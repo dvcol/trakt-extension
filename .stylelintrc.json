@@ -1,0 +1,3 @@
+{
+  "extends": ["@dvcol/stylelint-plugin-presets/config/vue"]
+}
