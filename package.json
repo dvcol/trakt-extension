@@ -34,8 +34,8 @@
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
-    "@commitlint/config-conventional": "^16.2.1",
+    "@commitlint/cli": "^17.0.0",
+    "@commitlint/config-conventional": "^17.0.0",
     "@dvcol/eslint-plugin-presets": "^1.2.1",
     "@dvcol/stylelint-plugin-presets": "^1.1.0",
     "@types/chrome": "^0.0.188",
@@ -47,7 +47,7 @@
     "c8": "^7.11.2",
     "eslint": "^8.5.0",
     "extract-changelog-release": "^1.0.2",
-    "husky": "^7.0.4",
+    "husky": "^8.0.0",
     "jsdom": "^19.0.0",
     "prettier": "^2.5.1",
     "standard-version": "^9.3.2",
