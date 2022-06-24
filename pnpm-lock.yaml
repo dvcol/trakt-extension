@@ -31,7 +31,7 @@ specifiers:
   stylelint: ^14.8.1
   typescript: ~4.7.0
   vite: ^2.9.5
-  vitest: ^0.15.0
+  vitest: ^0.16.0
   vue: ^3.2.33
   vue-router: ^4.0.14
   vue-tsc: ^0.38.0
@@ -72,7 +72,7 @@ devDependencies:
   stylelint: 14.8.1
   typescript: 4.7.3
   vite: 2.9.6
-  vitest: 0.15.0_c8@7.11.2+jsdom@19.0.0
+  vitest: 0.16.0_c8@7.11.2+jsdom@19.0.0
   vue-tsc: 0.38.0_typescript@4.7.3
   webextension-polyfill: 0.9.0
 
@@ -8244,13 +8244,13 @@ packages:
       readable-stream: 3.6.0
     dev: true
 
-  /tinypool/0.1.3:
-    resolution: {integrity: sha512-2IfcQh7CP46XGWGGbdyO4pjcKqsmVqFAPcXfPxcPXmOWt9cYkTP9HcDmGgsfijYoAEc4z9qcpM/BaBz46Y9/CQ==}
+  /tinypool/0.2.1:
+    resolution: {integrity: sha512-HFU5ZYVq3wBfhSaf8qdqGsneaqXm0FgJQpoUlJbVdHpRLzm77IneKAD3RjzJWZvIv0YpPB9S7LUW53f6BE6ZSg==}
     engines: {node: '>=14.0.0'}
     dev: true
 
-  /tinyspy/0.3.2:
-    resolution: {integrity: sha512-2+40EP4D3sFYy42UkgkFFB+kiX2Tg3URG/lVvAZFfLxgGpnWl5qQJuBw1gaLttq8UOS+2p3C0WrhJnQigLTT2Q==}
+  /tinyspy/0.3.3:
+    resolution: {integrity: sha512-gRiUR8fuhUf0W9lzojPf1N1euJYA30ISebSfgca8z76FOvXtVXqd5ojEIaKLWbDQhAaC3ibxZIjqbyi4ybjcTw==}
     engines: {node: '>=14.0.0'}
     dev: true
 
@@ -8742,8 +8742,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.15.0_c8@7.11.2+jsdom@19.0.0:
-    resolution: {integrity: sha512-ofXZ8tBYAkVJpTpkaGruBh9nG6lO9cs04IdFpneDblCwBpncnlpEgZvlF3XWF4lSsklPe9le4MO8+j90DnsX+g==}
+  /vitest/0.16.0_c8@7.11.2+jsdom@19.0.0:
+    resolution: {integrity: sha512-Ntp6jrM8wf2NMtamMBLkRBBdeqHkgAH/WMh5Xryts1j2ft2D8QZQbiSVFkSl4WmEQzcPP0YM069g/Ga1vtnEtg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
@@ -8769,8 +8769,8 @@ packages:
       debug: 4.3.4
       jsdom: 19.0.0
       local-pkg: 0.4.1
-      tinypool: 0.1.3
-      tinyspy: 0.3.2
+      tinypool: 0.2.1
+      tinyspy: 0.3.3
       vite: 2.9.12
     transitivePeerDependencies:
       - less
