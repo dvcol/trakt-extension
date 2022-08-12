@@ -35,7 +35,7 @@ specifiers:
   vue: ^3.2.33
   vue-router: ^4.0.14
   vue-tsc: ^0.40.0
-  webextension-polyfill: ^0.9.0
+  webextension-polyfill: ^0.10.0
 
 dependencies:
   '@dvcol/web-extension-utils': 1.1.1
@@ -74,7 +74,7 @@ devDependencies:
   vite: 2.9.6
   vitest: 0.21.0_c8@7.11.2+jsdom@19.0.0
   vue-tsc: 0.40.0_typescript@4.7.3
-  webextension-polyfill: 0.9.0
+  webextension-polyfill: 0.10.0
 
 packages:
 
@@ -8872,8 +8872,8 @@ packages:
       defaults: 1.0.3
     dev: true
 
-  /webextension-polyfill/0.9.0:
-    resolution: {integrity: sha512-LTtHb0yR49xa9irkstDxba4GATDAcDw3ncnFH9RImoFwDlW47U95ME5sn5IiQX2ghfaECaf6xyXM8yvClIBkkw==}
+  /webextension-polyfill/0.10.0:
+    resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
     dev: true
 
   /webidl-conversions/7.0.0:
