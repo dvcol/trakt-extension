@@ -6,7 +6,7 @@ specifiers:
   '@dvcol/eslint-plugin-presets': ^1.2.1
   '@dvcol/stylelint-plugin-presets': ^1.1.0
   '@dvcol/web-extension-utils': ^1.1.1
-  '@types/chrome': ^0.0.193
+  '@types/chrome': ^0.0.194
   '@types/fs-extra': ^9.0.13
   '@types/jsdom': ^16.2.14
   '@types/node': ^16.11.32
@@ -47,8 +47,8 @@ devDependencies:
   '@commitlint/cli': 17.0.2
   '@commitlint/config-conventional': 17.0.2
   '@dvcol/eslint-plugin-presets': 1.2.1_bu5nx2ceh465k42g5d76k2cgzu
-  '@dvcol/stylelint-plugin-presets': 1.1.0
-  '@types/chrome': 0.0.193
+  '@dvcol/stylelint-plugin-presets': 1.1.0_2rhpri4pycdpqvtipflngvnrgy
+  '@types/chrome': 0.0.194
   '@types/fs-extra': 9.0.13
   '@types/jsdom': 16.2.14
   '@types/node': 16.11.32
@@ -1641,9 +1641,12 @@ packages:
       - typescript
     dev: true
 
-  /@dvcol/stylelint-plugin-presets/1.1.0:
+  /@dvcol/stylelint-plugin-presets/1.1.0_2rhpri4pycdpqvtipflngvnrgy:
     resolution: {integrity: sha512-pTFNDVpjsN8Id78G6NDl25akBYQjUNTyh/ZBDeG3HjFJRNm/ibjQvV60xklLo7gBPpVN5a4IMLAeUOjyf30XpQ==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
+    peerDependencies:
+      prettier: ^2.6.2
+      stylelint: ^14.7.0 || ^14.0.0
     peerDependenciesMeta:
       postcss:
         optional: true
@@ -1878,8 +1881,8 @@ packages:
     resolution: {integrity: sha512-hC7OMnszpxhZPduX+m+nrx+uFoLkWOMiR4oa/AZF3MuSETYTZmFfJAHqZEM8MVlvfG7BEUcgvtwoCTxBp6hm3g==}
     dev: true
 
-  /@types/chrome/0.0.193:
-    resolution: {integrity: sha512-R8C84oqvk8A8C8G1viBd8qLpDr86Y/jwD+KLgzUekbIT9RGds6a9GnlQyg8P7ltnGogTMHkiEQK0ZlcrvTeo3Q==}
+  /@types/chrome/0.0.194:
+    resolution: {integrity: sha512-6bAg8NcePsvg1uBkDXGOWiDwwPjamDEAYdeYPMEmbjxQFYHvIZNTQ782ipQUZrjAbJaHwTQvFMmfF33mLfmJfQ==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.8
@@ -8520,6 +8523,7 @@ packages:
   /unified/9.2.2:
     resolution: {integrity: sha512-Sg7j110mtefBD+qunSLO1lqOEKdrwBFBrR6Qd8f4uwkhWNlbkaqwHse6e7QvD3AP/MNoJdEDLaf8OxYyoWgorQ==}
     dependencies:
+      '@types/unist': 2.0.6
       bail: 1.0.5
       extend: 3.0.2
       is-buffer: 2.0.5
