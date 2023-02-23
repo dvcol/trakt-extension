@@ -57,6 +57,7 @@
     "fs-extra": "^10.1.0",
     "husky": "^8.0.0",
     "jsdom": "^19.0.0",
+    "lint-staged": "^13.1.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
@@ -67,6 +68,14 @@
     "vitest": "^0.28.0",
     "vue-tsc": "^0.40.0",
     "webextension-polyfill": "^0.10.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue,svelte,json,md}": [
+      "eslint --fix"
+    ],
+    "*.{css,scss,less,vue,svelte}": [
+      "stylelint --fix"
+    ]
   },
   "pnpm": {
     "peerDependencyRules": {
