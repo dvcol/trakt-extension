@@ -1,12 +1,16 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*"],
+  "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "~/*": ["./src/*"]
     }
   }
 }

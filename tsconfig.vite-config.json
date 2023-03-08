@@ -1,8 +1,10 @@
 {
   "extends": "@vue/tsconfig/tsconfig.node.json",
-  "include": ["vite.config.*"],
+  "include": ["vite.config.*", "scripts/**/*", "package.json"],
   "compilerOptions": {
+    "strict": true,
     "composite": true,
+    "resolveJsonModule": true,
     "types": ["node", "vitest"]
   }
 }
