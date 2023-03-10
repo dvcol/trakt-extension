@@ -6,7 +6,7 @@ specifiers:
   '@dvcol/eslint-plugin-presets': ^1.2.1
   '@dvcol/stylelint-plugin-presets': ^1.1.0
   '@dvcol/web-extension-utils': ^1.1.1
-  '@types/chrome': ^0.0.220
+  '@types/chrome': ^0.0.221
   '@types/fs-extra': ^11.0.0
   '@types/jsdom': ^21.0.0
   '@types/node': ^18.0.0
@@ -49,7 +49,7 @@ devDependencies:
   '@commitlint/config-conventional': 17.0.2
   '@dvcol/eslint-plugin-presets': 1.2.1_mgh4yccdsrhx5by5flk3utiigu
   '@dvcol/stylelint-plugin-presets': 1.1.0_xbbfz2baxlrkhtchrf4gd5re5y
-  '@types/chrome': 0.0.220
+  '@types/chrome': 0.0.221
   '@types/fs-extra': 11.0.1
   '@types/jsdom': 21.1.0
   '@types/node': 18.14.1
@@ -2117,8 +2117,8 @@ packages:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
 
-  /@types/chrome/0.0.220:
-    resolution: {integrity: sha512-s5Sl4M3z3+IQLvYbR1yA+UVjX+LTtodmuZjqL6LkP+MWmuoNl1yryoJVCHBqEDZTH5p5PALGgkQVSTfjfYwXlg==}
+  /@types/chrome/0.0.221:
+    resolution: {integrity: sha512-hD86b5sUswrOn0+7Np4yIluClo8eSupSwUyV0S3A7Q96kfsTS3dI+VExj+G+DOyON2vMCKXef24E07cMCuF46w==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.8
