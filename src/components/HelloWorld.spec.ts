@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
-import HelloWorld from '../HelloWorld.vue';
+import HelloWorld from './HelloWorld.vue';
 
 describe('hello world', () => {
   it('renders properly', () => {
