@@ -28,6 +28,7 @@ specifiers:
   pinia: ^2.0.33
   prettier: ^2.8.4
   rimraf: ^4.4.0
+  rollup: ^3.19.1
   standard-version: ^9.5.0
   stylelint: ^14.16.1
   typescript: ~4.9.5
@@ -41,6 +42,7 @@ specifiers:
 dependencies:
   '@dvcol/web-extension-utils': 1.7.2
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
+  rollup: 3.19.1
   vue: 3.2.47
   vue-router: 4.1.6_vue@3.2.47
 
@@ -5175,7 +5177,6 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /function-bind/1.1.1:
@@ -8053,13 +8054,12 @@ packages:
       glob: 9.3.0
     dev: true
 
-  /rollup/3.17.2:
-    resolution: {integrity: sha512-qMNZdlQPCkWodrAZ3qnJtvCAl4vpQ8q77uEujVCCbC/6CLB7Lcmvjq7HyiOSnf4fxTT9XgsE36oLHJBH49xjqA==}
+  /rollup/3.19.1:
+    resolution: {integrity: sha512-lAbrdN7neYCg/8WaoWn/ckzCtz+jr70GFfYdlf50OF7387HTg+wiuiqJRFYawwSPpqfqDNYqK7smY/ks2iAudg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /rrweb-cssom/0.6.0:
     resolution: {integrity: sha512-APM0Gt1KoXBz0iIkkdB/kfvGOwC4UuJFeG/c+yV7wSc7q96cG/kJ0HiYCnzivD9SB53cLV1MlHFNfOuPaadYSw==}
@@ -9554,7 +9554,7 @@ packages:
       esbuild: 0.16.17
       postcss: 8.4.21
       resolve: 1.22.1
-      rollup: 3.17.2
+      rollup: 3.19.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

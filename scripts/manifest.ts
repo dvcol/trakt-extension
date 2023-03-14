@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 
 import pkg from '../package.json';
 
-import { isDev, port, r } from './utils';
+import { isDev, port, resolveParent } from './utils';
 
 import type { Manifest } from 'webextension-polyfill';
 
@@ -26,6 +26,9 @@ export const manifest: Manifest.WebExtensionManifest = {
     default_icon: 'icons/icon-512.png',
     default_popup: 'views/popup/index.html',
   },
+  background: {
+    service_worker: 'script/background.js',
+  },
   permissions: ['storage'],
   content_security_policy: {
     // Adds localhost for vite hot reload
@@ -35,26 +38,9 @@ export const manifest: Manifest.WebExtensionManifest = {
   },
 };
 
-/**
- * Manifest V2 version for hot reload
- * @see https://bugs.chromium.org/p/chromium/issues/detail?id=1247690
- * @todo Remove when MV3 hot reload is fixed
- */
-export const manifestV2: Manifest.WebExtensionManifest = {
-  manifest_version: 2,
-  name: manifest.name,
-  version: manifest.version,
-  description: manifest.description,
-  browser_action: manifest.action,
-  options_ui: manifest.options_ui,
-  icons: manifest.icons,
-  permissions: manifest.permissions,
-  content_security_policy: (manifest.content_security_policy as { extension_pages: string })?.extension_pages,
-};
-
 export async function writeManifest() {
-  fs.ensureDirSync(r(`dist`));
-  fs.writeJSONSync(r('dist/manifest.json'), isDev ? manifestV2 : manifest, {
+  fs.ensureDirSync(resolveParent(`dist`));
+  fs.writeJSONSync(resolveParent('dist/manifest.json'), manifest, {
     spaces: 2,
   });
   console.log(`Writing manifest.json to '${__dirname}/dist/manifest.json'`);
