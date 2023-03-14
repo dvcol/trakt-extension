@@ -6,7 +6,7 @@ specifiers:
   '@dvcol/eslint-plugin-presets': ^1.2.2
   '@dvcol/stylelint-plugin-presets': ^1.1.0
   '@dvcol/web-extension-utils': ^1.7.2
-  '@types/chrome': ^0.0.223
+  '@types/chrome': ^0.0.224
   '@types/fs-extra': ^11.0.1
   '@types/jsdom': ^21.1.0
   '@types/node': ^18.15.3
@@ -42,7 +42,6 @@ specifiers:
 dependencies:
   '@dvcol/web-extension-utils': 1.7.2
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
-  rollup: 3.19.1
   vue: 3.2.47
   vue-router: 4.1.6_vue@3.2.47
 
@@ -51,7 +50,7 @@ devDependencies:
   '@commitlint/config-conventional': 17.4.4
   '@dvcol/eslint-plugin-presets': 1.2.2_vgl77cfdswitgr47lm5swmv43m
   '@dvcol/stylelint-plugin-presets': 1.1.0_dolz6rwlo5u24hf4fhkbpcxlqi
-  '@types/chrome': 0.0.223
+  '@types/chrome': 0.0.224
   '@types/fs-extra': 11.0.1
   '@types/jsdom': 21.1.0
   '@types/node': 18.15.3
@@ -72,6 +71,7 @@ devDependencies:
   npm-run-all: 4.1.5
   prettier: 2.8.4
   rimraf: 4.4.0
+  rollup: 3.19.1
   standard-version: 9.5.0
   stylelint: 14.16.1
   typescript: 4.9.5
@@ -2128,8 +2128,8 @@ packages:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
 
-  /@types/chrome/0.0.223:
-    resolution: {integrity: sha512-Z/wYh1K9ekdnv/uLSIU/vOF9s3PG8nP7Gn7mwsCdFlyKJUH3BMsOyj2qDv4pU6sF+b2bCHbxBpDjpGgvEqDPLg==}
+  /@types/chrome/0.0.224:
+    resolution: {integrity: sha512-YkL7q3KDV7OAKgVCBNIfH73rnjNMbIzAYHzTa2DKhSK/2z0Wf/n8yJnK/UoW+lvuYJJR4LtAkG3YvsIZTy7BOA==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.8
@@ -5177,6 +5177,7 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /function-bind/1.1.1:
@@ -8060,6 +8061,7 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /rrweb-cssom/0.6.0:
     resolution: {integrity: sha512-APM0Gt1KoXBz0iIkkdB/kfvGOwC4UuJFeG/c+yV7wSc7q96cG/kJ0HiYCnzivD9SB53cLV1MlHFNfOuPaadYSw==}
