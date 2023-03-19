@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from '@dvcol/web-extension-utils/lib/chrome/utils/i18n.utils';
 import { RouterLink, RouterView } from 'vue-router';
 
 import HelloWorld from '~/components/HelloWorld.vue';
+
+const i18n = useI18n('global');
 </script>
 
 <template>
   <v-app>
-    <v-app-bar :elevation="2"></v-app-bar>
+    <v-app-bar :elevation="2">{{ i18n('app_name') }}</v-app-bar>
 
     <header>
       <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />

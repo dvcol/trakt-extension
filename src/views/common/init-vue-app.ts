@@ -1,4 +1,4 @@
-import { isDarkTheme } from '@dvcol/web-extension-utils';
+import { isDarkTheme } from '@dvcol/web-extension-utils/lib/common/utils/window.utils';
 import { createPinia } from 'pinia';
 
 import { createApp } from 'vue';

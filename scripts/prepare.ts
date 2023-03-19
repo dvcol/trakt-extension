@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-import { mergeJson } from '@dvcol/web-extension-utils/common';
+import { mergeJson } from '@dvcol/web-extension-utils/lib/common/utils/file.utils';
 import { watch } from 'chokidar';
 import fs from 'fs-extra';
 
