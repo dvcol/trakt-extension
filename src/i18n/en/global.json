@@ -1,0 +1,18 @@
+{
+  "global__app_name": {
+    "message": "Side Trakt",
+    "description": "Extension name."
+  },
+  "global__app_title": {
+    "message": "Side Trakt (companion app for Traskt.tv)",
+    "description": "Extension title."
+  },
+  "global__app_title_popup": {
+    "message": "Side Trakt Popup",
+    "description": "Popup page title field."
+  },
+  "global__app_title_options": {
+    "message": "Side Trakt Options",
+    "description": "Options page title field."
+  }
+}

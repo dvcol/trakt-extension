@@ -5,7 +5,7 @@ specifiers:
   '@commitlint/config-conventional': ^17.4.4
   '@dvcol/eslint-plugin-presets': ^1.3.2
   '@dvcol/stylelint-plugin-presets': ^1.1.0
-  '@dvcol/web-extension-utils': ^2.2.0
+  '@dvcol/web-extension-utils': ^2.3.0
   '@types/chrome': ^0.0.224
   '@types/fs-extra': ^11.0.1
   '@types/jsdom': ^21.1.0
@@ -53,7 +53,7 @@ devDependencies:
   '@commitlint/config-conventional': 17.4.4
   '@dvcol/eslint-plugin-presets': 1.3.2_dvv2j667zjrmsuy6szq6yl3izm
   '@dvcol/stylelint-plugin-presets': 1.1.0_dolz6rwlo5u24hf4fhkbpcxlqi
-  '@dvcol/web-extension-utils': 2.2.0
+  '@dvcol/web-extension-utils': 2.3.0
   '@types/chrome': 0.0.224
   '@types/fs-extra': 11.0.1
   '@types/jsdom': 21.1.0
@@ -1735,10 +1735,12 @@ packages:
       - supports-color
     dev: true
 
-  /@dvcol/web-extension-utils/2.2.0:
-    resolution: {integrity: sha512-1zRUfm2ZNppl11DQ1k+kCY/2vMPdk9BHJ1ftRSSN0Mz3yjcWRbuFP/8RpdSyWSnREw8QiQl4IdXLFCpM1ZcU5A==}
+  /@dvcol/web-extension-utils/2.3.0:
+    resolution: {integrity: sha512-gjOmxzqCsmgWgGcnXnfeD1svYL7iJsTZ7FxzDsqpN+zlpUwRyiMumruBUmzYSUSx/fG7z+QYxQcjdv1JkZVU1g==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
     dependencies:
+      fast-glob: 3.2.12
+      fs-extra: 11.1.0
       rxjs: 7.8.0
     dev: true
 

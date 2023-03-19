@@ -61,4 +61,7 @@ export default defineConfig(({ command }) => ({
     globals: true,
     environment: 'jsdom',
   },
+  optimizeDeps: {
+    exclude: ['path', 'fast-glob'],
+  },
 }));

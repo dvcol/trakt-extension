@@ -11,7 +11,7 @@ export const manifest: Manifest.WebExtensionManifest = {
   name: pkg.title || pkg.name,
   version: pkg.version,
   description: pkg.description,
-  // default_locale: 'en', // TODO i18n
+  default_locale: 'en',
   icons: {
     16: 'icons/icon-512.png',
     48: 'icons/icon-512.png',

@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 
+import { mergeJson } from '@dvcol/web-extension-utils/common';
 import { watch } from 'chokidar';
 import fs from 'fs-extra';
 
@@ -28,8 +29,10 @@ const copyViews = async (views = ['options', 'popup']) => views.map(copyIndexHtm
 /**
  * Copy extension icons to dist folder
  */
-const copyIcons = async () =>
-  isDev ? fs.symlink(resolveParent('icons'), resolveParent('dist/icons'), 'junction') : fs.copySync('icons', 'dist/icons', { overwrite: true });
+const copyIcons = async (_isDev: boolean) => {
+  if (_isDev) return fs.symlink(resolveParent('icons'), resolveParent('dist/icons'), 'junction');
+  return fs.copySync('icons', 'dist/icons', { overwrite: true });
+};
 
 /**
  * Copy extension icons to dist folder
@@ -42,7 +45,12 @@ const copyAssets = async () => fs.symlink(resolveParent('src/assets'), resolvePa
 const prepare = async (hmr = isDev) => {
   writeManifest().catch(e => console.error('Failed to write manifest.json', e));
 
-  copyIcons().catch(e => console.error('Failed to copy extension icons', e));
+  copyIcons(isDev).catch(e => console.error('Failed to copy extension icons', e));
+
+  mergeJson({
+    pattern: 'src/i18n/en/**/*.json',
+    output: 'dist/_locales/en/messages.json',
+  }).catch((e: Error) => console.error('Failed to merge jsons', e));
 
   if (hmr) {
     console.log('Watching changes ...');
@@ -63,6 +71,13 @@ const prepare = async (hmr = isDev) => {
       } catch (e) {
         console.error('Failed to write manifest.json', e);
       }
+    });
+
+    watch([resolveParent('src/i18n/en/**/*.json')]).on('change', () => {
+      mergeJson({
+        pattern: 'src/i18n/en/**/*.json',
+        output: 'dist/_locales/en/messages.json',
+      }).catch((e: Error) => console.error('Failed to merge jsons', e));
     });
 
     copyAssets().catch(e => console.error('Failed to write assets', e));
