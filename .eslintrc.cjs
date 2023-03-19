@@ -6,5 +6,8 @@ module.exports = {
   settings: { jest: { version: 27 } },
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: ['/!(src)/**', '**/*.test.*', '**/*.spec.*', '**/*.config.*'] }],
+    'vue/no-undef-components': ['error',{
+      "ignorePatterns": ['^v-.*']
+    }]
   }
 };

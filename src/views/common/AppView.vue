@@ -5,20 +5,24 @@ import HelloWorld from '~/components/HelloWorld.vue';
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <v-app-bar :elevation="2"></v-app-bar>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <header>
+      <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <div class="wrapper">
+        <HelloWorld msg="You did it!" />
 
-  <RouterView />
+        <nav>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/about">About</RouterLink>
+        </nav>
+      </div>
+    </header>
+
+    <RouterView />
+  </v-app>
 </template>
 
 <style lang="scss">

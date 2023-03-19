@@ -2,8 +2,8 @@ import { dirname, relative } from 'path';
 import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
-
 import { defineConfig } from 'vite';
+import vuetify from 'vite-plugin-vuetify';
 
 import { isDev, port, resolveParent } from './scripts/utils';
 
@@ -30,6 +30,7 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     vue(),
+    vuetify(),
 
     // rewrite assets to use relative path
     {
