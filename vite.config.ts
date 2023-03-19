@@ -9,16 +9,14 @@ import { isDev, port, resolveParent } from './scripts/utils';
 
 import type { InputOption } from 'rollup';
 
-const getInput = (hmr: boolean): InputOption =>
-  isDev
-    ? {
-        background: resolveParent('src/script/background/index.ts'),
-      }
-    : {
-        background: resolveParent('src/script/background/index.ts'),
-        options: resolveParent('src/views/options/index.html'),
-        popup: resolveParent('src/views/popup/index.html'),
-      };
+const getInput = (hmr: boolean): InputOption => {
+  if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
+  return {
+    background: resolveParent('src/scripts/background/index.ts'),
+    options: resolveParent('src/views/options/index.html'),
+    popup: resolveParent('src/views/popup/index.html'),
+  };
+};
 
 export default defineConfig(({ command }) => ({
   root: resolveParent('src'),
@@ -54,7 +52,7 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: getInput(isDev),
       output: {
-        entryFileNames: entry => (entry.name === 'background' ? 'script/[name].js' : 'assets/[name]-[hash].js'),
+        entryFileNames: entry => (entry.name === 'background' ? 'scripts/[name].js' : 'assets/[name]-[hash].js'),
       },
     },
   },

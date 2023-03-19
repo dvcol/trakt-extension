@@ -8,7 +8,7 @@ import type { Manifest } from 'webextension-polyfill';
 
 export const manifest: Manifest.WebExtensionManifest = {
   manifest_version: 3,
-  name: 'Trakt Companion (client for Trakt.tv)' || pkg.name,
+  name: pkg.title || pkg.name,
   version: pkg.version,
   description: pkg.description,
   // default_locale: 'en', // TODO i18n
@@ -22,12 +22,12 @@ export const manifest: Manifest.WebExtensionManifest = {
     open_in_tab: true,
   },
   action: {
-    default_title: 'Trakt Companion',
+    default_title: pkg.title || pkg.name,
     default_icon: 'icons/icon-512.png',
     default_popup: 'views/popup/index.html',
   },
   background: {
-    service_worker: 'script/background.js',
+    service_worker: 'scripts/background.js',
   },
   permissions: ['storage'],
   content_security_policy: {
@@ -39,7 +39,7 @@ export const manifest: Manifest.WebExtensionManifest = {
 };
 
 export async function writeManifest() {
-  fs.ensureDirSync(resolveParent(`dist`));
+  fs.ensureDirSync(resolveParent('dist'));
   fs.writeJSONSync(resolveParent('dist/manifest.json'), manifest, {
     spaces: 2,
   });
