@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useI18n } from '@dvcol/web-extension-utils/lib/chrome/utils/i18n.utils';
 import { RouterLink, RouterView } from 'vue-router';
 
 import HelloWorld from '~/components/HelloWorld.vue';
+import { useI18n } from '~/utils';
 
 const i18n = useI18n('global');
 </script>

@@ -1,4 +1,3 @@
-import { isDarkTheme } from '@dvcol/web-extension-utils/lib/common/utils/window.utils';
 import { createPinia } from 'pinia';
 
 import { createApp } from 'vue';
@@ -10,6 +9,8 @@ import router from '../../router';
 import AppView from './AppView.vue';
 
 import type { App, Component } from 'vue';
+
+import { isDarkTheme } from '~/utils';
 
 import 'vuetify/styles';
 import '../../styles/base.css';
