@@ -1,5 +1,5 @@
 
-<h1 align="center">Welcome to traktv companion 👋</h1>
+<h1 align="center">Welcome to Side Trakt 👋</h1>
 <p>
   <img src="https://img.shields.io/badge/pnpm-%3E%3D7.0.0-blue.svg" />
   <img src="https://img.shields.io/badge/node-%3E%3D17.0.0-blue.svg" />
@@ -46,7 +46,7 @@ pnpm run test
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/dvcol/traktv-companion/issues).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/dvcol/trakt-extension/issues).
 
 ## Show your support
 
@@ -58,7 +58,7 @@ Give a ⭐️ if this project helped you!
 
 ## 📝 License
 
-This project is [MIT](https://github.com/dvcol/traktv-companion/blob/master/LICENSE) licensed.
+This project is [MIT](https://github.com/dvcol/trakt-extension/blob/master/LICENSE) licensed.
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
