@@ -31,8 +31,8 @@ devDependencies:
     specifier: ^1.1.1
     version: 1.1.1(postcss-html@1.5.0)(postcss@8.4.21)(prettier@2.8.4)(stylelint@15.3.0)
   '@types/chrome':
-    specifier: ^0.0.231
-    version: 0.0.231
+    specifier: ^0.0.232
+    version: 0.0.232
   '@types/fs-extra':
     specifier: ^11.0.1
     version: 11.0.1
@@ -1048,8 +1048,8 @@ packages:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
 
-  /@types/chrome@0.0.231:
-    resolution: {integrity: sha512-K3dSpeorWAj2UA/1GRUbny34+PARsH/k8bj8dRZQusSqNE323QEGils9ty1LaVyR1DnfLMD9PX8cV5Q+EhwAvQ==}
+  /@types/chrome@0.0.232:
+    resolution: {integrity: sha512-IfEhAewLgCDJZ70gnNJ2cbl4L5+9WvR0FL5wl3MGHguSbeQbThN2BNagFq5PddNFMVHW7JKf8TBu7tyWixOeyQ==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.8
