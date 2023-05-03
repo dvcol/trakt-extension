@@ -70,7 +70,7 @@
     "typescript": "^5.0.2",
     "vite": "^4.2.1",
     "vite-plugin-vuetify": "^1.0.2",
-    "vitest": "^0.30.0",
+    "vitest": "^0.31.0",
     "vue-tsc": "^1.2.0",
     "webextension-polyfill": "^0.10.0"
   },
