@@ -52,8 +52,8 @@ devDependencies:
     specifier: ^2.3.2
     version: 2.3.2(vue@3.2.47)
   '@vue/tsconfig':
-    specifier: ^0.3.0
-    version: 0.3.0
+    specifier: ^0.4.0
+    version: 0.4.0
   c8:
     specifier: ^7.13.0
     version: 7.13.0
@@ -1332,8 +1332,8 @@ packages:
       '@vue/server-renderer': 3.2.47(vue@3.2.47)
     dev: true
 
-  /@vue/tsconfig@0.3.0:
-    resolution: {integrity: sha512-q/6xf5nbmCcJ5jTzJapIPRiBfJGunfuKh0jvl3o/25Wn93ZHkiYTB+rR0pj+2lZ9cCrkK/f4JLuhe4jGLwtwMw==}
+  /@vue/tsconfig@0.4.0:
+    resolution: {integrity: sha512-CPuIReonid9+zOG/CGTT05FXrPYATEqoDGNrEaqS4hwcw5BUNM2FguC0mOwJD4Jr16UpRVl9N0pY3P+srIbqmg==}
     dev: true
 
   /@vuetify/loader-shared@1.7.1(vue@3.2.47)(vuetify@3.1.11):
