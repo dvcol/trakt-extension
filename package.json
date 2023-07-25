@@ -42,7 +42,7 @@
     "@commitlint/config-conventional": "^17.4.4",
     "@dvcol/eslint-plugin-presets": "^1.3.4",
     "@dvcol/stylelint-plugin-presets": "^1.1.1",
-    "@types/chrome": "^0.0.241",
+    "@types/chrome": "^0.0.242",
     "@types/fs-extra": "^11.0.1",
     "@types/jsdom": "^21.1.0",
     "@types/node": "^18.15.5",
