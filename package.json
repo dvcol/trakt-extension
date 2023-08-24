@@ -1,6 +1,6 @@
 {
   "name": "@dvcol/trakt-extension",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "title": "Side Trakt (companion app for Trakt.tv)",
   "description": "Side Trakt, a chrome extension for Trakt.tv",
   "license": "MIT",
