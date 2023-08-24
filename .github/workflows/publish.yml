@@ -1,0 +1,75 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Publish - npm Publish and Github Release
+
+on:
+  workflow_call:
+    inputs:
+      tag-name:
+        description: Tag name
+        required: false
+        type: string
+      skip-npm:
+        description: Skip npm publish
+        required: false
+        type: boolean
+
+env:
+  node_version: 20.x
+  pnpm_version: 8.x
+
+jobs:
+  publish:
+    name: Github release and npm publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch ${{ github.ref }}
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          node_version: ${{ env.node_version }}
+          pnpm_version: ${{ env.pnpm_version }}
+
+      - name: Publish to npm
+        if: ${{ inputs.skip-npm != true }}
+        run: |
+          # =================  Publish  =================
+
+          pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Generate Release changelog
+        run: |
+          # =================  Changelog  =================
+
+          pnpm run release:changelog
+
+      - name: Fetch latest tag
+        if: ${{ github.event.inputs.tag-name == '' }}
+        id: latest-tag
+        run: |
+          # =================  Fetch tag  =================
+
+          tag_name=$(git describe --abbrev=0)
+          echo "Tag found: '\e[34m$tag_name\e[0m'"
+          echo "TAG_NAME=$tag_name" >> "$GITHUB_OUTPUT"
+
+      - name: Push Release to github
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.tag-name || steps.latest-tag.outputs.TAG_NAME }}
+          body_path: RELEASE.md
+
+      - uses: actions/cache/save@v3
+        id: cache
+        with:
+          path: dist
+          key: ${{ github.ref }}-${{ github.run_id }}-build
