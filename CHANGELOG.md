@@ -2,4 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0 (2023-08-24)
+
+
+### Features
+
+* **assets:** adds basic traktv assets ([c8e8e0c](https://github.com/dvcol/trakt-extension/commit/c8e8e0ccf06d7579cfdf1c0fda97d8e0bf77059d))
+* **ci:** adds github release, npm publish and store upload ([10b9b99](https://github.com/dvcol/trakt-extension/commit/10b9b993aff71807853552a7182a983e52a526cb))
+* **i18n:** adds local support ([3524f7d](https://github.com/dvcol/trakt-extension/commit/3524f7d0587bf5e06c34c4cadc83a0691b9145f4))
+* **init:** initialized vite vue3 project ([75db580](https://github.com/dvcol/trakt-extension/commit/75db580789fc871edba3c0565966b774a59475b0))
+* **vuetify:** adds vuetify setup ([c0edfca](https://github.com/dvcol/trakt-extension/commit/c0edfcab02e03ea77c6baaebfdba4a8f54b08e21))
+* **wc:** add support for web component ([c641983](https://github.com/dvcol/trakt-extension/commit/c641983ec4a627a102b924b5f075fe81f0f11129))
+
+
+### Bug Fixes
+
+* **build:** fix hmr and add service worker ([7fd35a4](https://github.com/dvcol/trakt-extension/commit/7fd35a4dd71e07e39a481f2bb032dbbe723bf092))
+* **ci:** fix npm publish config ([0c2a6c2](https://github.com/dvcol/trakt-extension/commit/0c2a6c24139a8d4494e92f81329dc60d0b199ba8))
+* **ci:** remove yarn reference ([f32a5d4](https://github.com/dvcol/trakt-extension/commit/f32a5d40cbcdc3cfe3b1dec3c5993affd897877b))
+* **lint:** fix stylelint and eslint ([af2aa03](https://github.com/dvcol/trakt-extension/commit/af2aa03f28f07a6bc6a0d768381dc2ad6d78706b))
+* **wc:** sizing ([7240154](https://github.com/dvcol/trakt-extension/commit/724015488d31d005524ffe9e70a7c4a577339d8a))
+
 ## 1.0.0 (2023-08-24)
