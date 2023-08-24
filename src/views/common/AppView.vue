@@ -4,28 +4,33 @@ import { RouterLink, RouterView } from 'vue-router';
 import HelloWorld from '~/components/HelloWorld.vue';
 import { useI18n } from '~/utils';
 
+const test = 'test Value';
+
 const i18n = useI18n('global');
 </script>
 
 <template>
-  <v-app>
-    <v-app-bar :elevation="2">{{ i18n('app_name') }}</v-app-bar>
+  <VApp>
+    <VAppBar :elevation="2" fixed="fale">{{ i18n('app_name') }}</VAppBar>
+    <VMain>
+      <VContainer fluid>
+        <header>
+          <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />
 
-    <header>
-      <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />
+          <div class="wrapper">
+            <HelloWorld :msg="test" />
 
-      <div class="wrapper">
-        <HelloWorld msg="You did it!" />
+            <nav>
+              <RouterLink to="/">Home</RouterLink>
+              <RouterLink to="/about">About</RouterLink>
+            </nav>
+          </div>
+        </header>
 
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-        </nav>
-      </div>
-    </header>
-
-    <RouterView />
-  </v-app>
+        <RouterView />
+      </VContainer>
+    </VMain>
+  </VApp>
 </template>
 
 <style lang="scss">
@@ -34,11 +39,6 @@ const i18n = useI18n('global');
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
-}
-
-header {
-  max-height: 100vh;
-  line-height: 1.5;
 }
 
 .logo {
@@ -72,7 +72,7 @@ nav {
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   body {
     display: flex;
     place-items: center;

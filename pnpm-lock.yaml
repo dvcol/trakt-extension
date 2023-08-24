@@ -30,7 +30,7 @@ devDependencies:
     version: 17.7.0
   '@dvcol/eslint-plugin-presets':
     specifier: ^1.3.9
-    version: 1.3.9(@typescript-eslint/eslint-plugin@6.4.1)(@typescript-eslint/parser@6.4.1)(@vue/eslint-config-prettier@8.0.0)(@vue/eslint-config-typescript@11.0.3)(eslint-config-airbnb-base@15.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-eslint-comments@3.2.0)(eslint-plugin-html@7.1.0)(eslint-plugin-import@2.28.1)(eslint-plugin-jsonc@2.9.0)(eslint-plugin-markdown@3.0.1)(eslint-plugin-prettier@5.0.0)(eslint-plugin-vitest@0.2.8)(eslint-plugin-vue@9.17.0)(eslint-plugin-vuejs-accessibility@1.2.0)(eslint-plugin-yml@1.5.0)(eslint@8.47.0)(jsonc-eslint-parser@2.2.0)(vue@3.3.4)(yaml-eslint-parser@1.2.0)
+    version: 1.3.9(@typescript-eslint/eslint-plugin@6.4.1)(@typescript-eslint/parser@6.4.1)(@vue/eslint-config-prettier@8.0.0)(@vue/eslint-config-typescript@11.0.3)(eslint-config-airbnb-base@15.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-eslint-comments@3.2.0)(eslint-plugin-html@7.1.0)(eslint-plugin-import@2.28.1)(eslint-plugin-jsonc@2.9.0)(eslint-plugin-markdown@3.0.1)(eslint-plugin-prettier@5.0.0)(eslint-plugin-vitest@0.2.8)(eslint-plugin-vue@9.17.0)(eslint-plugin-vuejs-accessibility@2.2.0)(eslint-plugin-yml@1.5.0)(eslint@8.47.0)(jsonc-eslint-parser@2.2.0)(vue@3.3.4)(yaml-eslint-parser@1.2.0)
   '@dvcol/stylelint-plugin-presets':
     specifier: ^1.2.1
     version: 1.2.1(postcss-html@1.5.0)(postcss@8.4.28)(prettier@3.0.2)(stylelint@15.10.3)
@@ -116,8 +116,8 @@ devDependencies:
     specifier: ^9.17.0
     version: 9.17.0(eslint@8.47.0)
   eslint-plugin-vuejs-accessibility:
-    specifier: ^1.1.1
-    version: 1.2.0(eslint@8.47.0)
+    specifier: ^2.2.0
+    version: 2.2.0(eslint@8.47.0)
   eslint-plugin-yml:
     specifier: ^1.0.0
     version: 1.5.0(eslint@8.47.0)
@@ -230,7 +230,7 @@ packages:
       debug: 4.3.4
       gensync: 1.0.0-beta.2
       json5: 2.2.1
-      semver: 6.3.0
+      semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -254,7 +254,7 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-validator-option': 7.16.7
       browserslist: 4.20.3
-      semver: 6.3.0
+      semver: 6.3.1
     dev: true
 
   /@babel/helper-environment-visitor@7.16.7:
@@ -607,7 +607,7 @@ packages:
       postcss-selector-parser: 6.0.13
     dev: true
 
-  /@dvcol/eslint-plugin-presets@1.3.9(@typescript-eslint/eslint-plugin@6.4.1)(@typescript-eslint/parser@6.4.1)(@vue/eslint-config-prettier@8.0.0)(@vue/eslint-config-typescript@11.0.3)(eslint-config-airbnb-base@15.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-eslint-comments@3.2.0)(eslint-plugin-html@7.1.0)(eslint-plugin-import@2.28.1)(eslint-plugin-jsonc@2.9.0)(eslint-plugin-markdown@3.0.1)(eslint-plugin-prettier@5.0.0)(eslint-plugin-vitest@0.2.8)(eslint-plugin-vue@9.17.0)(eslint-plugin-vuejs-accessibility@1.2.0)(eslint-plugin-yml@1.5.0)(eslint@8.47.0)(jsonc-eslint-parser@2.2.0)(vue@3.3.4)(yaml-eslint-parser@1.2.0):
+  /@dvcol/eslint-plugin-presets@1.3.9(@typescript-eslint/eslint-plugin@6.4.1)(@typescript-eslint/parser@6.4.1)(@vue/eslint-config-prettier@8.0.0)(@vue/eslint-config-typescript@11.0.3)(eslint-config-airbnb-base@15.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-eslint-comments@3.2.0)(eslint-plugin-html@7.1.0)(eslint-plugin-import@2.28.1)(eslint-plugin-jsonc@2.9.0)(eslint-plugin-markdown@3.0.1)(eslint-plugin-prettier@5.0.0)(eslint-plugin-vitest@0.2.8)(eslint-plugin-vue@9.17.0)(eslint-plugin-vuejs-accessibility@2.2.0)(eslint-plugin-yml@1.5.0)(eslint@8.47.0)(jsonc-eslint-parser@2.2.0)(vue@3.3.4)(yaml-eslint-parser@1.2.0):
     resolution: {integrity: sha512-O96M8y/3xAvmhfyOXlxr0/TnQpUKCH1+wUg5RH6qm6zAD8c3w8FVfC0KlK7JCXwbqGenYv9q0szyMtC9yRRkXA==}
     engines: {node: ' >=14.13.1 || >=16', yarn: '>= 3.2.0'}
     peerDependencies:
@@ -700,7 +700,7 @@ packages:
       eslint-plugin-prettier: 5.0.0(eslint-config-prettier@9.0.0)(eslint@8.47.0)(prettier@3.0.2)
       eslint-plugin-vitest: 0.2.8(eslint@8.47.0)(typescript@5.1.6)(vite@4.4.9)(vitest@0.34.2)
       eslint-plugin-vue: 9.17.0(eslint@8.47.0)
-      eslint-plugin-vuejs-accessibility: 1.2.0(eslint@8.47.0)
+      eslint-plugin-vuejs-accessibility: 2.2.0(eslint@8.47.0)
       eslint-plugin-yml: 1.5.0(eslint@8.47.0)
       espree: 9.5.0
       jsonc-eslint-parser: 2.2.0
@@ -2872,7 +2872,7 @@ packages:
       json-stringify-safe: 5.0.1
       lodash: 4.17.21
       meow: 8.1.2
-      semver: 6.3.0
+      semver: 6.3.1
       split: 1.0.1
       through2: 4.0.2
     dev: true
@@ -3814,8 +3814,9 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-vuejs-accessibility@1.2.0(eslint@8.47.0):
-    resolution: {integrity: sha512-wF7kT22lS2VOmIpDeI65bnFFKFgESEEpI+CWKr43mdfDRywA4sCk7cKhtZsvfbPOtKO0GDlnpFxZbOIGsFn7IQ==}
+  /eslint-plugin-vuejs-accessibility@2.2.0(eslint@8.47.0):
+    resolution: {integrity: sha512-/Dr02rkrBU/mDE4+xO8/9Y230mC9ZTkh2U5tJHEFHxw/CldccmVCWgWs4NM1lq+Bbu9bJzwJPHOsZ+o5wIQuOA==}
+    engines: {node: '>=16.0.0'}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
@@ -4421,7 +4422,7 @@ packages:
     hasBin: true
     dependencies:
       meow: 8.1.2
-      semver: 6.3.0
+      semver: 6.3.1
     dev: true
 
   /gitconfiglocal@1.0.0:
@@ -5693,7 +5694,7 @@ packages:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
     engines: {node: '>=8'}
     dependencies:
-      semver: 6.3.0
+      semver: 6.3.1
 
   /make-dir@4.0.0:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
@@ -7181,11 +7182,11 @@ packages:
   /semver@6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
+    dev: true
 
   /semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
-    dev: true
 
   /semver@7.3.7:
     resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}
