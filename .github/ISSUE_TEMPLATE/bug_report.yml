@@ -1,7 +1,7 @@
 name: Bug report
 description: Report errors or unexpected issues
 title: '[bug]: Bug Report (please change this title)'
-labels: ['bug', 'bug-report']
+labels: [bug, bug-report]
 assignees: []
 
 body:
@@ -67,7 +67,7 @@ body:
       description: A brief description of the issue.
       placeholder: |
         Describe what happens:
-        
+
         Everytime I add a new torrent, the extension crashes ...
     validations:
       required: true
@@ -77,9 +77,9 @@ body:
     attributes:
       label: Steps to Reproduce the Issue
       description: Please describe in details the steps to reproduce your issue.
-      placeholder: | 
+      placeholder: |
         Describe how to reproduce:
-        
+
           1. When I'm doing this
           2. Then this
           3. While having this open

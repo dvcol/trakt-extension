@@ -42,7 +42,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
-    "@dvcol/eslint-plugin-presets": "^1.3.9",
+    "@dvcol/eslint-plugin-presets": "^1.3.10",
     "@dvcol/stylelint-plugin-presets": "^1.2.1",
     "@tsconfig/node20": "^20.1.2",
     "@types/chrome": "^0.0.243",

@@ -1,40 +1,23 @@
 {
-  "extends": [
-    "config:base",
-    ":preserveSemverRanges"
-  ],
+  "extends": ["config:base", ":preserveSemverRanges"],
   "assigneesFromCodeOwners": true,
   "rangeStrategy": "replace",
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
-      "labels": [
-        "dependencies"
-      ],
+      "labels": ["dependencies"],
       "automerge": true,
       "automergeType": "pr"
     },
     {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["major"],
       "groupName": "all major dependencies",
       "groupSlug": "all-major",
-      "labels": [
-        "dependencies",
-        "breaking"
-      ]
+      "labels": ["dependencies", "breaking"]
     }
   ]
 }

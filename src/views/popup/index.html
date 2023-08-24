@@ -21,46 +21,45 @@
 <style>
 
     body {
-        font-size: 1rem;
         margin: 0;
+        font-size: 1rem;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
 
     #app-popup {
-        overflow: hidden;
-        height: 37rem;
         width: 45rem;
-        max-height: 600px;
         max-width: 800px;
+        height: 37rem;
+        max-height: 600px;
+        overflow: hidden;
         transition: width 1s, height 2s;
     }
 
     #app-skeleton-container {
         height: 100%;
-
-        background-color: rgb(234, 238, 243);
+        background-color: rgb(234 238 243);
     }
 
     #app-skeleton-navbar {
         width: 100%;
         height: 48px;
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
         background-color: white;
+        box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
     }
 
     #app-skeleton-content {
-        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        height: 100%;
     }
 
     @media (prefers-color-scheme: dark) {
         #app-skeleton-container {
             color: #bdbdbd;
-            background-color: rgb(32, 38, 45);
+            background-color: rgb(32 38 45);
         }
 
         #app-skeleton-navbar {

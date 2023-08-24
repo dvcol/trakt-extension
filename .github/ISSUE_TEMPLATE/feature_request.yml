@@ -1,7 +1,7 @@
 name: Feature request
 description: Suggest an improvement
 title: '[feature]: Feature Request (please change this title)'
-labels: ['enhancement', 'feature-request']
+labels: [enhancement, feature-request]
 assignees: []
 
 body:
@@ -40,7 +40,7 @@ body:
       description: A brief description of the proposed functionality.
       placeholder: |
         Describe what you want to improve:
-        
+
         I wish that when I'm downloading a task I also get a free coffee !
     validations:
       required: true
