@@ -22,6 +22,9 @@
     "LICENSE",
     "dist/lib"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "husky install",
     "clear": "rimraf dist",

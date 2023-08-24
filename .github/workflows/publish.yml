@@ -21,7 +21,7 @@ env:
 
 jobs:
   publish-npm:
-    name: Github release and npm publish
+    name: Npm publish
     runs-on: ubuntu-latest
 
     steps:
