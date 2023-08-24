@@ -6,6 +6,10 @@ name: Publish - npm Publish and Github Release
 on:
   workflow_call:
     inputs:
+      commit-hash:
+        description: Commit to checkout
+        required: false
+        type: string
       tag-name:
         description: Tag name
         required: false
@@ -63,6 +67,7 @@ jobs:
       - name: Checkout branch ${{ github.ref }}
         uses: actions/checkout@v3
         with:
+          ref: ${{ inputs.commit-hash || 'main' }}
           fetch-depth: 0
 
       - name: Build
