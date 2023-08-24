@@ -92,19 +92,19 @@ jobs:
           pnpm run release:changelog
 
       - name: Fetch latest tag
-        if: ${{ github.event.inputs.tag-name == '' }}
+        if: ${{ inputs.tag-name == '' }}
         id: latest-tag
         run: |
           # =================  Fetch tag  =================
 
-          tag_name=$(git describe --abbrev=0)
+          tag_name=$(git describe --abbrev=0 --match 'v*')
           echo "Tag found: '\e[34m$tag_name\e[0m'"
           echo "TAG_NAME=$tag_name" >> "$GITHUB_OUTPUT"
 
       - name: Push Release to github
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.inputs.tag-name || steps.latest-tag.outputs.TAG_NAME }}
+          tag_name: ${{ inputs.tag-name || steps.latest-tag.outputs.TAG_NAME }}
           body_path: RELEASE.md
           files: dist/trakt-extension.zip
 
@@ -118,5 +118,5 @@ jobs:
           # =================  Publish to Chrome store  =================
 
           # Uploading zip to web store
-          yarn dlx -q chrome-webstore-upload-cli upload --source dist/trakt-extension.zip --extension-id "$CHROME_WEB_STORE_EXTENSION_ID" --client-id "$CHROME_WEB_STORE_CLIENT_ID" --client-secret "$CHROME_WEB_STORE_CLIENT_SECRET" --refresh-token "$CHROME_WEB_STORE_REFRESH_TOKEN"
+          npx -s chrome-webstore-upload-cli upload --source dist/trakt-extension.zip --extension-id "$CHROME_WEB_STORE_EXTENSION_ID" --client-id "$CHROME_WEB_STORE_CLIENT_ID" --client-secret "$CHROME_WEB_STORE_CLIENT_SECRET" --refresh-token "$CHROME_WEB_STORE_REFRESH_TOKEN"
   

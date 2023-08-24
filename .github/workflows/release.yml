@@ -28,6 +28,9 @@ jobs:
     name: Tag and release commit
     runs-on: ubuntu-latest
 
+    outputs:
+      tag-name: ${{ steps.push-tag.outputs.tag_name }}
+
     steps:
       - name: Checkout branch ${{ github.ref }}
         uses: actions/checkout@v3
@@ -62,9 +65,10 @@ jobs:
           git config user.email "<>"
 
           # generate release
-          yarn release
+          pnpm run release
 
       - name: Push to remote
+        id: push-tag
         run: |
           # ================= Remote =================
 
@@ -74,6 +78,10 @@ jobs:
 
           # push changes
           git push origin --follow-tags
+          
+          tag_name=$(git describe --abbrev=0 --match 'v*')
+          
+          echo "tag_name=$tag_name" >> "$GITHUB_OUTPUT"
 
   publish:
     name: Publish
@@ -81,7 +89,7 @@ jobs:
     uses: ./.github/workflows/publish.yml
     secrets: inherit
     with:
-      tag-name: ${{ inputs.tag-name }}
+      tag-name: ${{ inputs.tag-name || needs.release.outputs.tag-name }}
       skip-npm: ${{ inputs.skip-npm }}
 
   deploy:
