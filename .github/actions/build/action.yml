@@ -16,28 +16,15 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup pnpm ${{ inputs.pnpm_version }}
-      uses: pnpm/action-setup@v2
+    - name: Install
+      uses: ./.github/actions/install
       with:
-        version: ${{ inputs.pnpm_version }}
-
-    - name: Setup Node.js ${{ inputs.node_version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ inputs.node_version }}
-        registry-url: 'https://registry.npmjs.org'
-        cache: pnpm
-
-    - name: Install dependencies
-      shell: bash
-      run: |
-        # ================= Install =================
-
-        pnpm install
+        node_version: ${{ inputs.node_version }}
+        pnpm_version: ${{ inputs.pnpm_version }}
 
     - name: Build sources
       shell: bash
       run: |
         # =================  Build  =================
 
-        pnpm run ${{ inputs.script }}·
+        pnpm run ${{ inputs.script }}
