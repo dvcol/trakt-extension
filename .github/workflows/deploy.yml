@@ -40,10 +40,11 @@ jobs:
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         uses: actions/checkout@v3
 
-      - name: Build
+      - name: Build·
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         uses: ./.github/actions/build
         with:
+          script: 'build:web'
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 

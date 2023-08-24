@@ -2,6 +2,10 @@ name: Build
 description: Install and build the repo
 
 inputs:
+  script:
+    description: Build script
+    default: 'build'
+
   node_version:
     description: Pnpm version to use
     required: true
@@ -20,7 +24,7 @@ runs:
     - name: Setup Node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ env.node_version }}
+        node-version: ${{ inputs.node_version }}
         registry-url: 'https://registry.npmjs.org'
         cache: pnpm
 
@@ -36,4 +40,4 @@ runs:
       run: |
         # =================  Build  =================
 
-        pnpm run build
+        pnpm run ${{ inputs.script }}·

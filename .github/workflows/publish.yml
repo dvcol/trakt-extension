@@ -20,7 +20,7 @@ env:
   pnpm_version: 8.x
 
 jobs:
-  publish:
+  publish-npm:
     name: Github release and npm publish
     runs-on: ubuntu-latest
 
@@ -34,6 +34,7 @@ jobs:
       - name: Build
         uses: ./.github/actions/build
         with:
+          script: 'build:web'
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
@@ -45,6 +46,44 @@ jobs:
           pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - uses: actions/cache/save@v3
+        id: cache
+        with:
+          path: dist
+          key: ${{ github.ref }}-${{ github.run_id }}-build
+
+
+  publish-store:
+    name: Publish extension
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion != 'failure' }}
+
+    steps:
+      - name: Checkout branch ${{ github.ref }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          script: 'build'
+          node_version: ${{ env.node_version }}
+          pnpm_version: ${{ env.pnpm_version }}
+
+      - name: Zip build folder
+        run: |
+          # =================  Zipping build folder  =================
+
+          # Zipping dist folder for artifact upload
+          cd dist;
+          zip -r trakt-extension.zip *
+
+          # Check zip created
+          echo "Zip created in 'dist/'"
+          ls -l  trakt-extension.zip
+          cd ..
 
       - name: Generate Release changelog
         run: |
@@ -67,9 +106,17 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.tag-name || steps.latest-tag.outputs.TAG_NAME }}
           body_path: RELEASE.md
+          files: dist/trakt-extension.zip
 
-      - uses: actions/cache/save@v3
-        id: cache
-        with:
-          path: dist
-          key: ${{ github.ref }}-${{ github.run_id }}-build
+      - name: Publish to Chrome Webstore
+        env:
+          CHROME_WEB_STORE_EXTENSION_ID: pdodapikbijcfickiofjkjgkkmlcnbba
+          CHROME_WEB_STORE_CLIENT_ID: ${{ secrets.CHROME_WEB_STORE_CLIENT_ID }}
+          CHROME_WEB_STORE_CLIENT_SECRET: ${{ secrets.CHROME_WEB_STORE_CLIENT_SECRET }}
+          CHROME_WEB_STORE_REFRESH_TOKEN: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
+        run: |
+          # =================  Publish to Chrome store  =================
+
+          # Uploading zip to web store
+          yarn dlx -q chrome-webstore-upload-cli upload --source dist/trakt-extension.zip --extension-id "$CHROME_WEB_STORE_EXTENSION_ID" --client-id "$CHROME_WEB_STORE_CLIENT_ID" --client-secret "$CHROME_WEB_STORE_CLIENT_SECRET" --refresh-token "$CHROME_WEB_STORE_REFRESH_TOKEN"
+  
