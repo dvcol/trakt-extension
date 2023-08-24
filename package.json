@@ -1,6 +1,6 @@
 {
   "name": "@dvcol/trakt-extension",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "title": "Side Trakt (companion app for Trakt.tv)",
   "description": "Side Trakt, a chrome extension for Trakt.tv",
   "license": "MIT",
@@ -15,6 +15,13 @@
     "node": ">=20",
     "pnpm": ">= 8"
   },
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
+  "files": [
+    "*.md",
+    "LICENSE",
+    "dist/lib"
+  ],
   "scripts": {
     "prepare": "husky install",
     "clear": "rimraf dist",
@@ -22,6 +29,7 @@
     "serve": "vite",
     "dev": "cross-env NODE_ENV=development run-p dist serve",
     "build": "cross-env NODE_ENV=production pnpm run dist && vue-tsc --noEmit && vite build",
+    "build:web": "VITE_WEB=true pnpm run build",
     "test:unit": "vitest run --environment jsdom --coverage",
     "test:watch": "vitest --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
@@ -89,6 +97,7 @@
     "stylelint": "^15.10.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.2",
     "vite-plugin-vuetify": "^1.0.2",
     "vitest": "^0.34.2",
     "vue-tsc": "^1.8.8",

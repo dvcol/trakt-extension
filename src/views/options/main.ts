@@ -1,3 +1,3 @@
-import { initVueApp } from '~/views/common';
+import { mountVueApp } from '~/views/common';
 
-initVueApp('#app-options');
+mountVueApp('#app-options');

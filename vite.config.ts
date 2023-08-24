@@ -3,19 +3,34 @@ import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
+import dtsPlugin from 'vite-plugin-dts';
 import vuetify from 'vite-plugin-vuetify';
 
 import { isDev, port, resolveParent } from './scripts/utils';
 
 import type { InputOption } from 'rollup';
 
+const isWeb = !!process.env.VITE_WEB;
+
 const getInput = (hmr: boolean): InputOption => {
   if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
-  return {
+
+  const inputs: Record<string, string> = {
     background: resolveParent('src/scripts/background/index.ts'),
     options: resolveParent('src/views/options/index.html'),
     popup: resolveParent('src/views/popup/index.html'),
   };
+
+  if (isWeb) {
+    inputs.web = resolveParent('src/index.html');
+    inputs.index = resolveParent('src/index.ts');
+  }
+  return inputs;
+};
+
+const getBase = (command: string) => {
+  if (command === 'serve') return `http://localhost:${port}/`;
+  return isWeb ? '/trakt-extension/' : '/';
 };
 
 export default defineConfig(({ command }) => ({
@@ -29,6 +44,10 @@ export default defineConfig(({ command }) => ({
     __DEV__: isDev,
   },
   plugins: [
+    dtsPlugin({
+      include: ['index.ts'],
+      outDir: resolveParent('dist/lib'),
+    }),
     vue(),
     vuetify(),
 
@@ -40,7 +59,7 @@ export default defineConfig(({ command }) => ({
       transformIndexHtml: (html, { path }) => html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets').replace(/\\/g, '/')}/`),
     },
   ],
-  base: command === 'serve' ? `http://localhost:${port}/` : '/',
+  base: getBase(command),
   server: {
     port,
     hmr: {
@@ -53,7 +72,17 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: getInput(isDev),
       output: {
-        entryFileNames: entry => (entry.name === 'background' ? 'scripts/[name].js' : 'assets/[name]-[hash].js'),
+        chunkFileNames: 'chunks/[name]-[hash].chunk.js',
+        entryFileNames: entry => {
+          if (entry.name === 'background') return 'scripts/[name].js';
+          if (entry.name === 'index') return 'lib/[name].js';
+          return 'scripts/[name]-[hash].js';
+        },
+        assetFileNames: asset => {
+          const format = '[name][extname]';
+          if (asset.name?.endsWith('css')) return `styles/${format}`;
+          return `assets/[name][extname]`;
+        },
       },
     },
   },
