@@ -1,14 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <base target="_blank">
+  <head>
+    <meta charset="UTF-8" />
+    <base target="_blank" />
     <title>Side Trakt Web</title>
-</head>
-<body>
-  <wc-trakt-extension>
-    Loading component ...
-  </wc-trakt-extension>
-  <script type="module" src="./main.ts"></script>
-</body>
+  </head>
+  <body>
+    <wc-trakt-extension> Loading component ... </wc-trakt-extension>
+    <script type="module" src="./main.ts"></script>
+  </body>
 </html>
+
+<style>
+  body {
+    display: flex;
+  }
+
+  wc-trakt-extension {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+  }
+</style>
