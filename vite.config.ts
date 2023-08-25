@@ -11,6 +11,7 @@ import { isDev, port, resolveParent } from './scripts/utils';
 import type { InputOption } from 'rollup';
 
 const isWeb = !!process.env.VITE_WEB;
+const isBuildDev = !!process.env.VITE_BUILD_DEV;
 
 const getInput = (hmr: boolean): InputOption => {
   if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
@@ -23,13 +24,15 @@ const getInput = (hmr: boolean): InputOption => {
 
   if (isWeb) {
     inputs.web = resolveParent('src/index.html');
-    inputs.index = resolveParent('src/index.ts');
+    inputs.lib = resolveParent('src/index.ts');
+    inputs.entry = resolveParent('src/views/web/define-component.ts');
   }
   return inputs;
 };
 
 const getBase = (command: string) => {
   if (command === 'serve') return `http://localhost:${port}/`;
+  if (isBuildDev) return '/';
   return isWeb ? '/trakt-extension/' : '/';
 };
 
@@ -45,7 +48,7 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     dtsPlugin({
-      include: ['index.ts'],
+      include: ['index.ts', 'views/web/**'],
       outDir: resolveParent('dist/lib'),
     }),
     vue(),
@@ -68,14 +71,16 @@ export default defineConfig(({ command }) => ({
   },
   build: {
     outDir: resolveParent('dist'),
-    sourcemap: isDev ? 'inline' : false,
+    sourcemap: isDev || isBuildDev ? 'inline' : false,
     rollupOptions: {
       input: getInput(isDev),
       output: {
+        minifyInternalExports: false,
         chunkFileNames: 'chunks/[name]-[hash].chunk.js',
         entryFileNames: entry => {
           if (entry.name === 'background') return 'scripts/[name].js';
-          if (entry.name === 'index') return 'lib/[name].js';
+          if (entry.name === 'entry') return 'entry/index.js';
+          if (entry.name === 'lib') return 'lib/index.js';
           return 'scripts/[name]-[hash].js';
         },
         assetFileNames: asset => {
