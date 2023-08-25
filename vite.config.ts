@@ -11,6 +11,7 @@ import { isDev, port, resolveParent } from './scripts/utils';
 import type { InputOption } from 'rollup';
 
 const isWeb = !!process.env.VITE_WEB;
+const sourcemap = !!process.env.VITE_SOURCEMAP;
 
 const getInput = (hmr: boolean): InputOption => {
   if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
@@ -69,7 +70,7 @@ export default defineConfig(({ command }) => ({
   },
   build: {
     outDir: resolveParent('dist'),
-    sourcemap: isDev ? 'inline' : false,
+    sourcemap: isDev || sourcemap ? 'inline' : false,
     rollupOptions: {
       input: getInput(isDev),
       output: {

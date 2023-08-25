@@ -1,3 +1,3 @@
 import { defineComponent } from '~/views/web';
 
-defineComponent();
+defineComponent({ baseUrl: import.meta.env.VITE_BASE });

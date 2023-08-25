@@ -1,14 +1,14 @@
 import AppWeb from '~/components/web/AppWeb.ce.vue';
-
 import { createElementInstance } from '~/views/common';
 
 export enum WebComponents {
   TraktExtension = 'wc-trakt-extension',
 }
 
-export type DefineComponent = (component?: WebComponents) => void;
+export type DefineOption = { baseName?: string; baseUrl?: string };
+export type DefineComponent = (options?: DefineOption, component?: WebComponents) => void;
 
-export function defineComponent(options: { basename?: string } = {}, component: WebComponents = WebComponents.TraktExtension): void {
+export function defineComponent(options: DefineOption = {}, component: WebComponents = WebComponents.TraktExtension): void {
   if (customElements.get(component)) {
     console.warn(`Custom element '${component}' is already defined.`);
   } else {

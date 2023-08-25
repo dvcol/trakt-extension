@@ -2,11 +2,13 @@
 import { RouterLink, RouterView } from 'vue-router';
 
 import HelloWorld from '~/components/HelloWorld.vue';
+import { useRouterStore } from '~/stores/router.store';
 import { useI18n } from '~/utils';
 
 const test = 'test Value';
 
 const i18n = useI18n('global');
+const { baseName } = useRouterStore();
 </script>
 
 <template>
@@ -21,8 +23,8 @@ const i18n = useI18n('global');
             <HelloWorld :msg="test" />
 
             <nav>
-              <RouterLink to="/">Home</RouterLink>
-              <RouterLink to="/about">About</RouterLink>
+              <RouterLink :to="`${baseName}/`">Home</RouterLink>
+              <RouterLink :to="`${baseName}/about`">About</RouterLink>
             </nav>
           </div>
         </header>
