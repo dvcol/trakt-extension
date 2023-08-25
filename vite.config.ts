@@ -32,8 +32,8 @@ const getInput = (hmr: boolean): InputOption => {
 
 const getBase = (command: string) => {
   if (command === 'serve') return `http://localhost:${port}/`;
-  if (isBuildDev) return '/';
-  return isWeb ? '/trakt-extension/' : '/';
+  if (isBuildDev) return '';
+  return isWeb ? '/trakt-extension/' : '';
 };
 
 export default defineConfig(({ command }) => ({
