@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/dvcol/trakt-extension/compare/v1.1.1...v1.1.2) (2023-08-25)
+
+
+### Bug Fixes
+
+* **routing:** adds basename ([83c4525](https://github.com/dvcol/trakt-extension/commit/83c45252409506d8c9be6627a1f5ad4359ad03df))
+* **wc:** change base path ([b1793a9](https://github.com/dvcol/trakt-extension/commit/b1793a9047a0de75567be8aa672002940318c617))
+* **wc:** disable export minification ([947fb44](https://github.com/dvcol/trakt-extension/commit/947fb4497ab34a1cf0e4927bd87c9f1c187b5d59))
+
 ### [1.1.1](https://github.com/dvcol/trakt-extension/compare/v1.1.0...v1.1.1) (2023-08-24)
 
 
