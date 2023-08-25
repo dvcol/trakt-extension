@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/dvcol/trakt-extension/compare/v1.1.2...v1.1.3) (2023-08-25)
+
+
+### Bug Fixes
+
+* **router:** fix routing ([f624e1e](https://github.com/dvcol/trakt-extension/commit/f624e1ed225b4a8a33acec8b436552800fe569e8))
+
 ### [1.1.2](https://github.com/dvcol/trakt-extension/compare/v1.1.1...v1.1.2) (2023-08-25)
 
 
