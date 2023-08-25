@@ -11,7 +11,6 @@ import { isDev, port, resolveParent } from './scripts/utils';
 import type { InputOption } from 'rollup';
 
 const isWeb = !!process.env.VITE_WEB;
-const isBuildDev = !!process.env.VITE_BUILD_DEV;
 
 const getInput = (hmr: boolean): InputOption => {
   if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
@@ -32,8 +31,7 @@ const getInput = (hmr: boolean): InputOption => {
 
 const getBase = (command: string) => {
   if (command === 'serve') return `http://localhost:${port}/`;
-  if (isBuildDev) return '';
-  return isWeb ? '/trakt-extension/' : '';
+  return '';
 };
 
 export default defineConfig(({ command }) => ({
@@ -71,7 +69,7 @@ export default defineConfig(({ command }) => ({
   },
   build: {
     outDir: resolveParent('dist'),
-    sourcemap: isDev || isBuildDev ? 'inline' : false,
+    sourcemap: isDev ? 'inline' : false,
     rollupOptions: {
       input: getInput(isDev),
       output: {

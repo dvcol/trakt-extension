@@ -7,7 +7,7 @@ import { createVuetify } from 'vuetify';
 import type { App, Component } from 'vue';
 
 import AppView from '~/components/AppView.vue';
-import createRouter from '~/router';
+import { createRouter } from '~/router';
 
 import { isDarkTheme } from '~/utils';
 

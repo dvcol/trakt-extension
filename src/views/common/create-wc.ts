@@ -12,7 +12,8 @@ type ComponentInstance = ComponentInternalInstance & { provides: ComponentIntern
 export const createElementInstance = (component = AppWeb, options: InitVueAppOption) => {
   return defineCustomElement({
     styles: component.styles,
-    setup() {
+    props: component.props,
+    setup(props) {
       const app = initVueApp(component, options);
 
       const inst = getCurrentInstance() as ComponentInstance;
@@ -20,7 +21,8 @@ export const createElementInstance = (component = AppWeb, options: InitVueAppOpt
         Object.assign(inst.appContext, app._context);
         Object.assign(inst.provides, app._context.provides);
       }
+
+      return () => h(component, props);
     },
-    render: () => h(component),
   });
 };

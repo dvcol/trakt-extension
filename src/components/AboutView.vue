@@ -4,9 +4,11 @@
   </div>
 </template>
 
-<style>
-@media (width >= 1024px) {
-  .about {
+<style scoped>
+.about {
+  color: red;
+
+  @media (width >= 1024px) {
     display: flex;
     align-items: center;
     min-height: 100vh;

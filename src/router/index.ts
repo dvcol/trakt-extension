@@ -16,5 +16,3 @@ export const createRouter = (basename: string = import.meta.env.BASE_URL) =>
       },
     ],
   });
-
-export default createRouter;
