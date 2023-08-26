@@ -26,11 +26,15 @@
     font-size: 1rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #fff;
+    background: #181818;
     transition:
       color 0.5s,
       background-color 0.5s;
     will-change: color, background-color;
+
+    @media (prefers-color-scheme: light) {
+      background: #fff;
+    }
 
     @media (prefers-color-scheme: dark) {
       background: #181818;
