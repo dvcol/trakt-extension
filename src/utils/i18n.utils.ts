@@ -6,7 +6,7 @@ import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
 
 export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> => {
-  if (!chrome?.i18n) {
+  if (!window?.chrome?.i18n) {
     const store = useI18nStore();
     const router = useRouterStore();
 
