@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { watch } from 'vue';
-
 const props = defineProps<{
   msg: string;
 }>();
-
-watch(
-  () => props.msg,
-  _msg => console.info(_msg),
-);
 </script>
 
 <template>

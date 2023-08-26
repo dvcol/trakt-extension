@@ -8,8 +8,15 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   const { setBaseName, setBaseUrl } = useRouterStore();
   setBaseName(baseName);
   setBaseUrl(baseUrl);
+  const _routes = routes.map(r => ({ ...r, path: `${baseName}${r.path}` }));
   return createVueRouter({
     history: createWebHashHistory(baseUrl),
-    routes: routes.map(r => ({ ...r, path: `${baseName}${r.path}` })),
+    routes: [
+      {
+        path: '/:pathMatch(.*)',
+        redirect: `${baseName}/`,
+      },
+      ..._routes,
+    ],
   });
 };
