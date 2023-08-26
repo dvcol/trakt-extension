@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/dvcol/trakt-extension/compare/v1.1.3...v1.2.0) (2023-08-26)
+
+
+### Features
+
+* **setup:** fix style encapsulation and remove vuetify ([9c03d87](https://github.com/dvcol/trakt-extension/commit/9c03d872a4e58ec5286301271ae3e962d1302ff9))
+
+
+### Bug Fixes
+
+* **wc:** fix typing, locale fetch and backgrounds ([41f35f8](https://github.com/dvcol/trakt-extension/commit/41f35f8244abbcb1815b11e472993e033ba03f95))
+
 ### [1.1.3](https://github.com/dvcol/trakt-extension/compare/v1.1.2...v1.1.3) (2023-08-25)
 
 
