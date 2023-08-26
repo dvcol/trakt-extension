@@ -1,5 +1,6 @@
+import { createElementInstance } from './create-wc';
+
 import AppWeb from '~/components/web/AppWeb.ce.vue';
-import { createElementInstance } from '~/views/common';
 
 export enum WebComponents {
   TraktExtension = 'wc-trakt-extension',

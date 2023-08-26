@@ -1,3 +1,3 @@
-import { mountVueApp } from '~/views/common';
+import defineComponent from '~/web/define-component';
 
-mountVueApp('#app-options');
+defineComponent({ baseUrl: import.meta.env.VITE_BASE });

@@ -1,3 +1,9 @@
+<script setup>
+import { ref } from 'vue';
+
+const show = ref(false);
+</script>
+
 <template>
   <div class="about">
     <h1>This is an about page</h1>
@@ -6,12 +12,8 @@
 
 <style scoped>
 .about {
+  display: flex;
+  justify-content: center;
   color: red;
-
-  @media (width >= 1024px) {
-    display: flex;
-    align-items: center;
-    min-height: 100vh;
-  }
 }
 </style>

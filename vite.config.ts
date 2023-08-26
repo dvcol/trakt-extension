@@ -2,18 +2,20 @@ import { dirname, relative } from 'path';
 import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
+import { viteVueCE } from 'unplugin-vue-ce';
+
 import { defineConfig } from 'vite';
 import dtsPlugin from 'vite-plugin-dts';
-import vuetify from 'vite-plugin-vuetify';
 
 import { isDev, port, resolveParent } from './scripts/utils';
 
 import type { InputOption } from 'rollup';
+import type { PluginOption } from 'vite';
 
 const isWeb = !!process.env.VITE_WEB;
 const sourcemap = !!process.env.VITE_SOURCEMAP;
 
-const getInput = (hmr: boolean): InputOption => {
+const getInput = (hmr: boolean, _isWeb: boolean): InputOption => {
   if (hmr) return { background: resolveParent('src/scripts/background/index.ts') };
 
   const inputs: Record<string, string> = {
@@ -22,20 +24,34 @@ const getInput = (hmr: boolean): InputOption => {
     popup: resolveParent('src/views/popup/index.html'),
   };
 
-  if (isWeb) {
+  if (_isWeb) {
     inputs.web = resolveParent('src/index.html');
     inputs.lib = resolveParent('src/index.ts');
-    inputs.entry = resolveParent('src/views/web/define-component.ts');
+    inputs.entry = resolveParent('src/web/define-component.ts');
   }
   return inputs;
 };
 
-const getBase = (command: string) => {
-  if (command === 'serve') return `http://localhost:${port}/`;
-  return '';
-};
+const getPlugins = (): PluginOption[] => [
+  dtsPlugin({
+    include: ['index.ts', 'web/**'],
+    outDir: resolveParent('dist/lib'),
+  }),
+  vue({
+    customElement: true,
+  }),
+  viteVueCE(),
 
-export default defineConfig(({ command }) => ({
+  // rewrite assets to use relative path
+  {
+    name: 'assets-rewrite',
+    enforce: 'post',
+    apply: 'build',
+    transformIndexHtml: (html, { path }) => html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets').replace(/\\/g, '/')}/`),
+  },
+];
+
+export default defineConfig(() => ({
   root: resolveParent('src'),
   resolve: {
     alias: {
@@ -45,23 +61,8 @@ export default defineConfig(({ command }) => ({
   define: {
     __DEV__: isDev,
   },
-  plugins: [
-    dtsPlugin({
-      include: ['index.ts', 'views/web/**'],
-      outDir: resolveParent('dist/lib'),
-    }),
-    vue(),
-    vuetify(),
-
-    // rewrite assets to use relative path
-    {
-      name: 'assets-rewrite',
-      enforce: 'post',
-      apply: 'build',
-      transformIndexHtml: (html, { path }) => html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets').replace(/\\/g, '/')}/`),
-    },
-  ],
-  base: getBase(command),
+  plugins: getPlugins(),
+  base: './',
   server: {
     port,
     hmr: {
@@ -72,7 +73,7 @@ export default defineConfig(({ command }) => ({
     outDir: resolveParent('dist'),
     sourcemap: isDev || sourcemap ? 'inline' : false,
     rollupOptions: {
-      input: getInput(isDev),
+      input: getInput(isDev, isWeb),
       output: {
         minifyInternalExports: false,
         chunkFileNames: 'chunks/[name]-[hash].chunk.js',
