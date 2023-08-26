@@ -30,18 +30,10 @@ export const useI18nStore = defineStore('i18n', () => {
       }
     }
 
-    console.info({
-      value,
-      key,
-      result,
-      locale: locale.value,
-    });
-
     return result;
   };
 
   const addLocale = (_locale: Locale, _lang = lang.value) => {
-    console.info('adding local', { _lang, _locale });
     locales.value[_lang] = _locale;
     return locales.value;
   };

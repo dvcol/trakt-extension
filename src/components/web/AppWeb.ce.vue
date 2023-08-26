@@ -34,7 +34,6 @@ const AppView = lazyComponent(() => import('~/components/AppView.vue'));
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  background: var(--color-background);
   transition:
     color 0.5s,
     background-color 0.5s;

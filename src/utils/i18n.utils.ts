@@ -8,7 +8,7 @@ export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> =>
   if (!chrome?.i18n) {
     const store = useI18nStore();
 
-    fetch(`${import.meta.env.BASE_URL}/_locales/${store.lang}/messages.json`)
+    fetch(new URL(`./_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
       .then(r => r.json())
       .then((locale: Locale) => store.addLocale(locale))
       .catch(err => console.error(`Failed to fetch locale '${store.lang}'`, err));

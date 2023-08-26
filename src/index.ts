@@ -1,12 +1,13 @@
-import type { DefineComponent, WebComponents } from '~/views/web/define-component';
+import type { Component } from 'vue';
+import type { DefineComponent, WebComponents } from '~/web/define-component';
 
-const baseUrl = 'trakt-extension';
+export const baseUrl = 'trakt-extension';
 
 type TraktExtension = {
+  component: Component;
   WebComponents: WebComponents;
   defineComponent: DefineComponent;
   default: DefineComponent;
 };
 
-export type { TraktExtension, DefineComponent };
-export { baseUrl };
+export type { TraktExtension, DefineComponent, WebComponents };
