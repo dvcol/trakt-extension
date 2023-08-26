@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import AppView from '~/components/AppView.vue';
+import { lazyComponent } from '~/utils/lazy.utils';
+
+const AppView = lazyComponent(() => import('~/components/AppView.vue'));
 </script>
 
 <template>

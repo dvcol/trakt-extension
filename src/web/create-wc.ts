@@ -1,14 +1,13 @@
 import { defineCustomElement, getCurrentInstance, h } from 'vue';
 
-import type { ComponentInternalInstance, ComponentPublicInstance } from 'vue';
-
+import type { Component, ComponentInternalInstance } from 'vue';
 import type { InitVueAppOption } from '~/web/init-vue-app';
 
 import { initVueApp } from '~/web/init-vue-app';
 
 type ComponentInstance = ComponentInternalInstance & { provides: ComponentInternalInstance['appContext']['provides'] };
 
-export const createElementInstance = (component: ComponentPublicInstance, options: InitVueAppOption) => {
+export const createElementInstance = (component: Component, options: InitVueAppOption) => {
   return defineCustomElement({
     setup(props) {
       const app = initVueApp(component, options);
