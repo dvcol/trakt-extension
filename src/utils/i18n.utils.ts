@@ -11,7 +11,7 @@ export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> =>
     const router = useRouterStore();
 
     if (!store.locales?.[store.lang]) {
-      fetch(new URL(`${router.baseName ?? '.'}/_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
+      fetch(new URL(`${router.baseUrl ?? './'}_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
         .then(r => r.json())
         .then((locale: Locale) => store.addLocale(locale))
         .catch(err => console.error(`Failed to fetch locale '${store.lang}'`, err));

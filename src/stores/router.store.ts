@@ -7,5 +7,10 @@ export const useRouterStore = defineStore('router', () => {
     baseName.value = name;
   };
 
-  return { baseName, setBaseName };
+  const baseUrl = ref('');
+  const setBaseUrl = (url: string) => {
+    baseUrl.value = url;
+  };
+
+  return { baseName, setBaseName, baseUrl, setBaseUrl };
 });
