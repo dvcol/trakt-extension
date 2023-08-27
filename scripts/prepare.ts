@@ -5,7 +5,7 @@ import { watch } from 'chokidar';
 import fs from 'fs-extra';
 
 import { writeManifest } from './manifest';
-import { isDev, port, resolveParent } from './utils';
+import { isDev, resolveParent } from './utils';
 
 /**
  * Replace index.html with link to vite localhost for hot reload
@@ -13,10 +13,11 @@ import { isDev, port, resolveParent } from './utils';
  */
 const copyIndexHtml = async (view: string) => {
   fs.ensureDirSync(resolveParent(`dist/views/${view}`));
-  const data = fs
-    .readFileSync(resolveParent(`src/views/${view}/index.html`), 'utf-8')
-    .replace('"./main.ts"', `"http://localhost:${port}/views/${view}/main.ts"`)
-    .replace('<div id="app"></div>', '<div id="app">Vite server did not start</div>');
+  const data = fs.readFileSync(resolveParent(`src/views/${view}/index.html`), 'utf-8').replace(
+    '<script type="module" src="./main.ts"></script>',
+    `<script type="module" src="http://localhost:3303/@vite/client"></script>
+    <script type="module" src="http://localhost:3303/views/popup/main.ts"></script>`,
+  );
   fs.writeFileSync(resolveParent(`dist/views/${view}/index.html`), data, 'utf-8');
   console.log(`Stubbing '${view}' to '${__dirname}/dist/views/${view}/index.html'`);
 };
