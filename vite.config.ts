@@ -1,3 +1,4 @@
+import { readdir, readFile } from 'fs/promises';
 import { dirname, relative } from 'path';
 import { fileURLToPath, URL } from 'url';
 
@@ -33,6 +34,8 @@ const getInput = (hmr: boolean, _isWeb: boolean): InputOption => {
   return inputs;
 };
 
+const i18nRegex = /.*src\/i18n\/([a-zA-Z]+)\/.*\.json/;
+
 const getPlugins = (): PluginOption[] => [
   dtsPlugin({
     include: ['index.ts', 'web/**'],
@@ -42,6 +45,37 @@ const getPlugins = (): PluginOption[] => [
     customElement: true,
   }),
   viteVueCE(),
+
+  {
+    name: 'i18n-hmr',
+    configureServer: server => {
+      console.info('server start');
+      server.ws.on('fetch:i18n', async () => {
+        const dir = await readdir('dist/_locales');
+        const locales = dir.map(_lang =>
+          readFile(`dist/_locales/${_lang}/messages.json`, { encoding: 'utf-8' }).then(locale => ({ lang: _lang, locale: JSON.parse(locale) })),
+        );
+        server.ws.send({
+          type: 'custom',
+          event: 'update:i18n',
+          data: await Promise.all(locales),
+        });
+      });
+    },
+    handleHotUpdate: async ({ server, file, read }) => {
+      const lang = file.match(i18nRegex)?.[1];
+      if (lang) {
+        console.info('Emit new i18n', file);
+        const locale = JSON.parse(await read());
+        server.ws.send({
+          type: 'custom',
+          event: 'update:i18n',
+          data: [{ lang, locale }],
+        });
+      }
+      return [];
+    },
+  },
 
   // replace document query selector to inject naive-ui within shadow root instead of document head
   {

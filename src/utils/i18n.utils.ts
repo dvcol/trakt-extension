@@ -10,7 +10,13 @@ export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> =>
     const store = useI18nStore();
     const router = useRouterStore();
 
-    if (!store.locales?.[store.lang]) {
+    if (import.meta.hot) {
+      console.info('Listening to i18n HMR changes');
+      import.meta.hot.send('fetch:i18n');
+      import.meta.hot.on('update:i18n', (data: { lang: string; locale: Locale }[]) => {
+        data?.forEach(({ lang, locale }) => store.addLocale(locale, lang));
+      });
+    } else if (!store.locales?.[store.lang]) {
       fetch(new URL(`${router.baseUrl ?? './'}_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
         .then(r => r.json())
         .then((locale: Locale) => store.addLocale(locale))
