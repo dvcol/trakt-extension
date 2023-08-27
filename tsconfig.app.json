@@ -6,6 +6,7 @@
     "composite": true,
     "baseUrl": ".",
     "lib": ["DOM", "ESNext"],
+    "types": ["naive-ui/volar"],
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
