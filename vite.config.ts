@@ -2,6 +2,7 @@ import { dirname, relative } from 'path';
 import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
+import MagicString from 'magic-string';
 import { viteVueCE } from 'unplugin-vue-ce';
 
 import { defineConfig } from 'vite';
@@ -42,6 +43,24 @@ const getPlugins = (): PluginOption[] => [
   }),
   viteVueCE(),
 
+  // replace document query selector to inject naive-ui within shadow root instead of document head
+  {
+    name: 'chunk-transform',
+    enforce: 'post',
+    transform: (code, id) => {
+      if (id.includes('css-render') || id.includes('naive-ui')) {
+        const getReplacement = (fallback = 'document') => `(document.querySelector('wc-trakt-extension').shadowRoot ?? ${fallback})`;
+        const _code = new MagicString(code)
+          .replace(/document\.querySelector/g, `(${getReplacement()}).querySelector`)
+          .replace(/document\.head/g, `(${getReplacement('document.head')})`);
+        return {
+          code: _code.toString(),
+          map: _code.generateMap({ hires: true }),
+        };
+      }
+    },
+  },
+
   // rewrite assets to use relative path
   {
     name: 'assets-rewrite',
@@ -60,6 +79,8 @@ export default defineConfig(() => ({
   },
   define: {
     __DEV__: isDev,
+    __VUE_OPTIONS_API__: false,
+    __VUE_PROD_DEVTOOLS__: isDev,
   },
   plugins: getPlugins(),
   base: './',

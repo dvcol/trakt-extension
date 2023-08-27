@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NButton, NButtonGroup } from 'naive-ui';
 import { RouterLink, RouterView } from 'vue-router';
 
 import HelloWorld from '~/components/HelloWorld.vue';
@@ -20,6 +21,12 @@ const store = useRouterStore();
         <RouterLink :to="`${store.baseName}/`">Home</RouterLink>
         <RouterLink :to="`${store.baseName}/about`">About</RouterLink>
       </nav>
+
+      <NButtonGroup class="buttons">
+        <RouterLink :to="`${store.baseName}/`"><NButton>Home</NButton></RouterLink>
+        <NButton ghost> One More </NButton>
+        <RouterLink :to="`${store.baseName}/about`"><NButton>About/NButton></NButton></RouterLink>
+      </NButtonGroup>
     </div>
   </header>
   <main>
@@ -32,6 +39,11 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 main {
