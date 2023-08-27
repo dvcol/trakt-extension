@@ -5,7 +5,7 @@ const AppView = lazyComponent(() => import('~/components/AppView.vue'));
 </script>
 
 <template>
-  <div id="app">
+  <div id="trakt-extension-root">
     <AppView />
   </div>
 </template>
@@ -13,7 +13,7 @@ const AppView = lazyComponent(() => import('~/components/AppView.vue'));
 <style lang="scss">
 @import '~/styles/base.css';
 
-#app {
+:host {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
