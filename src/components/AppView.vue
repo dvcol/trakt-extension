@@ -18,15 +18,15 @@ const store = useRouterStore();
       <HelloWorld :msg="i18n('app_name')" />
 
       <nav>
-        <RouterLink :to="`${store.baseName}/`">Home</RouterLink>
-        <RouterLink :to="`${store.baseName}/about`">About</RouterLink>
+        <NButtonGroup class="buttons">
+          <RouterLink v-slot="{ href, navigate, isActive }" :to="`${ store.baseName }/`" custom>
+            <NButton round :class="{ active: isActive }" :href="href" @click="navigate">Home</NButton>
+          </RouterLink>
+          <RouterLink v-slot="{ href, navigate, isActive }" :to="`${store.baseName}/about`" custom>
+            <NButton round :class="{ active: isActive }" :href="href" @click="navigate">About</NButton>
+          </RouterLink>
+        </NButtonGroup>
       </nav>
-
-      <NButtonGroup class="buttons">
-        <RouterLink :to="`${store.baseName}/`"><NButton>Home</NButton></RouterLink>
-        <NButton ghost> One More </NButton>
-        <RouterLink :to="`${store.baseName}/about`"><NButton>About/NButton></NButton></RouterLink>
-      </NButtonGroup>
     </div>
   </header>
   <main>
@@ -40,9 +40,20 @@ header {
   flex-direction: column;
   justify-content: center;
 
+  nav {
+    margin-top: 2rem;
+    font-size: 12px;
+    text-align: center;
+  }
+
   .buttons {
     display: flex;
     justify-content: center;
+
+    .active {
+      color: var(--n-text-color-pressed);
+      background-color: var(--n-color-pressed);
+    }
   }
 }
 
@@ -53,30 +64,5 @@ main {
 .logo {
   display: block;
   margin: 2rem auto;
-}
-
-nav {
-  margin-top: 2rem;
-  font-size: 12px;
-  text-align: center;
-
-  & a {
-    display: inline-block;
-    padding: 0 1rem;
-    border-left: 1px solid var(--color-border);
-
-    &.router-link-exact-active {
-      color: var(--color-text);
-
-      &:hover,
-      &:focus {
-        background-color: transparent;
-      }
-    }
-
-    &:first-of-type {
-      border: 0;
-    }
-  }
 }
 </style>

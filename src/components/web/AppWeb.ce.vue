@@ -1,12 +1,22 @@
 <script setup lang="ts">
+import { darkTheme, lightTheme, NConfigProvider } from 'naive-ui';
+
+import { computed } from 'vue';
+
+import { watchPreferDark } from '~/utils';
 import { lazyComponent } from '~/utils/lazy.utils';
 
 const AppView = lazyComponent(() => import('~/components/AppView.vue'));
+
+const isDark = watchPreferDark();
+const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
 </script>
 
 <template>
   <div id="trakt-extension-root">
-    <AppView />
+    <NConfigProvider :theme="theme">
+      <AppView />
+    </NConfigProvider>
   </div>
 </template>
 
