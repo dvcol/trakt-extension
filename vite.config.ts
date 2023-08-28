@@ -62,7 +62,7 @@ const getPlugins = (): PluginOption[] => [
         });
       });
     },
-    handleHotUpdate: async ({ server, file, read }) => {
+    handleHotUpdate: async ({ server, file, read, modules }) => {
       const lang = file.match(i18nRegex)?.[1];
       if (lang) {
         console.info('Emit new i18n', file);
@@ -73,7 +73,7 @@ const getPlugins = (): PluginOption[] => [
           data: [{ lang, locale }],
         });
       }
-      return [];
+      return modules;
     },
   },
 

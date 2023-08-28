@@ -2,7 +2,7 @@ import { createPinia } from 'pinia';
 
 import { createApp } from 'vue';
 
-import type { Component } from 'vue';
+import type { App, Component } from 'vue';
 
 import type { RouterOptions } from '~/router';
 
@@ -17,6 +17,14 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
 
   const router = createRouter(options);
   app.use(router);
+
+  return app;
+};
+
+export const mountVueApp = (id = '#app', component: Component): App => {
+  const app = initVueApp(component);
+
+  app.mount(id);
 
   return app;
 };
