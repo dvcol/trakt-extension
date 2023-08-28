@@ -10,8 +10,8 @@ export const defineComponent = async (options: DefineOption = {}, component: Web
     console.warn(`Custom element '${component}' is already defined.`);
   } else {
     const [{ createElementInstance }, { lazyComponent }] = await Promise.all([import('~/web/create-wc'), import('~/utils/lazy.utils')]);
-    const AppWeb = lazyComponent(() => import('~/components/web/AppWeb.ce.vue'));
-    const TraktExtensionWc = createElementInstance(AppWeb, options);
+    const ContainerComponent = lazyComponent(() => import('~/components/web/ContainerComponent.ce.vue'));
+    const TraktExtensionWc = createElementInstance(ContainerComponent, options);
     customElements.define(component, TraktExtensionWc);
   }
 };

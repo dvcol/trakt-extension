@@ -1,0 +1,26 @@
+{
+  "route__calendar": {
+    "message": "Calendar",
+    "description": "Calendar route name"
+  },
+  "route__history": {
+    "message": "History",
+    "description": "Watch history route name"
+  },
+  "route__list": {
+    "message": "List",
+    "description": "List and collection route name"
+  },
+  "route__progress": {
+    "message": "Progress",
+    "description": "Watch progress route name"
+  },
+  "route__search": {
+    "message": "Search",
+    "description": "Search route name"
+  },
+  "route__settings": {
+    "message": "Settings",
+    "description": "Settings and options route name"
+  }
+}

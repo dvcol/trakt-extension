@@ -6,7 +6,7 @@ import { computed } from 'vue';
 import { watchPreferDark } from '~/utils';
 import { lazyComponent } from '~/utils/lazy.utils';
 
-const AppView = lazyComponent(() => import('~/components/AppView.vue'));
+const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
 
 const isDark = watchPreferDark();
 const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
@@ -15,7 +15,7 @@ const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
 <template>
   <div id="trakt-extension-root">
     <NConfigProvider :theme="theme">
-      <AppView />
+      <AppComponent />
     </NConfigProvider>
   </div>
 </template>
