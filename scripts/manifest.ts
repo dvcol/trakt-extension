@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 
 import pkg from '../package.json';
 
-import { isDev, port, resolveParent } from './utils';
+import { getDirName, isDev, port, resolveParent } from './utils';
 
 import type { Manifest } from 'webextension-polyfill';
 
@@ -43,5 +43,5 @@ export async function writeManifest() {
   fs.writeJSONSync(resolveParent('dist/manifest.json'), manifest, {
     spaces: 2,
   });
-  console.log(`Writing manifest.json to '${__dirname}/dist/manifest.json'`);
+  console.log(`Writing manifest.json to '${getDirName()}/dist/manifest.json'`);
 }

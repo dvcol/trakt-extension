@@ -5,7 +5,7 @@ import { watch } from 'chokidar';
 import fs from 'fs-extra';
 
 import { writeManifest } from './manifest';
-import { isDev, resolveParent } from './utils';
+import { getDirName, isDev, resolveParent } from './utils';
 
 /**
  * Replace index.html with link to vite localhost for hot reload
@@ -19,7 +19,7 @@ const copyIndexHtml = async (view: string) => {
     <script type="module" src="http://localhost:3303/views/popup/main.ts"></script>`,
   );
   fs.writeFileSync(resolveParent(`dist/views/${view}/index.html`), data, 'utf-8');
-  console.log(`Stubbing '${view}' to '${__dirname}/dist/views/${view}/index.html'`);
+  console.log(`Stubbing '${view}' to '${getDirName()}/dist/views/${view}/index.html'`);
 };
 
 /**
