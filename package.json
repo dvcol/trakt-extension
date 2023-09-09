@@ -37,7 +37,7 @@
     "build": "cross-env NODE_ENV=production pnpm run dist && vue-tsc --noEmit && vite build",
     "build:web": "VITE_WEB=true VITE_BASE=/trakt-extension/ pnpm run build",
     "analyse": "vite-bundle-visualizer",
-    "test:unit": "vitest run --environment jsdom --coverage",
+    "test:unit": "vitest run --environment jsdom --coverage --passWithNoTests",
     "test:watch": "vitest --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint .",
