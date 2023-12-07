@@ -106,7 +106,7 @@
     "standard-version": "^9.5.0",
     "stylelint": "^15.10.3",
     "typescript": "^5.1.6",
-    "unplugin-vue-ce": "1.0.0-beta.18",
+    "unplugin-vue-ce": "1.0.0-beta.19",
     "vite": "^5.0.0",
     "vite-bundle-visualizer": "^0.11.0",
     "vite-plugin-dts": "^3.5.2",
