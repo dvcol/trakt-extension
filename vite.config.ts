@@ -4,14 +4,16 @@ import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
 import MagicString from 'magic-string';
+
 import { viteVueCE } from 'unplugin-vue-ce';
 
 import { defineConfig } from 'vite';
 import dtsPlugin from 'vite-plugin-dts';
 
+import pkg from './package.json';
 import { isDev, port, resolveParent } from './scripts/utils';
 
-import type { InputOption } from 'rollup';
+import type { ExistingRawSourceMap, InputOption } from 'rollup';
 import type { PluginOption } from 'vite';
 
 const isWeb = !!process.env.VITE_WEB;
@@ -44,8 +46,7 @@ const getPlugins = (): PluginOption[] => [
   vue({
     customElement: true,
   }),
-  viteVueCE(),
-
+  viteVueCE({}),
   {
     name: 'i18n-hmr',
     configureServer: server => {
@@ -89,7 +90,7 @@ const getPlugins = (): PluginOption[] => [
           .replace(/document\.head/g, `(${getReplacement('document.head')})`);
         return {
           code: _code.toString(),
-          map: _code.generateMap({ hires: true }),
+          map: _code.generateMap({ hires: true }) as ExistingRawSourceMap,
         };
       }
     },
@@ -115,6 +116,8 @@ export default defineConfig(() => ({
     __DEV__: isDev,
     __VUE_OPTIONS_API__: false,
     __VUE_PROD_DEVTOOLS__: isDev,
+    'import.meta.env.PKG_VERSION': JSON.stringify(pkg.version),
+    'import.meta.env.PKG_NAME': JSON.stringify(pkg.name),
   },
   plugins: getPlugins(),
   base: './',
@@ -149,6 +152,9 @@ export default defineConfig(() => ({
   test: {
     globals: true,
     environment: 'jsdom',
+    coverage: {
+      reportsDirectory: '../coverage',
+    },
   },
   optimizeDeps: {
     exclude: ['path', 'fast-glob'],
