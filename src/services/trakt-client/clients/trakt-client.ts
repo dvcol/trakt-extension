@@ -4,44 +4,24 @@ import { traktApi } from '../api/trakt-client.endpoints';
 
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
-import type {
-  TraktApiEndpoint,
-  TraktApiParams,
-  TraktApiRequest,
-  TraktClientAuthentication,
-  TraktClientAuthenticationRequest,
-  TraktClientSettings,
-} from '~/models/trakt-client.model';
+import type { TraktApiRequest, TraktClientAuthentication, TraktClientAuthenticationRequest, TraktClientSettings } from '~/models/trakt-client.model';
 
 import { Client, Config } from '~/settings/traktv.api';
 import { randomHex } from '~/utils/crypto.utils';
 import { HttpMethod } from '~/utils/http.utils';
 
-const mapToEndpoint = <T extends TraktApiEndpoint>(template: T): T => {
-  const api = { ...template };
-  Object.entries(api).forEach(([key, value]) => {
-    if ('url' in value) api[key] = { ...api[key], call: (param: TraktApiParams) => this._call(value, param) } as TraktApiEndpoint;
-    else api[key] = mapToEndpoint(api);
-  });
-  return api;
-};
+const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'statusCode' in error;
 
 const handleError = <T>(error: T | Response) => {
-  if (error.statusCode === 401) throw Error(error.response.headers['www-authenticate']);
+  if (isResponse(error) && error.status === 401) throw Error(error.headers.get('www-authenticate') ?? '');
   throw error;
 };
 
-const traktEndpoints = mapToEndpoint(traktApi);
-type ITraktEndpoints = typeof traktEndpoints;
-
-/** Needed to type Object assignment */
-interface TraktApi extends ITraktEndpoints {}
-
 /** To allow type extension */
-class TraktApi extends BaseTraktClient implements ITraktEndpoints {
+class TraktApi extends BaseTraktClient {
   constructor(settings: TraktClientSettings, authentication = {}) {
     super(settings, authentication);
-    Object.assign(this, mapToEndpoint(traktApi));
+    Object.assign(this, traktApi);
   }
 }
 
@@ -80,7 +60,7 @@ export class TraktClient extends TraktApi {
    * Exchange oauth token to authenticate client's calls
    * @param auth
    */
-  private _exchange(auth: TraktClientAuthenticationRequest) {
+  private async _exchange(auth: TraktClientAuthenticationRequest) {
     const req: TraktApiRequest = {
       input: `${this._settings.endpoint}/oauth/token`,
       init: {
@@ -94,24 +74,28 @@ export class TraktClient extends TraktApi {
     };
 
     super.debug(req);
-    return fetch(req.input, req.init)
-      .then<Response, Record<string, string>>(response => {
-        isResponseOk(response);
-        return response.json();
-      })
-      .then(body => {
-        this._authentication.refresh_token = body.refresh_token;
-        this._authentication.access_token = body.access_token;
-        this._authentication.expires = (body.created_at + body.expires_in) * 1000;
-        return body;
-      })
-      .catch(handleError);
+
+    try {
+      const response = await fetch(req.input, req.init);
+
+      isResponseOk(response);
+
+      const body = await response.json();
+
+      this._authentication.refresh_token = body.refresh_token;
+      this._authentication.access_token = body.access_token;
+      this._authentication.expires = (body.created_at + body.expires_in) * 1000;
+
+      return body;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   /**
    * Revoke current authentication
    */
-  private _revoke() {
+  private async _revoke() {
     const req: TraktApiRequest = {
       input: `${this._settings.endpoint}/oauth/revoke`,
       init: {
@@ -129,20 +113,22 @@ export class TraktClient extends TraktApi {
     };
 
     super.debug(req);
-    return fetch(req.input, req.init).then<Response, Record<string, string>>(response => {
-      isResponseOk(response);
-      return response;
-    });
+
+    const response = await fetch(req.input, req.init);
+
+    isResponseOk(response);
+
+    return response;
   }
 
   /**
    * Get remember device code to paste on login screen
    * @param auth
-   * @param type the type of code (i.e. code or token)
+   * @param mode the type of code (i.e. code or token)
    */
-  private _deviceCode(auth: TraktClientAuthenticationRequest, type?: 'code' | 'token' = 'code' in auth ? 'token' : 'code') {
+  private async _deviceCode(auth: Partial<TraktClientAuthenticationRequest>, mode: 'code' | 'token' = 'code' in auth ? 'token' : 'code') {
     const req: TraktApiRequest = {
-      input: `${this._settings.endpoint}/oauth/device/${type}`,
+      input: `${this._settings.endpoint}/oauth/device/${mode}`,
       init: {
         method: HttpMethod.POST,
         headers: {
@@ -154,18 +140,20 @@ export class TraktClient extends TraktApi {
     };
 
     super.debug(req);
-    return fetch(req.input, req.init)
-      .then<Response, Record<string, string>>(response => {
-        isResponseOk(response);
-        return response.json();
-      })
-      .catch(handleError);
+
+    try {
+      const response = await fetch(req.input, req.init);
+      isResponseOk(response);
+      return response.json();
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   /**
    * Get authentication url for browsers
    */
-  get_url() {
+  getUrl() {
     this._authentication.state = randomHex();
     // Replace 'api' from the api_url to get the top level trakt domain
     const base_url = this._settings.endpoint.replace(/api\W/, '');
@@ -205,6 +193,9 @@ export class TraktClient extends TraktApi {
    * Refresh access token
    */
   refreshToken() {
+    if (!this._authentication.refresh_token) {
+      throw new Error('No refresh token found.');
+    }
     return this._exchange({
       refresh_token: this._authentication.refresh_token,
       client_id: this._settings.client_id,
@@ -223,7 +214,7 @@ export class TraktClient extends TraktApi {
     this.authentication.expires = auth.expires;
     this.authentication.refresh_token = auth.refresh_token;
 
-    if (auth.expires < Date.now()) await this.refreshToken();
+    if (auth.expires && auth.expires < Date.now()) await this.refreshToken();
     return this.authentication;
   }
 
@@ -233,7 +224,7 @@ export class TraktClient extends TraktApi {
   async revokeAuthentication(): Promise<void> {
     if (this.authentication.access_token) {
       await this._revoke();
-      this.authentication = {};
+      this._authentication = {};
     }
   }
 }

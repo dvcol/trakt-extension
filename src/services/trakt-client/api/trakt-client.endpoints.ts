@@ -1,11 +1,6 @@
-import type { ITraktApi, TraktApiParams } from '~/models/trakt-client.model';
+import type { ITraktApi } from '~/models/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
-
-const call = (param: TraktApiParams) => {
-  console.error('Endpoint call function not implemented', param);
-  throw new Error('Endpoint call function not implemented');
-};
 
 const calendars = {
   my: {
@@ -17,7 +12,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/my/shows/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     new_shows: {
       opts: {
@@ -27,7 +21,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/my/shows/new/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     premieres_shows: {
       opts: {
@@ -37,7 +30,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/my/shows/premieres/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     movies: {
       opts: {
@@ -47,7 +39,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/my/movies/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     dvd: {
       opts: {
@@ -57,7 +48,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/my/dvd/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
   },
   all: {
@@ -68,7 +58,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/all/shows/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     new_shows: {
       opts: {
@@ -77,7 +66,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/all/shows/new/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     premieres_shows: {
       opts: {
@@ -86,7 +74,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/all/shows/premieres/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     movies: {
       opts: {
@@ -95,7 +82,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/all/movies/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
     dvd: {
       opts: {
@@ -104,7 +90,6 @@ const calendars = {
       method: HttpMethod.GET,
       url: '/calendars/all/dvd/:start_date/:days',
       optional: ['start_date', 'days'],
-      call,
     },
   },
 } satisfies ITraktApi;
@@ -127,7 +112,6 @@ const checkin = {
       app_date: null,
     },
     optional: [],
-    call,
   },
   delete: {
     opts: {
@@ -136,7 +120,6 @@ const checkin = {
     method: HttpMethod.DELETE,
     url: '/checkin',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -159,14 +142,12 @@ const comments = {
         review: null,
       },
       optional: [],
-      call,
     },
     get: {
       opts: {},
       method: HttpMethod.GET,
       url: '/comments/:id',
       optional: [],
-      call,
     },
     update: {
       opts: {
@@ -180,7 +161,6 @@ const comments = {
         review: null,
       },
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -189,7 +169,6 @@ const comments = {
       method: HttpMethod.DELETE,
       url: '/comments/:id',
       optional: [],
-      call,
     },
   },
   replies: {
@@ -201,7 +180,6 @@ const comments = {
       method: HttpMethod.GET,
       url: '/comments/:id/replies',
       optional: [],
-      call,
     },
     add: {
       opts: {
@@ -214,7 +192,6 @@ const comments = {
         spoiler: null,
       },
       optional: [],
-      call,
     },
   },
   item: {
@@ -224,7 +201,6 @@ const comments = {
     method: HttpMethod.GET,
     url: '/comments/:id/item',
     optional: [],
-    call,
   },
   likes: {
     opts: {
@@ -233,7 +209,6 @@ const comments = {
     method: HttpMethod.GET,
     url: '/comments/:id/likes',
     optional: [],
-    call,
   },
   like: {
     add: {
@@ -243,7 +218,6 @@ const comments = {
       method: HttpMethod.POST,
       url: '/comments/:id/like',
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -252,7 +226,6 @@ const comments = {
       method: HttpMethod.DELETE,
       url: '/comments/:id/like',
       optional: [],
-      call,
     },
   },
   trending: {
@@ -263,7 +236,6 @@ const comments = {
     method: HttpMethod.GET,
     url: '/comments/trending/:comment_type/:type?include_replies=',
     optional: ['comment_type', 'type', 'include_replies'],
-    call,
   },
   recent: {
     opts: {
@@ -273,7 +245,6 @@ const comments = {
     method: HttpMethod.GET,
     url: '/comments/recent/:comment_type/:type?include_replies=',
     optional: ['comment_type', 'type', 'include_replies'],
-    call,
   },
   updates: {
     opts: {
@@ -283,7 +254,6 @@ const comments = {
     method: HttpMethod.GET,
     url: '/comments/updates/:comment_type/:type?include_replies=',
     optional: ['comment_type', 'type', 'include_replies'],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -295,7 +265,6 @@ const lists = {
     method: HttpMethod.GET,
     url: '/lists/trending',
     optional: [],
-    call,
   },
   popular: {
     opts: {
@@ -304,14 +273,12 @@ const lists = {
     method: HttpMethod.GET,
     url: '/lists/popular',
     optional: [],
-    call,
   },
   get: {
     opts: {},
     method: HttpMethod.GET,
     url: '/lists/:id',
     optional: [],
-    call,
   },
   likes: {
     opts: {
@@ -320,7 +287,6 @@ const lists = {
     method: HttpMethod.GET,
     url: '/lists/:id/likes',
     optional: [],
-    call,
   },
   items: {
     opts: {
@@ -330,7 +296,6 @@ const lists = {
     method: HttpMethod.GET,
     url: '/lists/:id/items/:type',
     optional: [],
-    call,
   },
   comments: {
     opts: {
@@ -339,7 +304,6 @@ const lists = {
     method: HttpMethod.GET,
     url: '/lists/:id/comments/:sort',
     optional: ['sort'],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -352,7 +316,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/trending',
     optional: [],
-    call,
   },
   popular: {
     opts: {
@@ -362,7 +325,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/popular',
     optional: [],
-    call,
   },
   recommended: {
     opts: {
@@ -372,7 +334,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/recommended/:period',
     optional: ['period'],
-    call,
   },
   played: {
     opts: {
@@ -382,7 +343,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/played/:period',
     optional: ['period'],
-    call,
   },
   watched: {
     opts: {
@@ -392,7 +352,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/watched/:period',
     optional: ['period'],
-    call,
   },
   collected: {
     opts: {
@@ -402,7 +361,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/collected/:period',
     optional: ['period'],
-    call,
   },
   anticipated: {
     opts: {
@@ -412,7 +370,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/anticipated',
     optional: [],
-    call,
   },
   boxoffice: {
     opts: {
@@ -421,7 +378,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/boxoffice',
     optional: [],
-    call,
   },
   updates: {
     opts: {
@@ -431,7 +387,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/updates/:start_date',
     optional: ['start_date'],
-    call,
   },
   updated_ids: {
     opts: {
@@ -440,7 +395,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/updates/id/:start_date',
     optional: ['start_date'],
-    call,
   },
   summary: {
     opts: {
@@ -449,28 +403,24 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id',
     optional: [],
-    call,
   },
   aliases: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/aliases',
     optional: [],
-    call,
   },
   releases: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/releases/:country',
     optional: ['country'],
-    call,
   },
   translations: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/translations/:language',
     optional: ['language'],
-    call,
   },
   comments: {
     opts: {
@@ -479,7 +429,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id/comments/:sort',
     optional: ['sort'],
-    call,
   },
   lists: {
     opts: {
@@ -488,7 +437,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id/lists/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   people: {
     opts: {
@@ -497,14 +445,12 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id/people',
     optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/ratings',
     optional: [],
-    call,
   },
   related: {
     opts: {
@@ -513,21 +459,18 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id/related?limit=',
     optional: ['limit'],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/stats',
     optional: [],
-    call,
   },
   studios: {
     opts: {},
     method: HttpMethod.GET,
     url: '/movies/:id/studios',
     optional: [],
-    call,
   },
   watching: {
     opts: {
@@ -536,7 +479,6 @@ const movies = {
     method: HttpMethod.GET,
     url: '/movies/:id/watching',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -548,7 +490,6 @@ const people = {
     method: HttpMethod.GET,
     url: '/people/:id',
     optional: [],
-    call,
   },
   movies: {
     opts: {
@@ -557,7 +498,6 @@ const people = {
     method: HttpMethod.GET,
     url: '/people/:id/movies',
     optional: [],
-    call,
   },
   shows: {
     opts: {
@@ -566,7 +506,6 @@ const people = {
     method: HttpMethod.GET,
     url: '/people/:id/shows',
     optional: [],
-    call,
   },
   lists: {
     opts: {
@@ -575,7 +514,6 @@ const people = {
     method: HttpMethod.GET,
     url: '/people/:id/lists/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   updates: {
     get: {
@@ -586,7 +524,6 @@ const people = {
       method: HttpMethod.GET,
       url: '/people/updates/:start_date?limit=',
       optional: ['limit'],
-      call,
     },
     id: {
       opts: {
@@ -595,7 +532,6 @@ const people = {
       method: HttpMethod.GET,
       url: '/people/updates/id/:start_date?limit=',
       optional: ['limit'],
-      call,
     },
   },
 } satisfies ITraktApi;
@@ -610,7 +546,6 @@ const recommendations = {
       method: HttpMethod.GET,
       url: '/recommendations/movies/?limit=&ignore_collected=',
       optional: ['limit', 'ignore_collected'],
-      call,
     },
     hide: {
       opts: {
@@ -619,7 +554,6 @@ const recommendations = {
       method: HttpMethod.DELETE,
       url: '/recommendations/movies/:id',
       optional: [],
-      call,
     },
   },
   shows: {
@@ -631,7 +565,6 @@ const recommendations = {
       method: HttpMethod.GET,
       url: '/recommendations/shows/?limit=&ignore_collected=',
       optional: ['limit', 'ignore_collected'],
-      call,
     },
     hide: {
       opts: {
@@ -640,7 +573,6 @@ const recommendations = {
       method: HttpMethod.DELETE,
       url: '/recommendations/shows/:id',
       optional: [],
-      call,
     },
   },
 } satisfies ITraktApi;
@@ -660,7 +592,6 @@ const scrobble = {
       app_date: null,
     },
     optional: [],
-    call,
   },
   pause: {
     opts: {
@@ -676,7 +607,6 @@ const scrobble = {
       app_date: null,
     },
     optional: [],
-    call,
   },
   stop: {
     opts: {
@@ -692,7 +622,6 @@ const scrobble = {
       app_date: null,
     },
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -705,7 +634,6 @@ const search = {
     method: HttpMethod.GET,
     url: '/search/:type?query=&fields=',
     optional: ['fields'],
-    call,
   },
   id: {
     opts: {
@@ -715,7 +643,6 @@ const search = {
     method: HttpMethod.GET,
     url: '/search/:id_type/:id?type=&fields=',
     optional: ['type', 'fields'],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -728,7 +655,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/trending',
     optional: [],
-    call,
   },
   popular: {
     opts: {
@@ -738,7 +664,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/popular',
     optional: [],
-    call,
   },
   recommended: {
     opts: {
@@ -748,7 +673,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/recommended/:period',
     optional: ['period'],
-    call,
   },
   played: {
     opts: {
@@ -758,7 +682,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/played/:period',
     optional: ['period'],
-    call,
   },
   watched: {
     opts: {
@@ -768,7 +691,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/watched/:period',
     optional: ['period'],
-    call,
   },
   collected: {
     opts: {
@@ -778,7 +700,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/collected',
     optional: ['period'],
-    call,
   },
   anticipated: {
     opts: {
@@ -788,7 +709,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/anticipated',
     optional: [],
-    call,
   },
   updates: {
     opts: {
@@ -798,7 +718,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/updates/:start_date',
     optional: ['start_date'],
-    call,
   },
   updated_ids: {
     opts: {
@@ -807,7 +726,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/updates/id/:start_date',
     optional: ['start_date'],
-    call,
   },
   summary: {
     opts: {
@@ -816,28 +734,24 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id',
     optional: [],
-    call,
   },
   aliases: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/aliases',
     optional: [],
-    call,
   },
   certifications: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/certifications',
     optional: [],
-    call,
   },
   translations: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/translations/:language',
     optional: ['language'],
-    call,
   },
   comments: {
     opts: {
@@ -846,7 +760,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/comments/:sort',
     optional: ['sort'],
-    call,
   },
   lists: {
     opts: {
@@ -855,7 +768,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/lists/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   progress: {
     collection: {
@@ -865,7 +777,6 @@ const shows = {
       method: HttpMethod.GET,
       url: '/shows/:id/progress/collection?hidden=&specials=&count_specials=&last_activity=',
       optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
-      call,
     },
     watched: {
       opts: {
@@ -875,7 +786,6 @@ const shows = {
       method: HttpMethod.GET,
       url: '/shows/:id/progress/watched?hidden=&specials=&count_specials=&last_activity=',
       optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
-      call,
     },
     reset: {
       opts: {
@@ -884,7 +794,6 @@ const shows = {
       method: HttpMethod.POST,
       url: '/shows/:id/progress/watched/reset',
       optional: [],
-      call,
     },
     undo_reset: {
       opts: {
@@ -893,7 +802,6 @@ const shows = {
       method: HttpMethod.DELETE,
       url: '/shows/:id/progress/watched/reset',
       optional: [],
-      call,
     },
   },
   people: {
@@ -903,14 +811,12 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/people',
     optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/ratings',
     optional: [],
-    call,
   },
   related: {
     opts: {
@@ -920,21 +826,18 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/related',
     optional: [],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/stats',
     optional: [],
-    call,
   },
   studios: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/studios',
     optional: [],
-    call,
   },
   watching: {
     opts: {
@@ -943,7 +846,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/watching',
     optional: [],
-    call,
   },
   next_episode: {
     opts: {
@@ -952,7 +854,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/next_episode',
     optional: [],
-    call,
   },
   last_episode: {
     opts: {
@@ -961,7 +862,6 @@ const shows = {
     method: HttpMethod.GET,
     url: '/shows/:id/last_episode',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -973,7 +873,6 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons',
     optional: [],
-    call,
   },
   season: {
     opts: {
@@ -982,7 +881,6 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season?translations=',
     optional: ['translations'],
-    call,
   },
   comments: {
     opts: {
@@ -991,7 +889,6 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/comments/:sort',
     optional: ['sort'],
-    call,
   },
   lists: {
     opts: {
@@ -1000,7 +897,6 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/lists/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   people: {
     opts: {
@@ -1009,21 +905,18 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/people',
     optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/ratings',
     optional: [],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/stats',
     optional: [],
-    call,
   },
   watching: {
     opts: {
@@ -1032,7 +925,6 @@ const seasons = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/watching',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -1044,14 +936,12 @@ const episodes = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode',
     optional: [],
-    call,
   },
   translations: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/translations/:language',
     optional: ['language'],
-    call,
   },
   comments: {
     opts: {
@@ -1060,7 +950,6 @@ const episodes = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/comments/:sort',
     optional: ['sort'],
-    call,
   },
   lists: {
     opts: {
@@ -1069,7 +958,6 @@ const episodes = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/lists/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   people: {
     opts: {
@@ -1078,21 +966,18 @@ const episodes = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/people',
     optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/ratings',
     optional: [],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/stats',
     optional: [],
-    call,
   },
   watching: {
     opts: {
@@ -1101,7 +986,6 @@ const episodes = {
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/watching',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -1113,7 +997,6 @@ const sync = {
     method: HttpMethod.GET,
     url: '/sync/last_activities',
     optional: [],
-    call,
   },
   playback: {
     get: {
@@ -1123,7 +1006,6 @@ const sync = {
       method: HttpMethod.GET,
       url: '/sync/playback/:type?limit=',
       optional: ['type', 'limit'],
-      call,
     },
     remove: {
       opts: {
@@ -1132,7 +1014,6 @@ const sync = {
       method: HttpMethod.DELETE,
       url: '/sync/playback/:id',
       optional: [],
-      call,
     },
   },
   collection: {
@@ -1144,7 +1025,6 @@ const sync = {
       method: HttpMethod.GET,
       url: '/sync/collection/:type',
       optional: [],
-      call,
     },
     add: {
       opts: {
@@ -1159,7 +1039,6 @@ const sync = {
         episodes: null,
       },
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -1174,7 +1053,6 @@ const sync = {
         episodes: null,
       },
       optional: [],
-      call,
     },
   },
   watched: {
@@ -1185,7 +1063,6 @@ const sync = {
     method: HttpMethod.GET,
     url: '/sync/watched/:type',
     optional: [],
-    call,
   },
   history: {
     get: {
@@ -1197,7 +1074,6 @@ const sync = {
       method: HttpMethod.GET,
       url: '/sync/history/:type/:id?start_at=&end_at=',
       optional: ['type', 'id', 'start_at', 'end_at'],
-      call,
     },
     add: {
       opts: {
@@ -1212,7 +1088,6 @@ const sync = {
         episodes: null,
       },
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -1227,7 +1102,6 @@ const sync = {
         ids: null,
       },
       optional: [],
-      call,
     },
   },
   ratings: {
@@ -1240,7 +1114,6 @@ const sync = {
       method: HttpMethod.GET,
       url: '/sync/ratings/:type/:rating',
       optional: ['rating', 'type'],
-      call,
     },
     add: {
       opts: {
@@ -1255,7 +1128,6 @@ const sync = {
         episodes: null,
       },
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -1269,7 +1141,6 @@ const sync = {
         episodes: null,
       },
       optional: [],
-      call,
     },
     watchlist: {
       get: {
@@ -1281,7 +1152,6 @@ const sync = {
         method: HttpMethod.GET,
         url: '/sync/watchlist/:type',
         optional: ['type'],
-        call,
       },
       add: {
         opts: {
@@ -1295,7 +1165,6 @@ const sync = {
           episodes: null,
         },
         optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -1309,7 +1178,6 @@ const sync = {
           episodes: null,
         },
         optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -1321,7 +1189,6 @@ const sync = {
           rank: null,
         },
         optional: [],
-        call,
       },
     },
     recommendations: {
@@ -1334,7 +1201,6 @@ const sync = {
         method: HttpMethod.GET,
         url: '/sync/recommendations/:type/:sort',
         optional: [],
-        call,
       },
       add: {
         opts: {
@@ -1347,7 +1213,6 @@ const sync = {
           shows: null,
         },
         optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -1360,7 +1225,6 @@ const sync = {
           shows: null,
         },
         optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -1372,7 +1236,6 @@ const sync = {
           rank: null,
         },
         optional: [],
-        call,
       },
     },
   },
@@ -1386,7 +1249,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/settings',
     optional: [],
-    call,
   },
   requests: {
     get: {
@@ -1397,7 +1259,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/requests',
       optional: [],
-      call,
     },
     following: {
       opts: {
@@ -1407,7 +1268,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/requests/following',
       optional: [],
-      call,
     },
     approve: {
       opts: {
@@ -1416,7 +1276,6 @@ const users = {
       method: HttpMethod.POST,
       url: '/users/requests/:id',
       optional: [],
-      call,
     },
     deny: {
       opts: {
@@ -1425,7 +1284,6 @@ const users = {
       method: HttpMethod.DELETE,
       url: '/users/requests/:id',
       optional: [],
-      call,
     },
     hidden: {
       get: {
@@ -1437,7 +1295,6 @@ const users = {
         method: HttpMethod.GET,
         url: '/users/hidden/:section?type=',
         optional: ['type'],
-        call,
       },
       add: {
         opts: {
@@ -1451,7 +1308,6 @@ const users = {
           episodes: null,
         },
         optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -1465,7 +1321,6 @@ const users = {
           episodes: null,
         },
         optional: [],
-        call,
       },
     },
     likes: {
@@ -1476,7 +1331,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/likes/:type',
       optional: ['type'],
-      call,
     },
     saved_filters: {
       opts: {
@@ -1486,7 +1340,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/saved_filters/:section',
       optional: [],
-      call,
     },
     profile: {
       opts: {
@@ -1496,7 +1349,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username',
       optional: [],
-      call,
     },
     collection: {
       opts: {
@@ -1506,7 +1358,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/collection/:type',
       optional: [],
-      call,
     },
     comments: {
       opts: {
@@ -1517,7 +1368,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/comments/:comment_type/:type?include_replies=',
       optional: ['comment_type', 'type', 'include_replies'],
-      call,
     },
   },
   lists: {
@@ -1528,7 +1378,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/lists',
       optional: [],
-      call,
     },
     collaborations: {
       opts: {
@@ -1537,7 +1386,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/lists/collaborations',
       optional: [],
-      call,
     },
     create: {
       opts: {
@@ -1553,7 +1401,6 @@ const users = {
         allow_comments: null,
       },
       optional: [],
-      call,
     },
     reorder: {
       opts: {
@@ -1565,7 +1412,6 @@ const users = {
         rank: null,
       },
       optional: [],
-      call,
     },
   },
   list: {
@@ -1576,7 +1422,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id',
       optional: [],
-      call,
     },
     update: {
       opts: {
@@ -1592,7 +1437,6 @@ const users = {
         allow_comments: null,
       },
       optional: [],
-      call,
     },
     delete: {
       opts: {
@@ -1601,7 +1445,6 @@ const users = {
       method: HttpMethod.DELETE,
       url: '/users/:username/lists/:id',
       optional: [],
-      call,
     },
     likes: {
       opts: {
@@ -1611,7 +1454,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id/likes',
       optional: [],
-      call,
     },
     like: {
       add: {
@@ -1621,7 +1463,6 @@ const users = {
         method: HttpMethod.POST,
         url: '/users/:username/lists/:id/like',
         optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -1630,7 +1471,6 @@ const users = {
         method: HttpMethod.DELETE,
         url: '/users/:username/lists/:id/like',
         optional: [],
-        call,
       },
     },
     items: {
@@ -1643,7 +1483,6 @@ const users = {
         method: HttpMethod.GET,
         url: '/users/:username/lists/:id/items?type=',
         optional: ['type'],
-        call,
       },
       add: {
         opts: {
@@ -1657,7 +1496,6 @@ const users = {
           people: null,
         },
         optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -1671,7 +1509,6 @@ const users = {
           people: null,
         },
         optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -1683,7 +1520,6 @@ const users = {
           rank: null,
         },
         optional: [],
-        call,
       },
     },
     comments: {
@@ -1693,7 +1529,6 @@ const users = {
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id/comments/:sort',
       optional: ['sort'],
-      call,
     },
   },
   follow: {
@@ -1704,7 +1539,6 @@ const users = {
       method: HttpMethod.POST,
       url: '/users/:username/follow',
       optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -1713,7 +1547,6 @@ const users = {
       method: HttpMethod.DELETE,
       url: '/users/:username/follow',
       optional: [],
-      call,
     },
   },
   followers: {
@@ -1724,7 +1557,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/followers',
     optional: [],
-    call,
   },
   following: {
     opts: {
@@ -1734,7 +1566,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/following',
     optional: [],
-    call,
   },
   friends: {
     opts: {
@@ -1744,7 +1575,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/friends',
     optional: [],
-    call,
   },
   history: {
     opts: {
@@ -1755,7 +1585,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/history/:type/:item_id?start_at=&end_at=',
     optional: ['type', 'item_id', 'start_at', 'end_at'],
-    call,
   },
   ratings: {
     opts: {
@@ -1766,7 +1595,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/ratings/:type/:rating',
     optional: ['rating', 'type'],
-    call,
   },
   watchlist: {
     opts: {
@@ -1777,7 +1605,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/watchlist/:type',
     optional: ['type'],
-    call,
   },
   recommendations: {
     opts: {
@@ -1788,7 +1615,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/recommendations/:type/:sort',
     optional: ['type', 'sort'],
-    call,
   },
   watching: {
     opts: {
@@ -1797,7 +1623,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/watching',
     optional: [],
-    call,
   },
   watched: {
     opts: {
@@ -1807,7 +1632,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/watched/:type',
     optional: [],
-    call,
   },
   stats: {
     opts: {
@@ -1816,7 +1640,6 @@ const users = {
     method: HttpMethod.GET,
     url: '/users/:username/stats',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;
 
@@ -1840,34 +1663,29 @@ export const traktApi = {
     method: HttpMethod.GET,
     url: '/genres/:type',
     optional: [],
-    call,
   },
   networks: {
     opts: {},
     method: HttpMethod.GET,
     url: '/networks',
     optional: [],
-    call,
   },
   languages: {
     opts: {},
     method: HttpMethod.GET,
     url: '/languages/:type',
     optional: [],
-    call,
   },
   countries: {
     opts: {},
     method: HttpMethod.GET,
     url: '/countries/:type',
     optional: [],
-    call,
   },
   certifications: {
     opts: {},
     method: HttpMethod.GET,
     url: '/certifications/:type',
     optional: [],
-    call,
   },
 } satisfies ITraktApi;

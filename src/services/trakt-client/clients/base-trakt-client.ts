@@ -48,10 +48,10 @@ const parseResponse = (response: Response): TraktApiResponse => {
 
   if (response.headers.has('x-pagination-item-count')) {
     _response.pagination = {
-      itemCount: response.headers.get('x-pagination-item-count'),
-      pageCount: response.headers.get('x-pagination-page-count'),
-      limit: response.headers.get('x-pagination-limit'),
-      page: response.headers.get('x-pagination-page'),
+      itemCount: Number(response.headers.get('x-pagination-item-count')),
+      pageCount: Number(response.headers.get('x-pagination-page-count')),
+      limit: Number(response.headers.get('x-pagination-limit')),
+      page: Number(response.headers.get('x-pagination-page')),
     };
   }
 
@@ -82,7 +82,7 @@ export class BaseTraktClient {
     }
   }
 
-  private _call(template: TraktApiTemplate, params: TraktApiParams) {
+  protected _call(template: TraktApiTemplate, params: TraktApiParams) {
     const headers: HeadersInit = {
       'User-Agent': this._settings.useragent,
       'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export class BaseTraktClient {
       req.init.body = parseBody(template.body, params);
     }
 
-    this._debug(req);
+    this.debug(req);
     return fetch(req.input, req.init).then(parseResponse);
   }
 
@@ -123,14 +123,12 @@ export class BaseTraktClient {
     const [pathPart, queryPart] = template.url.split('?');
 
     let path = pathPart;
-    let queryParams: URLSearchParams;
+    const queryParams: URLSearchParams = new URLSearchParams(queryPart);
 
     if (queryPart) {
-      queryParams = new URLSearchParams(queryPart);
-
       queryParams.forEach((value, key, parent) => {
         const _value = params[key] ?? value;
-        if (_value?.length) {
+        if (_value !== undefined && value !== '') {
           queryParams.set(key, encodeURIComponent(_value));
         } else if (!template.optional?.includes(key)) {
           throw Error(`Missing mandatory query parameter: ${key}`);
@@ -161,20 +159,20 @@ export class BaseTraktClient {
 
     // Adds Filters query parameters
     Object.entries(params).forEach(([key, value]) => {
-      if (TraktApiFilterValues.includes(key)) {
-        queryParams.set(key, value);
+      if ((TraktApiFilterValues as string[]).includes(key)) {
+        queryParams.set(key, `${value}`);
       }
     });
 
     // Pagination
     if (template.opts.pagination) {
-      if (params.page) queryParams.set('page', params.page);
-      if (params.limit) queryParams.set('limit', params.limit);
+      if (params.page) queryParams.set('page', `${params.page}`);
+      if (params.limit) queryParams.set('limit', `${params.limit}`);
     }
 
     // Extended
     if (template.opts.extended && params.extended) {
-      queryParams.set('extended', params.extended);
+      queryParams.set('extended', `${params.extended}`);
     }
 
     const url = queryParams ? `${path}?${queryParams.toString()}` : path;

@@ -33,7 +33,7 @@ export type TraktClientRefreshAuthenticationRequest = TraktClientBaseAuthenticat
   grant_type?: 'refresh_token';
 };
 
-export type TraktClientAuthenticationRequest = TraktClientCodeAuthenticationRequest & TraktClientRefreshAuthenticationRequest;
+export type TraktClientAuthenticationRequest = TraktClientCodeAuthenticationRequest | TraktClientRefreshAuthenticationRequest;
 
 export type TraktClientAuthentication = {
   refresh_token?: string;
@@ -68,8 +68,4 @@ export type TraktApiParams = Record<string, string | boolean | number> & {
   limit?: number;
 };
 
-export type TraktApiEndpoint<R = Response> = TraktApiTemplate & {
-  call: (template: TraktApiTemplate) => Promise<R>;
-};
-
-export type ITraktApi = { [key: string]: TraktApiTemplate | TraktApiEndpoint | ITraktApi };
+export type ITraktApi = { [key: string]: TraktApiTemplate | ITraktApi };
