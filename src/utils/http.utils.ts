@@ -9,3 +9,5 @@ export const HttpMethod = {
   OPTIONS: 'OPTIONS',
   TRACE: 'TRACE',
 } as const;
+
+export type HttpMethods = keyof typeof HttpMethod;

@@ -1,4 +1,11 @@
-import type { HttpMethod } from '~/utils/http.utils';
+import type { HttpMethods } from '~/utils/http.utils';
+
+export type TraktClientPagination = {
+  itemCount: number;
+  pageCount: number;
+  limit: number;
+  page: number;
+};
 
 export type TraktClientSettings = {
   client_id: string;
@@ -6,9 +13,27 @@ export type TraktClientSettings = {
   redirect_uri: string;
   endpoint: string;
   useragent: string;
-  pagination?: string;
+  pagination?: boolean;
   debug?: boolean;
 };
+
+type TraktClientBaseAuthenticationRequest = {
+  client_id: string;
+  client_secret: string;
+  redirect_uri?: string;
+};
+
+export type TraktClientCodeAuthenticationRequest = TraktClientBaseAuthenticationRequest & {
+  code: string;
+  grant_type?: 'authorization_code';
+};
+
+export type TraktClientRefreshAuthenticationRequest = TraktClientBaseAuthenticationRequest & {
+  refresh_token: string;
+  grant_type?: 'refresh_token';
+};
+
+export type TraktClientAuthenticationRequest = TraktClientCodeAuthenticationRequest & TraktClientRefreshAuthenticationRequest;
 
 export type TraktClientAuthentication = {
   refresh_token?: string;
@@ -18,7 +43,7 @@ export type TraktClientAuthentication = {
 };
 
 export type TraktApiTemplate = {
-  method: keyof typeof HttpMethod;
+  method: HttpMethods;
   url: string;
   opts: {
     auth?: boolean | 'optional';
@@ -29,4 +54,22 @@ export type TraktApiTemplate = {
   optional?: string[];
 };
 
-export type TraktApi = { [key: string]: TraktApiTemplate | TraktApi };
+export type TraktApiRequest = {
+  input: RequestInfo;
+  init: RequestInit & { headers: RequestInit['headers'] };
+};
+
+export type TraktApiResponse = Response & {
+  pagination?: TraktClientPagination;
+};
+
+export type TraktApiParams = Record<string, string | boolean | number> & {
+  page?: number;
+  limit?: number;
+};
+
+export type TraktApiEndpoint<R = Response> = TraktApiTemplate & {
+  call: (template: TraktApiTemplate) => Promise<R>;
+};
+
+export type ITraktApi = { [key: string]: TraktApiTemplate | TraktApiEndpoint | ITraktApi };
