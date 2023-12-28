@@ -82,7 +82,7 @@ export class BaseTraktClient {
     }
   }
 
-  protected _call(template: TraktApiTemplate, params: TraktApiParams) {
+  protected async _call(template: TraktApiTemplate, params: TraktApiParams) {
     const headers: HeadersInit = {
       'User-Agent': this._settings.useragent,
       'Content-Type': 'application/json',
@@ -109,7 +109,8 @@ export class BaseTraktClient {
     }
 
     this.debug(req);
-    return fetch(req.input, req.init).then(parseResponse);
+    const response = await fetch(req.input, req.init);
+    return parseResponse(response);
   }
 
   /**

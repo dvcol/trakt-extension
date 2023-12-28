@@ -52,6 +52,7 @@ export type TraktApiTemplate = {
   };
   body?: Record<string, unknown>;
   optional?: string[];
+  call?: (param: TraktApiParams) => Promise<TraktApiResponse>;
 };
 
 export type TraktApiRequest = {

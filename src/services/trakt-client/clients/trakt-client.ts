@@ -4,7 +4,15 @@ import { traktApi } from '../api/trakt-client.endpoints';
 
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
-import type { TraktApiRequest, TraktClientAuthentication, TraktClientAuthenticationRequest, TraktClientSettings } from '~/models/trakt-client.model';
+import type {
+  ITraktApi,
+  TraktApiParams,
+  TraktApiRequest,
+  TraktApiTemplate,
+  TraktClientAuthentication,
+  TraktClientAuthenticationRequest,
+  TraktClientSettings,
+} from '~/models/trakt-client.model';
 
 import { Client, Config } from '~/settings/traktv.api';
 import { randomHex } from '~/utils/crypto.utils';
@@ -17,8 +25,24 @@ const handleError = <T>(error: T | Response) => {
   throw error;
 };
 
+type ITraktEndpoints = typeof traktApi;
+
+/** Needed to type Object assignment */
+interface TraktApi extends ITraktEndpoints {}
+
+const isTraktApiTemplate = (template: TraktApiTemplate | ITraktApi): template is TraktApiTemplate => 'call' in template;
+
 /** To allow type extension */
-class TraktApi extends BaseTraktClient {
+class TraktApi extends BaseTraktClient implements ITraktEndpoints {
+  bindToEndpoint(template: ITraktApi) {
+    const api = { ...template };
+    Object.entries(api).forEach(([key, value]) => {
+      if (isTraktApiTemplate(value)) (api[key] as TraktApiTemplate).call = (param: TraktApiParams) => this._call(value, param);
+      else api[key] = this.bindToEndpoint(api);
+    });
+    return api;
+  }
+
   constructor(settings: TraktClientSettings, authentication = {}) {
     super(settings, authentication);
     Object.assign(this, traktApi);
