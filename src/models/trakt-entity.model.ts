@@ -1,3 +1,5 @@
+import type { RequireAtLeastOne } from '~/utils/typescript.utils';
+
 export type TraktMovie = {
   title: string;
   year: number;
@@ -33,7 +35,7 @@ export type TraktSeason = {
 export type TraktEpisode = {
   season: number;
   number: number;
-  number_abs?: number;
+  number_abs: number;
   title: string;
   ids: {
     trakt: number;
@@ -63,3 +65,31 @@ export type TraktUser = {
     slug: string;
   };
 };
+
+export type TraktList = {
+  name: string;
+  description: string;
+  privacy: string;
+  share_link: string;
+  type: string;
+  display_numbers: boolean;
+  allow_comments: boolean;
+  sort_by: string;
+  sort_how: string;
+  created_at: string;
+  updated_at: string;
+  item_count: number;
+  comment_count: number;
+  likes: number;
+  ids: {
+    trakt: number;
+    slug: string;
+  };
+  user: TraktUser;
+};
+
+export type TraktSharing = RequireAtLeastOne<{
+  twitter: boolean;
+  mastodon: boolean;
+  tumblr: boolean;
+}>;

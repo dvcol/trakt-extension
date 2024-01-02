@@ -85,7 +85,7 @@ export type TraktApiTemplate<
 > = {
   method: HttpMethods;
   url: string;
-  opts: TraktApiTemplateOptions;
+  opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
   /** Execute the request */
@@ -121,7 +121,7 @@ export class TraktClientEndpoint<
   constructor(template: TraktApiTemplate<T, F, E>) {
     this.method = template.method;
     this.url = template.url;
-    this.opts = template.opts;
+    this.opts = template.opts ?? {};
     this.body = template.body;
     this.validate = template.validate;
     this.call = template.call ?? stubCall;

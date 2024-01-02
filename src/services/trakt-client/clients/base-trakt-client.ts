@@ -107,9 +107,9 @@ export class BaseTraktClient {
       [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };
 
-    if (template.opts.auth && this._authentication.access_token) {
+    if (template.opts?.auth && this._authentication.access_token) {
       headers.Authorization = `Bearer ${this._authentication.access_token}`;
-    } else if (template.opts.auth === true && !this._settings.client_secret) {
+    } else if (template.opts?.auth === true && !this._settings.client_secret) {
       throw Error('OAuth required');
     }
 
@@ -157,7 +157,7 @@ export class BaseTraktClient {
           queryParams.set(key, encodeURIComponent(typeof _value === 'string' ? _value : JSON.stringify(_value)));
         }
         // If the parameter is required we raise error
-        else if (template.opts.parameters?.query?.[key] === true) {
+        else if (template.opts?.parameters?.query?.[key] === true) {
           throw Error(`Missing mandatory query parameter: ${key}`);
         }
         // else we remove the empty field from parameters
@@ -175,7 +175,7 @@ export class BaseTraktClient {
           if (segment.match(/^:/)) {
             const name = segment.substring(1);
             const value = params[name];
-            if (value === undefined && template.opts.parameters?.path?.[name] === true) {
+            if (value === undefined && template.opts?.parameters?.path?.[name] === true) {
               throw Error(`Missing mandatory path parameter: ${name}`);
             }
             return value ?? '';
@@ -187,9 +187,9 @@ export class BaseTraktClient {
     }
 
     // Adds Filters query parameters
-    if (template.opts.filters?.length && params.filters) {
+    if (template.opts?.filters?.length && params.filters) {
       Object.entries(params.filters as { [s: string]: Primitive | Primitive[] }).forEach(([key, value]) => {
-        if (!isFilter(key) || !template.opts.filters?.includes(key)) {
+        if (!isFilter(key) || !template.opts?.filters?.includes(key)) {
           throw Error(`Filter is not supported: ${key}`);
         }
 
@@ -202,13 +202,13 @@ export class BaseTraktClient {
     }
 
     // Pagination
-    if (template.opts.pagination && params.pagination) {
+    if (template.opts?.pagination && params.pagination) {
       if (params.pagination.page) queryParams.set('page', `${params.pagination.page}`);
       if (params.pagination.limit) queryParams.set('limit', `${params.pagination.limit}`);
     }
 
     // Extended
-    if (template.opts.extended && params.extended) {
+    if (template.opts?.extended && params.extended) {
       if (!template.opts.extended.includes(params.extended)) {
         throw Error(`Invalid value '${params.extended}', extended should be '${template.opts.extended}'`);
       }

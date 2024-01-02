@@ -1,4 +1,4 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
+import type { TraktApiExtended, TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt-client.model';
 
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
@@ -7,6 +7,36 @@ import { TraktClientEndpoint } from '~/models/trakt-client.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
 import { HttpMethod } from '~/utils/http.utils';
+
+type StartAndDay = {
+  /**
+   * Date (in UTC) from which to start the calendar.
+   * Defaults to today.
+   */
+  start_date?: string;
+  /**
+   * Number of days to display.
+   * Defaults to 7.
+   * The maximum amount of days you can send is 33.
+   */
+  days?: number;
+};
+
+const opts: TraktApiTemplateOptions = {
+  extended: ['full'],
+  filters: TraktApiCommonFilterValues,
+  parameters: {
+    path: {
+      start_date: false,
+      days: false,
+    },
+  },
+};
+
+const validate: TraktApiTemplate<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>['validate'] = param => {
+  if (param.start_date) TraktApiValidators.date(param.start_date);
+  return true;
+};
 
 /**
  * By default, the calendar will return all shows or movies for the specified time period and can be global or user specific.
@@ -29,30 +59,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-shows/get-shows}
        */
-      get: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      get: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/:start_date/:days',
-        opts: {
-          auth: true,
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts: { auth: true, ...opts },
+        validate,
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
@@ -62,30 +73,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-new-shows/get-new-shows}
        */
-      new: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      new: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/new/:start_date/:days',
-        opts: {
-          auth: true,
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts: { auth: true, ...opts },
+        validate,
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
@@ -95,30 +87,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-season-premieres/get-season-premieres}
        */
-      premieres: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      premieres: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/premieres/:start_date/:days',
-        opts: {
-          auth: true,
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts: { auth: true, ...opts },
+        validate,
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
@@ -128,30 +101,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-finales/get-finales}
        */
-      finales: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      finales: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/finales/:start_date/:days',
-        opts: {
-          auth: true,
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts: { auth: true, ...opts },
+        validate,
       }),
     },
     /**
@@ -162,30 +116,11 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-movies/get-movies}
      */
-    movies: new TraktClientEndpoint<
-      {
-        start_date?: string;
-        days?: number;
-      },
-      TraktApiCommonFilters
-    >({
+    movies: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
       method: HttpMethod.GET,
       url: '/calendars/my/movies/:start_date/:days',
-      opts: {
-        auth: true,
-        extended: ['full'],
-        filters: TraktApiCommonFilterValues,
-        parameters: {
-          path: {
-            start_date: false,
-            days: false,
-          },
-        },
-      },
-      validate: param => {
-        if (param.start_date) TraktApiValidators.date(param.start_date);
-        return true;
-      },
+      opts: { auth: true, ...opts },
+      validate,
     }),
     /**
      * Returns all movies with a DVD release date during the time period specified.
@@ -195,30 +130,11 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases}
      */
-    dvd: new TraktClientEndpoint<
-      {
-        start_date?: string;
-        days?: number;
-      },
-      TraktApiCommonFilters
-    >({
+    dvd: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
       method: HttpMethod.GET,
       url: '/calendars/my/dvd/:start_date/:days',
-      opts: {
-        auth: true,
-        extended: ['full'],
-        filters: TraktApiCommonFilterValues,
-        parameters: {
-          path: {
-            start_date: false,
-            days: false,
-          },
-        },
-      },
-      validate: param => {
-        if (param.start_date) TraktApiValidators.date(param.start_date);
-        return true;
-      },
+      opts: { auth: true, ...opts },
+      validate,
     }),
   },
   all: {
@@ -229,29 +145,11 @@ export const calendars = {
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-shows/get-shows}
      */
     shows: {
-      get: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      get: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/:start_date/:days',
-        opts: {
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts,
+        validate,
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
@@ -259,29 +157,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-new-shows/get-new-shows}
        */
-      new: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      new: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/new/:start_date/:days',
-        opts: {
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts,
+        validate,
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
@@ -289,29 +169,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-season-premieres/get-season-premieres}
        */
-      premieres: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      premieres: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/premieres/:start_date/:days',
-        opts: {
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts,
+        validate,
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
@@ -319,29 +181,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales}
        */
-      finales: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      finales: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/all/finales/:start_date/:days',
-        opts: {
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts,
+        validate,
       }),
       /**
        * Returns all movies with a release date during the time period specified.
@@ -349,29 +193,11 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-movies/get-movies}
        */
-      movies: new TraktClientEndpoint<
-        {
-          start_date?: string;
-          days?: number;
-        },
-        TraktApiCommonFilters
-      >({
+      movies: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
         method: HttpMethod.GET,
         url: '/calendars/all/movies/:start_date/:days',
-        opts: {
-          extended: ['full'],
-          filters: TraktApiCommonFilterValues,
-          parameters: {
-            path: {
-              start_date: false,
-              days: false,
-            },
-          },
-        },
-        validate: param => {
-          if (param.start_date) TraktApiValidators.date(param.start_date);
-          return true;
-        },
+        opts,
+        validate,
       }),
     },
     /**
@@ -380,29 +206,11 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-dvd/get-dvd-releases}
      */
-    dvd: new TraktClientEndpoint<
-      {
-        start_date?: string;
-        days?: number;
-      },
-      TraktApiCommonFilters
-    >({
+    dvd: new TraktClientEndpoint<StartAndDay, TraktApiCommonFilters, typeof TraktApiExtended.Full>({
       method: HttpMethod.GET,
       url: '/calendars/all/dvd/:start_date/:days',
-      opts: {
-        extended: ['full'],
-        filters: TraktApiCommonFilterValues,
-        parameters: {
-          path: {
-            start_date: false,
-            days: false,
-          },
-        },
-      },
-      validate: param => {
-        if (param.start_date) TraktApiValidators.date(param.start_date);
-        return true;
-      },
+      opts,
+      validate,
     }),
   },
-} satisfies ITraktApi;
+};
