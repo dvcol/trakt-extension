@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging -- necessary for infer signature from assign */
 
-import { traktApi } from '../api/trakt-client.endpoints';
+import { traktApi } from '../api/trakt-api.endpoints';
 
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
@@ -8,12 +8,13 @@ import type {
   ITraktApi,
   TraktApiParams,
   TraktApiRequest,
-  TraktApiTemplate,
   TraktClientAuthentication,
   TraktClientAuthenticationRequest,
+  TraktClientEndpoint,
   TraktClientSettings,
 } from '~/models/trakt-client.model';
 
+import { TraktApiExtended, TraktApiHeaders } from '~/models/trakt-client.model';
 import { Client, Config } from '~/settings/traktv.api';
 import { randomHex } from '~/utils/crypto.utils';
 import { HttpMethod } from '~/utils/http.utils';
@@ -21,7 +22,14 @@ import { HttpMethod } from '~/utils/http.utils';
 const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'statusCode' in error;
 
 const handleError = <T>(error: T | Response) => {
-  if (isResponse(error) && error.status === 401) throw Error(error.headers.get('www-authenticate') ?? '');
+  if (!isResponse(error)) throw error;
+
+  if (error.status === 401 && error.headers.has('www-authenticate')) {
+    throw Error(error.headers.get('www-authenticate')!);
+  } else if (error.status === 429 && error.headers.has(TraktApiHeaders.XRatelimit)) {
+    throw new Error(error.headers.get(TraktApiHeaders.XRatelimit)!);
+  }
+
   throw error;
 };
 
@@ -30,22 +38,22 @@ type ITraktEndpoints = typeof traktApi;
 /** Needed to type Object assignment */
 interface TraktApi extends ITraktEndpoints {}
 
-const isTraktApiTemplate = (template: TraktApiTemplate | ITraktApi): template is TraktApiTemplate => 'call' in template;
+const isTraktApiTemplate = (template: TraktClientEndpoint | ITraktApi): template is TraktClientEndpoint => 'call' in template;
 
 /** To allow type extension */
 class TraktApi extends BaseTraktClient implements ITraktEndpoints {
   bindToEndpoint(template: ITraktApi) {
-    const api = { ...template };
+    const api = structuredClone(template);
     Object.entries(api).forEach(([key, value]) => {
-      if (isTraktApiTemplate(value)) (api[key] as TraktApiTemplate).call = (param: TraktApiParams) => this._call(value, param);
+      if (isTraktApiTemplate(value)) (api[key] as TraktClientEndpoint).call = (param: TraktApiParams) => this._call(value, param);
       else api[key] = this.bindToEndpoint(api);
     });
     return api;
   }
 
-  constructor(settings: TraktClientSettings, authentication = {}) {
+  constructor(settings: TraktClientSettings, authentication = {}, api: ITraktApi = traktApi) {
     super(settings, authentication);
-    Object.assign(this, traktApi);
+    Object.assign(this, this.bindToEndpoint(api));
   }
 }
 
@@ -90,8 +98,8 @@ export class TraktClient extends TraktApi {
       init: {
         method: HttpMethod.POST,
         headers: {
-          'User-Agent': this._settings.useragent,
-          'Content-Type': 'application/json',
+          [TraktApiHeaders.UserAgent]: this._settings.useragent,
+          [TraktApiHeaders.ContentType]: 'application/json',
         },
         body: JSON.stringify(auth),
       },
@@ -125,8 +133,8 @@ export class TraktClient extends TraktApi {
       init: {
         method: HttpMethod.POST,
         headers: {
-          'User-Agent': this._settings.useragent,
-          'Content-Type': 'application/json',
+          [TraktApiHeaders.UserAgent]: this._settings.useragent,
+          [TraktApiHeaders.ContentType]: 'application/json',
         },
         body: JSON.stringify({
           token: this._authentication.access_token,
@@ -156,8 +164,8 @@ export class TraktClient extends TraktApi {
       init: {
         method: HttpMethod.POST,
         headers: {
-          'User-Agent': this._settings.useragent,
-          'Content-Type': 'application/json',
+          [TraktApiHeaders.UserAgent]: this._settings.useragent,
+          [TraktApiHeaders.ContentType]: 'application/json',
         },
         body: JSON.stringify(auth),
       },
@@ -254,3 +262,16 @@ export class TraktClient extends TraktApi {
 }
 
 /* eslint-enable @typescript-eslint/no-unsafe-declaration-merging  */
+
+const test = new TraktClient();
+
+test.calendars.my.shows.get
+  .call({
+    days: 12,
+    start_date: '12',
+    extended: TraktApiExtended.Full,
+    filters: {
+      countries: ['test'],
+    },
+  })
+  .then(r => r.json());

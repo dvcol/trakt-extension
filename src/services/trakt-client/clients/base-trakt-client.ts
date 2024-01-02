@@ -1,6 +1,6 @@
-import { TraktApiFilterValues } from '../api/trakt-client.filters';
-
+import type { Primitive, RecursivePrimitiveRecord } from '~/models/primitive.model';
 import type {
+  TraktApiExtends,
   TraktApiParams,
   TraktApiRequest,
   TraktApiResponse,
@@ -9,23 +9,36 @@ import type {
   TraktClientSettings,
 } from '~/models/trakt-client.model';
 
+import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
+
+import { TraktApiHeaders } from '~/models/trakt-client.model';
+
+import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
+
 /**
  * Parses body from {@link TraktApiTemplate} into stringifies {@link BodyInit}
  * @param body
  * @param params
  */
-const parseBody = (body: TraktApiTemplate['body'] = {}, params: TraktApiParams = {}): BodyInit => {
-  const _body = body;
+const parseBody = <
+  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
+  F extends TraktApiFilters = TraktApiFilters,
+  E extends TraktApiExtends = TraktApiExtends,
+>(
+  body: TraktApiTemplate<T, F, E>['body'] = {},
+  params: TraktApiParams<T, F, E>,
+): BodyInit => {
+  const _body: Record<string, unknown> = {};
 
   Object.entries(params).forEach(([key, value]) => {
-    if (key in _body) _body[key] = value;
+    if (key in body) _body[key] = value;
   });
 
-  Object.keys(_body).forEach(key => {
-    if (!_body[key]) delete _body[key];
+  Object.keys(body).forEach(key => {
+    if (body[key] === true && !(key in _body)) throw new Error(`Required field '${key}' is missing in request boyd.`);
   });
 
-  return JSON.stringify({ ..._body });
+  return JSON.stringify(_body);
 };
 
 /**
@@ -46,12 +59,12 @@ const parseResponse = (response: Response): TraktApiResponse => {
 
   const _response: TraktApiResponse = { ...response };
 
-  if (response.headers.has('x-pagination-item-count')) {
+  if (response.headers.has(TraktApiHeaders.XPaginationItemCount)) {
     _response.pagination = {
-      itemCount: Number(response.headers.get('x-pagination-item-count')),
-      pageCount: Number(response.headers.get('x-pagination-page-count')),
-      limit: Number(response.headers.get('x-pagination-limit')),
-      page: Number(response.headers.get('x-pagination-page')),
+      itemCount: Number(response.headers.get(TraktApiHeaders.XPaginationItemCount)),
+      pageCount: Number(response.headers.get(TraktApiHeaders.XPaginationPageCount)),
+      limit: Number(response.headers.get(TraktApiHeaders.XPaginationLimit)),
+      page: Number(response.headers.get(TraktApiHeaders.XPaginationPage)),
     };
   }
 
@@ -82,19 +95,25 @@ export class BaseTraktClient {
     }
   }
 
-  protected async _call(template: TraktApiTemplate, params: TraktApiParams) {
+  protected async _call<
+    T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
+    F extends TraktApiFilters = TraktApiFilters,
+    E extends TraktApiExtends = TraktApiExtends,
+  >(template: TraktApiTemplate<T, F, E>, params: TraktApiParams<T, F, E>) {
     const headers: HeadersInit = {
-      'User-Agent': this._settings.useragent,
-      'Content-Type': 'application/json',
-      'trakt-api-version': '2',
-      'trakt-api-key': this._settings.client_id,
+      [TraktApiHeaders.UserAgent]: this._settings.useragent,
+      [TraktApiHeaders.ContentType]: 'application/json',
+      [TraktApiHeaders.TraktApiVersion]: '2',
+      [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };
 
     if (template.opts.auth && this._authentication.access_token) {
       headers.Authorization = `Bearer ${this._authentication.access_token}`;
-    } else if (template.opts.auth && !this._settings.client_secret) {
+    } else if (template.opts.auth === true && !this._settings.client_secret) {
       throw Error('OAuth required');
     }
+
+    template.validate?.(params);
 
     const req: TraktApiRequest = {
       input: this._parse(template, params),
@@ -119,7 +138,11 @@ export class BaseTraktClient {
    * @param params
    * @private
    */
-  private _parse(template: TraktApiTemplate, params: TraktApiParams = {}): RequestInfo {
+  private _parse<
+    T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
+    F extends TraktApiFilters = TraktApiFilters,
+    E extends TraktApiExtends = TraktApiExtends,
+  >(template: TraktApiTemplate<T, F, E>, params: TraktApiParams<T, F, E>): RequestInfo {
     // fill query parameters i.e. ?variable
     const [pathPart, queryPart] = template.url.split('?');
 
@@ -129,11 +152,16 @@ export class BaseTraktClient {
     if (queryPart) {
       queryParams.forEach((value, key, parent) => {
         const _value = params[key] ?? value;
+        // If a value is found we encode
         if (_value !== undefined && value !== '') {
-          queryParams.set(key, encodeURIComponent(_value));
-        } else if (!template.optional?.includes(key)) {
+          queryParams.set(key, encodeURIComponent(typeof _value === 'string' ? _value : JSON.stringify(_value)));
+        }
+        // If the parameter is required we raise error
+        else if (template.opts.parameters?.query?.[key] === true) {
           throw Error(`Missing mandatory query parameter: ${key}`);
-        } else {
+        }
+        // else we remove the empty field from parameters
+        else {
           parent.delete(key);
         }
       });
@@ -147,7 +175,7 @@ export class BaseTraktClient {
           if (segment.match(/^:/)) {
             const name = segment.substring(1);
             const value = params[name];
-            if (value === undefined && !template.optional?.includes(name)) {
+            if (value === undefined && template.opts.parameters?.path?.[name] === true) {
               throw Error(`Missing mandatory path parameter: ${name}`);
             }
             return value ?? '';
@@ -159,20 +187,31 @@ export class BaseTraktClient {
     }
 
     // Adds Filters query parameters
-    Object.entries(params).forEach(([key, value]) => {
-      if ((TraktApiFilterValues as string[]).includes(key)) {
+    if (template.opts.filters?.length && params.filters) {
+      Object.entries(params.filters as { [s: string]: Primitive | Primitive[] }).forEach(([key, value]) => {
+        if (!isFilter(key) || !template.opts.filters?.includes(key)) {
+          throw Error(`Filter is not supported: ${key}`);
+        }
+
+        if (!TraktApiFilterValidator.validate(key, value, true)) {
+          throw Error(`Filter '${key}' is invalid: ${value}`);
+        }
+
         queryParams.set(key, `${value}`);
-      }
-    });
+      });
+    }
 
     // Pagination
-    if (template.opts.pagination) {
-      if (params.page) queryParams.set('page', `${params.page}`);
-      if (params.limit) queryParams.set('limit', `${params.limit}`);
+    if (template.opts.pagination && params.pagination) {
+      if (params.pagination.page) queryParams.set('page', `${params.pagination.page}`);
+      if (params.pagination.limit) queryParams.set('limit', `${params.pagination.limit}`);
     }
 
     // Extended
     if (template.opts.extended && params.extended) {
+      if (!template.opts.extended.includes(params.extended)) {
+        throw Error(`Invalid value '${params.extended}', extended should be '${template.opts.extended}'`);
+      }
       queryParams.set('extended', `${params.extended}`);
     }
 
