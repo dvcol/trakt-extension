@@ -1,4 +1,3 @@
-import type { Primitive } from '~/models/primitive.model';
 import type {
   TraktApiParams,
   TraktApiRequest,
@@ -7,6 +6,8 @@ import type {
   TraktClientAuthentication,
   TraktClientSettings,
 } from '~/models/trakt-client.model';
+
+import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt-client.model';
 
@@ -197,7 +198,7 @@ export class BaseTraktClient {
       queryParams.set('extended', `${params.extended}`);
     }
 
-    const url = queryParams ? `${path}?${queryParams.toString()}` : path;
+    const url = queryParams?.size ? `${path}?${queryParams.toString()}` : path;
     return [this._settings.endpoint, url].join('/');
   }
 }

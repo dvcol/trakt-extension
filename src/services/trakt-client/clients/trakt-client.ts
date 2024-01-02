@@ -38,20 +38,40 @@ type ITraktEndpoints = typeof traktApi;
 /** Needed to type Object assignment */
 interface TraktApi extends ITraktEndpoints {}
 
-const isTraktApiTemplate = (template: TraktClientEndpoint | ITraktApi): template is TraktClientEndpoint => 'call' in template;
+const isTraktApiTemplate = <T extends TraktApiParams = TraktApiParams>(
+  template: TraktClientEndpoint<T> | ITraktApi<T>,
+): template is TraktClientEndpoint<T> => 'call' in template;
 
 /** To allow type extension */
 class TraktApi extends BaseTraktClient implements ITraktEndpoints {
-  bindToEndpoint(template: ITraktApi) {
-    const api = structuredClone(template);
+  /* eslint-disable @typescript-eslint/no-explicit-any -- generic typing */
+  /**
+   * Binds BaseTraktClient _call instance to the endpoint instance and the call method of the endpoint
+   *
+   * @param template
+   *
+   * @example client.endpoints({ request }) or client.endpoints.call({ request }) for type inference
+   */
+  bindToEndpoint(template: ITraktApi<any>) {
+    const api = { ...template };
     Object.entries(api).forEach(([key, value]) => {
-      if (isTraktApiTemplate(value)) (api[key] as TraktClientEndpoint).call = (param: TraktApiParams) => this._call(value, param);
-      else api[key] = this.bindToEndpoint(api);
+      if (isTraktApiTemplate(value) && isTraktApiTemplate(api[key])) {
+        const fn: TraktClientEndpoint['call'] = param => this._call(value, param);
+        Object.entries(api[key]).forEach(([k, v]) => {
+          Object.defineProperty(fn, k, {
+            value: k === 'call' ? fn : v,
+          });
+        });
+        api[key] = fn as any;
+      } else {
+        api[key] = this.bindToEndpoint(api[key] as ITraktApi);
+      }
     });
     return api;
   }
+  /* eslint-enable @typescript-eslint/no-explicit-any -- generic typing */
 
-  constructor(settings: TraktClientSettings, authentication = {}, api: ITraktApi = traktApi) {
+  constructor(settings: TraktClientSettings, authentication = {}, api = traktApi) {
     super(settings, authentication);
     Object.assign(this, this.bindToEndpoint(api));
   }
@@ -262,103 +282,3 @@ export class TraktClient extends TraktApi {
 }
 
 /* eslint-enable @typescript-eslint/no-unsafe-declaration-merging  */
-
-const test = new TraktClient();
-
-test.certifications
-  .call({
-    type: 'shows',
-  })
-  .then(r => r.json());
-
-test.calendars.my.shows.get
-  .call({
-    start_date: '2009',
-    days: 12,
-    extended: 'full',
-    filters: {
-      query: '12',
-      countries: [12, '13', true],
-    },
-  })
-  .then(r => r.json());
-
-test.checkin.add
-  .call({
-    movie: {
-      title: 'test',
-      ids: {
-        trakt: 28,
-        slug: 'guardians-of-the-galaxy-2014',
-        imdb: 'tt2015381',
-        tmdb: 118340,
-      },
-      year: 206,
-    },
-  })
-  .then(r => r.json());
-
-test.checkin.add
-  .call({
-    episode: {
-      ids: {
-        trakt: 28,
-        imdb: 'tt2015381',
-        tvdb: 123,
-        tmdb: 118340,
-      },
-    },
-    sharing: {
-      mastodon: true,
-      tumblr: false,
-      twitter: false,
-    },
-  })
-  .then(r => r.json());
-
-test.checkin.add
-  .call({
-    episode: {
-      season: 12,
-      number: 123,
-    },
-    show: {
-      title: 'Breaking Bad',
-      year: 2008,
-      ids: {
-        trakt: 1,
-        slug: 'breaking-bad',
-        tvdb: 81189,
-        imdb: 'tt0903747',
-        tmdb: 1396,
-      },
-    },
-  })
-  .then(r => r.json());
-
-test.checkin.add
-  .call({
-    episode: {
-      number_abs: 12,
-    },
-    show: {
-      title: 'Breaking Bad',
-      year: 2008,
-      ids: {
-        trakt: 1,
-        slug: 'breaking-bad',
-        tvdb: 81189,
-        imdb: 'tt0903747',
-        tmdb: 1396,
-      },
-    },
-  })
-  .then(r => r.json());
-
-test.comments.comment.recent
-  .call({
-    pagination: {
-      limit: 12,
-    },
-  })
-  .then(r => r.json());

@@ -1,6 +1,9 @@
-import type { Primitive, RecursiveRecord } from '~/models/primitive.model';
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 import type { HttpMethods } from '~/utils/http.utils';
+
+import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
+
+import { ExtensibleFunction } from '~/utils/typescript.utils';
 
 export type TraktClientPagination = {
   itemCount: number;
@@ -104,7 +107,10 @@ const stubCall = <T extends TraktApiParams = TraktApiParams>(param: T): Promise<
   throw new Error('Endpoint call function not implemented');
 };
 
-export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams> implements TraktApiTemplate<T> {
+export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams>
+  extends ExtensibleFunction<(param: T) => Promise<TraktApiResponse>>
+  implements TraktApiTemplate<T>
+{
   method: HttpMethods;
   url: string;
   opts: TraktApiTemplateOptions;
@@ -113,10 +119,13 @@ export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams> impl
   call: (param: T) => Promise<TraktApiResponse>;
 
   constructor(template: TraktApiTemplate<T>) {
+    super(template.call ?? stubCall);
+
     this.method = template.method;
     this.url = template.url;
     this.opts = template.opts ?? {};
     this.body = template.body;
+
     this.validate = template.validate;
     this.call = template.call ?? stubCall;
   }

@@ -1,4 +1,4 @@
-import type { Primitive } from '~/models/primitive.model';
+import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktEpisodeTypeValues } from '~/models/trakt-episode.model';
 import { TraktShowStatusValues } from '~/models/trakt-show.model';
