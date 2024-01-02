@@ -1,8 +1,6 @@
-import type { TraktApiExtended } from '~/models/trakt-client.model';
+import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
 import type { TraktEpisode, TraktList, TraktMovie, TraktSeason, TraktSharing, TraktShow } from '~/models/trakt-entity.model';
-
-import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 
@@ -192,10 +190,12 @@ export const comments = {
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/replies/get-replies-for-a-comment}
      */
     replies: {
-      get: new TraktClientEndpoint<{
-        /** A specific comment ID. */
-        id: number;
-      }>({
+      get: new TraktClientEndpoint<
+        {
+          /** A specific comment ID. */
+          id: number;
+        } & TraktApiParamsPagination
+      >({
         method: HttpMethod.GET,
         url: '/comments/:id/replies',
         opts: {
@@ -249,9 +249,7 @@ export const comments = {
       {
         /** A specific comment ID. */
         id: number;
-      },
-      TraktApiFilters,
-      typeof TraktApiExtended.Full
+      } & TraktApiParamsExtended<typeof TraktApiExtended.Full>
     >({
       method: HttpMethod.GET,
       url: '/comments/:id/item',
@@ -271,10 +269,12 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/likes/get-all-users-who-liked-a-comment}
      */
-    likes: new TraktClientEndpoint<{
-      /** A specific comment ID. */
-      id: number;
-    }>({
+    likes: new TraktClientEndpoint<
+      {
+        /** A specific comment ID. */
+        id: number;
+      } & TraktApiParamsPagination
+    >({
       method: HttpMethod.GET,
       url: '/comments/:id/likes',
       opts: {
@@ -343,14 +343,17 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/trending/get-trending-comments}
      */
-    trending: new TraktClientEndpoint<{
-      /** The type of the comment: all, reviews or shouts */
-      comment_type?: 'all' | 'reviews' | 'shouts';
-      /** The type of entity: all, movies , shows, seasons, episodes or lists */
-      type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
-      /** To include comment replies or not. */
-      include_replies?: boolean;
-    }>({
+    trending: new TraktClientEndpoint<
+      {
+        /** The type of the comment: all, reviews or shouts */
+        comment_type?: 'all' | 'reviews' | 'shouts';
+        /** The type of entity: all, movies , shows, seasons, episodes or lists */
+        type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
+        /** To include comment replies or not. */
+        include_replies?: boolean;
+      } & TraktApiParamsPagination &
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+    >({
       method: HttpMethod.GET,
       url: '/comments/trending/:comment_type/:type?include_replies=false',
       opts: {
@@ -379,14 +382,17 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/recent/get-recently-created-comments}
      */
-    recent: new TraktClientEndpoint<{
-      /** The type of the comment: all, reviews or shouts */
-      comment_type?: 'all' | 'reviews' | 'shouts';
-      /** The type of entity: all, movies , shows, seasons, episodes or lists */
-      type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
-      /** To include comment replies or not. */
-      include_replies?: boolean;
-    }>({
+    recent: new TraktClientEndpoint<
+      {
+        /** The type of the comment: all, reviews or shouts */
+        comment_type?: 'all' | 'reviews' | 'shouts';
+        /** The type of entity: all, movies , shows, seasons, episodes or lists */
+        type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
+        /** To include comment replies or not. */
+        include_replies?: boolean;
+      } & TraktApiParamsPagination &
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+    >({
       method: HttpMethod.GET,
       url: '/comments/recent/:comment_type/:type?include_replies=false',
       opts: {
@@ -415,14 +421,17 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/updates/get-recently-updated-comments}
      */
-    updates: new TraktClientEndpoint<{
-      /** The type of the comment: all, reviews or shouts */
-      comment_type?: 'all' | 'reviews' | 'shouts';
-      /** The type of entity: all, movies , shows, seasons, episodes or lists */
-      type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
-      /** To include comment replies or not. */
-      include_replies?: boolean;
-    }>({
+    updates: new TraktClientEndpoint<
+      {
+        /** The type of the comment: all, reviews or shouts */
+        comment_type?: 'all' | 'reviews' | 'shouts';
+        /** The type of entity: all, movies , shows, seasons, episodes or lists */
+        type?: 'all' | 'movies' | 'shows' | 'seasons' | 'episodes' | 'lists';
+        /** To include comment replies or not. */
+        include_replies?: boolean;
+      } & TraktApiParamsPagination &
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+    >({
       method: HttpMethod.GET,
       url: '/comments/updates/:comment_type/:type?include_replies=false',
       opts: {

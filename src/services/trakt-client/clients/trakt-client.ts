@@ -276,6 +276,10 @@ test.calendars.my.shows.get
     start_date: '2009',
     days: 12,
     extended: 'full',
+    filters: {
+      query: '12',
+      countries: [12, '13', true],
+    },
   })
   .then(r => r.json());
 
@@ -347,6 +351,14 @@ test.checkin.add
         imdb: 'tt0903747',
         tmdb: 1396,
       },
+    },
+  })
+  .then(r => r.json());
+
+test.comments.comment.recent
+  .call({
+    pagination: {
+      limit: 12,
     },
   })
   .then(r => r.json());

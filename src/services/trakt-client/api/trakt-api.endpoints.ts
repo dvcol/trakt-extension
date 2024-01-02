@@ -1,6 +1,7 @@
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';
 import { checkin } from '~/services/trakt-client/api/endpoints/checkin.endpoint';
+import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
 // TODO: add filter, required and jsdoc
@@ -29,7 +30,7 @@ export const traktApi = {
       },
     },
   }),
-  // comments,
+  comments,
   // lists,
   // movies,
   // people,

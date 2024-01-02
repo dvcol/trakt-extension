@@ -1,6 +1,5 @@
-import type { Primitive, RecursivePrimitiveRecord } from '~/models/primitive.model';
+import type { Primitive } from '~/models/primitive.model';
 import type {
-  TraktApiExtends,
   TraktApiParams,
   TraktApiRequest,
   TraktApiResponse,
@@ -8,8 +7,6 @@ import type {
   TraktClientAuthentication,
   TraktClientSettings,
 } from '~/models/trakt-client.model';
-
-import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
 import { TraktApiHeaders } from '~/models/trakt-client.model';
 
@@ -20,14 +17,7 @@ import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/t
  * @param body
  * @param params
  */
-const parseBody = <
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
-  E extends TraktApiExtends = TraktApiExtends,
->(
-  body: TraktApiTemplate<T, F, E>['body'] = {},
-  params: TraktApiParams<T, F, E>,
-): BodyInit => {
+const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemplate<T>['body'] = {}, params: T): BodyInit => {
   const _body: Record<string, unknown> = {};
 
   Object.entries(params).forEach(([key, value]) => {
@@ -95,11 +85,7 @@ export class BaseTraktClient {
     }
   }
 
-  protected async _call<
-    T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-    F extends TraktApiFilters = TraktApiFilters,
-    E extends TraktApiExtends = TraktApiExtends,
-  >(template: TraktApiTemplate<T, F, E>, params: TraktApiParams<T, F, E>) {
+  protected async _call<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T) {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
       [TraktApiHeaders.ContentType]: 'application/json',
@@ -138,11 +124,7 @@ export class BaseTraktClient {
    * @param params
    * @private
    */
-  private _parse<
-    T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-    F extends TraktApiFilters = TraktApiFilters,
-    E extends TraktApiExtends = TraktApiExtends,
-  >(template: TraktApiTemplate<T, F, E>, params: TraktApiParams<T, F, E>): RequestInfo {
+  private _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): RequestInfo {
     // fill query parameters i.e. ?variable
     const [pathPart, queryPart] = template.url.split('?');
 

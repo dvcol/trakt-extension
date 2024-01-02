@@ -1,4 +1,4 @@
-import type { Primitive, RecursivePrimitiveRecord } from '~/models/primitive.model';
+import type { Primitive, RecursiveRecord } from '~/models/primitive.model';
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 import type { HttpMethods } from '~/utils/http.utils';
 
@@ -44,6 +44,15 @@ export type TraktClientAuthentication = {
   state?: string;
 };
 
+/**
+ * By default, all methods will return minimal info for movies, shows, episodes, people, and users.
+ * Minimal info is typically all you need to match locally cached items and includes the title, year, and ids.
+ * However, you can request different extended levels of information by adding ?extended={level} to the URL.
+ * Send a comma separated string to get multiple types of extended info.
+ *
+ * node: This returns a lot of extra data, so please only use extended parameters if you actually need them!
+ * @see {@link https://trakt.docs.apiary.io/#introduction/extended-info}
+ */
 export const TraktApiExtended = {
   Full: 'full',
   Metadata: 'metadata',
@@ -78,47 +87,32 @@ export type TraktApiTemplateOptions = {
   filters?: TraktApiFilters[];
 };
 
-export type TraktApiTemplate<
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
-  E extends TraktApiExtends = TraktApiExtends,
-> = {
+export type TraktApiTemplate<T extends TraktApiParams = TraktApiParams> = {
   method: HttpMethods;
   url: string;
   opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
   /** Execute the request */
-  call?: (param: TraktApiParams<T, F, E>) => Promise<TraktApiResponse>;
+  call?: (param: T) => Promise<TraktApiResponse>;
   /** Validate the parameters before performing request */
-  validate?: (param: TraktApiParams<T, F, E>) => boolean;
+  validate?: (param: T) => boolean;
 };
 
-const stubCall = <
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
-  E extends TraktApiExtends = TraktApiExtends,
->(
-  param: TraktApiParams<T, F, E>,
-): Promise<TraktApiResponse> => {
+const stubCall = <T extends TraktApiParams = TraktApiParams>(param: T): Promise<TraktApiResponse> => {
   console.error('Endpoint call function not implemented', param);
   throw new Error('Endpoint call function not implemented');
 };
 
-export class TraktClientEndpoint<
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
-  E extends TraktApiExtends = TraktApiExtends,
-> implements TraktApiTemplate<T, F, E>
-{
+export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams> implements TraktApiTemplate<T> {
   method: HttpMethods;
   url: string;
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
-  validate?: (param: TraktApiParams<T, F, E>) => boolean;
-  call: (param: TraktApiParams<T, F, E>) => Promise<TraktApiResponse>;
+  validate?: (param: T) => boolean;
+  call: (param: T) => Promise<TraktApiResponse>;
 
-  constructor(template: TraktApiTemplate<T, F, E>) {
+  constructor(template: TraktApiTemplate<T>) {
     this.method = template.method;
     this.url = template.url;
     this.opts = template.opts ?? {};
@@ -137,25 +131,56 @@ export type TraktApiResponse = Response & {
   pagination?: TraktClientPagination;
 };
 
-export type TraktApiParams<
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
-  E extends TraktApiExtends = TraktApiExtends,
-> = T & {
-  filters?: Partial<Record<F, Primitive | Primitive[]>>;
-  extended?: E;
-  pagination?: {
-    page?: number;
-    limit?: number;
-  };
+/**
+ * Page defaults to 1 and limit to 10.
+ *
+ * @see {@link https://trakt.docs.apiary.io/#introduction/pagination}
+ */
+export type TraktApiPagination = {
+  /** Number of page of results to be returned. (defaults to 1) */
+  page?: number;
+  /** Number of results to return per page. (defaults to 10) */
+  limit?: number;
 };
 
-export type ITraktApi<
-  T extends RecursivePrimitiveRecord = RecursivePrimitiveRecord,
-  F extends TraktApiFilters = TraktApiFilters,
+export type TraktApiParamsFilter<F extends TraktApiFilters = TraktApiFilters, V extends Primitive = Primitive> = {
+  /**
+   * An optional filter to refine query
+   *
+   * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+   */
+  filters?: Partial<Record<F, V | V[]>>;
+};
+
+export type TraktApiParamsExtended<E extends TraktApiExtends = TraktApiExtends> = {
+  /**
+   * Increases the verbosity of the response.
+   *
+   * note: This returns a lot of extra data, so please only use extended parameters if you actually need them!
+   *
+   * @see {@link https://trakt.docs.apiary.io/#introduction/extended-info}
+   */
+  extended?: E;
+};
+
+export type TraktApiParamsPagination = {
+  /**
+   * An empty pagination will load 1 page of 10 items by default on paginated endpoints.
+   * An empty pagination on optionally paginated endpoints will return the full response.
+   *
+   * @see {@link https://trakt.docs.apiary.io/#introduction/pagination}
+   */
+  pagination?: TraktApiPagination;
+};
+
+export type TraktApiParams<
+  T extends RecursiveRecord = RecursiveRecord,
   E extends TraktApiExtends = TraktApiExtends,
-> = {
-  [key: string]: TraktClientEndpoint<T, F, E> | ITraktApi<T, F, E>;
+  F extends TraktApiFilters = TraktApiFilters,
+> = T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & TraktApiParamsPagination;
+
+export type ITraktApi<T extends TraktApiParams = TraktApiParams> = {
+  [key: string]: TraktClientEndpoint<T> | ITraktApi<T>;
 };
 
 export const TraktApiHeaders = {

@@ -1,7 +1,6 @@
 export type Primitive = string | boolean | number;
 export type PrimitiveRecord = Record<string, Primitive>;
-export type RecursivePrimitiveRecord =
-  | PrimitiveRecord
-  | {
-      [key: string]: Primitive | PrimitiveRecord | RecursivePrimitiveRecord;
-    };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
+export type RecursiveRecord<T = any> = {
+  [key: string]: T | RecursiveRecord<T>;
+};
