@@ -90,36 +90,36 @@ export type TraktApiTemplateOptions = {
   filters?: TraktApiFilters[];
 };
 
-export type TraktApiTemplate<T extends TraktApiParams = TraktApiParams> = {
+export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams, R = unknown> = {
   method: HttpMethods;
   url: string;
   opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
   /** Execute the request */
-  call?: (param: T) => Promise<TraktApiResponse>;
+  call?: (param: P) => Promise<TraktApiResponse<R>>;
   /** Validate the parameters before performing request */
-  validate?: (param: T) => boolean;
+  validate?: (param: P) => boolean;
 };
 
-const stubCall = <T extends TraktApiParams = TraktApiParams>(param: T): Promise<TraktApiResponse> => {
+const stubCall = <P extends TraktApiParams = TraktApiParams, R = unknown>(param: P): Promise<TraktApiResponse<R>> => {
   console.error('Endpoint call function not implemented', param);
   throw new Error('Endpoint call function not implemented');
 };
 
-export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams>
-  extends ExtensibleFunction<(param: T) => Promise<TraktApiResponse>>
-  implements TraktApiTemplate<T>
+export class TraktClientEndpoint<P extends TraktApiParams = TraktApiParams, R = unknown>
+  extends ExtensibleFunction<(param: P) => Promise<TraktApiResponse<R>>>
+  implements TraktApiTemplate<P, R>
 {
   method: HttpMethods;
   url: string;
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
-  validate?: (param: T) => boolean;
-  call: (param: T) => Promise<TraktApiResponse>;
+  validate?: (param: P) => boolean;
+  call: (param: P) => Promise<TraktApiResponse<R>>;
 
-  constructor(template: TraktApiTemplate<T>) {
-    super(template.call ?? stubCall);
+  constructor(template: TraktApiTemplate<P, R>) {
+    super(template.call ?? stubCall<P, R>);
 
     this.method = template.method;
     this.url = template.url;
@@ -127,7 +127,7 @@ export class TraktClientEndpoint<T extends TraktApiParams = TraktApiParams>
     this.body = template.body;
 
     this.validate = template.validate;
-    this.call = template.call ?? stubCall;
+    this.call = template.call ?? stubCall<P, R>;
   }
 }
 
@@ -136,7 +136,11 @@ export type TraktApiRequest = {
   init: RequestInit & { headers: RequestInit['headers'] };
 };
 
-export type TraktApiResponse = Response & {
+type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
+
+type ResponseOrTypedResponse<T> = T extends never ? Response : TypedResponse<T>;
+
+export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
   pagination?: TraktClientPagination;
 };
 

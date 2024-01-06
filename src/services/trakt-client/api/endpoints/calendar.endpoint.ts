@@ -1,3 +1,4 @@
+import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt-calendar.model';
 import type { TraktApiExtended, TraktApiParams, TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt-client.model';
 
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
@@ -61,7 +62,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-shows/get-shows}
        */
-      get: new TraktClientEndpoint<CalendarParams>({
+      get: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/:start_date/:days',
         opts: { auth: true, ...opts },
@@ -75,7 +76,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-new-shows/get-new-shows}
        */
-      new: new TraktClientEndpoint<CalendarParams>({
+      new: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/new/:start_date/:days',
         opts: { auth: true, ...opts },
@@ -89,7 +90,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-season-premieres/get-season-premieres}
        */
-      premieres: new TraktClientEndpoint<CalendarParams>({
+      premieres: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/premieres/:start_date/:days',
         opts: { auth: true, ...opts },
@@ -103,7 +104,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-finales/get-finales}
        */
-      finales: new TraktClientEndpoint<CalendarParams>({
+      finales: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/my/shows/finales/:start_date/:days',
         opts: { auth: true, ...opts },
@@ -118,7 +119,7 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-movies/get-movies}
      */
-    movies: new TraktClientEndpoint<CalendarParams>({
+    movies: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,
       url: '/calendars/my/movies/:start_date/:days',
       opts: { auth: true, ...opts },
@@ -132,7 +133,7 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases}
      */
-    dvd: new TraktClientEndpoint<CalendarParams>({
+    dvd: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,
       url: '/calendars/my/dvd/:start_date/:days',
       opts: { auth: true, ...opts },
@@ -147,7 +148,7 @@ export const calendars = {
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-shows/get-shows}
      */
     shows: {
-      get: new TraktClientEndpoint<CalendarParams>({
+      get: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/:start_date/:days',
         opts,
@@ -159,7 +160,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-new-shows/get-new-shows}
        */
-      new: new TraktClientEndpoint<CalendarParams>({
+      new: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/new/:start_date/:days',
         opts,
@@ -171,7 +172,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-season-premieres/get-season-premieres}
        */
-      premieres: new TraktClientEndpoint<CalendarParams>({
+      premieres: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/all/shows/premieres/:start_date/:days',
         opts,
@@ -183,7 +184,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales}
        */
-      finales: new TraktClientEndpoint<CalendarParams>({
+      finales: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
         url: '/calendars/all/finales/:start_date/:days',
         opts,
@@ -195,7 +196,7 @@ export const calendars = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-movies/get-movies}
        */
-      movies: new TraktClientEndpoint<CalendarParams>({
+      movies: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
         method: HttpMethod.GET,
         url: '/calendars/all/movies/:start_date/:days',
         opts,
@@ -208,7 +209,7 @@ export const calendars = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-dvd/get-dvd-releases}
      */
-    dvd: new TraktClientEndpoint<CalendarParams>({
+    dvd: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,
       url: '/calendars/all/dvd/:start_date/:days',
       opts,

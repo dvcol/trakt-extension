@@ -10,3 +10,15 @@ export const TraktEpisodeType = {
 
 export type TraktEpisodeTypes = (typeof TraktEpisodeType)[keyof typeof TraktEpisodeType];
 export const TraktEpisodeTypeValues = Object.values(TraktEpisodeType);
+
+export type TraktEpisode = {
+  season: number;
+  number: number;
+  title: string;
+  ids: {
+    trakt: number;
+    tvdb: number;
+    imdb: string;
+    tmdb: number;
+  };
+};

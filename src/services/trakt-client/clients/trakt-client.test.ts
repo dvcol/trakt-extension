@@ -42,14 +42,14 @@ describe('traktClient', () => {
     });
   });
 
-  it.skip('test', () => {
-    test.certifications
+  it.skip('test', async () => {
+    await test.certifications
       .call({
         type: 'shows',
       })
       .then(r => r.json());
 
-    test.calendars.my.shows.get
+    await test.calendars.my.shows.get
       .call({
         start_date: '2009',
         days: 12,
@@ -61,7 +61,7 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    test.checkin.add
+    await test.checkin.add
       .call({
         movie: {
           title: 'test',
@@ -76,7 +76,7 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    test.checkin.add
+    await test.checkin.add
       .call({
         episode: {
           ids: {
@@ -94,7 +94,7 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    test.checkin.add
+    await test.checkin.add
       .call({
         episode: {
           season: 12,
@@ -114,7 +114,7 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    test.checkin.add
+    await test.checkin.add
       .call({
         episode: {
           number_abs: 12,
@@ -133,7 +133,7 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    test.comments.comment.recent
+    await test.comments.comment.recent
       .call({
         pagination: {
           limit: 12,

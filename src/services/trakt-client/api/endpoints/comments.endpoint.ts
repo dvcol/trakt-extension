@@ -1,6 +1,14 @@
 import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
-import type { TraktEpisode, TraktList, TraktMovie, TraktSeason, TraktSharing, TraktShow } from '~/models/trakt-entity.model';
+import type { TraktComment, TraktCommentItem, TraktCommentMedia } from '~/models/trakt-comment.model';
+import type { TraktSharing } from '~/models/trakt-entity.model';
+
+import type { TraktEpisode } from '~/models/trakt-episode.model';
+import type { TraktLike } from '~/models/trakt-like.model';
+import type { TraktList } from '~/models/trakt-list.model';
+import type { TraktMovie } from '~/models/trakt-movie.model';
+import type { TraktSeason } from '~/models/trakt-season.model';
+import type { TraktShow } from '~/models/trakt-show.model';
 
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 
@@ -87,7 +95,8 @@ export const comments = {
             /** List to comment */
             list: Pick<TraktList, 'ids'>;
           }
-      )
+      ),
+      TraktComment
     >({
       method: HttpMethod.POST,
       url: '/comments',
@@ -114,10 +123,13 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/get-a-comment-or-reply}
      */
-    get: new TraktClientEndpoint<{
-      /** A specific comment ID. */
-      id: number;
-    }>({
+    get: new TraktClientEndpoint<
+      {
+        /** A specific comment ID. */
+        id: number;
+      },
+      TraktComment
+    >({
       method: HttpMethod.GET,
       url: '/comments/:id',
       opts: {
@@ -137,10 +149,13 @@ export const comments = {
      *
      * @see {@link https://trakt.docs.apiary.io/#reference/comments/comment/update-a-comment-or-reply}
      */
-    update: new TraktClientEndpoint<{
-      /** A specific comment ID. */
-      id: number;
-    }>({
+    update: new TraktClientEndpoint<
+      {
+        /** A specific comment ID. */
+        id: number;
+      },
+      TraktComment
+    >({
       method: HttpMethod.PUT,
       url: '/comments/:id',
       opts: {
@@ -194,7 +209,8 @@ export const comments = {
         {
           /** A specific comment ID. */
           id: number;
-        } & TraktApiParamsPagination
+        } & TraktApiParamsPagination,
+        TraktComment[]
       >({
         method: HttpMethod.GET,
         url: '/comments/:id/replies',
@@ -213,14 +229,17 @@ export const comments = {
        *
        * @see {@link https://trakt.docs.apiary.io/#reference/comments/comment/post-a-reply-for-a-comment}
        */
-      add: new TraktClientEndpoint<{
-        /** A specific comment ID. */
-        id: number;
-        /** Text for the comment. */
-        comment: string;
-        /** Is this a spoiler? Defaults to false */
-        spoiler?: boolean;
-      }>({
+      add: new TraktClientEndpoint<
+        {
+          /** A specific comment ID. */
+          id: number;
+          /** Text for the comment. */
+          comment: string;
+          /** Is this a spoiler? Defaults to false */
+          spoiler?: boolean;
+        },
+        TraktComment
+      >({
         method: HttpMethod.POST,
         url: '/comments/:id/replies',
         opts: {
@@ -249,7 +268,8 @@ export const comments = {
       {
         /** A specific comment ID. */
         id: number;
-      } & TraktApiParamsExtended<typeof TraktApiExtended.Full>
+      } & TraktApiParamsExtended<typeof TraktApiExtended.Full>,
+      TraktCommentMedia
     >({
       method: HttpMethod.GET,
       url: '/comments/:id/item',
@@ -273,7 +293,8 @@ export const comments = {
       {
         /** A specific comment ID. */
         id: number;
-      } & TraktApiParamsPagination
+      } & TraktApiParamsPagination,
+      TraktLike[]
     >({
       method: HttpMethod.GET,
       url: '/comments/:id/likes',
@@ -352,7 +373,8 @@ export const comments = {
         /** To include comment replies or not. */
         include_replies?: boolean;
       } & TraktApiParamsPagination &
-        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>,
+      TraktCommentItem[]
     >({
       method: HttpMethod.GET,
       url: '/comments/trending/:comment_type/:type?include_replies=false',
@@ -391,7 +413,8 @@ export const comments = {
         /** To include comment replies or not. */
         include_replies?: boolean;
       } & TraktApiParamsPagination &
-        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>,
+      TraktCommentItem[]
     >({
       method: HttpMethod.GET,
       url: '/comments/recent/:comment_type/:type?include_replies=false',
@@ -430,7 +453,8 @@ export const comments = {
         /** To include comment replies or not. */
         include_replies?: boolean;
       } & TraktApiParamsPagination &
-        TraktApiParamsExtended<typeof TraktApiExtended.Full>
+        TraktApiParamsExtended<typeof TraktApiExtended.Full>,
+      TraktCommentItem[]
     >({
       method: HttpMethod.GET,
       url: '/comments/updates/:comment_type/:type?include_replies=false',

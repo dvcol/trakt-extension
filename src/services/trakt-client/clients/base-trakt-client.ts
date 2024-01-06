@@ -86,7 +86,10 @@ export class BaseTraktClient {
     }
   }
 
-  protected async _call<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T) {
+  protected async _call<P extends TraktApiParams = TraktApiParams, R = unknown>(
+    template: TraktApiTemplate<P>,
+    params: P,
+  ): Promise<TraktApiResponse<R>> {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
       [TraktApiHeaders.ContentType]: 'application/json',
@@ -116,7 +119,7 @@ export class BaseTraktClient {
 
     this.debug(req);
     const response = await fetch(req.input, req.init);
-    return parseResponse(response);
+    return parseResponse(response) as TraktApiResponse<R>;
   }
 
   /**

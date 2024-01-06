@@ -1,4 +1,9 @@
-import type { TraktEpisode, TraktMovie, TraktSharing, TraktShow } from '~/models/trakt-entity.model';
+import type { TraktCheckedError, TraktCheckin } from '~/models/trakt-checkin.model';
+import type { TraktSharing } from '~/models/trakt-entity.model';
+
+import type { TraktEpisode } from '~/models/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt-movie.model';
+import type { TraktShow } from '~/models/trakt-show.model';
 
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 
@@ -50,9 +55,10 @@ export const checkin = {
       | {
           show: TraktShow;
           /** Episode to be checked-in. If no traktv ids is provided, either episode's season & number or number_abs is required */
-          episode: Partial<TraktEpisode> & (Pick<TraktEpisode, 'season' | 'number'> | Pick<TraktEpisode, 'number_abs'>);
+          episode: Partial<TraktEpisode> & (Pick<TraktEpisode, 'season' | 'number'> | { number_abs: number });
         }
-    )
+    ),
+    TraktCheckin | TraktCheckedError
   >({
     method: HttpMethod.POST,
     url: '/checkin',
