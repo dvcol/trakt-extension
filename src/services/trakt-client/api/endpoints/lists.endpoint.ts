@@ -10,7 +10,7 @@ export const lists = {
    * @pagination true
    * @emoji true
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/languages/list}
+   * @see [list]{@link https://trakt.docs.apiary.io/#reference/languages/list}
    */
   trending: new TraktClientEndpoint<TraktApiParamsPagination>({
     method: HttpMethod.GET,
@@ -21,7 +21,7 @@ export const lists = {
     },
   }),
   /**
-   * @see {@link https://trakt.docs.apiary.io/#reference/lists/popular}
+   * @see [popular]{@link https://trakt.docs.apiary.io/#reference/lists/popular}
    */
   popular: {
     opts: {
@@ -33,7 +33,7 @@ export const lists = {
     call,
   },
   /**
-   * @see {@link https://trakt.docs.apiary.io/#reference/lists/list}
+   * @see [list]{@link https://trakt.docs.apiary.io/#reference/lists/list}
    */
   list: {
     opts: {},
@@ -43,7 +43,7 @@ export const lists = {
     call,
   },
   /**
-   * @see {@link https://trakt.docs.apiary.io/#reference/lists/list-likes}
+   * @see [list-likes]{@link https://trakt.docs.apiary.io/#reference/lists/list-likes}
    */
   likes: {
     opts: {
@@ -56,7 +56,7 @@ export const lists = {
   },
   like: {
     /**
-     * @see {@link https://trakt.docs.apiary.io/#reference/lists/list-like/like-a-list}
+     * @see [like-a-list]{@link https://trakt.docs.apiary.io/#reference/lists/list-like/like-a-list}
      */
     add: {
       opts: {
@@ -68,7 +68,7 @@ export const lists = {
       call,
     },
     /**
-     * @see {@link https://trakt.docs.apiary.io/#reference/lists/list-like/remove-like-on-a-list}
+     * @see [remove-like-on-a-list]{@link https://trakt.docs.apiary.io/#reference/lists/list-like/remove-like-on-a-list}
      */
     remove: {
       opts: {
@@ -81,7 +81,7 @@ export const lists = {
     },
   },
   /**
-   * @see {@link https://trakt.docs.apiary.io/#reference/lists/list-items}
+   * @see [list-items]{@link https://trakt.docs.apiary.io/#reference/lists/list-items}
    */
   items: {
     opts: {
@@ -94,7 +94,7 @@ export const lists = {
     call,
   },
   /**
-   * @see {@link https://trakt.docs.apiary.io/#reference/lists/list-comments}
+   * @see [list-comments]{@link https://trakt.docs.apiary.io/#reference/lists/list-comments}
    */
   comments: {
     opts: {

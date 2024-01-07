@@ -27,7 +27,7 @@ export type TraktCheckin<T extends 'any' | 'movie' | 'show' | 'episode' = 'any'>
 /**
  * Error when there is already a checkin in progress. (code 409)
  */
-export type TraktCheckedError = {
+export type TraktCheckinError = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   expires_at: '2014-10-15T22:21:29.000Z';
 };

@@ -13,38 +13,18 @@ export type TraktClientPagination = {
 };
 
 export type TraktClientSettings = {
+  /** Get this from your app settings. */
   client_id: string;
+  /** Get this from your app settings. */
   client_secret: string;
+  /** URI specified in your app settings. */
   redirect_uri: string;
+  /** The domain name (i.e. https://api.trakt.tv) */
   endpoint: string;
+  /** The consumer client identifier */
   useragent: string;
-  pagination?: boolean;
+  /** Enable/disables debug logs */
   debug?: boolean;
-};
-
-type TraktClientBaseAuthenticationRequest = {
-  client_id: string;
-  client_secret: string;
-  redirect_uri?: string;
-};
-
-export type TraktClientCodeAuthenticationRequest = TraktClientBaseAuthenticationRequest & {
-  code: string;
-  grant_type?: 'authorization_code';
-};
-
-export type TraktClientRefreshAuthenticationRequest = TraktClientBaseAuthenticationRequest & {
-  refresh_token: string;
-  grant_type?: 'refresh_token';
-};
-
-export type TraktClientAuthenticationRequest = TraktClientCodeAuthenticationRequest | TraktClientRefreshAuthenticationRequest;
-
-export type TraktClientAuthentication = {
-  refresh_token?: string;
-  access_token?: string;
-  expires?: number;
-  state?: string;
 };
 
 /**
@@ -54,7 +34,7 @@ export type TraktClientAuthentication = {
  * Send a comma separated string to get multiple types of extended info.
  *
  * node: This returns a lot of extra data, so please only use extended parameters if you actually need them!
- * @see {@link https://trakt.docs.apiary.io/#introduction/extended-info}
+ * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
  */
 export const TraktApiExtended = {
   Full: 'full',
@@ -147,7 +127,7 @@ export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
 /**
  * Page defaults to 1 and limit to 10.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/pagination}
+ * @see [pagination]{@link https://trakt.docs.apiary.io/#introduction/pagination}
  */
 export type TraktApiPagination = {
   /** Number of page of results to be returned. (defaults to 1) */
@@ -160,7 +140,7 @@ export type TraktApiParamsFilter<F extends TraktApiFilters = TraktApiFilters, V 
   /**
    * An optional filter to refine query
    *
-   * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+   * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
    */
   filters?: Partial<Record<F, V | V[]>>;
 };
@@ -169,9 +149,9 @@ export type TraktApiParamsExtended<E extends TraktApiExtends = TraktApiExtends> 
   /**
    * Increases the verbosity of the response.
    *
-   * note: This returns a lot of extra data, so please only use extended parameters if you actually need them!
+   * Note: This returns a lot of extra data, so please only use extended parameters if you actually need them!
    *
-   * @see {@link https://trakt.docs.apiary.io/#introduction/extended-info}
+   * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
    */
   extended?: E;
 };
@@ -181,7 +161,7 @@ export type TraktApiParamsPagination = {
    * An empty pagination will load 1 page of 10 items by default on paginated endpoints.
    * An empty pagination on optionally paginated endpoints will return the full response.
    *
-   * @see {@link https://trakt.docs.apiary.io/#introduction/pagination}
+   * @see [pagination]{@link https://trakt.docs.apiary.io/#introduction/pagination}
    */
   pagination?: TraktApiPagination;
 };

@@ -5,19 +5,19 @@ import { traktApi } from '../api/trakt-api.endpoints';
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
 import type {
-  ITraktApi,
-  TraktApiParams,
-  TraktApiRequest,
+  TraktAuthentication,
+  TraktAuthenticationAuthorizeRequest,
+  TraktAuthenticationCodeRequest,
+  TraktAuthenticationRefreshRequest,
+  TraktAuthenticationRevokeRequest,
   TraktClientAuthentication,
-  TraktClientAuthenticationRequest,
-  TraktClientEndpoint,
-  TraktClientSettings,
-} from '~/models/trakt-client.model';
+  TraktDeviceAuthentication,
+} from '~/models/trakt-authentication.model';
+import type { ITraktApi, TraktApiParams, TraktApiResponse, TraktClientEndpoint, TraktClientSettings } from '~/models/trakt-client.model';
 
 import { TraktApiHeaders } from '~/models/trakt-client.model';
 import { Client, Config } from '~/settings/traktv.api';
 import { randomHex } from '~/utils/crypto.utils';
-import { HttpMethod } from '~/utils/http.utils';
 
 const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'statusCode' in error;
 
@@ -78,15 +78,6 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
 }
 
 export class TraktClient extends TraktApi {
-  get authentication(): TraktClientAuthentication {
-    return {
-      access_token: this._authentication.access_token,
-      refresh_token: this._authentication.refresh_token,
-      expires: this._authentication.expires,
-      state: this._authentication.state,
-    };
-  }
-
   constructor({
     client_id = Client.ID,
     client_secret = Client.Secret,
@@ -95,7 +86,6 @@ export class TraktClient extends TraktApi {
     useragent = Config.UserAgent,
     endpoint = Config.TraktEndpoint,
     debug,
-    pagination,
   }: Partial<TraktClientSettings> = {}) {
     super({
       client_id,
@@ -104,33 +94,29 @@ export class TraktClient extends TraktApi {
       useragent,
       endpoint,
       debug,
-      pagination,
     });
   }
 
   /**
    * Exchange oauth token to authenticate client's calls
-   * @param auth
+   * @param request
    */
-  private async _exchange(auth: TraktClientAuthenticationRequest) {
-    const req: TraktApiRequest = {
-      input: `${this._settings.endpoint}/oauth/token`,
-      init: {
-        method: HttpMethod.POST,
-        headers: {
-          [TraktApiHeaders.UserAgent]: this._settings.useragent,
-          [TraktApiHeaders.ContentType]: 'application/json',
-        },
-        body: JSON.stringify(auth),
-      },
+  private async _exchange(request: Pick<TraktAuthenticationCodeRequest, 'code'> | Pick<TraktAuthenticationRefreshRequest, 'refresh_token'>) {
+    const _request: TraktAuthenticationCodeRequest | TraktAuthenticationRefreshRequest = {
+      client_id: this._settings.client_id,
+      client_secret: this._settings.client_secret,
+      redirect_uri: this._settings.redirect_uri,
+      grant_type: 'code' in request ? 'authorization_code' : 'refresh_token',
+      ...request,
     };
 
-    super.debug(req);
-
     try {
-      const response = await fetch(req.input, req.init);
-
-      isResponseOk(response);
+      let response: TraktApiResponse<TraktAuthentication>;
+      if ('code' in _request) {
+        response = await this.authentication.oAuth.token.code.call(_request);
+      } else {
+        response = await this.authentication.oAuth.token.refresh.call(_request);
+      }
 
       const body = await response.json();
 
@@ -146,27 +132,16 @@ export class TraktClient extends TraktApi {
 
   /**
    * Revoke current authentication
+   * @param request
    */
-  private async _revoke() {
-    const req: TraktApiRequest = {
-      input: `${this._settings.endpoint}/oauth/revoke`,
-      init: {
-        method: HttpMethod.POST,
-        headers: {
-          [TraktApiHeaders.UserAgent]: this._settings.useragent,
-          [TraktApiHeaders.ContentType]: 'application/json',
-        },
-        body: JSON.stringify({
-          token: this._authentication.access_token,
-          client_id: this._settings.client_id,
-          client_secret: this._settings.client_secret,
-        }),
-      },
-    };
-
-    super.debug(req);
-
-    const response = await fetch(req.input, req.init);
+  private async _revoke(
+    request: TraktAuthenticationRevokeRequest = {
+      token: this._authentication.access_token,
+      client_id: this._settings.client_id,
+      client_secret: this._settings.client_secret,
+    },
+  ) {
+    const response = await this.authentication.oAuth.revoke.call(request);
 
     isResponseOk(response);
 
@@ -175,27 +150,22 @@ export class TraktClient extends TraktApi {
 
   /**
    * Get remember device code to paste on login screen
-   * @param auth
-   * @param mode the type of code (i.e. code or token)
+   * @param code
    */
-  private async _deviceCode(auth: Partial<TraktClientAuthenticationRequest>, mode: 'code' | 'token' = 'code' in auth ? 'token' : 'code') {
-    const req: TraktApiRequest = {
-      input: `${this._settings.endpoint}/oauth/device/${mode}`,
-      init: {
-        method: HttpMethod.POST,
-        headers: {
-          [TraktApiHeaders.UserAgent]: this._settings.useragent,
-          [TraktApiHeaders.ContentType]: 'application/json',
-        },
-        body: JSON.stringify(auth),
-      },
-    };
-
-    super.debug(req);
-
+  private async _device(code?: string) {
     try {
-      const response = await fetch(req.input, req.init);
-      isResponseOk(response);
+      let response: TraktApiResponse<TraktAuthentication | TraktDeviceAuthentication>;
+      if (code) {
+        response = await this.authentication.device.token.call({
+          client_id: this._settings.client_id,
+          client_secret: this._settings.client_secret,
+          code,
+        });
+      } else {
+        response = await this.authentication.device.code.call({
+          client_id: this._settings.client_id,
+        });
+      }
       return response.json();
     } catch (error) {
       handleError(error);
@@ -203,42 +173,42 @@ export class TraktClient extends TraktApi {
   }
 
   /**
-   * Get authentication url for browsers
+   * Get authentication codes for devices
    */
-  getUrl() {
-    this._authentication.state = randomHex();
-    // Replace 'api' from the api_url to get the top level trakt domain
-    const base_url = this._settings.endpoint.replace(/api\W/, '');
-    return `${base_url}/oauth/authorize?response_type=code&client_id=${this._settings.client_id}&redirect_uri=${this._settings.redirect_uri}&state=${this._authentication.state}`;
+  deviceGetCode() {
+    return this._device({ client_id: this._settings.client_id });
   }
 
   /**
-   * Verify code; optional state
-   * @param code
-   * @param state
+   * Poll with authentication code
    */
-  exchangeCode(code: string, state: string) {
-    if (state && state !== this._authentication.state) throw Error('Invalid CSRF (State)');
+  devicePollToken(codes: TraktDeviceAuthentication) {
+    // TODO polling logic
+    return this._device(codes.device_code);
+  }
 
-    return this._exchange({
-      code,
+  /**
+   * Get authentication url for browsers
+   */
+  authorizeUrl(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> = {}) {
+    this._authentication.state = request.state ?? randomHex();
+    return this.authentication.oAuth.authorize.call({
+      response_type: 'code',
       client_id: this._settings.client_id,
-      client_secret: this._settings.client_secret,
       redirect_uri: this._settings.redirect_uri,
-      grant_type: 'authorization_code',
+      state: this._authentication.state,
+      ...request,
     });
   }
 
   /**
-   * Get authentication codes for devices
+   * Verify code. (optional state)
+   * @param code
+   * @param state
    */
-  getCodes() {
-    return this._deviceCode(
-      {
-        client_id: this._settings.client_id,
-      },
-      'code',
-    );
+  exchangeCode(code: string, state?: string) {
+    if (state && state !== this._authentication.state) throw Error('Invalid CSRF (State)');
+    return this._exchange({ code });
   }
 
   /**
@@ -248,13 +218,16 @@ export class TraktClient extends TraktApi {
     if (!this._authentication.refresh_token) {
       throw new Error('No refresh token found.');
     }
-    return this._exchange({
-      refresh_token: this._authentication.refresh_token,
-      client_id: this._settings.client_id,
-      client_secret: this._settings.client_secret,
-      redirect_uri: this._settings.redirect_uri,
-      grant_type: 'refresh_token',
-    });
+    return this._exchange({ refresh_token: this._authentication.refresh_token });
+  }
+  /**
+   * Revoke authentication
+   */
+  async revokeAuthentication(): Promise<void> {
+    if (this.auth.access_token) {
+      await this._revoke();
+      this._authentication = {};
+    }
   }
 
   /**
@@ -262,22 +235,12 @@ export class TraktClient extends TraktApi {
    * @param auth
    */
   async importAuthentication(auth: TraktClientAuthentication): Promise<TraktClientAuthentication> {
-    this.authentication.access_token = auth.access_token;
-    this.authentication.expires = auth.expires;
-    this.authentication.refresh_token = auth.refresh_token;
+    this.auth.access_token = auth.access_token;
+    this.auth.expires = auth.expires;
+    this.auth.refresh_token = auth.refresh_token;
 
     if (auth.expires && auth.expires < Date.now()) await this.refreshToken();
-    return this.authentication;
-  }
-
-  /**
-   * Revoke authentication
-   */
-  async revokeAuthentication(): Promise<void> {
-    if (this.authentication.access_token) {
-      await this._revoke();
-      this._authentication = {};
-    }
+    return this.auth;
   }
 }
 

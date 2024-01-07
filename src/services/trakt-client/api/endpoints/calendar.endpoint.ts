@@ -49,7 +49,7 @@ const validate: TraktApiTemplate<CalendarParams>['validate'] = param => {
  * The my calendar displays episodes for all shows that have been watched, collected, or watchlisted plus individual episodes on the watchlist.
  * It will remove any shows that have been hidden from the calendar. The all calendar displays info for all shows airing during the specified period.
  *
- * @see {@link https://trakt.docs.apiary.io/#reference/calendars}
+ * @see [calendars]{@link https://trakt.docs.apiary.io/#reference/calendars}
  */
 export const calendars = {
   my: {
@@ -60,7 +60,7 @@ export const calendars = {
        * @extended full
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-shows/get-shows}
+       * @see [get-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/my-shows/get-shows}
        */
       get: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -74,7 +74,7 @@ export const calendars = {
        * @extended full
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-new-shows/get-new-shows}
+       * @see [get-new-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/my-new-shows/get-new-shows}
        */
       new: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -88,7 +88,7 @@ export const calendars = {
        * @extended full
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-season-premieres/get-season-premieres}
+       * @see [get-season-premieres]{@link https://trakt.docs.apiary.io/#reference/calendars/my-season-premieres/get-season-premieres}
        */
       premieres: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -102,7 +102,7 @@ export const calendars = {
        * @extended full
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-finales/get-finales}
+       * @see [get-finales]{@link https://trakt.docs.apiary.io/#reference/calendars/my-finales/get-finales}
        */
       finales: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -117,7 +117,7 @@ export const calendars = {
      * @extended full
      * @filters common
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-movies/get-movies}
+     * @see [get-movies]{@link https://trakt.docs.apiary.io/#reference/calendars/my-movies/get-movies}
      */
     movies: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,
@@ -131,7 +131,7 @@ export const calendars = {
      * @extended full
      * @filters common
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases}
+     * @see [get-dvd-releases]{@link https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases}
      */
     dvd: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,
@@ -145,7 +145,7 @@ export const calendars = {
      * Returns all shows airing during the time period specified.
      * @filters common
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-shows/get-shows}
+     * @see [get-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/all-shows/get-shows}
      */
     shows: {
       get: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
@@ -158,7 +158,7 @@ export const calendars = {
        * Returns all new show premieres (series_premiere) airing during the time period specified.
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-new-shows/get-new-shows}
+       * @see [get-new-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/all-new-shows/get-new-shows}
        */
       new: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -170,7 +170,7 @@ export const calendars = {
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-season-premieres/get-season-premieres}
+       * @see [get-season-premieres]{@link https://trakt.docs.apiary.io/#reference/calendars/all-season-premieres/get-season-premieres}
        */
       premieres: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -182,7 +182,7 @@ export const calendars = {
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales}
+       * @see [get-finales]{@link https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales}
        */
       finales: new TraktClientEndpoint<CalendarParams, TraktCalendarShow[]>({
         method: HttpMethod.GET,
@@ -194,7 +194,7 @@ export const calendars = {
        * Returns all movies with a release date during the time period specified.
        * @filters common
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-movies/get-movies}
+       * @see [get-movies]{@link https://trakt.docs.apiary.io/#reference/calendars/all-movies/get-movies}
        */
       movies: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
         method: HttpMethod.GET,
@@ -207,7 +207,7 @@ export const calendars = {
      * Returns all movies with a DVD release date during the time period specified.
      * @filters common
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/calendars/all-dvd/get-dvd-releases}
+     * @see [get-dvd-releases]{@link https://trakt.docs.apiary.io/#reference/calendars/all-dvd/get-dvd-releases}
      */
     dvd: new TraktClientEndpoint<CalendarParams, TraktCalendarMovie[]>({
       method: HttpMethod.GET,

@@ -4,6 +4,7 @@ import type { TraktCertification, TraktCountry, TraktGenre, TraktLanguage, Trakt
 
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 
+import { authentication } from '~/services/trakt-client/api/endpoints/authentication.endpoint';
 import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';
 import { checkin } from '~/services/trakt-client/api/endpoints/checkin.endpoint';
 import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoint';
@@ -12,6 +13,7 @@ import { HttpMethod } from '~/utils/http.utils';
 // TODO: add filter, required and jsdoc
 
 export const traktApi = {
+  authentication,
   calendars,
   checkin,
   /**
@@ -19,9 +21,9 @@ export const traktApi = {
    *
    * Most TV shows and movies have a certification to indicate the content rating. Some API methods allow filtering by certification, so it's good to cache this list in your app.
    *
-   * note: Only us certifications are currently returned.
+   * Note: Only us certifications are currently returned.
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/certifications/list/get-certifications}
+   * @see [get-certifications]{@link https://trakt.docs.apiary.io/#reference/certifications/list/get-certifications}
    */
   certifications: new TraktClientEndpoint<
     {
@@ -46,7 +48,7 @@ export const traktApi = {
    *
    * Some API methods allow filtering by country code, so it's good to cache this list in your app.
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/countries}
+   * @see [countries]{@link https://trakt.docs.apiary.io/#reference/countries}
    */
   countries: new TraktClientEndpoint<
     {
@@ -70,7 +72,7 @@ export const traktApi = {
    *
    * One or more genres are attached to all movies and shows. Some API methods allow filtering by genre, so it's good to cache this list in your app.
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/genres}
+   * @see [genres]{@link https://trakt.docs.apiary.io/#reference/genres}
    */
   genres: new TraktClientEndpoint<
     {
@@ -94,7 +96,7 @@ export const traktApi = {
    *
    * Some API methods allow filtering by language code, so it's good to cache this list in your app.
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/genres/list}
+   * @see [list]{@link https://trakt.docs.apiary.io/#reference/genres/list}
    */
   languages: new TraktClientEndpoint<
     {
@@ -122,7 +124,7 @@ export const traktApi = {
    *
    * @pagination optional
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/networks}
+   * @see [networks]{@link https://trakt.docs.apiary.io/#reference/networks}
    */
   networks: new TraktClientEndpoint<TraktApiParamsPagination, TraktNetwork[]>({
     method: HttpMethod.GET,
@@ -132,6 +134,7 @@ export const traktApi = {
     },
   }),
   // people,
+  // note - new,
   // recommendations,
   // scrobble,
   // search,

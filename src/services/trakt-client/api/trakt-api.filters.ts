@@ -10,9 +10,9 @@ import { DecimalRange, DigitRange, LargeRange, PercentageRange, VeryLargeRange }
  Add a query string (i.e. ?years=2016&genres=action) with any filters you want to use.
  Some filters allow multiples which can be sent as comma delimited parameters.
  *
- * note: Make sure to properly URL encode the parameters including spaces and special characters.
+ * Note: Make sure to properly URL encode the parameters including spaces and special characters.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiCommonFilter = {
   /** Search titles and descriptions. */
@@ -40,7 +40,7 @@ export const TraktApiCommonFilterValues: TraktApiCommonFilters[] = Object.values
  *
  *  Trakt, TMDB, and IMDB ratings apply to movies, shows, and episodes. Rotten Tomatoes and Metacritic apply to movies.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiRatingFilter = {
   /** Trakt rating range between 0 and 100. */
@@ -64,7 +64,7 @@ export const TraktApiRatingFilterValues: TraktApiRatingFilters[] = Object.values
  *  Applying these filters refines the results and helps your users to more easily discover new items.
  *  Add a query string (i.e. ?rt_meters=0-100) with any filters you want to use.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiMovieRatingFilter = {
   ...TraktApiRatingFilter,
@@ -83,7 +83,7 @@ export const TraktApiMovieRatingFilterValues: TraktApiMovieRatingFilters[] = Obj
  *  Applying these filters refines the results and helps your users to more easily discover new items.
  *  Add a query string (i.e. ?certifications=us) with any filters you want to use.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiMovieFilter = {
   /** US content certification. (supports comma separated multiple values) */
@@ -104,7 +104,7 @@ export const TraktApiMovieFilterValues: TraktApiMovieFilters[] = [
  *  Applying these filters refines the results and helps your users to more easily discover new items.
  *  Add a query string (i.e. ?certifications=us) with any filters you want to use.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiShowFilter = {
   /** US content certification. (supports comma separated multiple values) */
@@ -126,7 +126,7 @@ export const TraktApiShowFilterValues: TraktApiShowFilters[] = [
  *  Applying these filters refines the results and helps your users to more easily discover new items.
  *  Add a query string (i.e. ?certifications=us) with any filters you want to use.
  *
- * @see {@link https://trakt.docs.apiary.io/#introduction/filters}
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
  */
 export const TraktApiEpisodeFilter = {
   /** US content certification. (supports comma separated multiple values) */

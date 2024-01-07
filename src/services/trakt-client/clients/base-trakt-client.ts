@@ -1,11 +1,5 @@
-import type {
-  TraktApiParams,
-  TraktApiRequest,
-  TraktApiResponse,
-  TraktApiTemplate,
-  TraktClientAuthentication,
-  TraktClientSettings,
-} from '~/models/trakt-client.model';
+import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
+import type { TraktApiParams, TraktApiRequest, TraktApiResponse, TraktApiTemplate, TraktClientSettings } from '~/models/trakt-client.model';
 
 import type { Primitive } from '~/utils/typescript.utils';
 

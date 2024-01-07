@@ -1,4 +1,4 @@
-import type { TraktCheckedError, TraktCheckin } from '~/models/trakt-checkin.model';
+import type { TraktCheckin } from '~/models/trakt-checkin.model';
 import type { TraktSharing } from '~/models/trakt-entity.model';
 
 import type { TraktEpisode } from '~/models/trakt-episode.model';
@@ -14,7 +14,7 @@ import { HttpMethod } from '~/utils/http.utils';
  * You might be watching live tv, at a friend's house, or watching a movie in theaters. You can simply checkin from your phone or tablet in those situations.
  * The item will display as watching on the site, then automatically switch to watched status once the duration has elapsed.
  *
- * @see {@link https://trakt.docs.apiary.io/#reference/checkin}
+ * @see [checkin]{@link https://trakt.docs.apiary.io/#reference/checkin}
  */
 export const checkin = {
   /**
@@ -22,11 +22,13 @@ export const checkin = {
    * The item will display as watching on the site, then automatically switch to watched status once the duration has elapsed.
    * A unique history id (64-bit integer) will be returned and can be used to reference this checkin directly.
    *
-   * note: For episode checkin you can either provide episode ids, or the show and either episode's season & number or episodes's number_abs
+   * Note: For episode checkin you can either provide episode ids, or the show and either episode's season & number or episodes's number_abs
    *
    * @auth true
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/checkin/checkin/check-into-an-item}
+   * @throws TraktCheckinError
+   *
+   * @see [check-into-an-item]{@link https://trakt.docs.apiary.io/#reference/checkin/checkin/check-into-an-item}
    */
   add: new TraktClientEndpoint<
     {
@@ -36,9 +38,9 @@ export const checkin = {
        * The sharing object is optional and will apply the user's settings if not sent.
        * If sharing is sent, each key will override the user's setting for that social network.
        * Send true to post or false to not post on the indicated social network.
-       * You can see which social networks a user has connected with the /users/settings method.
+       * You can see which social networks a user has connected with the [/users/settings]{@link https://trakt.docs.apiary.io/reference/users/settings} method.
        *
-       * note: If a checkin is already in progress, a 409 HTTP status code will returned. The response will contain an expires_at timestamp which is when the user can check in again.
+       * Note: If a checkin is already in progress, a 409 HTTP status code will returned. The response will contain an expires_at timestamp which is when the user can check in again.
        */
       sharing?: TraktSharing;
       /** Message used for sharing. If not sent, it will use the watching string in the user settings. */
@@ -58,7 +60,7 @@ export const checkin = {
           episode: Partial<TraktEpisode> & (Pick<TraktEpisode, 'season' | 'number'> | { number_abs: number });
         }
     ),
-    TraktCheckin | TraktCheckedError
+    TraktCheckin
   >({
     method: HttpMethod.POST,
     url: '/checkin',
@@ -77,7 +79,7 @@ export const checkin = {
   /**
    * Removes any active checkins, no need to provide a specific item.
    *
-   * @see {@link https://trakt.docs.apiary.io/#reference/checkin/checkin/delete-any-active-checkins}
+   * @see [delete-any-active-checkins]{@link https://trakt.docs.apiary.io/#reference/checkin/checkin/delete-any-active-checkins}
    */
   delete: new TraktClientEndpoint({
     method: HttpMethod.DELETE,

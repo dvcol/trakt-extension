@@ -23,8 +23,8 @@ import { HttpMethod } from '~/utils/http.utils';
  * * Comments must be at least 5 words.
  * * Comments 200 words or longer will be automatically marked as a review.
  * * Correctly indicate if the comment contains spoilers.
- * * Only write comments in English - This is important!
- * * Do not include app specific text like (via App Name) or #apphashtag. This clutters up the comments and failure to clean the comment text could get your app blacklisted from commenting.
+ * * Only write comments in English - <b>This is important!</b>
+ * * <b>Do not include</b> app specific text like (via App Name) or #apphashtag. This clutters up the comments and failure to clean the comment text could get your app blacklisted from commenting.
  *
  * Possible Error Responses:
  * * 401	Invalid user
@@ -42,7 +42,7 @@ import { HttpMethod } from '~/utils/http.utils';
  * Comments support markdown formatting so you'll want to render this in your app so it matches what the website does.
  * In addition, we support inline spoiler tags like [spoiler]text[/spoiler] which you should also handle independent of the top level spoiler attribute.
  *
- * @see {@link https://trakt.docs.apiary.io/#reference/comments}
+ * @see [comments]{@link https://trakt.docs.apiary.io/#reference/comments}
  */
 export const comments = {
   comment: {
@@ -58,7 +58,7 @@ export const comments = {
      * @auth true
      * @emoji true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/comments/post-a-comment}
+     * @see [post-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/comments/post-a-comment}
      */
     add: new TraktClientEndpoint<
       {
@@ -117,11 +117,11 @@ export const comments = {
       },
     }),
     /**
-     * Returns a single comment and indicates how many replies it has. Use /comments/:id/replies to get the actual replies.
+     * Returns a single comment and indicates how many replies it has. Use [/comments/:id/replies]{@link https://trakt.docs.apiary.io/reference/comments/replies/} to get the actual replies.
      *
      * @emoji true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/get-a-comment-or-reply}
+     * @see [get-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/get-a-comment-or-reply}
      */
     get: new TraktClientEndpoint<
       {
@@ -147,7 +147,7 @@ export const comments = {
      * @auth true
      * @emoji true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/comment/update-a-comment-or-reply}
+     * @see [update-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/comment/update-a-comment-or-reply}
      */
     update: new TraktClientEndpoint<
       {
@@ -180,7 +180,7 @@ export const comments = {
      *
      * @auth true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/comment/delete-a-comment-or-reply}
+     * @see [delete-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/comment/delete-a-comment-or-reply}
      */
     remove: new TraktClientEndpoint<{
       /** A specific comment ID. */
@@ -198,11 +198,12 @@ export const comments = {
       },
     }),
     /**
-     * Returns all replies for a comment. It is possible these replies could have replies themselves, so in that case you would just call /comments/:id/replies again with the new comment id.
+     * Returns all replies for a comment.
+     * It is possible these replies could have replies themselves, so in that case you would just call [/comments/:id/replies]{@link https://trakt.docs.apiary.io/reference/comments/replies/} again with the new comment id.
      *
      * @emoji true
      * @pagination true
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/replies/get-replies-for-a-comment}
+     * @see [get-replies-for-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/replies/get-replies-for-a-comment}
      */
     replies: {
       get: new TraktClientEndpoint<
@@ -227,7 +228,7 @@ export const comments = {
       /**
        * Add a new reply to an existing comment. Make sure to allow and encourage spoilers to be indicated in your app and follow the rules listed above.
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/comments/comment/post-a-reply-for-a-comment}
+       * @see [post-a-reply-for-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/comment/post-a-reply-for-a-comment}
        */
       add: new TraktClientEndpoint<
         {
@@ -262,7 +263,7 @@ export const comments = {
      *
      * @extended full
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/replies/get-the-attached-media-item}
+     * @see [get-the-attached-media-item]{@link https://trakt.docs.apiary.io/#reference/comments/replies/get-the-attached-media-item}
      */
     item: new TraktClientEndpoint<
       {
@@ -287,7 +288,7 @@ export const comments = {
      *
      * @pagination true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/likes/get-all-users-who-liked-a-comment}
+     * @see [get-all-users-who-liked-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/likes/get-all-users-who-liked-a-comment}
      */
     likes: new TraktClientEndpoint<
       {
@@ -312,7 +313,7 @@ export const comments = {
      *
      * @auth true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/replies/like-a-comment}
+     * @see [like-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/replies/like-a-comment}
      */
     like: {
       add: new TraktClientEndpoint<{
@@ -335,7 +336,7 @@ export const comments = {
        *
        * @auth true
        *
-       * @see {@link https://trakt.docs.apiary.io/#reference/comments/like/remove-like-on-a-comment}
+       * @see [remove-like-on-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/like/remove-like-on-a-comment}
        */
       remove: new TraktClientEndpoint<{
         /** A specific comment ID. */
@@ -362,7 +363,7 @@ export const comments = {
      * @emoji true
      * @pagination true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/trending/get-trending-comments}
+     * @see [get-trending-comments]{@link https://trakt.docs.apiary.io/#reference/comments/trending/get-trending-comments}
      */
     trending: new TraktClientEndpoint<
       {
@@ -402,7 +403,7 @@ export const comments = {
      * @emoji true
      * @pagination true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/recent/get-recently-created-comments}
+     * @see [get-recently-created-comments]{@link https://trakt.docs.apiary.io/#reference/comments/recent/get-recently-created-comments}
      */
     recent: new TraktClientEndpoint<
       {
@@ -442,7 +443,7 @@ export const comments = {
      * @emoji true
      * @pagination true
      *
-     * @see {@link https://trakt.docs.apiary.io/#reference/comments/updates/get-recently-updated-comments}
+     * @see [get-recently-updated-comments]{@link https://trakt.docs.apiary.io/#reference/comments/updates/get-recently-updated-comments}
      */
     updates: new TraktClientEndpoint<
       {
