@@ -53,6 +53,13 @@ const parseResponse = (response: Response): TraktApiResponse => {
     };
   }
 
+  if (response.headers.has(TraktApiHeaders.XSortBy) || response.headers.has(TraktApiHeaders.XSortHow)) {
+    _response.sort = {
+      by: response.headers.get(TraktApiHeaders.XSortBy),
+      how: response.headers.get(TraktApiHeaders.XSortHow),
+    };
+  }
+
   return _response;
 };
 

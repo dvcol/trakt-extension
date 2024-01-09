@@ -122,6 +122,10 @@ type ResponseOrTypedResponse<T> = T extends never ? Response : TypedResponse<T>;
 
 export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
   pagination?: TraktClientPagination;
+  sort?: {
+    by?: string | null;
+    how?: string | null;
+  };
 };
 
 /**
@@ -203,6 +207,10 @@ export const TraktApiHeaders = {
   XStartDate: 'X-Start-Date',
   /** End of the queried interval */
   XEndDate: 'X-End-Date',
+  /** Desired sort by within possible values: rank, added, title, released, runtime, popularity, percentage, votes, my_rating, random, watched, and collected. */
+  XSortBy: 'X-Sort-By',
+  /** Desired sort: order asc or desc. */
+  XSortHow: 'X-Sort-How',
   /** The user agent of the consumer client */
   UserAgent: 'User-Agent',
   /** The content type of the payload  */
