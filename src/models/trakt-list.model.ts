@@ -1,8 +1,10 @@
 import type { TraktEpisode } from '~/models/trakt-episode.model';
+import type { TraktApiIds } from '~/models/trakt-id.model';
 import type { TraktMovie } from '~/models/trakt-movie.model';
+import type { TraktPerson } from '~/models/trakt-people.model';
 import type { TraktSeason } from '~/models/trakt-season.model';
 import type { TraktShow } from '~/models/trakt-show.model';
-import type { TraktPerson, TraktUser } from '~/models/trakt-user.model';
+import type { TraktUser } from '~/models/trakt-user.model';
 
 export type TraktList = {
   name: string;
@@ -33,10 +35,7 @@ export type TraktList = {
   item_count: number;
   comment_count: number;
   likes: number;
-  ids: {
-    trakt: number;
-    slug: string;
-  };
+  ids: Pick<TraktApiIds, 'trakt' | 'slug'>;
   user: TraktUser;
 };
 

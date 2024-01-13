@@ -1,34 +1,26 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const people = {
   summary: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/people/:id',
-    optional: [],
-    call,
   },
   movies: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/people/:id/movies',
-    optional: [],
-    call,
   },
   shows: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/people/:id/shows',
-    optional: [],
-    call,
   },
   lists: {
     opts: {
@@ -36,19 +28,17 @@ export const people = {
     },
     method: HttpMethod.GET,
     url: '/people/:id/lists/:type/:sort',
-    optional: ['type', 'sort'],
-    call,
+    // optional: ['type', 'sort'],
   },
   updates: {
     get: {
       opts: {
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/people/updates/:start_date?limit=',
-      optional: ['limit'],
-      call,
+      // optional: ['limit'],
     },
     id: {
       opts: {
@@ -56,8 +46,7 @@ export const people = {
       },
       method: HttpMethod.GET,
       url: '/people/updates/id/:start_date?limit=',
-      optional: ['limit'],
-      call,
+      // optional: ['limit'],
     },
   },
-} satisfies ITraktApi;
+};

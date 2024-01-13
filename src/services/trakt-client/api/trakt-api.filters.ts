@@ -23,14 +23,15 @@ export const TraktApiCommonFilter = {
   Runtimes: 'runtimes',
   /** Genre slugs. (supports comma separated multiple values) */
   Genres: 'genres',
-  /** 2 character language code. (supports comma separated multiple values) */
+  /** 2 character (ISO 639-1) language code. (supports comma separated multiple values) */
   Languages: 'languages',
-  /** 2 character country code. (supports comma separated multiple values) */
+  /** 2 character (ISO 3166-1 alpha-2) country code. (supports comma separated multiple values) */
   Countries: 'countries',
   /** Trakt studio ID. (supports comma separated multiple values) */
   StudioIds: 'studio_ids',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiCommonFilters = (typeof TraktApiCommonFilter)[keyof typeof TraktApiCommonFilter];
 export const TraktApiCommonFilterValues: TraktApiCommonFilters[] = Object.values(TraktApiCommonFilter);
 
@@ -57,6 +58,7 @@ export const TraktApiRatingFilter = {
   ImdbRatings: 'imdb_ratings',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiRatingFilters = (typeof TraktApiRatingFilter)[keyof typeof TraktApiRatingFilter];
 export const TraktApiRatingFilterValues: TraktApiRatingFilters[] = Object.values(TraktApiRatingFilter);
 
@@ -76,6 +78,7 @@ export const TraktApiMovieRatingFilter = {
   Metascores: 'metascores',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiMovieRatingFilters = (typeof TraktApiMovieRatingFilter)[keyof typeof TraktApiMovieRatingFilter];
 export const TraktApiMovieRatingFilterValues: TraktApiMovieRatingFilters[] = Object.values(TraktApiMovieRatingFilter);
 
@@ -90,6 +93,7 @@ export const TraktApiMovieFilter = {
   Certifications: 'certifications',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiMovieFilters =
   | TraktApiCommonFilters
   | TraktApiMovieRatingFilters
@@ -115,6 +119,7 @@ export const TraktApiShowFilter = {
   Status: 'status',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiShowFilters = TraktApiCommonFilters | TraktApiRatingFilters | (typeof TraktApiShowFilter)[keyof typeof TraktApiShowFilter];
 export const TraktApiShowFilterValues: TraktApiShowFilters[] = [
   ...TraktApiCommonFilterValues,
@@ -137,6 +142,7 @@ export const TraktApiEpisodeFilter = {
   EpisodeTypes: 'episode_types',
 } as const;
 
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
 export type TraktApiEpisodeFilters =
   | TraktApiCommonFilters
   | TraktApiRatingFilters
@@ -157,7 +163,8 @@ export const TraktApiFilter = {
 
 export const TraktApiFilterValues = Object.values(TraktApiFilter);
 
-export type TraktApiFilters = (typeof TraktApiFilter)[keyof typeof TraktApiFilter];
+/** @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters} */
+export type TraktApiFilters = TraktApiCommonFilters | TraktApiRatingFilters | TraktApiMovieFilters | TraktApiShowFilters | TraktApiEpisodeFilters;
 
 export const isFilter = (filter: string): filter is TraktApiFilters => (TraktApiFilterValues as string[]).includes(filter);
 

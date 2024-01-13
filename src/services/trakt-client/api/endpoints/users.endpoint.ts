@@ -1,5 +1,3 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const users = {
@@ -9,29 +7,23 @@ export const users = {
     },
     method: HttpMethod.GET,
     url: '/users/settings',
-    optional: [],
-    call,
   },
   requests: {
     get: {
       opts: {
         auth: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/users/requests',
-      optional: [],
-      call,
     },
     following: {
       opts: {
         auth: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/users/requests/following',
-      optional: [],
-      call,
     },
     approve: {
       opts: {
@@ -39,8 +31,6 @@ export const users = {
       },
       method: HttpMethod.POST,
       url: '/users/requests/:id',
-      optional: [],
-      call,
     },
     deny: {
       opts: {
@@ -48,20 +38,17 @@ export const users = {
       },
       method: HttpMethod.DELETE,
       url: '/users/requests/:id',
-      optional: [],
-      call,
     },
     hidden: {
       get: {
         opts: {
           auth: true,
           pagination: true,
-          extended: ['full'],
+          extended: [TraktApiExtended.Full],
         },
         method: HttpMethod.GET,
         url: '/users/hidden/:section?type=',
-        optional: ['type'],
-        call,
+        // optional: ['type'],
       },
       add: {
         opts: {
@@ -74,8 +61,6 @@ export const users = {
           shows: null,
           episodes: null,
         },
-        optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -88,8 +73,6 @@ export const users = {
           shows: null,
           episodes: null,
         },
-        optional: [],
-        call,
       },
     },
     likes: {
@@ -100,8 +83,7 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/likes/:type',
-      optional: ['type'],
-      call,
+      // optional: ['type'],
     },
     saved_filters: {
       opts: {
@@ -110,8 +92,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/saved_filters/:section',
-      optional: [],
-      call,
     },
     profile: {
       opts: {
@@ -120,8 +100,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username',
-      optional: [],
-      call,
     },
     collection: {
       opts: {
@@ -130,19 +108,16 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/collection/:type',
-      optional: [],
-      call,
     },
     comments: {
       opts: {
         auth: 'optional',
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/users/:username/comments/:comment_type/:type?include_replies=',
-      optional: ['comment_type', 'type', 'include_replies'],
-      call,
+      // optional: ['comment_type', 'type', 'include_replies'],
     },
   },
   lists: {
@@ -152,8 +127,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/lists',
-      optional: [],
-      call,
     },
     collaborations: {
       opts: {
@@ -161,8 +134,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/lists/collaborations',
-      optional: [],
-      call,
     },
     create: {
       opts: {
@@ -177,8 +148,6 @@ export const users = {
         display_numbers: null,
         allow_comments: null,
       },
-      optional: [],
-      call,
     },
     reorder: {
       opts: {
@@ -189,8 +158,6 @@ export const users = {
       body: {
         rank: null,
       },
-      optional: [],
-      call,
     },
   },
   list: {
@@ -200,8 +167,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id',
-      optional: [],
-      call,
     },
     update: {
       opts: {
@@ -216,8 +181,6 @@ export const users = {
         display_numbers: null,
         allow_comments: null,
       },
-      optional: [],
-      call,
     },
     delete: {
       opts: {
@@ -225,8 +188,6 @@ export const users = {
       },
       method: HttpMethod.DELETE,
       url: '/users/:username/lists/:id',
-      optional: [],
-      call,
     },
     likes: {
       opts: {
@@ -235,8 +196,6 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id/likes',
-      optional: [],
-      call,
     },
     like: {
       add: {
@@ -245,8 +204,6 @@ export const users = {
         },
         method: HttpMethod.POST,
         url: '/users/:username/lists/:id/like',
-        optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -254,8 +211,6 @@ export const users = {
         },
         method: HttpMethod.DELETE,
         url: '/users/:username/lists/:id/like',
-        optional: [],
-        call,
       },
     },
     items: {
@@ -263,12 +218,11 @@ export const users = {
         opts: {
           auth: 'optional',
           pagination: 'optional',
-          extended: ['full'],
+          extended: [TraktApiExtended.Full],
         },
         method: HttpMethod.GET,
         url: '/users/:username/lists/:id/items?type=',
-        optional: ['type'],
-        call,
+        // optional: ['type'],
       },
       add: {
         opts: {
@@ -281,8 +235,6 @@ export const users = {
           shows: null,
           people: null,
         },
-        optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -295,8 +247,6 @@ export const users = {
           shows: null,
           people: null,
         },
-        optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -307,8 +257,6 @@ export const users = {
         body: {
           rank: null,
         },
-        optional: [],
-        call,
       },
     },
     comments: {
@@ -317,8 +265,7 @@ export const users = {
       },
       method: HttpMethod.GET,
       url: '/users/:username/lists/:id/comments/:sort',
-      optional: ['sort'],
-      call,
+      // optional: ['sort'],
     },
   },
   follow: {
@@ -328,8 +275,6 @@ export const users = {
       },
       method: HttpMethod.POST,
       url: '/users/:username/follow',
-      optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -337,83 +282,71 @@ export const users = {
       },
       method: HttpMethod.DELETE,
       url: '/users/:username/follow',
-      optional: [],
-      call,
     },
   },
   followers: {
     opts: {
       auth: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/followers',
-    optional: [],
-    call,
   },
   following: {
     opts: {
       auth: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/following',
-    optional: [],
-    call,
   },
   friends: {
     opts: {
       auth: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/friends',
-    optional: [],
-    call,
   },
   history: {
     opts: {
       auth: 'optional',
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/history/:type/:item_id?start_at=&end_at=',
-    optional: ['type', 'item_id', 'start_at', 'end_at'],
-    call,
+    // optional: ['type', 'item_id', 'start_at', 'end_at'],
   },
   ratings: {
     opts: {
       auth: 'optional',
       pagination: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/ratings/:type/:rating',
-    optional: ['rating', 'type'],
-    call,
+    // optional: ['rating', 'type'],
   },
   watchlist: {
     opts: {
       auth: 'optional',
       pagination: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/watchlist/:type',
-    optional: ['type'],
-    call,
+    // optional: ['type'],
   },
   recommendations: {
     opts: {
       auth: true,
       pagination: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/users/:username/recommendations/:type/:sort',
-    optional: ['type', 'sort'],
-    call,
+    // optional: ['type', 'sort'],
   },
   watching: {
     opts: {
@@ -421,8 +354,6 @@ export const users = {
     },
     method: HttpMethod.GET,
     url: '/users/:username/watching',
-    optional: [],
-    call,
   },
   watched: {
     opts: {
@@ -431,8 +362,6 @@ export const users = {
     },
     method: HttpMethod.GET,
     url: '/users/:username/watched/:type',
-    optional: [],
-    call,
   },
   stats: {
     opts: {
@@ -440,7 +369,5 @@ export const users = {
     },
     method: HttpMethod.GET,
     url: '/users/:username/stats',
-    optional: [],
-    call,
   },
-} satisfies ITraktApi;
+};

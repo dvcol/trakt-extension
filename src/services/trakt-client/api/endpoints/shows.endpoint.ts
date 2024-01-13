@@ -1,87 +1,74 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const shows = {
   trending: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/trending',
-    optional: [],
-    call,
   },
   popular: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/popular',
-    optional: [],
-    call,
   },
   recommended: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/recommended/:period',
-    optional: ['period'],
-    call,
+    // optional: ['period'],
   },
   played: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/played/:period',
-    optional: ['period'],
-    call,
+    // optional: ['period'],
   },
   watched: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/watched/:period',
-    optional: ['period'],
-    call,
+    // optional: ['period'],
   },
   collected: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/collected',
-    optional: ['period'],
-    call,
+    // optional: ['period'],
   },
   anticipated: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/anticipated',
-    optional: [],
-    call,
   },
   updates: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/updates/:start_date',
-    optional: ['start_date'],
-    call,
+    // optional: ['start_date'],
   },
   updated_ids: {
     opts: {
@@ -89,38 +76,30 @@ export const shows = {
     },
     method: HttpMethod.GET,
     url: '/shows/updates/id/:start_date',
-    optional: ['start_date'],
-    call,
+    // optional: ['start_date'],
   },
   summary: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id',
-    optional: [],
-    call,
   },
   aliases: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/aliases',
-    optional: [],
-    call,
   },
   certifications: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/certifications',
-    optional: [],
-    call,
   },
   translations: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/translations/:language',
-    optional: ['language'],
-    call,
+    // optional: ['language'],
   },
   comments: {
     opts: {
@@ -128,8 +107,7 @@ export const shows = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/comments/:sort',
-    optional: ['sort'],
-    call,
+    // optional: ['sort'],
   },
   lists: {
     opts: {
@@ -137,8 +115,7 @@ export const shows = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/lists/:type/:sort',
-    optional: ['type', 'sort'],
-    call,
+    // optional: ['type', 'sort'],
   },
   progress: {
     collection: {
@@ -147,18 +124,16 @@ export const shows = {
       },
       method: HttpMethod.GET,
       url: '/shows/:id/progress/collection?hidden=&specials=&count_specials=&last_activity=',
-      optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
-      call,
+      // optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
     },
     watched: {
       opts: {
         auth: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/shows/:id/progress/watched?hidden=&specials=&count_specials=&last_activity=',
-      optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
-      call,
+      // optional: ['hidden', 'specials', 'count_specials', 'last_activity'],
     },
     reset: {
       opts: {
@@ -166,8 +141,6 @@ export const shows = {
       },
       method: HttpMethod.POST,
       url: '/shows/:id/progress/watched/reset',
-      optional: [],
-      call,
     },
     undo_reset: {
       opts: {
@@ -175,8 +148,6 @@ export const shows = {
       },
       method: HttpMethod.DELETE,
       url: '/shows/:id/progress/watched/reset',
-      optional: [],
-      call,
     },
   },
   people: {
@@ -185,65 +156,49 @@ export const shows = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/people',
-    optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/ratings',
-    optional: [],
-    call,
   },
   related: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/related',
-    optional: [],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/stats',
-    optional: [],
-    call,
   },
   studios: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/studios',
-    optional: [],
-    call,
   },
   watching: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/watching',
-    optional: [],
-    call,
   },
   next_episode: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/next_episode',
-    optional: [],
-    call,
   },
   last_episode: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/last_episode',
-    optional: [],
-    call,
   },
-} satisfies ITraktApi;
+};

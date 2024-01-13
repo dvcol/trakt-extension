@@ -1,3 +1,5 @@
+import type { TraktApiIds } from '~/models/trakt-id.model';
+
 export const TraktShowStatus = {
   /** Airing right now */
   ReturningSeries: 'returning series',
@@ -20,11 +22,5 @@ export const TraktShowStatusValues = Object.values(TraktShowStatus);
 export type TraktShow = {
   title: string;
   year: number;
-  ids: {
-    trakt: number;
-    slug: string;
-    tvdb: number;
-    imdb: string;
-    tmdb: number;
-  };
+  ids: Pick<TraktApiIds, 'trakt' | 'slug' | 'imdb' | 'tvdb' | 'tmdb'>;
 };

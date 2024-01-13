@@ -19,7 +19,7 @@ export const checkin = {
    *
    * Note: For episode checkin you can either provide episode ids, or the show and either episode's season & number or episodes's number_abs
    *
-   * @auth true
+   * @auth required
    *
    * @throws TraktCheckinError
    *

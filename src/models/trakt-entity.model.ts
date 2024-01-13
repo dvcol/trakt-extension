@@ -1,3 +1,4 @@
+import type { TraktApiIds } from '~/models/trakt-id.model';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
 export type TraktSharing = RequireAtLeastOne<{
@@ -27,8 +28,5 @@ export type TraktLanguage = TraktBaseCodeEntity;
 export type TraktNetwork = {
   name: string;
   country: string;
-  ids: {
-    trakt: number;
-    tmdb: number;
-  };
+  ids: Pick<TraktApiIds, 'trakt' | 'tmdb'>;
 };

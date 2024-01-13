@@ -1,5 +1,3 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const recommendations = {
@@ -7,12 +5,11 @@ export const recommendations = {
     get: {
       opts: {
         auth: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/recommendations/movies/?limit=&ignore_collected=',
-      optional: ['limit', 'ignore_collected'],
-      call,
+      // optional: ['limit', 'ignore_collected'],
     },
     hide: {
       opts: {
@@ -20,20 +17,17 @@ export const recommendations = {
       },
       method: HttpMethod.DELETE,
       url: '/recommendations/movies/:id',
-      optional: [],
-      call,
     },
   },
   shows: {
     get: {
       opts: {
         auth: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/recommendations/shows/?limit=&ignore_collected=',
-      optional: ['limit', 'ignore_collected'],
-      call,
+      // optional: ['limit', 'ignore_collected'],
     },
     hide: {
       opts: {
@@ -41,8 +35,6 @@ export const recommendations = {
       },
       method: HttpMethod.DELETE,
       url: '/recommendations/shows/:id',
-      optional: [],
-      call,
     },
   },
-} satisfies ITraktApi;
+};

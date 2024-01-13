@@ -1,5 +1,3 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const scrobble = {
@@ -16,8 +14,6 @@ export const scrobble = {
       app_version: null,
       app_date: null,
     },
-    optional: [],
-    call,
   },
   pause: {
     opts: {
@@ -32,8 +28,6 @@ export const scrobble = {
       app_version: null,
       app_date: null,
     },
-    optional: [],
-    call,
   },
   stop: {
     opts: {
@@ -48,7 +42,5 @@ export const scrobble = {
       app_version: null,
       app_date: null,
     },
-    optional: [],
-    call,
   },
-} satisfies ITraktApi;
+};

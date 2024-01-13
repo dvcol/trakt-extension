@@ -1,23 +1,18 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const episodes = {
   summary: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode',
-    optional: [],
-    call,
   },
   translations: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/translations/:language',
-    optional: ['language'],
-    call,
+    // optional: ['language'],
   },
   comments: {
     opts: {
@@ -25,8 +20,7 @@ export const episodes = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/comments/:sort',
-    optional: ['sort'],
-    call,
+    // optional: ['sort'],
   },
   lists: {
     opts: {
@@ -34,8 +28,7 @@ export const episodes = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/lists/:type/:sort',
-    optional: ['type', 'sort'],
-    call,
+    // optional: ['type', 'sort'],
   },
   people: {
     opts: {
@@ -43,30 +36,22 @@ export const episodes = {
     },
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/people',
-    optional: [],
-    call,
   },
   ratings: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/ratings',
-    optional: [],
-    call,
   },
   stats: {
     opts: {},
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/stats',
-    optional: [],
-    call,
   },
   watching: {
     opts: {
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/shows/:id/seasons/:season/episodes/:episode/watching',
-    optional: [],
-    call,
   },
-} satisfies ITraktApi;
+};

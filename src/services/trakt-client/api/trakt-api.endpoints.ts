@@ -8,6 +8,8 @@ import { authentication } from '~/services/trakt-client/api/endpoints/authentica
 import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';
 import { checkin } from '~/services/trakt-client/api/endpoints/checkin.endpoint';
 import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoint';
+import { lists } from '~/services/trakt-client/api/endpoints/lists.endpoint';
+import { movies } from '~/services/trakt-client/api/endpoints/movies.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
 // TODO: add filter, required and jsdoc
@@ -115,8 +117,8 @@ export const traktApi = {
       },
     },
   }),
-  // lists,
-  // movies,
+  lists,
+  movies,
   /**
    * Get a list of all TV networks, including the name, country, and ids.
    *
@@ -133,8 +135,8 @@ export const traktApi = {
       pagination: 'optional',
     },
   }),
-  // people,
   // note - new,
+  // people,
   // recommendations,
   // scrobble,
   // search,

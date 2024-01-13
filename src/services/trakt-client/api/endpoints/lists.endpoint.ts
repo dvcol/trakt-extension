@@ -1,10 +1,10 @@
-import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
+import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
 import type { TraktComment } from '~/models/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt-like.model';
 import type { TraktList, TraktListItem, TraktListList } from '~/models/trakt-list.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 
@@ -12,10 +12,10 @@ export const lists = {
   /**
    * Returns all lists with the most likes and comments over the last 7 days.
    *
-   * @pagination true
-   * @emoji true
+   * @pagination true - {@link TraktApiPagination}
+   * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    *
-   * @see [trending]{@link https://trakt.docs.apiary.io/#reference/lists/trending}
+   * @see [apiary]{@link https://trakt.docs.apiary.io/#reference/lists/trending}
    */
   trending: new TraktClientEndpoint<TraktApiParamsPagination, TraktListList[]>({
     method: HttpMethod.GET,
@@ -28,10 +28,10 @@ export const lists = {
   /**
    * Returns the most popular lists. Popularity is calculated using total number of likes and comments.
    *
-   * @pagination true
-   * @emoji true
+   * @pagination true - {@link TraktApiPagination}
+   * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    *
-   * @see [popular]{@link https://trakt.docs.apiary.io/#reference/lists/popular}
+   * @see [apiary]{@link https://trakt.docs.apiary.io/#reference/lists/popular}
    */
   popular: new TraktClientEndpoint<TraktApiParamsPagination, TraktListList[]>({
     method: HttpMethod.GET,
@@ -46,7 +46,7 @@ export const lists = {
    *
    * Note: You must use an integer id, and only public lists will return data.
    *
-   * @emoji true
+   * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    *
    * @see [list]{@link https://trakt.docs.apiary.io/#reference/lists/list}
    */
@@ -71,7 +71,7 @@ export const lists = {
   /**
    * Returns all users who liked a list.
    *
-   * @pagination true
+   * @pagination true - {@link TraktApiPagination}
    *
    * @see [list-likes]{@link https://trakt.docs.apiary.io/#reference/lists/list-likes}
    */
@@ -97,7 +97,7 @@ export const lists = {
     /**
      * Votes help determine popular lists. Only one like is allowed per list per user.
      *
-     * @auth true
+     * @auth required
      *
      * @see [like-a-list]{@link https://trakt.docs.apiary.io/#reference/lists/list-like/like-a-list}
      */
@@ -119,7 +119,7 @@ export const lists = {
     /**
      * Remove a like on a list.
      *
-     * @auth true
+     * @auth required
      *
      * @see [remove-like-on-a-list]{@link https://trakt.docs.apiary.io/#reference/lists/list-like/remove-like-on-a-list}
      */
@@ -154,9 +154,9 @@ export const lists = {
    * Values for X-Sort-By include rank, added, title, released, runtime, popularity, percentage, votes, my_rating, random, watched, and collected.
    * Values for X-Sort-How include asc and desc.
    *
-   * @pagination optional
-   * @extended full
-   * @emoji true
+   * @pagination optional - {@link TraktApiPagination}
+   * @extended full - {@link TraktApiExtended.Full}
+   * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    *
    * @see [list-items]{@link https://trakt.docs.apiary.io/#reference/lists/list-items}
    */
@@ -174,7 +174,7 @@ export const lists = {
     url: '/lists/:id/items/:type',
     opts: {
       pagination: 'optional',
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
       parameters: {
         path: {
           id: true,
@@ -190,8 +190,8 @@ export const lists = {
    *
    * Note: If you send OAuth, comments from blocked users will be automatically filtered out.
    *
-   * @pagination true
-   * @emoji true
+   * @pagination true - {@link TraktApiPagination}
+   * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    * @auth optional
    *
    * @see [list-comments]{@link https://trakt.docs.apiary.io/#reference/lists/list-comments}

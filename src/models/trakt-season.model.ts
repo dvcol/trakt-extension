@@ -1,8 +1,6 @@
+import type { TraktApiIds } from '~/models/trakt-id.model';
+
 export type TraktSeason = {
   number: number;
-  ids: {
-    trakt: number;
-    tvdb: number;
-    tmdb: number;
-  };
+  ids: Pick<TraktApiIds, 'trakt' | 'tvdb' | 'tmdb'>;
 };

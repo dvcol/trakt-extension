@@ -1,3 +1,5 @@
+import type { TraktApiIds } from '~/models/trakt-id.model';
+
 export const TraktEpisodeType = {
   Standard: 'standard',
   SeriesPremiere: 'series_premiere',
@@ -15,10 +17,5 @@ export type TraktEpisode = {
   season: number;
   number: number;
   title: string;
-  ids: {
-    trakt: number;
-    tvdb: number;
-    imdb: string;
-    tmdb: number;
-  };
+  ids: Pick<TraktApiIds, 'trakt' | 'tvdb' | 'imdb' | 'tmdb'>;
 };

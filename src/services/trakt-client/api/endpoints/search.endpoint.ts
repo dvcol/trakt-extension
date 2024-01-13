@@ -1,26 +1,22 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const search = {
   text: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/search/:type?query=&fields=',
-    optional: ['fields'],
-    call,
+    // optional: ['fields'],
   },
   id: {
     opts: {
       pagination: true,
-      extended: ['full'],
+      extended: [TraktApiExtended.Full],
     },
     method: HttpMethod.GET,
     url: '/search/:id_type/:id?type=&fields=',
-    optional: ['type', 'fields'],
-    call,
+    // optional: ['type', 'fields'],
   },
-} satisfies ITraktApi;
+};

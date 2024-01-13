@@ -1,9 +1,9 @@
-import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
+import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
 import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt-like.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint, TraktApiExtended } from '~/models/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 
@@ -48,8 +48,8 @@ export const comments = {
      * Send true to post or false to not post on the indicated social network.
      * You can see which social networks a user has connected with the /users/settings method.
      *
-     * @auth true
-     * @emoji true
+     * @auth required
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [post-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/comments/post-a-comment}
      */
@@ -75,7 +75,7 @@ export const comments = {
     /**
      * Returns a single comment and indicates how many replies it has. Use [/comments/:id/replies]{@link https://trakt.docs.apiary.io/reference/comments/replies/} to get the actual replies.
      *
-     * @emoji true
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [get-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/get-a-comment-or-reply}
      */
@@ -100,8 +100,8 @@ export const comments = {
     /**
      * Update a single comment. The OAuth user must match the author of the comment in order to update it. If not, a 401 HTTP status is returned.
      *
-     * @auth true
-     * @emoji true
+     * @auth required
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [update-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/comment/update-a-comment-or-reply}
      */
@@ -134,7 +134,7 @@ export const comments = {
      * 🔒 OAuth RequiredDelete a single comment. The OAuth user must match the author of the comment in order to delete it. If not, a 401 HTTP status code is returned.
      * The comment must also be less than 2 weeks old or have 0 replies. If not, a 409 HTTP status is returned.
      *
-     * @auth true
+     * @auth required
      *
      * @see [delete-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/comment/delete-a-comment-or-reply}
      */
@@ -157,8 +157,9 @@ export const comments = {
      * Returns all replies for a comment.
      * It is possible these replies could have replies themselves, so in that case you would just call [/comments/:id/replies]{@link https://trakt.docs.apiary.io/reference/comments/replies/} again with the new comment id.
      *
-     * @emoji true
-     * @pagination true
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @pagination true - {@link TraktApiPagination}
+     *
      * @see [get-replies-for-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/replies/get-replies-for-a-comment}
      */
     replies: {
@@ -217,7 +218,7 @@ export const comments = {
     /**
      * Returns the media item this comment is attached to. The media type can be movie, show, season, episode, or list and it also returns the standard media object for that media type.
      *
-     * @extended full
+     * @extended full - {@link TraktApiExtended.Full}
      *
      * @see [get-the-attached-media-item]{@link https://trakt.docs.apiary.io/#reference/comments/replies/get-the-attached-media-item}
      */
@@ -231,7 +232,7 @@ export const comments = {
       method: HttpMethod.GET,
       url: '/comments/:id/item',
       opts: {
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
         parameters: {
           path: {
             id: true,
@@ -242,7 +243,7 @@ export const comments = {
     /**
      * Returns all users who liked a comment. If you only need the replies count, the main comment object already has that, so no need to use this method.
      *
-     * @pagination true
+     * @pagination true - {@link TraktApiPagination}
      *
      * @see [get-all-users-who-liked-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/likes/get-all-users-who-liked-a-comment}
      */
@@ -267,7 +268,7 @@ export const comments = {
     /**
      * Votes help determine popular comments. Only one like is allowed per comment per user.
      *
-     * @auth true
+     * @auth required
      *
      * @see [like-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/replies/like-a-comment}
      */
@@ -290,7 +291,7 @@ export const comments = {
       /**
        * Remove a like on a comment.
        *
-       * @auth true
+       * @auth required
        *
        * @see [remove-like-on-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/like/remove-like-on-a-comment}
        */
@@ -315,9 +316,9 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full
-     * @emoji true
-     * @pagination true
+     * @extended full - {@link TraktApiExtended.Full}
+     * @pagination true - {@link TraktApiPagination}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [get-trending-comments]{@link https://trakt.docs.apiary.io/#reference/comments/trending/get-trending-comments}
      */
@@ -338,7 +339,7 @@ export const comments = {
       opts: {
         emoji: true,
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
         parameters: {
           path: {
             comment_type: false,
@@ -355,9 +356,9 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full
-     * @emoji true
-     * @pagination true
+     * @extended full - {@link TraktApiExtended.Full}
+     * @pagination true - {@link TraktApiPagination}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [get-recently-created-comments]{@link https://trakt.docs.apiary.io/#reference/comments/recent/get-recently-created-comments}
      */
@@ -378,7 +379,7 @@ export const comments = {
       opts: {
         emoji: true,
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
         parameters: {
           path: {
             comment_type: false,
@@ -395,9 +396,9 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full
-     * @emoji true
-     * @pagination true
+     * @extended full - {@link TraktApiExtended.Full}
+     * @pagination true - {@link TraktApiPagination}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
      * @see [get-recently-updated-comments]{@link https://trakt.docs.apiary.io/#reference/comments/updates/get-recently-updated-comments}
      */
@@ -418,7 +419,7 @@ export const comments = {
       opts: {
         emoji: true,
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
         parameters: {
           path: {
             comment_type: false,

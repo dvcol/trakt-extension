@@ -1,5 +1,3 @@
-import type { ITraktApi } from '~/models/trakt-client.model';
-
 import { HttpMethod } from '~/utils/http.utils';
 
 export const sync = {
@@ -9,8 +7,6 @@ export const sync = {
     },
     method: HttpMethod.GET,
     url: '/sync/last_activities',
-    optional: [],
-    call,
   },
   playback: {
     get: {
@@ -19,8 +15,7 @@ export const sync = {
       },
       method: HttpMethod.GET,
       url: '/sync/playback/:type?limit=',
-      optional: ['type', 'limit'],
-      call,
+      // optional: ['type', 'limit'],
     },
     remove: {
       opts: {
@@ -28,8 +23,6 @@ export const sync = {
       },
       method: HttpMethod.DELETE,
       url: '/sync/playback/:id',
-      optional: [],
-      call,
     },
   },
   collection: {
@@ -40,8 +33,6 @@ export const sync = {
       },
       method: HttpMethod.GET,
       url: '/sync/collection/:type',
-      optional: [],
-      call,
     },
     add: {
       opts: {
@@ -55,8 +46,6 @@ export const sync = {
         seasons: null,
         episodes: null,
       },
-      optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -70,8 +59,6 @@ export const sync = {
         seasons: null,
         episodes: null,
       },
-      optional: [],
-      call,
     },
   },
   watched: {
@@ -81,20 +68,17 @@ export const sync = {
     },
     method: HttpMethod.GET,
     url: '/sync/watched/:type',
-    optional: [],
-    call,
   },
   history: {
     get: {
       opts: {
         auth: true,
         pagination: true,
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/sync/history/:type/:id?start_at=&end_at=',
-      optional: ['type', 'id', 'start_at', 'end_at'],
-      call,
+      // optional: ['type', 'id', 'start_at', 'end_at'],
     },
     add: {
       opts: {
@@ -108,8 +92,6 @@ export const sync = {
         seasons: null,
         episodes: null,
       },
-      optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -123,8 +105,6 @@ export const sync = {
         episodes: null,
         ids: null,
       },
-      optional: [],
-      call,
     },
   },
   ratings: {
@@ -132,12 +112,11 @@ export const sync = {
       opts: {
         auth: true,
         pagination: 'optional',
-        extended: ['full'],
+        extended: [TraktApiExtended.Full],
       },
       method: HttpMethod.GET,
       url: '/sync/ratings/:type/:rating',
-      optional: ['rating', 'type'],
-      call,
+      // optional: ['rating', 'type'],
     },
     add: {
       opts: {
@@ -151,8 +130,6 @@ export const sync = {
         seasons: null,
         episodes: null,
       },
-      optional: [],
-      call,
     },
     remove: {
       opts: {
@@ -165,20 +142,17 @@ export const sync = {
         shows: null,
         episodes: null,
       },
-      optional: [],
-      call,
     },
     watchlist: {
       get: {
         opts: {
           auth: true,
           pagination: 'optional',
-          extended: ['full'],
+          extended: [TraktApiExtended.Full],
         },
         method: HttpMethod.GET,
         url: '/sync/watchlist/:type',
-        optional: ['type'],
-        call,
+        // optional: ['type'],
       },
       add: {
         opts: {
@@ -191,8 +165,6 @@ export const sync = {
           shows: null,
           episodes: null,
         },
-        optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -205,8 +177,6 @@ export const sync = {
           shows: null,
           episodes: null,
         },
-        optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -217,8 +187,6 @@ export const sync = {
         body: {
           rank: null,
         },
-        optional: [],
-        call,
       },
     },
     recommendations: {
@@ -226,12 +194,10 @@ export const sync = {
         opts: {
           auth: true,
           pagination: 'optional',
-          extended: ['full'],
+          extended: [TraktApiExtended.Full],
         },
         method: HttpMethod.GET,
         url: '/sync/recommendations/:type/:sort',
-        optional: [],
-        call,
       },
       add: {
         opts: {
@@ -243,8 +209,6 @@ export const sync = {
           movies: null,
           shows: null,
         },
-        optional: [],
-        call,
       },
       remove: {
         opts: {
@@ -256,8 +220,6 @@ export const sync = {
           movies: null,
           shows: null,
         },
-        optional: [],
-        call,
       },
       reorder: {
         opts: {
@@ -268,9 +230,7 @@ export const sync = {
         body: {
           rank: null,
         },
-        optional: [],
-        call,
       },
     },
   },
-} satisfies ITraktApi;
+};
