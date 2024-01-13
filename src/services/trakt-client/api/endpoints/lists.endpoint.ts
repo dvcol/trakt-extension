@@ -1,4 +1,4 @@
-import type { TraktApiParamsPagination } from '~/models/trakt-client.model';
+import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
 import type { TraktComment } from '~/models/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt-like.model';
@@ -166,7 +166,8 @@ export const lists = {
       id: number;
       /** Filter for a specific item type */
       type?: 'movie' | 'show' | 'season' | 'episode' | 'perso';
-    },
+    } & TraktApiParamsPagination &
+      TraktApiParamsExtended<typeof TraktApiExtended.Full>,
     TraktListItem[]
   >({
     method: HttpMethod.GET,
@@ -201,7 +202,7 @@ export const lists = {
       id: number;
       /** How to sort  */
       sort: 'newest' | 'oldest' | 'likes' | 'replies';
-    },
+    } & TraktApiParamsPagination,
     TraktComment[]
   >({
     method: HttpMethod.GET,

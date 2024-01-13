@@ -23,7 +23,7 @@ type StartAndDay = {
   days?: number;
 };
 
-type CalendarParams = TraktApiParams<StartAndDay, typeof TraktApiExtended.Full, TraktApiCommonFilters>;
+type CalendarParams = TraktApiParams<StartAndDay, typeof TraktApiExtended.Full, TraktApiCommonFilters, false>;
 
 const opts: TraktApiTemplateOptions = {
   extended: ['full'],
@@ -56,6 +56,7 @@ export const calendars = {
     shows: {
       /**
        * Returns all shows airing during the time period specified.
+       *
        * @auth true
        * @extended full
        * @filters common
@@ -70,6 +71,7 @@ export const calendars = {
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
+       *
        * @auth true
        * @extended full
        * @filters common
@@ -84,6 +86,7 @@ export const calendars = {
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
+       *
        * @auth true
        * @extended full
        * @filters common
@@ -98,6 +101,7 @@ export const calendars = {
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
+       *
        * @auth true
        * @extended full
        * @filters common
@@ -113,6 +117,7 @@ export const calendars = {
     },
     /**
      * Returns all movies with a release date during the time period specified.
+     *
      * @auth true
      * @extended full
      * @filters common
@@ -127,6 +132,7 @@ export const calendars = {
     }),
     /**
      * Returns all movies with a DVD release date during the time period specified.
+     *
      * @auth true
      * @extended full
      * @filters common
@@ -143,6 +149,7 @@ export const calendars = {
   all: {
     /**
      * Returns all shows airing during the time period specified.
+     *
      * @filters common
      *
      * @see [get-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/all-shows/get-shows}
@@ -156,6 +163,7 @@ export const calendars = {
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
+       *
        * @filters common
        *
        * @see [get-new-shows]{@link https://trakt.docs.apiary.io/#reference/calendars/all-new-shows/get-new-shows}
@@ -168,6 +176,7 @@ export const calendars = {
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
+       *
        * @filters common
        *
        * @see [get-season-premieres]{@link https://trakt.docs.apiary.io/#reference/calendars/all-season-premieres/get-season-premieres}
@@ -180,6 +189,7 @@ export const calendars = {
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
+       *
        * @filters common
        *
        * @see [get-finales]{@link https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales}
@@ -192,6 +202,7 @@ export const calendars = {
       }),
       /**
        * Returns all movies with a release date during the time period specified.
+       *
        * @filters common
        *
        * @see [get-movies]{@link https://trakt.docs.apiary.io/#reference/calendars/all-movies/get-movies}
@@ -205,6 +216,7 @@ export const calendars = {
     },
     /**
      * Returns all movies with a DVD release date during the time period specified.
+     *
      * @filters common
      *
      * @see [get-dvd-releases]{@link https://trakt.docs.apiary.io/#reference/calendars/all-dvd/get-dvd-releases}

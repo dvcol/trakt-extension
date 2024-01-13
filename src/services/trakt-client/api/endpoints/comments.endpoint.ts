@@ -1,14 +1,7 @@
 import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
 
-import type { TraktComment, TraktCommentItem, TraktCommentMedia } from '~/models/trakt-comment.model';
-import type { TraktSharing } from '~/models/trakt-entity.model';
-
-import type { TraktEpisode } from '~/models/trakt-episode.model';
+import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt-like.model';
-import type { TraktList } from '~/models/trakt-list.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
-import type { TraktShow } from '~/models/trakt-show.model';
 
 import { TraktClientEndpoint } from '~/models/trakt-client.model';
 
@@ -60,44 +53,7 @@ export const comments = {
      *
      * @see [post-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/comments/post-a-comment}
      */
-    add: new TraktClientEndpoint<
-      {
-        /** Text for the comment. */
-        comment: string;
-        /** Is this a spoiler? Defaults to false */
-        spoiler?: boolean;
-        /**
-         * Control sharing to any connected social networks.
-         *
-         * The sharing object is optional and will apply the user's settings if not sent.
-         * If sharing is sent, each key will override the user's setting for that social network.
-         * Send true to post or false to not post on the indicated social network. You can see which social networks a user has connected with the /users/settings method.
-         */
-        sharing?: TraktSharing;
-      } & (
-        | {
-            /** Movie to comment */
-            movie: TraktMovie;
-          }
-        | {
-            /** Show to comment */
-            show: TraktShow;
-          }
-        | {
-            /** Season to comment */
-            season: TraktSeason;
-          }
-        | {
-            /** Episode to comment */
-            episode: TraktEpisode;
-          }
-        | {
-            /** List to comment */
-            list: Pick<TraktList, 'ids'>;
-          }
-      ),
-      TraktComment
-    >({
+    add: new TraktClientEndpoint<TraktCommentRequest, TraktComment>({
       method: HttpMethod.POST,
       url: '/comments',
       opts: {

@@ -42,29 +42,28 @@ export type TraktAuthenticationAuthorizeRequest = {
   prompt?: 'login';
 };
 
-export type TraktAuthenticationCodeRequest = {
-  /** Authorization code. */
-  code: string;
+export type TraktAuthenticationBaseRequest = {
   /** Get this from your app settings. */
   client_id: string;
   /** Get this from your app settings. */
   client_secret: string;
   /** URI specified in your app settings. */
   redirect_uri: string;
+  /** Authentication type: authorization_code or refresh_token */
+  grant_type: 'authorization_code' | 'refresh_token';
+};
+
+export type TraktAuthenticationCodeRequest = TraktAuthenticationBaseRequest & {
+  /** Authorization code. */
+  code: string;
   /** Authentication type: authorization_code */
   grant_type: 'authorization_code';
 };
 
-export type TraktAuthenticationRefreshRequest = {
+export type TraktAuthenticationRefreshRequest = TraktAuthenticationBaseRequest & {
   /** Saved from the initial token method. */
   refresh_token: string;
-  /** Get this from your app settings. */
-  client_id: string;
-  /** Get this from your app settings. */
-  client_secret: string;
-  /** URI specified in your app settings. */
-  redirect_uri: string;
-  /** Authentication type: authorization_code */
+  /** Authentication type: refresh_token */
   grant_type: 'refresh_token';
 };
 

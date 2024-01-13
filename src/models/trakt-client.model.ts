@@ -1,4 +1,5 @@
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
+
 import type { HttpMethods } from '~/utils/http.utils';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
@@ -140,25 +141,29 @@ export type TraktApiPagination = {
   limit?: number;
 };
 
-export type TraktApiParamsFilter<F extends TraktApiFilters = TraktApiFilters, V extends Primitive = Primitive> = {
-  /**
-   * An optional filter to refine query
-   *
-   * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
-   */
-  filters?: Partial<Record<F, V | V[]>>;
-};
+export type TraktApiParamsFilter<F extends TraktApiFilters | void = TraktApiFilters, V extends Primitive = Primitive> = F extends TraktApiFilters
+  ? {
+      /**
+       * An optional filter to refine query
+       *
+       * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
+       */
+      filters?: Partial<Record<F, V | V[]>>;
+    }
+  : Record<string, never>;
 
-export type TraktApiParamsExtended<E extends TraktApiExtends = TraktApiExtends> = {
-  /**
-   * Increases the verbosity of the response.
-   *
-   * Note: This returns a lot of extra data, so please only use extended parameters if you actually need them!
-   *
-   * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
-   */
-  extended?: E;
-};
+export type TraktApiParamsExtended<E extends TraktApiExtends | void = TraktApiExtends> = E extends TraktApiExtends
+  ? {
+      /**
+       * Increases the verbosity of the response.
+       *
+       * Note: This returns a lot of extra data, so please only use extended parameters if you actually need them!
+       *
+       * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
+       */
+      extended?: E;
+    }
+  : Record<string, never>;
 
 export type TraktApiParamsPagination = {
   /**
@@ -174,11 +179,20 @@ export type TraktApiParams<
   T extends RecursiveRecord = RecursiveRecord,
   E extends TraktApiExtends = TraktApiExtends,
   F extends TraktApiFilters = TraktApiFilters,
-> = T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & TraktApiParamsPagination;
+  P extends true | false = true,
+> = P extends true
+  ? T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & TraktApiParamsPagination
+  : T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F>;
 
-export type ITraktApi<T extends TraktApiParams = TraktApiParams> = {
-  [key: string]: TraktClientEndpoint<T> | ITraktApi<T>;
-};
+export type PartialTraktApiParams<
+  T extends RecursiveRecord | void = void,
+  E extends TraktApiExtends | void = void,
+  F extends TraktApiFilters | void = void,
+  P extends true | false = false,
+> = (T extends void ? Record<string, never> : T) &
+  (E extends void ? Record<string, never> : TraktApiParamsExtended<E>) &
+  (F extends void ? Record<string, never> : TraktApiParamsFilter<F>) &
+  (P extends false ? Record<string, never> : TraktApiParamsPagination);
 
 export const TraktApiHeaders = {
   /** Interval to wait after rate limit is reached */
