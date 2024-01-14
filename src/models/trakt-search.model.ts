@@ -43,21 +43,24 @@ export type TraktSearch = TraktApiParams<
  *
  * @see [search]{@link https://trakt.docs.apiary.io/#reference/search}
  */
-export type TraktSearchResult<T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | 'any' = 'any'> = { score: number } & (T extends 'movie'
-  ? { type: 'movie'; movie: TraktMovie }
+export type TraktSearchResult<
+  T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | 'any' = 'any',
+  I extends 'extended' | 'short' | 'any' = 'any',
+> = { score: number } & (T extends 'movie'
+  ? { type: 'movie'; movie: TraktMovie<I> }
   : T extends 'show'
-    ? { type: 'show'; show: TraktShow }
+    ? { type: 'show'; show: TraktShow<I> }
     : T extends 'episode'
-      ? { type: 'episode'; show: TraktShow; episode: TraktEpisode }
+      ? { type: 'episode'; show: TraktShow<I>; episode: TraktEpisode<I> }
       : T extends 'person'
-        ? { type: 'person'; person: TraktPerson }
+        ? { type: 'person'; person: TraktPerson<I> }
         : T extends 'list'
           ? { type: 'list'; list: TraktList }
           : { type: 'movie' | 'show' | 'episode' | 'person' | 'list' } & (
-              | { movie: TraktMovie }
-              | { show: TraktShow }
-              | { show: TraktShow; episode: TraktEpisode }
-              | { person: TraktPerson }
+              | { movie: TraktMovie<I> }
+              | { show: TraktShow<I> }
+              | { show: TraktShow<I>; episode: TraktEpisode<I> }
+              | { person: TraktPerson<I> }
               | { list: TraktList }
             ));
 

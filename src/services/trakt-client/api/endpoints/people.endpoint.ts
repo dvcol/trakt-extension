@@ -4,39 +4,9 @@ import type { TraktPerson, TraktPersonUpdate } from '~/models/trakt-people.model
 
 import type { TraktShowCast } from '~/models/trakt-show.model';
 
-import {
-  TraktApiExtended,
-  type TraktApiParamsExtended,
-  type TraktApiParamsPagination,
-  type TraktApiTemplate,
-  TraktClientEndpoint,
-} from '~/models/trakt-client.model';
-import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
-import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
+import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { type StartDateParam, transformStartDate, validateStartDate } from '~/models/trakt-entity.model';
 import { HttpMethod } from '~/utils/http.utils';
-
-type StartDateParam = {
-  /**
-   * Updated since this date and time.
-   * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-   *
-   * * <b>Important</b>
-   *
-   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-   * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-   */
-  start_date?: string;
-};
-
-const validate: TraktApiTemplate<StartDateParam>['validate'] = param => {
-  if (param.start_date) TraktApiValidators.date(param.start_date);
-  return true;
-};
-
-const transform: TraktApiTemplate<StartDateParam>['transform'] = param => {
-  if (param.start_date) return { ...param, start_date: TraktApiTransforms.date.dropMinutes(param.start_date) };
-  return param;
-};
 
 export const people = {
   /**
@@ -65,8 +35,8 @@ export const people = {
   >({
     method: HttpMethod.GET,
     url: '/people/updates/:start_date',
-    transform,
-    validate,
+    transform: transformStartDate,
+    validate: validateStartDate,
     opts: {
       pagination: true,
       extended: [TraktApiExtended.Full],
@@ -99,8 +69,8 @@ export const people = {
   updatedIds: new TraktClientEndpoint<StartDateParam & TraktApiParamsPagination, number[]>({
     method: HttpMethod.GET,
     url: '/people/updates/id/:start_date',
-    transform,
-    validate,
+    transform: transformStartDate,
+    validate: validateStartDate,
     opts: {
       pagination: true,
       parameters: {

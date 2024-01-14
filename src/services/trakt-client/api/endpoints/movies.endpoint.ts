@@ -2,17 +2,13 @@ import type { TraktComment } from '~/models/trakt-comment.model';
 import type { TraktList } from '~/models/trakt-list.model';
 import type {
   TraktMovie,
-  TraktMovieAlias,
   TraktMovieAnticipated,
   TraktMovieBoxOffice,
   TraktMovieCast,
   TraktMovieFavorited,
   TraktMoviePlayed,
-  TraktMovieRating,
   TraktMovieRelease,
   TraktMovieStats,
-  TraktMovieStudio,
-  TraktMovieTranslation,
   TraktMovieTrending,
   TraktMovieUpdate,
 } from '~/models/trakt-movie.model';
@@ -24,13 +20,19 @@ import {
   type TraktApiParamsExtended,
   type TraktApiParamsFilter,
   type TraktApiParamsPagination,
-  type TraktApiTemplate,
   type TraktApiTemplateOptions,
   TraktClientEndpoint,
 } from '~/models/trakt-client.model';
+import {
+  type StartDateParam,
+  type TraktAlias,
+  type TraktRating,
+  type TraktStudio,
+  type TraktTranslation,
+  transformStartDate,
+  validateStartDate,
+} from '~/models/trakt-entity.model';
 import { type TraktApiMovieFilters, TraktApiMovieFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
-import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
-import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
 import { HttpMethod } from '~/utils/http.utils';
 
 type BaseMovieParams = TraktApiParamsPagination & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsFilter<TraktApiMovieFilters>;
@@ -39,29 +41,6 @@ const baseOptions: TraktApiTemplateOptions = {
   pagination: true,
   extended: [TraktApiExtended.Full],
   filters: TraktApiMovieFilterValues,
-};
-
-type StartDateParam = {
-  /**
-   * Updated since this date and time.
-   * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-   *
-   * * <b>Important</b>
-   *
-   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-   * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-   */
-  start_date?: string;
-};
-
-const validate: TraktApiTemplate<StartDateParam>['validate'] = param => {
-  if (param.start_date) TraktApiValidators.date(param.start_date);
-  return true;
-};
-
-const transform: TraktApiTemplate<StartDateParam>['transform'] = param => {
-  if (param.start_date) return { ...param, start_date: TraktApiTransforms.date.dropMinutes(param.start_date) };
-  return param;
 };
 
 export const movies = {
@@ -74,7 +53,7 @@ export const movies = {
    *
    * @see [trending]{@link https://trakt.docs.apiary.io/#reference/movies/trending/get-trending-movies}
    */
-  trending: new TraktClientEndpoint<BaseMovieParams, TraktMovieTrending<'any'>[]>({
+  trending: new TraktClientEndpoint<BaseMovieParams, TraktMovieTrending[]>({
     method: HttpMethod.GET,
     url: '/movies/trending',
     opts: { ...baseOptions },
@@ -107,7 +86,7 @@ export const movies = {
       /** Time period. */
       period?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
     } & BaseMovieParams,
-    TraktMovieFavorited<'any'>[]
+    TraktMovieFavorited[]
   >({
     method: HttpMethod.GET,
     url: '/movies/favorited/:period',
@@ -121,7 +100,8 @@ export const movies = {
     },
   }),
   /**
-   * Returns the most played (a single user can watch multiple times) movies in the specified time period, defaulting to weekly. All stats are relative to the specific time period.
+   * Returns the most played (a single user can watch multiple times) movies in the specified time period, defaulting to weekly.
+   * All stats are relative to the specific time period.
    *
    * @pagination true - {@link TraktApiPagination}
    * @extended true - {@link TraktApiExtended.Full}
@@ -134,7 +114,7 @@ export const movies = {
       /** Time period. */
       period?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
     } & BaseMovieParams,
-    TraktMoviePlayed<'any'>[]
+    TraktMoviePlayed[]
   >({
     method: HttpMethod.GET,
     url: '/movies/played/:period',
@@ -161,7 +141,7 @@ export const movies = {
       /** Time period. */
       period?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
     } & BaseMovieParams,
-    TraktMoviePlayed<'any'>[]
+    TraktMoviePlayed[]
   >({
     method: HttpMethod.GET,
     url: '/movies/watched/:period',
@@ -188,7 +168,7 @@ export const movies = {
       /** Time period. */
       period?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
     } & BaseMovieParams,
-    TraktMoviePlayed<'any'>[]
+    TraktMoviePlayed[]
   >({
     method: HttpMethod.GET,
     url: '/movies/collected/:period',
@@ -210,7 +190,7 @@ export const movies = {
    *
    * @see [get-the-most-anticipated-movies]{@link https://trakt.docs.apiary.io/#reference/movies/anticipated/get-the-most-anticipated-movies}
    */
-  anticipated: new TraktClientEndpoint<BaseMovieParams, TraktMovieAnticipated<'any'>[]>({
+  anticipated: new TraktClientEndpoint<BaseMovieParams, TraktMovieAnticipated[]>({
     method: HttpMethod.GET,
     url: '/movies/anticipated',
     opts: { ...baseOptions },
@@ -222,7 +202,7 @@ export const movies = {
    *
    * @see [get-the-weekend-box-office]{@link https://trakt.docs.apiary.io/#reference/movies/box-office/get-the-weekend-box-office}
    */
-  boxOffice: new TraktClientEndpoint<TraktApiParamsExtended<typeof TraktApiExtended.Full>, TraktMovieBoxOffice<'any'>[]>({
+  boxOffice: new TraktClientEndpoint<TraktApiParamsExtended<typeof TraktApiExtended.Full>, TraktMovieBoxOffice[]>({
     method: HttpMethod.GET,
     url: '/movies/boxoffice',
     opts: {
@@ -230,12 +210,14 @@ export const movies = {
     },
   }),
   /**
-   * Returns all movies updated since the specified UTC date and time. We recommended storing the X-Start-Date header you can be efficient using this method moving forward.
+   * Returns all movies updated since the specified UTC date and time.
+   * We recommended storing the X-Start-Date header you can be efficient using this method moving forward.
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
    *
-   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
+   * The start_date is only accurate to the hour, for caching purposes.
+   * Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
@@ -249,12 +231,12 @@ export const movies = {
    */
   updates: new TraktClientEndpoint<
     StartDateParam & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsPagination,
-    TraktMovieUpdate<'any'>[]
+    TraktMovieUpdate[]
   >({
     method: HttpMethod.GET,
     url: '/movies/updates/:start_date',
-    transform,
-    validate,
+    transform: transformStartDate,
+    validate: validateStartDate,
     opts: {
       pagination: true,
       extended: [TraktApiExtended.Full],
@@ -266,12 +248,14 @@ export const movies = {
     },
   }),
   /**
-   * Returns all movie Trakt IDs updated since the specified UTC date and time. We recommended storing the X-Start-Date header you can be efficient using this method moving forward.
+   * Returns all movie Trakt IDs updated since the specified UTC date and time.
+   * We recommended storing the X-Start-Date header you can be efficient using this method moving forward.
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
    *
-   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
+   * The start_date is only accurate to the hour, for caching purposes.
+   * Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
@@ -285,8 +269,8 @@ export const movies = {
   updatedIds: new TraktClientEndpoint<StartDateParam & TraktApiParamsPagination, number[]>({
     method: HttpMethod.GET,
     url: '/movies/updates/id/:start_date',
-    transform,
-    validate,
+    transform: transformStartDate,
+    validate: validateStartDate,
     opts: {
       pagination: true,
       parameters: {
@@ -335,7 +319,7 @@ export const movies = {
       /** Trakt ID, Trakt slug, or IMDB ID */
       id: string;
     },
-    TraktMovieAlias[]
+    TraktAlias[]
   >({
     method: HttpMethod.GET,
     url: '/movies/:id/aliases',
@@ -386,11 +370,10 @@ export const movies = {
       /** 2 character language code (ISO 639-1) */
       language?: string;
     },
-    TraktMovieTranslation[]
+    TraktTranslation[]
   >({
     method: HttpMethod.GET,
     url: '/movies/:id/translations/:language',
-    // optional: ['language'],
     opts: {
       parameters: {
         path: {
@@ -401,7 +384,8 @@ export const movies = {
     },
   }),
   /**
-   * Returns all top level comments for a movie. By default, the newest comments are returned first. Other sorting options include oldest, most likes, most replies, highest rated, lowest rated, and most plays.
+   * Returns all top level comments for a movie. By default, the newest comments are returned first.
+   * Other sorting options include oldest, most likes, most replies, highest rated, lowest rated, and most plays.
    *
    * * <b>Note</b>
    *
@@ -457,7 +441,6 @@ export const movies = {
   >({
     method: HttpMethod.GET,
     url: '/movies/:id/lists/:type/:sort',
-    // optional: ['type', 'sort'],
     opts: {
       pagination: true,
       emoji: true,
@@ -502,7 +485,7 @@ export const movies = {
       /** Trakt ID, Trakt slug, or IMDB ID */
       id: string;
     },
-    TraktMovieRating
+    TraktRating
   >({
     method: HttpMethod.GET,
     url: '/movies/:id/ratings',
@@ -526,7 +509,8 @@ export const movies = {
     {
       /** Trakt ID, Trakt slug, or IMDB ID */
       id: string;
-    },
+    } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+      TraktApiParamsPagination,
     TraktMovie<'any'>[]
   >({
     method: HttpMethod.GET,
@@ -564,13 +548,15 @@ export const movies = {
   }),
   /**
    * Returns all studios for a movie.
+   *
+   * @see [get-movie-studios]{@link https://trakt.docs.apiary.io/#reference/movies/studios/get-movie-studios}
    */
   studios: new TraktClientEndpoint<
     {
       /** Trakt ID, Trakt slug, or IMDB ID */
       id: string;
     },
-    TraktMovieStudio[]
+    TraktStudio[]
   >({
     method: HttpMethod.GET,
     url: '/movies/:id/studios',
@@ -586,12 +572,14 @@ export const movies = {
    * Returns all users watching this movie right now.
    *
    * @extended true - {@link TraktApiExtended.Full}
+   *
+   * @see [get-users-watching-right-now]{@link https://trakt.docs.apiary.io/#reference/movies/watching/get-users-watching-right-now}
    */
   watching: new TraktClientEndpoint<
     {
       /** Trakt ID, Trakt slug, or IMDB ID */
       id: string;
-    },
+    } & TraktApiParamsExtended<typeof TraktApiExtended.Full>,
     TraktUser<'any'>[]
   >({
     method: HttpMethod.GET,

@@ -38,45 +38,41 @@ export type TraktMovie<T extends 'extended' | 'short' | 'any' = 'short'> = T ext
     ? TraktMovieShort
     : TraktMovieShort & Partial<TraktMovieExtended>;
 
-export type TraktMovieTrending<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMovieTrending<T extends 'extended' | 'short' | 'any' = 'any'> = {
   watchers: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieFavorited<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMovieFavorited<T extends 'extended' | 'short' | 'any' = 'any'> = {
   user_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMoviePlayed<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMoviePlayed<T extends 'extended' | 'short' | 'any' = 'any'> = {
   watcher_count: number;
   play_count: number;
   collected_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieAnticipated<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMovieAnticipated<T extends 'extended' | 'short' | 'any' = 'any'> = {
   list_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieBoxOffice<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMovieBoxOffice<T extends 'extended' | 'short' | 'any' = 'any'> = {
   revenue: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieUpdate<T extends 'extended' | 'short' | 'any' = 'short'> = {
+export type TraktMovieUpdate<T extends 'extended' | 'short' | 'any' = 'any'> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   updated_at: string;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieAlias = {
-  title: string;
-  country: string;
-};
-
 export type TraktMovieRelease = {
+  /** 2 character country code (ISO 3166-1 alpha-2) */
   country: string;
   certification: string;
   release_date: string;
@@ -84,23 +80,7 @@ export type TraktMovieRelease = {
   note: string;
 };
 
-export type TraktMovieTranslation = {
-  title: string;
-  overview: string;
-  tagline: string;
-  /** 2 character language code (ISO 639-1) */
-  language: string;
-  /** 2 character country code (ISO 3166-1 alpha-2) */
-  country: string;
-};
-
 export type TraktMovieCast = TraktCast<'short', 'short', 'any'>;
-
-export type TraktMovieRating = {
-  rating: number;
-  votes: number;
-  distribution: Record<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10, number>;
-};
 
 export type TraktMovieStats = {
   watchers: number;
@@ -110,11 +90,4 @@ export type TraktMovieStats = {
   lists: number;
   votes: number;
   favorited: number;
-};
-
-export type TraktMovieStudio = {
-  name: string;
-  /** 2 character country code (ISO 3166-1 alpha-2) */
-  country: string;
-  ids: Pick<TraktApiIds, 'trakt' | 'slug' | 'tmdb'>;
 };

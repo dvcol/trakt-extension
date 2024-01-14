@@ -5,8 +5,9 @@ import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-ap
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
 
+import { validateStartDate } from '~/models/trakt-entity.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
-import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
+
 import { HttpMethod } from '~/utils/http.utils';
 
 type StartAndDay = {
@@ -36,10 +37,7 @@ const opts: TraktApiTemplateOptions = {
   },
 };
 
-const validate: TraktApiTemplate<CalendarParams>['validate'] = param => {
-  if (param.start_date) TraktApiValidators.date(param.start_date);
-  return true;
-};
+const validate: TraktApiTemplate<CalendarParams>['validate'] = validateStartDate;
 
 /**
  * By default, the calendar will return all shows or movies for the specified time period and can be global or user specific.
