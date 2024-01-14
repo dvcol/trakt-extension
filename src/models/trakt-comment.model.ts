@@ -5,6 +5,7 @@ import type { TraktMovie } from '~/models/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt-season.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { TraktUser } from '~/models/trakt-user.model';
+import type { ExclusiveUnion } from '~/utils/typescript.utils';
 
 export type TraktComment = {
   id: number;
@@ -107,24 +108,4 @@ export type TraktCommentRequest<T extends 'any' | 'movie' | 'show' | 'season' | 
         ? Pick<BaseTraktCommentRequest, 'episode'>
         : T extends 'list'
           ? Pick<BaseTraktCommentRequest, 'list'>
-          :
-              | {
-                  /** Movie to comment */
-                  movie: TraktMovie;
-                }
-              | {
-                  /** Show to comment */
-                  show: TraktShow;
-                }
-              | {
-                  /** Season to comment */
-                  season: TraktSeason;
-                }
-              | {
-                  /** Episode to comment */
-                  episode: TraktEpisode;
-                }
-              | {
-                  /** List to comment */
-                  list: Pick<TraktList, 'ids'>;
-                });
+          : ExclusiveUnion<BaseTraktCommentRequest>);
