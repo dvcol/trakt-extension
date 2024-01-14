@@ -15,6 +15,7 @@ import { people } from '~/services/trakt-client/api/endpoints/people.endpoint';
 import { recommendations } from '~/services/trakt-client/api/endpoints/recommendations.endpoint';
 import { scrobble } from '~/services/trakt-client/api/endpoints/scrobble.endpoint';
 import { search } from '~/services/trakt-client/api/endpoints/search.endpoint';
+import { seasons } from '~/services/trakt-client/api/endpoints/seasons.endpoint';
 import { shows } from '~/services/trakt-client/api/endpoints/shows.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
@@ -147,7 +148,7 @@ export const traktApi = {
   scrobble,
   search,
   shows,
-  // seasons,
+  seasons,
   // episodes,
   // sync,
   // users,

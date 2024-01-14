@@ -361,7 +361,7 @@ export const movies = {
   /**
    * Returns all translations for a movie, including language and translated values for title, tagline and overview.
    *
-   * @see [get-all-movie-translations]{@link https://trakt.docs.apiary.io/#reference/movies/summary/get-all-movie-translations}
+   * @see [get-all-movie-translations]{@link https://trakt.docs.apiary.io/#reference/movies/translations/get-all-movie-translations}
    */
   translations: new TraktClientEndpoint<
     {
