@@ -43,6 +43,7 @@ describe('traktClient', () => {
   });
 
   it.skip('test', async () => {
+    test.checkin.delete.call().then(r => r.json());
     await test.certifications
       .call({
         type: 'shows',

@@ -6,12 +6,12 @@ import type { TraktSeason } from '~/models/trakt-season.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { TraktUser } from '~/models/trakt-user.model';
 
-export type TraktList = {
+export type TraktList<T extends string | 'watchlist' | 'favorites' | 'personal' = string> = {
   name: string;
   description: string;
   privacy: 'private' | 'friends' | 'public' | 'link';
   share_link: string;
-  type: string;
+
   display_numbers: boolean;
   allow_comments: boolean;
   sort_by:
@@ -37,7 +37,13 @@ export type TraktList = {
   likes: number;
   ids: Pick<TraktApiIds, 'trakt' | 'slug'>;
   user: TraktUser;
-};
+} & (T extends 'watchlist'
+  ? { type: 'watchlist' }
+  : T extends 'favorites'
+    ? { type: 'favorites' }
+    : T extends 'personal'
+      ? { type: 'personal' }
+      : { type: string | 'watchlist' | 'favorites' | 'personal' });
 
 export type TraktListList = {
   like_count: number;

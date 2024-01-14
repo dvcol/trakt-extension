@@ -9,9 +9,11 @@ export type ExclusiveUnion<T> = {
 export type Primitive = string | boolean | number;
 export type PrimitiveRecord = Record<string, Primitive>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
-export type RecursiveRecord<T = any> = {
-  [key: string]: T | RecursiveRecord<T>;
-};
+export type RecursiveRecord<T = any> =
+  | {
+      [key: string]: T | RecursiveRecord<T>;
+    }
+  | Record<string, never>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
 export type GenericFunction = (...args: any) => any;
 

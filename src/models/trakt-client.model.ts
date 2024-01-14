@@ -78,19 +78,19 @@ export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams, R = unkn
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
   /** Execute the request */
-  call?: (param: P) => Promise<TraktApiResponse<R>>;
+  call?: (param?: P) => Promise<TraktApiResponse<R>>;
   /** Validate the parameters before performing request */
   validate?: (param: P) => boolean;
   /** Transform the parameters before performing request */
   transform?: (param: P) => P;
 };
 
-const stubCall = <P extends TraktApiParams = TraktApiParams, R = unknown>(param: P): Promise<TraktApiResponse<R>> => {
+const stubCall = <P extends TraktApiParams = TraktApiParams, R = unknown>(param?: P): Promise<TraktApiResponse<R>> => {
   console.error('Endpoint call function not implemented', param);
   throw new Error('Endpoint call function not implemented');
 };
 
-export class TraktClientEndpoint<P extends TraktApiParams = TraktApiParams, R = unknown>
+export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown>
   extends ExtensibleFunction<(param: P) => Promise<TraktApiResponse<R>>>
   implements TraktApiTemplate<P, R>
 {
@@ -99,7 +99,7 @@ export class TraktClientEndpoint<P extends TraktApiParams = TraktApiParams, R = 
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
   validate?: (param: P) => boolean;
-  call: (param: P) => Promise<TraktApiResponse<R>>;
+  call: (param?: P) => Promise<TraktApiResponse<R>>;
 
   constructor(template: TraktApiTemplate<P, R>) {
     super(template.call ?? stubCall<P, R>);
@@ -130,6 +130,10 @@ export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
     end?: string | null;
   };
   sort?: {
+    by?: string | null;
+    how?: string | null;
+  };
+  appliedSort?: {
     by?: string | null;
     how?: string | null;
   };
@@ -205,6 +209,10 @@ export type PartialTraktApiParams<
   (F extends void ? Record<string, never> : TraktApiParamsFilter<F>) &
   (P extends false ? Record<string, never> : TraktApiParamsPagination);
 
+export type ITraktApi<T extends TraktApiParams = TraktApiParams> = {
+  [key: string]: TraktClientEndpoint<T> | ITraktApi<T>;
+};
+
 export const TraktApiHeaders = {
   /** Interval to wait after rate limit is reached */
   RetryAfter: 'Retry-After',
@@ -234,8 +242,12 @@ export const TraktApiHeaders = {
   XEndDate: 'X-End-Date',
   /** Desired sort by within possible values: rank, added, title, released, runtime, popularity, percentage, votes, my_rating, random, watched, and collected. */
   XSortBy: 'X-Sort-By',
-  /** Desired sort: order asc or desc. */
+  /** Desired sort order: asc or desc. */
   XSortHow: 'X-Sort-How',
+  /** Actual sort by within possible values: rank, added, title, released, runtime, popularity, percentage, and votes */
+  XAppliedSortBy: 'X-Applied-Sort-By',
+  /** Actual sort order asc or desc. */
+  XAppliedSortHow: 'X-Applied-Sort-How',
   /** The user agent of the consumer client */
   UserAgent: 'User-Agent',
   /** The content type of the payload  */

@@ -65,6 +65,13 @@ const parseResponse = (response: Response): TraktApiResponse => {
     };
   }
 
+  if (response.headers.has(TraktApiHeaders.XAppliedSortBy) || response.headers.has(TraktApiHeaders.XAppliedSortHow)) {
+    _response.appliedSort = {
+      by: response.headers.get(TraktApiHeaders.XAppliedSortBy),
+      how: response.headers.get(TraktApiHeaders.XAppliedSortHow),
+    };
+  }
+
   if (response.headers.has(TraktApiHeaders.XStartDate) || response.headers.has(TraktApiHeaders.XEndDate)) {
     _response.interval = {
       start: response.headers.get(TraktApiHeaders.XStartDate),
@@ -113,7 +120,7 @@ export class BaseTraktClient {
 
   protected async _call<P extends TraktApiParams = TraktApiParams, R = unknown>(
     template: TraktApiTemplate<P>,
-    params: P,
+    params: P = {} as P,
   ): Promise<TraktApiResponse<R>> {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
