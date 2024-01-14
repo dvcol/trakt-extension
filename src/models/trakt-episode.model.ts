@@ -1,4 +1,5 @@
 import type { TraktApiIds } from '~/models/trakt-id.model';
+import type { TraktCast } from '~/models/trakt-people.model';
 
 export const TraktEpisodeType = {
   Standard: 'standard',
@@ -43,19 +44,14 @@ export type TraktEpisode<T extends 'extended' | 'short' | 'any' = 'short'> = T e
     ? TraktEpisodeShort
     : TraktEpisodeShort & Partial<TraktEpisodeExtended>;
 
-export type TraktEpisodeTrending<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktEpisodeCast = TraktCast<'any', 'short', 'any'>;
+
+export type TraktShowStats = {
   watchers: number;
-  episode: TraktEpisode<T>;
-};
-
-export type TraktEpisodeFavorited<T extends 'extended' | 'short' | 'any' = 'any'> = {
-  user_count: number;
-  episode: TraktEpisode<T>;
-};
-
-export type TraktEpisodePlayed<T extends 'extended' | 'short' | 'any' = 'any'> = {
-  watcher_count: number;
-  play_count: number;
-  collected_count: number;
-  episode: TraktEpisode<T>;
+  plays: number;
+  collectors: number;
+  collected_episodes: number;
+  comments: number;
+  lists: number;
+  votes: number;
 };

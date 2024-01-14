@@ -214,7 +214,7 @@ export const seasons = {
       id: string;
       /** season number */
       season: number;
-    } & TraktApiParamsExtended<typeof TraktApiExtended.GuestStars | typeof TraktApiExtended.Full>,
+    } & TraktApiParamsExtended<typeof TraktApiExtended.GuestStars>,
     TraktSeasonCast
   >({
     method: HttpMethod.GET,
