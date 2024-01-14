@@ -32,7 +32,32 @@ export type TraktCheckinError = {
   expires_at: '2014-10-15T22:21:29.000Z';
 };
 
-export type TraktCheckinRequest = {
+type TraktCheckinRequestMovie = {
+  /** Movie to be checked-in */
+  movie: TraktMovie;
+};
+
+type TraktCheckinRequestShow = {
+  /** Show to be checked-in */
+  show: TraktShow;
+  /** Episode to be checked-in. If no traktv ids is provided, either episode's season & number or number_abs is required */
+  episode: Partial<TraktEpisode> & (Pick<TraktEpisode, 'season' | 'number'> | { number_abs: number });
+};
+
+type TraktCheckinRequestEpisode = {
+  /** Episode to be checked-in. If no show is provided, traktv ids are required */
+  episode: Partial<TraktEpisode> & Pick<TraktEpisode, 'ids'>;
+};
+
+type TraktCheckinRequestItem<T extends 'movie' | 'show' | 'episode' | 'any' = 'any'> = T extends 'movie'
+  ? TraktCheckinRequestMovie
+  : T extends 'show'
+    ? TraktCheckinRequestShow
+    : T extends 'episode'
+      ? TraktCheckinRequestEpisode
+      : TraktCheckinRequestMovie | TraktCheckinRequestEpisode | TraktCheckinRequestShow;
+
+export type TraktCheckinRequest<T extends 'movie' | 'show' | 'episode' | 'any' = 'any'> = {
   /**
    * Control sharing to any connected social networks.
    *
@@ -46,18 +71,4 @@ export type TraktCheckinRequest = {
   sharing?: TraktSharing;
   /** Message used for sharing. If not sent, it will use the watching string in the user settings. */
   message?: string;
-} & (
-  | {
-      /** Movie to be checked-in */
-      movie: TraktMovie;
-    }
-  | {
-      /** Episode to be checked-in. If no show is provided, traktv ids are required */
-      episode: Partial<TraktEpisode> & Pick<TraktEpisode, 'ids'>;
-    }
-  | {
-      show: TraktShow;
-      /** Episode to be checked-in. If no traktv ids is provided, either episode's season & number or number_abs is required */
-      episode: Partial<TraktEpisode> & (Pick<TraktEpisode, 'season' | 'number'> | { number_abs: number });
-    }
-);
+} & TraktCheckinRequestItem<T>;

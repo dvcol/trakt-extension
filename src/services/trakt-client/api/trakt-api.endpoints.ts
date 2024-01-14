@@ -10,6 +10,7 @@ import { checkin } from '~/services/trakt-client/api/endpoints/checkin.endpoint'
 import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoint';
 import { lists } from '~/services/trakt-client/api/endpoints/lists.endpoint';
 import { movies } from '~/services/trakt-client/api/endpoints/movies.endpoint';
+import { notes } from '~/services/trakt-client/api/endpoints/notes.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
 // TODO: add filter, required and jsdoc
@@ -135,7 +136,7 @@ export const traktApi = {
       pagination: 'optional',
     },
   }),
-  // note - new,
+  notes,
   // people,
   // recommendations,
   // scrobble,
