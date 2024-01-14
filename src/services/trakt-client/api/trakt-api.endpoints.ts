@@ -11,6 +11,7 @@ import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoin
 import { lists } from '~/services/trakt-client/api/endpoints/lists.endpoint';
 import { movies } from '~/services/trakt-client/api/endpoints/movies.endpoint';
 import { notes } from '~/services/trakt-client/api/endpoints/notes.endpoint';
+import { people } from '~/services/trakt-client/api/endpoints/people.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
 // TODO: add filter, required and jsdoc
@@ -137,7 +138,7 @@ export const traktApi = {
     },
   }),
   notes,
-  // people,
+  people,
   // recommendations,
   // scrobble,
   // search,

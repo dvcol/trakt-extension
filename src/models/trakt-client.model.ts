@@ -123,9 +123,18 @@ type ResponseOrTypedResponse<T> = T extends never ? Response : TypedResponse<T>;
 
 export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
   pagination?: TraktClientPagination;
+  interval?: {
+    start?: string | null;
+    end?: string | null;
+  };
   sort?: {
     by?: string | null;
     how?: string | null;
+  };
+  vip?: {
+    url?: string | null;
+    user?: string | null;
+    limit?: string | null;
   };
 };
 
@@ -202,7 +211,7 @@ export const TraktApiHeaders = {
   /** https://trakt.tv/vip */
   XUpgradeURL: 'X-Upgrade-URL',
   /** true or false */
-  XVIPUser: 'X-VIP-User',
+  XVipUser: 'X-VIP-User',
   /** Limit allowed. */
   XAccountLimit: 'X-Account-Limit',
   /** Current page */

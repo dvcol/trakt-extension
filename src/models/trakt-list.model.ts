@@ -9,7 +9,7 @@ import type { TraktUser } from '~/models/trakt-user.model';
 export type TraktList = {
   name: string;
   description: string;
-  privacy: string;
+  privacy: 'private' | 'friends' | 'public' | 'link';
   share_link: string;
   type: string;
   display_numbers: boolean;

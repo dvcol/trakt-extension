@@ -1,4 +1,5 @@
 import type { TraktApiIds } from '~/models/trakt-id.model';
+import type { TraktCast } from '~/models/trakt-people.model';
 
 export const TraktShowStatus = {
   /** Airing right now */
@@ -24,3 +25,5 @@ export type TraktShow = {
   year: number;
   ids: Pick<TraktApiIds, 'trakt' | 'slug' | 'imdb' | 'tvdb' | 'tmdb'>;
 };
+
+export type TraktShowCast = TraktCast<'any', 'episodes', 'any'>;

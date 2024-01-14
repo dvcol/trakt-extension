@@ -94,7 +94,7 @@ export type TraktMovieTranslation = {
   country: string;
 };
 
-export type TraktMovieCast = TraktCast<'short', 'short'>;
+export type TraktMovieCast = TraktCast<'short', 'short', 'any'>;
 
 export type TraktMovieRating = {
   rating: number;

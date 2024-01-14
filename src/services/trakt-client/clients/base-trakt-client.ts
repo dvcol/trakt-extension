@@ -44,7 +44,12 @@ const parseResponse = (response: Response): TraktApiResponse => {
 
   const _response: TraktApiResponse = { ...response };
 
-  if (response.headers.has(TraktApiHeaders.XPaginationItemCount)) {
+  if (
+    response.headers.has(TraktApiHeaders.XPaginationItemCount) ||
+    response.headers.has(TraktApiHeaders.XPaginationPageCount) ||
+    response.headers.has(TraktApiHeaders.XPaginationLimit) ||
+    response.headers.has(TraktApiHeaders.XPaginationPage)
+  ) {
     _response.pagination = {
       itemCount: Number(response.headers.get(TraktApiHeaders.XPaginationItemCount)),
       pageCount: Number(response.headers.get(TraktApiHeaders.XPaginationPageCount)),
@@ -57,6 +62,25 @@ const parseResponse = (response: Response): TraktApiResponse => {
     _response.sort = {
       by: response.headers.get(TraktApiHeaders.XSortBy),
       how: response.headers.get(TraktApiHeaders.XSortHow),
+    };
+  }
+
+  if (response.headers.has(TraktApiHeaders.XStartDate) || response.headers.has(TraktApiHeaders.XEndDate)) {
+    _response.interval = {
+      start: response.headers.get(TraktApiHeaders.XStartDate),
+      end: response.headers.get(TraktApiHeaders.XEndDate),
+    };
+  }
+
+  if (
+    response.headers.has(TraktApiHeaders.XUpgradeURL) ||
+    response.headers.has(TraktApiHeaders.XVipUser) ||
+    response.headers.has(TraktApiHeaders.XAccountLimit)
+  ) {
+    _response.vip = {
+      url: response.headers.get(TraktApiHeaders.XUpgradeURL),
+      user: response.headers.get(TraktApiHeaders.XVipUser),
+      limit: response.headers.get(TraktApiHeaders.XAccountLimit),
     };
   }
 

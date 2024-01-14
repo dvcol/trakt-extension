@@ -23,7 +23,7 @@ type BaseTraktNoteRequestItem = {
   person: Pick<TraktPerson, 'ids'>;
 };
 
-const TraktNoteItemType = {
+export const TraktNoteItemType = {
   Movie: 'movie',
   Show: 'show',
   Season: 'season',
@@ -31,9 +31,9 @@ const TraktNoteItemType = {
   Person: 'person',
 } as const;
 
-type TraktNoteItemTypes = (typeof TraktNoteItemType)[keyof typeof TraktNoteItemType];
+export type TraktNoteItemTypes = (typeof TraktNoteItemType)[keyof typeof TraktNoteItemType];
 
-const TraktNoteType = {
+export const TraktNoteType = {
   Movie: 'movie',
   Show: 'show',
   Season: 'season',
@@ -44,7 +44,7 @@ const TraktNoteType = {
   Rating: 'rating',
 } as const;
 
-type TraktNoteTypes = (typeof TraktNoteType)[keyof typeof TraktNoteType];
+export type TraktNoteTypes = (typeof TraktNoteType)[keyof typeof TraktNoteType];
 
 type TraktNoteRequestItem<T extends TraktNoteTypes | 'any' = 'any'> = T extends 'movie'
   ? Pick<BaseTraktNoteRequestItem, 'movie'>
