@@ -81,6 +81,8 @@ export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams, R = unkn
   call?: (param: P) => Promise<TraktApiResponse<R>>;
   /** Validate the parameters before performing request */
   validate?: (param: P) => boolean;
+  /** Transform the parameters before performing request */
+  transform?: (param: P) => P;
 };
 
 const stubCall = <P extends TraktApiParams = TraktApiParams, R = unknown>(param: P): Promise<TraktApiResponse<R>> => {

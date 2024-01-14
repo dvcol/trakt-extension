@@ -139,7 +139,7 @@ export const notes = {
    * Since collection and rating is a 1:1 association, you can assume the note is attached to the media item in the type field that has been collected or rated.
    *
    * @vip required - [Requires a paid VIP subscription]{@link https://trakt.docs.apiary.io/#introduction/vip-methods}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-the-attached-item]{@link https://trakt.docs.apiary.io/#reference/notes/item/get-the-attached-item}
    */

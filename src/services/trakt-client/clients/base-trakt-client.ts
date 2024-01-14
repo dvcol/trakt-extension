@@ -128,10 +128,12 @@ export class BaseTraktClient {
       throw Error('OAuth required');
     }
 
-    template.validate?.(params);
+    const _params = template.transform?.(params) ?? params;
+
+    template.validate?.(_params);
 
     const req: TraktApiRequest = {
-      input: this._parse(template, params),
+      input: this._parse(template, _params),
       init: {
         method: template.method,
         headers,
@@ -139,7 +141,7 @@ export class BaseTraktClient {
     };
 
     if (template.method !== 'GET' && template.body) {
-      req.init.body = parseBody(template.body, params);
+      req.init.body = parseBody(template.body, _params);
     }
 
     this.debug(req);

@@ -24,10 +24,13 @@ import {
   type TraktApiParamsExtended,
   type TraktApiParamsFilter,
   type TraktApiParamsPagination,
+  type TraktApiTemplate,
   type TraktApiTemplateOptions,
   TraktClientEndpoint,
 } from '~/models/trakt-client.model';
 import { type TraktApiMovieFilters, TraktApiMovieFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
+import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
+import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
 import { HttpMethod } from '~/utils/http.utils';
 
 type BaseMovieParams = TraktApiParamsPagination & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsFilter<TraktApiMovieFilters>;
@@ -38,12 +41,35 @@ const baseOptions: TraktApiTemplateOptions = {
   filters: TraktApiMovieFilterValues,
 };
 
+type StartDateParam = {
+  /**
+   * Updated since this date and time.
+   * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
+   *
+   * * <b>Important</b>
+   *
+   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
+   * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
+   */
+  start_date?: string;
+};
+
+const validate: TraktApiTemplate<StartDateParam>['validate'] = param => {
+  if (param.start_date) TraktApiValidators.date(param.start_date);
+  return true;
+};
+
+const transform: TraktApiTemplate<StartDateParam>['transform'] = param => {
+  if (param.start_date) return { ...param, start_date: TraktApiTransforms.date.dropMinutes(param.start_date) };
+  return param;
+};
+
 export const movies = {
   /**
    * Returns all movies being watched right now. Movies with the most users are returned first.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [trending]{@link https://trakt.docs.apiary.io/#reference/movies/trending/get-trending-movies}
@@ -57,7 +83,7 @@ export const movies = {
    * Returns the most popular movies. Popularity is calculated using the rating percentage and the number of ratings.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-popular-movies]{@link https://trakt.docs.apiary.io/#reference/movies/popular/get-popular-movies}
@@ -71,7 +97,7 @@ export const movies = {
    * Returns the most favorited movies in the specified time period, defaulting to weekly. All stats are relative to the specific time period.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-the-most-favorited-movies]{@link https://trakt.docs.apiary.io/#reference/movies/favorited/get-the-most-favorited-movies}
@@ -98,7 +124,7 @@ export const movies = {
    * Returns the most played (a single user can watch multiple times) movies in the specified time period, defaulting to weekly. All stats are relative to the specific time period.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-the-most-played-movies]{@link https://trakt.docs.apiary.io/#reference/movies/played/get-the-most-played-movies}
@@ -125,7 +151,7 @@ export const movies = {
    * Returns the most watched (unique users) movies in the specified time period, defaulting to weekly. All stats are relative to the specific time period.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-the-most-watched-movies]{@link https://trakt.docs.apiary.io/#reference/movies/watched/get-the-most-watched-movies}
@@ -152,7 +178,7 @@ export const movies = {
    * Returns the most collected (unique users) movies in the specified time period, defaulting to weekly. All stats are relative to the specific time period.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-the-most-collected-movies]{@link https://trakt.docs.apiary.io/#reference/movies/collected/get-the-most-collected-movies}
@@ -179,7 +205,7 @@ export const movies = {
    * Returns the most anticipated movies based on the number of lists a movie appears on.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @filters movies - {@link TraktApiMovieFilters}
    *
    * @see [get-the-most-anticipated-movies]{@link https://trakt.docs.apiary.io/#reference/movies/anticipated/get-the-most-anticipated-movies}
@@ -192,7 +218,7 @@ export const movies = {
   /**
    * Returns the top 10 grossing movies in the U.S. box office last weekend. Updated every Monday morning.
    *
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-the-weekend-box-office]{@link https://trakt.docs.apiary.io/#reference/movies/box-office/get-the-weekend-box-office}
    */
@@ -208,34 +234,27 @@ export const movies = {
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
+   *
    * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
+   *
    * The start_date can only be a maximum of 30 days in the past.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-recently-updated-movies]{@link https://trakt.docs.apiary.io/#reference/movies/updates/get-recently-updated-movies}
    */
   updates: new TraktClientEndpoint<
-    {
-      /**
-       * Updated since this date and time.
-       * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-       *
-       * * <b>Important</b>
-       * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-       * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-       */
-      start_date?: string;
-    } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-      TraktApiParamsPagination,
+    StartDateParam & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsPagination,
     TraktMovieUpdate<'any'>[]
   >({
     method: HttpMethod.GET,
     url: '/movies/updates/:start_date',
+    transform,
+    validate,
     opts: {
       pagination: true,
       extended: [TraktApiExtended.Full],
@@ -251,32 +270,23 @@ export const movies = {
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
+   *
    * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
+   *
    * The start_date can only be a maximum of 30 days in the past.
    *
    * @pagination true - {@link TraktApiPagination}
    *
    * @see [get-recently-updated-movie-trakt-ids]{@link https://trakt.docs.apiary.io/#reference/movies/updated-ids/get-recently-updated-movie-trakt-ids}
    */
-  updatedIds: new TraktClientEndpoint<
-    {
-      /**
-       * Updated since this date and time.
-       * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-       *
-       * * <b>Important</b>
-       * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-       * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-       */
-      start_date?: string;
-    } & TraktApiParamsPagination,
-    number[]
-  >({
+  updatedIds: new TraktClientEndpoint<StartDateParam & TraktApiParamsPagination, number[]>({
     method: HttpMethod.GET,
     url: '/movies/updates/id/:start_date',
+    transform,
+    validate,
     opts: {
       pagination: true,
       parameters: {
@@ -290,9 +300,10 @@ export const movies = {
    * Returns a single movie's details.
    *
    * * <b>Note</b>
+   *
    * When getting full extended info, the status field can have a value of released, in production, post production, planned, rumored, or canceled.
    *
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-a-movie]{@link https://trakt.docs.apiary.io/#reference/movies/updated-ids/get-a-movie}
    */
@@ -393,6 +404,7 @@ export const movies = {
    * Returns all top level comments for a movie. By default, the newest comments are returned first. Other sorting options include oldest, most likes, most replies, highest rated, lowest rated, and most plays.
    *
    * * <b>Note</b>
+   *
    * If you send OAuth, comments from blocked users will be automatically filtered out.
    *
    * @pagination true - {@link TraktApiPagination}
@@ -463,7 +475,7 @@ export const movies = {
    * The crew object will be broken up by department into production, art, crew, costume & make-up, directing, writing, sound, camera, visual effects, lighting, and editing (if there are people for those crew positions).
    * Each of those members will have a jobs array and a standard person object.
    *
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-all-people-for-a-movie]{@link https://trakt.docs.apiary.io/#reference/movies/people/get-all-people-for-a-movie}
    */
@@ -506,7 +518,7 @@ export const movies = {
    * Returns related and similar movies.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-related-movies]{@link https://trakt.docs.apiary.io/#reference/movies/related/get-related-movies}
    */
@@ -573,7 +585,7 @@ export const movies = {
   /**
    * Returns all users watching this movie right now.
    *
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    */
   watching: new TraktClientEndpoint<
     {

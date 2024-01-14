@@ -12,6 +12,7 @@ export const scrobble = {
    * Use this method when the video initially starts playing or is unpaused. This will remove any playback progress if it exists.
    *
    * * <b>Note</b>
+   *
    * A watching status will auto expire after the remaining runtime has elapsed. There is no need to call this method again while continuing to watch the same item.
    *
    * @auth required
@@ -60,9 +61,11 @@ export const scrobble = {
    * The playback progress will be saved and [/sync/playback]{@link https://trakt.docs.apiary.io/reference/sync/playback/} can be used to resume the video from this exact position.
    *
    * * <b>Note</b>
+   *
    * If you prefer to use a threshold higher than 80%, you should use [/scrobble/pause]{@link https://trakt.docs.apiary.io/reference/scrobble/pause/} yourself so it doesn't create duplicate scrobbles.
    *
    * * <b>Note</b>
+   *
    * If the same item was just scrobbled, a 409 HTTP status code will returned to avoid scrobbling a duplicate.
    * The response will contain a watched_at timestamp when the item was last scrobbled and a expires_at timestamp when the item can be scrobbled again.
    *

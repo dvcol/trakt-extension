@@ -14,6 +14,7 @@ import { notes } from '~/services/trakt-client/api/endpoints/notes.endpoint';
 import { people } from '~/services/trakt-client/api/endpoints/people.endpoint';
 import { recommendations } from '~/services/trakt-client/api/endpoints/recommendations.endpoint';
 import { scrobble } from '~/services/trakt-client/api/endpoints/scrobble.endpoint';
+import { search } from '~/services/trakt-client/api/endpoints/search.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
 
 // TODO: add filter, required and jsdoc
@@ -128,7 +129,7 @@ export const traktApi = {
    *
    * Most TV shows have a TV network where it originally aired. Some API methods allow filtering by network, so it's good to cache this list in your app.
    *
-   * @pagination optional
+   * @pagination optional - {@link TraktApiPagination}
    *
    * @see [networks]{@link https://trakt.docs.apiary.io/#reference/networks}
    */
@@ -143,7 +144,7 @@ export const traktApi = {
   people,
   recommendations,
   scrobble,
-  // search,
+  search,
   // shows,
   // seasons,
   // episodes,

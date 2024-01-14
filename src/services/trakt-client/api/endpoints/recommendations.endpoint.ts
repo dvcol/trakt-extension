@@ -18,7 +18,7 @@ export const recommendations = {
      *
      * The favorited_by array contains all users who favorited the item along with any notes they added.
      *
-     * @extended [Full]{@link TraktApiExtended.Full}
+     * @extended true - {@link TraktApiExtended.Full}
      * @auth required
      *
      * @see [get-movie-recommendations]{@link https://trakt.docs.apiary.io/#reference/recommendations/movies/get-movie-recommendations}
@@ -74,7 +74,7 @@ export const recommendations = {
    *
    * The favorited_by array contains all users who favorited the item along with any notes they added.
    *
-   * @extended [Full]{@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @auth required
    *
    * @see [get-show-recommendations]{@link https://trakt.docs.apiary.io/#reference/recommendations/shows/get-show-recommendations}

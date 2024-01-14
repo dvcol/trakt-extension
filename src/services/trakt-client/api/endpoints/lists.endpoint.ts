@@ -155,7 +155,7 @@ export const lists = {
    * Values for X-Sort-How include asc and desc.
    *
    * @pagination optional - {@link TraktApiPagination}
-   * @extended full - {@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    *
    * @see [list-items]{@link https://trakt.docs.apiary.io/#reference/lists/list-items}

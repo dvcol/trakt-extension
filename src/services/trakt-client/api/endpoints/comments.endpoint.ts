@@ -3,7 +3,7 @@ import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/
 import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt-like.model';
 
-import { TraktClientEndpoint, TraktApiExtended } from '~/models/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 
@@ -218,7 +218,7 @@ export const comments = {
     /**
      * Returns the media item this comment is attached to. The media type can be movie, show, season, episode, or list and it also returns the standard media object for that media type.
      *
-     * @extended full - {@link TraktApiExtended.Full}
+     * @extended true - {@link TraktApiExtended.Full}
      *
      * @see [get-the-attached-media-item]{@link https://trakt.docs.apiary.io/#reference/comments/replies/get-the-attached-media-item}
      */
@@ -316,7 +316,7 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full - {@link TraktApiExtended.Full}
+     * @extended true - {@link TraktApiExtended.Full}
      * @pagination true - {@link TraktApiPagination}
      * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
@@ -356,7 +356,7 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full - {@link TraktApiExtended.Full}
+     * @extended true - {@link TraktApiExtended.Full}
      * @pagination true - {@link TraktApiPagination}
      * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *
@@ -396,7 +396,7 @@ export const comments = {
      * You can optionally filter by the comment_type and media type to limit what gets returned.
      * If you want to include_replies that will return replies in place alongside top level comments.
      *
-     * @extended full - {@link TraktApiExtended.Full}
+     * @extended true - {@link TraktApiExtended.Full}
      * @pagination true - {@link TraktApiPagination}
      * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
      *

@@ -4,8 +4,39 @@ import type { TraktPerson, TraktPersonUpdate } from '~/models/trakt-people.model
 
 import type { TraktShowCast } from '~/models/trakt-show.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
+import {
+  TraktApiExtended,
+  type TraktApiParamsExtended,
+  type TraktApiParamsPagination,
+  type TraktApiTemplate,
+  TraktClientEndpoint,
+} from '~/models/trakt-client.model';
+import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
+import { TraktApiValidators } from '~/services/trakt-client/api/trakt-api.validators';
 import { HttpMethod } from '~/utils/http.utils';
+
+type StartDateParam = {
+  /**
+   * Updated since this date and time.
+   * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
+   *
+   * * <b>Important</b>
+   *
+   * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
+   * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
+   */
+  start_date?: string;
+};
+
+const validate: TraktApiTemplate<StartDateParam>['validate'] = param => {
+  if (param.start_date) TraktApiValidators.date(param.start_date);
+  return true;
+};
+
+const transform: TraktApiTemplate<StartDateParam>['transform'] = param => {
+  if (param.start_date) return { ...param, start_date: TraktApiTransforms.date.dropMinutes(param.start_date) };
+  return param;
+};
 
 export const people = {
   /**
@@ -14,35 +45,28 @@ export const people = {
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
+   *
    * The start_date is only accurate to the hour, for caching purposes.
    * Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
+   *
    * The start_date can only be a maximum of 30 days in the past.
    *
    * @pagination true - {@link TraktApiPagination}
-   * @extended [Full]{@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-recently-updated-people]{@link https://trakt.docs.apiary.io/#reference/people/updates/get-recently-updated-people}
    */
   updates: new TraktClientEndpoint<
-    {
-      /**
-       * Updated since this date and time.
-       * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-       *
-       * * <b>Important</b>
-       * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-       * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-       */
-      start_date?: string;
-    } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-      TraktApiParamsPagination,
+    StartDateParam & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsPagination,
     TraktPersonUpdate[]
   >({
     method: HttpMethod.GET,
     url: '/people/updates/:start_date',
+    transform,
+    validate,
     opts: {
       pagination: true,
       extended: [TraktApiExtended.Full],
@@ -59,33 +83,24 @@ export const people = {
    * By default, 10 results are returned. You can send a limit to get up to 100 results per page.
    *
    * * <b>Important</b>
+   *
    * The start_date is only accurate to the hour, for caching purposes.
    * Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    *
    * * <b>Note</b>
+   *
    * The start_date can only be a maximum of 30 days in the past.
    *
    * @pagination true - {@link TraktApiPagination}
    *
    * @see [get-recently-updated-people-trakt-ids]{@link https://trakt.docs.apiary.io/#reference/people/updated-ids/get-recently-updated-people-trakt-ids}
    */
-  updatedIds: new TraktClientEndpoint<
-    {
-      /**
-       * Updated since this date and time.
-       * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
-       *
-       * * <b>Important</b>
-       * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
-       * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
-       */
-      start_date?: string;
-    } & TraktApiParamsPagination,
-    number[]
-  >({
+  updatedIds: new TraktClientEndpoint<StartDateParam & TraktApiParamsPagination, number[]>({
     method: HttpMethod.GET,
     url: '/people/updates/id/:start_date',
+    transform,
+    validate,
     opts: {
       pagination: true,
       parameters: {
@@ -99,13 +114,15 @@ export const people = {
    * Returns a single person's details.
    *
    * * <b>Gender</b>
+   *
    * If available, the gender property will be set to male, female, or non_binary.
    *
    * * <b>Known For Department</b>
+   *
    * If available, the known_for_department property will be set to production, art, crew, costume & make-up, directing, writing, sound, camera, visual effects, lighting, or editing.
    * Many people have credits across departments, known_for allows you to select their default credits more accurately.
    *
-   * @extended [Full]{@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-a-single-person]{@link https://trakt.docs.apiary.io/#reference/people/summary/get-a-single-person}
    */
@@ -133,7 +150,7 @@ export const people = {
    * The crew object will be broken up by department into production, art, crew, costume & make-up, directing, writing, sound, camera, visual effects, lighting, and editing (if there are people for those crew positions).
    * Each of those members will have a jobs array and a standard movie object.
    *
-   * @extended [Full]{@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-movie-credits]{@link https://trakt.docs.apiary.io/#reference/people/movies/get-movie-credits}
    */
@@ -163,7 +180,7 @@ export const people = {
    * The crew object will be broken up by department into production, art, crew, costume & make-up, directing, writing, sound, camera, visual effects, lighting, editing, and created by (if there are people for those crew positions).
    * Each of those members will have a jobs array and a standard show object.
    *
-   * @extended [Full]{@link TraktApiExtended.Full}
+   * @extended true - {@link TraktApiExtended.Full}
    *
    * @see [get-show-credits]{@link https://trakt.docs.apiary.io/#reference/people/shows/get-show-credits}
    */
