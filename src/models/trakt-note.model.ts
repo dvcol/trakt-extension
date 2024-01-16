@@ -103,29 +103,26 @@ type BaseTraktNoteItem = {
   person: TraktPerson;
 };
 
-export type TraktNoteItem<T extends TraktNoteTypes | 'any' = 'any'> = T extends 'movie'
-  ? Pick<BaseTraktNoteItem, 'movie'> & { type: 'movie'; attached_to: { type: 'movie' } }
+export type TraktNoteItem<T extends TraktNoteTypes | 'any' = 'any'> = {
+  type: T extends 'any' ? TraktNoteTypes : T;
+  attached_to: { type: T extends 'any' ? TraktNoteTypes : T };
+} & (T extends 'movie'
+  ? Pick<BaseTraktNoteItem, 'movie'>
   : T extends 'show'
-    ? Pick<BaseTraktNoteItem, 'show'> & { type: 'show'; attached_to: { type: 'show' } }
+    ? Pick<BaseTraktNoteItem, 'show'>
     : T extends 'season'
-      ? Pick<BaseTraktNoteItem, 'season'> & { type: 'season'; attached_to: { type: 'season' } }
+      ? Pick<BaseTraktNoteItem, 'season'>
       : T extends 'episode'
-        ? Pick<BaseTraktNoteItem, 'episode'> & { type: 'episode'; attached_to: { type: 'episode' } }
+        ? Pick<BaseTraktNoteItem, 'episode'>
         : T extends 'person'
-          ? Pick<BaseTraktNoteItem, 'person'> & { type: 'person'; attached_to: { type: 'person' } }
+          ? Pick<BaseTraktNoteItem, 'person'>
           : T extends 'history'
-            ? RequireAtLeastOne<BaseTraktNoteItem> & { type: 'history'; id: number; attached_to: { type: TraktNoteItemTypes } }
+            ? RequireAtLeastOne<BaseTraktNoteItem> & { attached_to: { id: number } }
             : T extends 'collection'
-              ? RequireAtLeastOne<BaseTraktNoteItem> & { type: 'collection'; attached_to: { type: TraktNoteItemTypes } }
+              ? RequireAtLeastOne<BaseTraktNoteItem>
               : T extends 'rating'
-                ? RequireAtLeastOne<BaseTraktNoteItem> & { type: 'rating'; attached_to: { type: TraktNoteItemTypes } }
-                : BaseTraktNoteItem & {
-                    type: TraktNoteTypes;
-                    attached_to: {
-                      type: TraktNoteTypes;
-                      id?: number;
-                    };
-                  };
+                ? RequireAtLeastOne<BaseTraktNoteItem>
+                : BaseTraktNoteItem & { attached_to: { id?: number } });
 
 export type TraktNote = BaseTraktNote & {
   id: number;

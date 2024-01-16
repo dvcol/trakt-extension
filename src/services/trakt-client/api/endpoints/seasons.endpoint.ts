@@ -67,7 +67,7 @@ export const seasons = {
       season: number;
       /** include episode translations - 2 character language code (ISO 639-1) */
       translations?: string;
-    },
+    } & TraktApiParamsExtended<typeof TraktApiExtended.Full>,
     TraktEpisode<'any'>[]
   >({
     method: HttpMethod.GET,

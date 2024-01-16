@@ -5,7 +5,7 @@ import type { TraktMovie } from '~/models/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt-season.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { TraktUser } from '~/models/trakt-user.model';
-import type { ExclusiveUnion } from '~/utils/typescript.utils';
+import type { ExclusiveUnion, RequireAtLeastOne } from '~/utils/typescript.utils';
 
 export type TraktComment = {
   id: number;
@@ -36,37 +36,19 @@ type BaseTraktCommentMedia = {
   list: TraktList;
 };
 
-export type TraktCommentMedia<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = T extends 'movie'
-  ? Pick<BaseTraktCommentMedia, 'movie'> & { type: 'movie' }
+export type TraktCommentMedia<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = {
+  type: T extends 'any' ? BaseTraktCommentMedia['type'] : T;
+} & (T extends 'movie'
+  ? Pick<BaseTraktCommentMedia, 'movie'>
   : T extends 'show'
-    ? Pick<BaseTraktCommentMedia, 'show'> & { type: 'show' }
+    ? Pick<BaseTraktCommentMedia, 'show'>
     : T extends 'season'
-      ? Pick<BaseTraktCommentMedia, 'season'> & { type: 'season' }
+      ? Pick<BaseTraktCommentMedia, 'season'>
       : T extends 'episode'
-        ? Pick<BaseTraktCommentMedia, 'episode'> & { type: 'episode' }
+        ? Pick<BaseTraktCommentMedia, 'episode'>
         : T extends 'list'
-          ? Pick<BaseTraktCommentMedia, 'list'> & { type: 'list' }
-          :
-              | {
-                  type: 'movie';
-                  movie: TraktMovie;
-                }
-              | {
-                  type: 'show';
-                  show: TraktShow;
-                }
-              | {
-                  type: 'season';
-                  season: TraktSeason;
-                }
-              | {
-                  type: 'episode';
-                  episode: TraktEpisode;
-                }
-              | {
-                  type: 'list';
-                  list: TraktList;
-                };
+          ? Pick<BaseTraktCommentMedia, 'list'>
+          : RequireAtLeastOne<BaseTraktCommentMedia>);
 
 export type TraktCommentItem<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = TraktCommentMedia<T> & {
   comment: TraktComment;

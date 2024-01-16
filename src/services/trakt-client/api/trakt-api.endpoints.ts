@@ -8,6 +8,7 @@ import { authentication } from '~/services/trakt-client/api/endpoints/authentica
 import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';
 import { checkin } from '~/services/trakt-client/api/endpoints/checkin.endpoint';
 import { comments } from '~/services/trakt-client/api/endpoints/comments.endpoint';
+import { episodes } from '~/services/trakt-client/api/endpoints/episodes.endpoint';
 import { lists } from '~/services/trakt-client/api/endpoints/lists.endpoint';
 import { movies } from '~/services/trakt-client/api/endpoints/movies.endpoint';
 import { notes } from '~/services/trakt-client/api/endpoints/notes.endpoint';
@@ -17,9 +18,9 @@ import { scrobble } from '~/services/trakt-client/api/endpoints/scrobble.endpoin
 import { search } from '~/services/trakt-client/api/endpoints/search.endpoint';
 import { seasons } from '~/services/trakt-client/api/endpoints/seasons.endpoint';
 import { shows } from '~/services/trakt-client/api/endpoints/shows.endpoint';
+import { sync } from '~/services/trakt-client/api/endpoints/sync.endpoint';
+import { users } from '~/services/trakt-client/api/endpoints/users.endpoint';
 import { HttpMethod } from '~/utils/http.utils';
-
-// TODO: add filter, required and jsdoc
 
 export const traktApi = {
   authentication,
@@ -149,7 +150,7 @@ export const traktApi = {
   search,
   shows,
   seasons,
-  // episodes,
-  // sync,
-  // users,
+  episodes,
+  sync,
+  users,
 };

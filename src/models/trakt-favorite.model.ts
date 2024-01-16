@@ -1,16 +1,22 @@
-import type { TraktList } from '~/models/trakt-list.model';
+import type { TraktList, TraktListItem } from '~/models/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt-movie.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { BaseSyncRequestItem } from '~/models/trakt-sync.model';
 
-export type TraktFavorite = TraktList<'favorites'>;
+export type TraktFavoriteList = TraktList<'favorites'>;
 
-export type TraktSyncFavoriteRequest = {
+export type TraktFavoriteItem<T extends 'movie' | 'show' | 'any' = 'any'> = T extends 'movie'
+  ? TraktListItem<'movie'>
+  : T extends 'show'
+    ? TraktListItem<'show'>
+    : TraktListItem<'movie'> | TraktListItem<'show'>;
+
+export type TraktFavoriteRequest = {
   movies?: BaseSyncRequestItem<'movies'>[];
   shows?: BaseSyncRequestItem<'shows'>[];
 };
 
-export type TraktSyncFavoriteAdded = {
+export type TraktFavoriteAdded = {
   added: {
     movies: number;
     shows: number;
@@ -30,7 +36,7 @@ export type TraktSyncFavoriteAdded = {
   };
 };
 
-export type TraktSyncFavoriteRemoved = {
+export type TraktFavoriteRemoved = {
   deleted: {
     movies: number;
     shows: number;

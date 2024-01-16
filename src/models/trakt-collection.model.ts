@@ -4,7 +4,7 @@ import type { TraktSeason } from '~/models/trakt-season.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { BaseSyncRequestItem } from '~/models/trakt-sync.model';
 
-export type TraktSyncCollectionMetadata = {
+export type TraktCollectionMetadata = {
   media_type: 'digital' | 'bluray' | 'hddvd' | 'dvd' | 'vcd' | 'vhs' | 'betamax' | 'laserdisc';
   resolution: 'uhd_4k' | 'hd_1080p' | 'hd_1080i' | 'hd_720p' | 'sd_480p' | 'sd_480i' | 'sd_576p' | 'sd_576i';
   hdr: 'dolby_vision' | 'hdr10' | 'hdr10_plus' | 'hlg';
@@ -49,45 +49,49 @@ export type TraktSyncCollectionMetadata = {
   '3d': boolean;
 };
 
-export type TraktSyncCollectionEpisode<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+export type TraktCollectionEpisode<M extends 'metadata' | 'short' | 'any' = 'any'> = {
   number: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   collected_at: string;
 } & (M extends 'metadata'
-  ? { metadata: TraktSyncCollectionMetadata }
+  ? { metadata: TraktCollectionMetadata }
   : M extends 'short'
     ? Record<string, never>
-    : { metadata?: TraktSyncCollectionMetadata });
+    : { metadata?: TraktCollectionMetadata });
 
-export type TraktSyncCollectionSeason<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+export type TraktCollectionSeason<M extends 'metadata' | 'short' | 'any' = 'any'> = {
   number: number;
-  episodes: TraktSyncCollectionEpisode<M>[];
+  episodes: TraktCollectionEpisode<M>[];
 };
 
-type TraktSyncCollectionShow<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+type TraktCollectionShow<M extends 'metadata' | 'short' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
   last_collected_at: string;
   last_updated_at: string;
-  show: TraktShow;
-  seasons: TraktSyncCollectionSeason<M>[];
+  show: TraktShow<E>;
+  seasons: TraktCollectionSeason<M>[];
 };
 
-type TraktSyncCollectionMovie<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+type TraktCollectionMovie<M extends 'metadata' | 'short' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
   collected_at: string;
   updated_at: string;
-  movie: TraktMovie;
+  movie: TraktMovie<E>;
 } & (M extends 'metadata'
-  ? { metadata: TraktSyncCollectionMetadata }
+  ? { metadata: TraktCollectionMetadata }
   : M extends 'short'
     ? Record<string, never>
-    : { metadata?: TraktSyncCollectionMetadata });
+    : { metadata?: TraktCollectionMetadata });
 
-export type TraktSyncCollection<T extends 'movie' | 'show' | 'any' = 'any', M extends 'metadata' | 'short' | 'any' = 'any'> = T extends 'movie'
-  ? TraktSyncCollectionMovie<M>
+export type TraktCollection<
+  T extends 'movie' | 'show' | 'any' = 'any',
+  M extends 'metadata' | 'short' | 'any' = 'any',
+  E extends 'extended' | 'short' | 'any' = 'any',
+> = T extends 'movie'
+  ? TraktCollectionMovie<M, E>
   : T extends 'show'
-    ? TraktSyncCollectionShow<M>
-    : TraktSyncCollectionMovie<M> | TraktSyncCollectionShow<M>;
+    ? TraktCollectionShow<M, E>
+    : TraktCollectionMovie<M, E> | TraktCollectionShow<M, E>;
 
-export type TraktSyncCollectionRequestItem<
+export type TraktCollectionRequestItem<
   T extends 'movies' | 'shows' | 'seasons' | 'episodes' | 'any' = 'any',
   M extends 'metadata' | 'short' = 'short',
 > = {
@@ -96,16 +100,16 @@ export type TraktSyncCollectionRequestItem<
    * Set to released to automatically use the inital release date + runtime (episodes only)).
    */
   collected_at?: string;
-} & (M extends 'metadata' ? Partial<TraktSyncCollectionMetadata> & BaseSyncRequestItem<T> : BaseSyncRequestItem<T>);
+} & (M extends 'metadata' ? Partial<TraktCollectionMetadata> & BaseSyncRequestItem<T> : BaseSyncRequestItem<T>);
 
-export type TraktSyncCollectionRequest<T extends 'metadata' | 'short' = 'short'> = {
-  movies?: TraktSyncCollectionRequestItem<'movies', T>[];
-  shows?: TraktSyncCollectionRequestItem<'shows', T>[];
-  seasons?: TraktSyncCollectionRequestItem<'seasons', T>[];
-  episodes?: TraktSyncCollectionRequestItem<'episodes', T>[];
+export type TraktCollectionRequest<T extends 'metadata' | 'short' = 'short'> = {
+  movies?: TraktCollectionRequestItem<'movies', T>[];
+  shows?: TraktCollectionRequestItem<'shows', T>[];
+  seasons?: TraktCollectionRequestItem<'seasons', T>[];
+  episodes?: TraktCollectionRequestItem<'episodes', T>[];
 };
 
-export type TraktSyncCollectionAdded = {
+export type TraktCollectionAdded = {
   added: {
     movies: number;
     episodes: number;
@@ -126,7 +130,7 @@ export type TraktSyncCollectionAdded = {
   };
 };
 
-export type TraktSyncCollectionRemoved = {
+export type TraktCollectionRemoved = {
   deleted: {
     movies: number;
     episodes: number;

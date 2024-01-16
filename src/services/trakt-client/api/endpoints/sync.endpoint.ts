@@ -1,28 +1,23 @@
-import type { TraktListItem } from '~/models/trakt-list.model';
+import type { TraktCollection, TraktCollectionAdded, TraktCollectionRemoved, TraktCollectionRequest } from '~/models/trakt-collection.model';
 import type {
-  TraktSyncCollection,
-  TraktSyncCollectionAdded,
-  TraktSyncCollectionRemoved,
-  TraktSyncCollectionRequest,
-} from '~/models/trakt-sync-collection.model';
-import type { TraktFavorite, TraktSyncFavoriteAdded, TraktSyncFavoriteRemoved, TraktSyncFavoriteRequest } from '~/models/trakt-sync-favorite.model';
+  TraktFavoriteAdded,
+  TraktFavoriteItem,
+  TraktFavoriteList,
+  TraktFavoriteRemoved,
+  TraktFavoriteRequest,
+} from '~/models/trakt-favorite.model';
 import type {
-  TraktSyncHistory,
-  TraktSyncHistoryAdded,
-  TraktSyncHistoryRemovedRequest,
-  TraktSyncHistoryRequest,
-  TraktSynHistoryRemoved,
-} from '~/models/trakt-sync-history.model';
-import type { TraktSyncRating, TraktSyncRatingAdded, TraktSyncRatingRemoved, TraktSyncRatingRequest } from '~/models/trakt-sync-rating.model';
-import type { TraktSyncWatched } from '~/models/trakt-sync-watched.model';
-import type { TraktSyncWatchlist, TraktSyncWatchlistAdded, TraktSyncWatchlistRemoved, TraktWatchlist } from '~/models/trakt-sync-watchlist.model';
-import type {
-  TraktSyncActivities,
-  TraktSyncListReordered,
-  TraktSyncProgress,
-  TraktSyncRequest,
-  TraktSyncUpdateRequest,
-} from '~/models/trakt-sync.model';
+  TraktHistory,
+  TraktHistoryAdded,
+  TraktHistoryRemoved,
+  TraktHistoryRemovedRequest,
+  TraktHistoryRequest,
+} from '~/models/trakt-history.model';
+import type { TraktListReordered } from '~/models/trakt-list.model';
+import type { TraktRating, TraktRatingAdded, TraktRatingRemoved, TraktRatingRequest } from '~/models/trakt-rating.model';
+import type { TraktSyncActivities, TraktSyncProgress, TraktSyncRequest, TraktSyncUpdateRequest } from '~/models/trakt-sync.model';
+import type { TraktWatched } from '~/models/trakt-watched.model';
+import type { TraktWatchlist, TraktWatchlistAdded, TraktWatchlistList, TraktWatchlistRemoved } from '~/models/trakt-watchlist.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
@@ -178,14 +173,14 @@ export const sync = {
      *
      * If you add ?extended=metadata to the URL, it will return the additional media_type, resolution, hdr, audio, audio_channels and '3d' metadata. It will use null if the metadata isn't set for an item.
      *
-     * @extended true - {@link TraktApiExtended.Metadata}
+     * @extended true - {@link TraktApiExtended.Full}, {@link TraktApiExtended.Metadata}
      * @auth required
      */
     get: new TraktClientEndpoint<
       {
         type: 'movies' | 'shows';
       } & TraktApiParamsExtended<typeof TraktApiExtended.Full | typeof TraktApiExtended.Metadata>,
-      TraktSyncCollection[]
+      TraktCollection[]
     >({
       method: HttpMethod.GET,
       url: '/sync/collection/:type',
@@ -211,7 +206,7 @@ export const sync = {
      *
      * @see [add-to-collection]{@link https://trakt.docs.apiary.io/#reference/sync/add-to-collection/add-items-to-collection}
      */
-    add: new TraktClientEndpoint<TraktSyncCollectionRequest<'metadata'>, TraktSyncCollectionAdded>({
+    add: new TraktClientEndpoint<TraktCollectionRequest<'metadata'>, TraktCollectionAdded>({
       opts: {
         auth: true,
       },
@@ -231,7 +226,7 @@ export const sync = {
      *
      * @see [remove-items-from-collection]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-collection/remove-items-from-collection}
      */
-    remove: new TraktClientEndpoint<TraktSyncRequest, TraktSyncCollectionRemoved>({
+    remove: new TraktClientEndpoint<TraktSyncRequest, TraktCollectionRemoved>({
       method: HttpMethod.POST,
       url: '/sync/collection/remove',
       opts: {
@@ -260,7 +255,7 @@ export const sync = {
    * Your app can adjust the progress by ignoring episodes with a last_watched_at prior to the reset_at.
    *
    * @auth required
-   * @extended true - {@link TraktApiExtended.NoSeasons}
+   * @extended true - {@link TraktApiExtended.Full}, {@link TraktApiExtended.NoSeasons}
    *
    * @see [get-watched]{@link https://trakt.docs.apiary.io/#reference/sync/get-watched/get-watched}
    */
@@ -268,7 +263,7 @@ export const sync = {
     {
       type: 'movies' | 'shows';
     } & TraktApiParamsExtended<typeof TraktApiExtended.Full | typeof TraktApiExtended.NoSeasons>,
-    TraktSyncWatched[]
+    TraktWatched[]
   >({
     method: HttpMethod.GET,
     url: '/sync/watched/:type',
@@ -308,7 +303,7 @@ export const sync = {
         end_at?: string;
       } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
         TraktApiParamsPagination,
-      TraktSyncHistory[]
+      TraktHistory[]
     >({
       method: HttpMethod.GET,
       url: '/sync/history/:type/:id?start_at=&end_at=',
@@ -345,7 +340,7 @@ export const sync = {
      *
      * @see [add-items-to-watched-history]{@link https://trakt.docs.apiary.io/#reference/sync/add-to-history/add-items-to-watched-history}
      */
-    add: new TraktClientEndpoint<TraktSyncHistoryRequest, TraktSyncHistoryAdded>({
+    add: new TraktClientEndpoint<TraktHistoryRequest, TraktHistoryAdded>({
       method: HttpMethod.POST,
       url: '/sync/history',
       opts: {
@@ -370,7 +365,7 @@ export const sync = {
      *
      * @see [remove-items-from-history]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-history/remove-items-from-history}
      */
-    remove: new TraktClientEndpoint<TraktSyncHistoryRemovedRequest, TraktSynHistoryRemoved>({
+    remove: new TraktClientEndpoint<TraktHistoryRemovedRequest, TraktHistoryRemoved>({
       method: HttpMethod.POST,
       url: '/sync/history/remove',
       opts: {
@@ -404,7 +399,7 @@ export const sync = {
         rating?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
       } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
         TraktApiParamsPagination,
-      TraktSyncRating[]
+      TraktRating[]
     >({
       method: HttpMethod.GET,
       url: '/sync/ratings/:type/:rating',
@@ -432,7 +427,7 @@ export const sync = {
      *
      * @see [add-new-ratings]{@link https://trakt.docs.apiary.io/#reference/sync/add-ratings/add-new-ratings}
      */
-    add: new TraktClientEndpoint<TraktSyncRatingRequest, TraktSyncRatingAdded>({
+    add: new TraktClientEndpoint<TraktRatingRequest, TraktRatingAdded>({
       opts: {
         auth: true,
       },
@@ -452,7 +447,7 @@ export const sync = {
      *
      * @see [remove-ratings]{@link https://trakt.docs.apiary.io/#reference/sync/remove-ratings/remove-ratings}
      */
-    remove: new TraktClientEndpoint<TraktSyncRequest, TraktSyncRatingRemoved>({
+    remove: new TraktClientEndpoint<TraktSyncRequest, TraktRatingRemoved>({
       method: HttpMethod.POST,
       url: '/sync/ratings/remove',
       opts: {
@@ -505,7 +500,7 @@ export const sync = {
           sort?: 'rank' | 'added' | 'released' | 'title';
         } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
           TraktApiParamsPagination,
-        TraktSyncWatchlist[]
+        TraktWatchlist[]
       >({
         method: HttpMethod.GET,
         url: '/sync/watchlist/:type/:sort',
@@ -529,7 +524,7 @@ export const sync = {
        *
        * @see [update-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/update-watchlist}
        */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlist>({
+      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlistList>({
         method: HttpMethod.PUT,
         url: '/sync/watchlist',
         opts: {
@@ -563,7 +558,7 @@ export const sync = {
        *
        * @see [add-items-to-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/add-items-to-watchlist}
        */
-      add: new TraktClientEndpoint<TraktSyncRequest, TraktSyncWatchlistAdded>({
+      add: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistAdded>({
         method: HttpMethod.POST,
         url: '/sync/watchlist',
         opts: {
@@ -585,7 +580,7 @@ export const sync = {
        *
        * @see [remove-items-from-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-watchlist/remove-items-from-watchlist}
        */
-      remove: new TraktClientEndpoint<TraktSyncRequest, TraktSyncWatchlistRemoved>({
+      remove: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistRemoved>({
         method: HttpMethod.POST,
         url: '/sync/watchlist/remove',
         opts: {
@@ -607,9 +602,10 @@ export const sync = {
        */
       reorder: new TraktClientEndpoint<
         {
+          /** Array of list ids in the new order. */
           rank: number[];
         },
-        TraktSyncListReordered
+        TraktListReordered
       >({
         method: HttpMethod.POST,
         url: '/sync/watchlist/reorder',
@@ -617,7 +613,7 @@ export const sync = {
           auth: true,
         },
         body: {
-          rank: false,
+          rank: true,
         },
       }),
     },
@@ -676,7 +672,7 @@ export const sync = {
           sort?: 'rank' | 'added' | 'released' | 'title';
         } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
           TraktApiParamsPagination,
-        (TraktListItem<'movie'> | TraktListItem<'show'>)[]
+        TraktFavoriteItem[]
       >({
         method: HttpMethod.GET,
         url: '/sync/favorites/:type/:sort',
@@ -700,7 +696,7 @@ export const sync = {
        *
        * @see [update-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/update-favorites}
        */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavorite>({
+      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavoriteList>({
         method: HttpMethod.PUT,
         url: '/sync/favorites',
         opts: {
@@ -730,7 +726,7 @@ export const sync = {
        *
        * @see [add-items-to-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/add-items-to-favorites}
        */
-      add: new TraktClientEndpoint<TraktSyncFavoriteRequest, TraktSyncFavoriteAdded>({
+      add: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteAdded>({
         method: HttpMethod.POST,
         url: '/sync/favorites',
         opts: {
@@ -750,7 +746,7 @@ export const sync = {
        *
        * @see [remove-items-from-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-favorites/remove-items-from-favorites}
        */
-      remove: new TraktClientEndpoint<TraktSyncFavoriteRequest, TraktSyncFavoriteRemoved>({
+      remove: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteRemoved>({
         method: HttpMethod.POST,
         url: '/sync/favorites/remove',
         opts: {
@@ -771,9 +767,10 @@ export const sync = {
        */
       reorder: new TraktClientEndpoint<
         {
+          /** Array of list ids in the new order. */
           rank: number[];
         },
-        TraktSyncListReordered
+        TraktListReordered
       >({
         opts: {
           auth: true,
@@ -781,7 +778,7 @@ export const sync = {
         method: HttpMethod.POST,
         url: '/sync/favorites/reorder',
         body: {
-          rank: false,
+          rank: true,
         },
       }),
       /**

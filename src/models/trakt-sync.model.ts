@@ -62,25 +62,25 @@ export type TraktSyncProgress<T extends 'movie' | 'episode' | 'any' = 'any'> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   paused_at: number;
   id: number;
-} & T extends 'movie'
-  ? { type: 'movie'; movie: TraktMovie }
-  : T extends 'episode'
-    ? { type: 'episode'; episode: TraktEpisode; show: TraktShow }
-    : { type: 'movie' | 'episode' } & ({ movie: TraktMovie } | { episode: TraktEpisode; show: TraktShow });
+} & { type: T extends 'any' ? 'movie' | 'episode' : T } & (T extends 'movie'
+    ? { movie: TraktMovie }
+    : T extends 'episode'
+      ? { episode: TraktEpisode; show: TraktShow }
+      : { movie: TraktMovie } | { episode: TraktEpisode; show: TraktShow });
 
 export type BaseSyncRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | 'any' = 'any'> = T extends 'movies'
-  ? Partial<TraktMovie>
+  ? Partial<TraktMovie> & Pick<TraktMovie, 'ids'>
   : T extends 'shows'
-    ? Partial<TraktShow> & { seasons?: Partial<TraktSeason<'episodes'>>[] }
+    ? Partial<TraktShow> & Pick<TraktShow, 'ids'> & { seasons?: Pick<TraktSeason, 'number'> & Partial<TraktSeason<'episodes'>>[] }
     : T extends 'seasons'
-      ? Partial<TraktSeason>
+      ? Partial<TraktSeason> & Pick<TraktSeason, 'ids'>
       : T extends 'episodes'
-        ? Partial<TraktEpisode>
+        ? Partial<TraktEpisode> & Pick<TraktEpisode, 'ids'>
         :
-            | Partial<TraktMovie>
-            | (Partial<TraktShow> & { seasons?: Partial<TraktSeason<'episodes'>>[] })
-            | Partial<TraktSeason>
-            | Partial<TraktEpisode>;
+            | (Partial<TraktMovie> & Pick<TraktMovie, 'ids'>)
+            | (Partial<TraktShow> & { seasons?: Pick<TraktSeason, 'number'> & Partial<TraktSeason<'episodes'>>[] })
+            | (Partial<TraktSeason> & Pick<TraktSeason, 'ids'>)
+            | (Partial<TraktEpisode> & Pick<TraktEpisode, 'ids'>);
 
 export type TraktSyncRequest = {
   movies?: BaseSyncRequestItem<'movies'>[];
@@ -105,14 +105,4 @@ export type TraktSyncUpdateRequest = {
     | 'watched'
     | 'collected';
   sort_how?: 'asc' | 'desc';
-};
-
-export type TraktSyncListReordered = {
-  updated: number;
-  skipped_ids: number[];
-  list: {
-    /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
-    updated_at: string;
-    item_count: number;
-  };
 };

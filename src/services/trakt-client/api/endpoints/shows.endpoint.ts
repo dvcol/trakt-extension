@@ -608,7 +608,7 @@ export const shows = {
    *
    * This returns a lot of data, so please only use this extended parameter if you actually need it!
    *
-   * @extended true - {@link TraktApiExtended.GuestStars}
+   * @extended true - {@link TraktApiExtended.Full}, {@link TraktApiExtended.GuestStars}
    *
    * @see [get-all-people-for-a-show]{@link https://trakt.docs.apiary.io/#reference/shows/people/get-all-people-for-a-show}
    */

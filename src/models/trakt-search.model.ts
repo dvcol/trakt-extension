@@ -5,6 +5,7 @@ import type { TraktMovie } from '~/models/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt-people.model';
 import type { TraktShow } from '~/models/trakt-show.model';
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
+import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
 export type TraktSearchType = 'movie' | 'show' | 'episode' | 'person' | 'list';
 
@@ -36,6 +37,14 @@ export type TraktSearch = TraktApiParams<
   true
 >;
 
+type BaseTraktSearchResultItem<I extends 'extended' | 'short' | 'any' = 'any'> = {
+  movie: TraktMovie<I>;
+  show: TraktShow<I>;
+  episode: TraktEpisode<I>;
+  person: TraktPerson<I>;
+  list: TraktList<I>;
+};
+
 /**
  * Search all text fields that a media object contains (i.e. title, overview, etc).
  * Results are ordered by the most relevant score.
@@ -46,23 +55,17 @@ export type TraktSearch = TraktApiParams<
 export type TraktSearchResult<
   T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | 'any' = 'any',
   I extends 'extended' | 'short' | 'any' = 'any',
-> = { score: number } & (T extends 'movie'
-  ? { type: 'movie'; movie: TraktMovie<I> }
+> = { score: number; type: T extends 'any' ? 'movie' | 'show' | 'episode' | 'person' | 'list' : T } & (T extends 'movie'
+  ? Pick<BaseTraktSearchResultItem<I>, 'movie'>
   : T extends 'show'
-    ? { type: 'show'; show: TraktShow<I> }
+    ? Pick<BaseTraktSearchResultItem<I>, 'show'>
     : T extends 'episode'
-      ? { type: 'episode'; show: TraktShow<I>; episode: TraktEpisode<I> }
+      ? Pick<BaseTraktSearchResultItem<I>, 'show' | 'episode'>
       : T extends 'person'
-        ? { type: 'person'; person: TraktPerson<I> }
+        ? Pick<BaseTraktSearchResultItem<I>, 'person'>
         : T extends 'list'
-          ? { type: 'list'; list: TraktList }
-          : { type: 'movie' | 'show' | 'episode' | 'person' | 'list' } & (
-              | { movie: TraktMovie<I> }
-              | { show: TraktShow<I> }
-              | { show: TraktShow<I>; episode: TraktEpisode<I> }
-              | { person: TraktPerson<I> }
-              | { list: TraktList }
-            ));
+          ? Pick<BaseTraktSearchResultItem<I>, 'list'>
+          : { show: TraktShow<I>; episode: TraktEpisode<I> } | RequireAtLeastOne<Omit<BaseTraktSearchResultItem<I>, 'episode'>>);
 
 export type TraktIdLookupType = 'trakt' | 'imdb' | 'tmdb' | 'tvdb';
 
