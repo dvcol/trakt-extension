@@ -15,11 +15,11 @@ describe('traktClient', () => {
       type: 'movies',
     });
 
-    expect(fetch).toHaveBeenCalledWith('https://api.trakt.tv/certifications/movies', {
+    expect(fetch).toHaveBeenCalledWith(`${traktClientSettings.endpoint}/certifications/movies`, {
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': '@dvcol/trakt-extension/1.2.0',
-        'trakt-api-key': '4f2745eb6a58949bd35f4948b70d0dd7184462841052fa11f24d85edc1256a22',
+        'trakt-api-key': traktClientSettings.client_id,
         'trakt-api-version': '2',
       },
       method: 'GET',
@@ -33,11 +33,11 @@ describe('traktClient', () => {
       type: 'shows',
     });
 
-    expect(fetch).toHaveBeenCalledWith('https://api.trakt.tv/certifications/shows', {
+    expect(fetch).toHaveBeenCalledWith(`${traktClientSettings.endpoint}/certifications/shows`, {
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': '@dvcol/trakt-extension/1.2.0',
-        'trakt-api-key': '4f2745eb6a58949bd35f4948b70d0dd7184462841052fa11f24d85edc1256a22',
+        'trakt-api-key': traktClientSettings.client_id,
         'trakt-api-version': '2',
       },
       method: 'GET',
