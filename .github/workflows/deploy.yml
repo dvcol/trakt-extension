@@ -33,7 +33,7 @@ jobs:
       - name: Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
 
-      - uses: actions/cache/restore@v3
+      - uses: actions/cache/restore@v4
         id: cache
         with:
           path: dist
@@ -48,17 +48,17 @@ jobs:
           pnpm_version: ${{ env.pnpm_version }}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
           path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
 
       - name: Setup credentials
         run: |
