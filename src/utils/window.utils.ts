@@ -9,7 +9,6 @@ export const watchMedia = (query: string) => {
 
   const listener = (_change: MediaQueryListEvent) => {
     matchMedia.value = _change.matches;
-    console.info('value change', matchMedia.value);
   };
   media.addEventListener('change', listener);
   onUnmounted(() => media.removeEventListener('change', listener));
