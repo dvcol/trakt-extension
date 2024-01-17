@@ -8,6 +8,7 @@ import MagicString from 'magic-string';
 import { viteVueCE } from 'unplugin-vue-ce';
 
 import { defineConfig } from 'vite';
+import checker from 'vite-plugin-checker';
 import dtsPlugin from 'vite-plugin-dts';
 
 import pkg from './package.json';
@@ -47,6 +48,11 @@ const getPlugins = (): PluginOption[] => [
     customElement: true,
   }),
   viteVueCE({}),
+  checker({
+    vueTsc: {
+      tsconfigPath: 'tsconfig.app.json',
+    },
+  }),
   {
     name: 'i18n-hmr',
     configureServer: server => {
@@ -126,6 +132,10 @@ export default defineConfig(() => ({
     hmr: {
       host: 'localhost',
     },
+  },
+  preview: {
+    port: 3304,
+    cors: true,
   },
   build: {
     outDir: resolveParent('dist'),
