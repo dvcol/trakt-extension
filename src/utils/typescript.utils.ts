@@ -16,14 +16,3 @@ export type RecursiveRecord<T = any> =
   | Record<string, never>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
 export type GenericFunction = (...args: any) => any;
-
-/**
- * Base class for extensible functions
- */
-export class ExtensibleFunction<T extends GenericFunction = GenericFunction> extends Function {
-  constructor(f: T) {
-    super();
-    // eslint-disable-next-line no-constructor-return
-    return Object.setPrototypeOf(f, new.target.prototype);
-  }
-}

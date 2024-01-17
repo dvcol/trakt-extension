@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging -- necessary for infer signature from assign */
-
 import { traktApi } from '../api/trakt-api.endpoints';
 
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
@@ -14,10 +12,9 @@ import type {
   TraktClientAuthentication,
   TraktDeviceAuthentication,
 } from '~/models/trakt-authentication.model';
-import type { ITraktApi, TraktApiParams, TraktApiResponse, TraktClientEndpoint, TraktClientSettings } from '~/models/trakt-client.model';
+import type { ITraktApi, TraktApiParams, TraktApiResponse, TraktClientEndpointCall, TraktClientSettings } from '~/models/trakt-client.model';
 
-import { TraktApiHeaders } from '~/models/trakt-client.model';
-import { Client, Config } from '~/settings/traktv.api';
+import { TraktApiHeaders, TraktClientEndpoint } from '~/models/trakt-client.model';
 import { randomHex } from '~/utils/crypto.utils';
 
 const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'statusCode' in error;
@@ -37,38 +34,38 @@ const handleError = <T>(error: T | Response) => {
 type ITraktEndpoints = typeof traktApi;
 
 /** Needed to type Object assignment */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 interface TraktApi extends ITraktEndpoints {}
 
 const isTraktApiTemplate = <T extends TraktApiParams = TraktApiParams>(
   template: TraktClientEndpoint<T> | ITraktApi<T>,
-): template is TraktClientEndpoint<T> => 'call' in template;
+): template is TraktClientEndpoint<T> => template instanceof TraktClientEndpoint;
 
 /** To allow type extension */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class TraktApi extends BaseTraktClient implements ITraktEndpoints {
   /* eslint-disable @typescript-eslint/no-explicit-any -- generic typing */
   /**
    * Binds BaseTraktClient _call instance to the endpoint instance and the call method of the endpoint
    *
-   * @param template
+   * @param api
    *
-   * @example client.endpoints({ request }) or client.endpoints.call({ request }) for type inference
+   * @example client.endpoints({ request })
    */
-  bindToEndpoint(template: ITraktApi<any>) {
-    const api = { ...template };
-    Object.entries(api).forEach(([key, value]) => {
-      if (isTraktApiTemplate(value) && isTraktApiTemplate(api[key])) {
-        const fn: TraktClientEndpoint['call'] = param => this._call(value, param);
-        Object.entries(api[key]).forEach(([k, v]) => {
-          Object.defineProperty(fn, k, {
-            value: k === 'call' ? fn : v,
-          });
+  bindToEndpoint(api: ITraktApi<any>) {
+    const client = { ...api };
+    Object.entries(client).forEach(([endpoint, template]) => {
+      if (isTraktApiTemplate(template) && isTraktApiTemplate(client[endpoint])) {
+        const fn: TraktClientEndpointCall = param => this._call(template, param);
+        Object.entries(client[endpoint]).forEach(([key, value]) => {
+          Object.defineProperty(fn, key, { value });
         });
-        api[key] = fn as any;
+        client[endpoint] = fn as any;
       } else {
-        api[key] = this.bindToEndpoint(api[key] as ITraktApi);
+        client[endpoint] = this.bindToEndpoint(client[endpoint] as ITraktApi);
       }
     });
-    return api;
+    return client;
   }
   /* eslint-enable @typescript-eslint/no-explicit-any -- generic typing */
 
@@ -80,14 +77,15 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
 
 export class TraktClient extends TraktApi {
   constructor({
-    client_id = Client.ID,
-    client_secret = Client.Secret,
-    redirect_uri = Config.RedirectionUrl,
+    client_id,
+    client_secret,
+    redirect_uri,
 
-    useragent = Config.UserAgent,
-    endpoint = Config.TraktEndpoint,
+    useragent,
+    endpoint,
+
     debug,
-  }: Partial<TraktClientSettings> = {}) {
+  }: TraktClientSettings) {
     super({
       client_id,
       client_secret,
@@ -114,9 +112,9 @@ export class TraktClient extends TraktApi {
     try {
       let response: TraktApiResponse<TraktAuthentication>;
       if ('code' in _request) {
-        response = await this.authentication.oAuth.token.code.call(_request as TraktAuthenticationCodeRequest);
+        response = await this.authentication.oAuth.token.code(_request as TraktAuthenticationCodeRequest);
       } else {
-        response = await this.authentication.oAuth.token.refresh.call(_request as TraktAuthenticationRefreshRequest);
+        response = await this.authentication.oAuth.token.refresh(_request as TraktAuthenticationRefreshRequest);
       }
 
       const body = await response.json();
@@ -145,7 +143,7 @@ export class TraktClient extends TraktApi {
       ...request,
     };
 
-    const response = await this.authentication.oAuth.revoke.call(_request);
+    const response = await this.authentication.oAuth.revoke(_request);
 
     isResponseOk(response);
 
@@ -160,13 +158,13 @@ export class TraktClient extends TraktApi {
     try {
       let response: TraktApiResponse<TraktAuthentication | TraktDeviceAuthentication>;
       if (code) {
-        response = await this.authentication.device.token.call({
+        response = await this.authentication.device.token({
           client_id: this._settings.client_id,
           client_secret: this._settings.client_secret,
           code,
         });
       } else {
-        response = await this.authentication.device.code.call({
+        response = await this.authentication.device.code({
           client_id: this._settings.client_id,
         });
       }
@@ -196,7 +194,7 @@ export class TraktClient extends TraktApi {
    */
   authorizeUrl(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> = {}) {
     this._authentication.state = request.state ?? randomHex();
-    return this.authentication.oAuth.authorize.call({
+    return this.authentication.oAuth.authorize({
       response_type: 'code',
       client_id: this._settings.client_id,
       redirect_uri: this._settings.redirect_uri,
@@ -247,5 +245,3 @@ export class TraktClient extends TraktApi {
     return this._authentication;
   }
 }
-
-/* eslint-enable @typescript-eslint/no-unsafe-declaration-merging  */

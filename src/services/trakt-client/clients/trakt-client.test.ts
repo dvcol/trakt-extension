@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
+import { traktClientSettings } from '../trakt-client.service';
+
 import { TraktClient } from './trakt-client';
 
 describe('traktClient', () => {
-  const test = new TraktClient();
+  const test = new TraktClient(traktClientSettings);
   const fetch = vi.spyOn(global, 'fetch').mockResolvedValue(new Response());
 
   it('should query certifications with call method', async () => {
     expect.assertions(1);
 
-    await test.certifications.call({
+    await test.certifications({
       type: 'movies',
     });
 
@@ -43,15 +45,15 @@ describe('traktClient', () => {
   });
 
   it.skip('test', async () => {
-    test.checkin.delete.call().then(r => r.json());
-    await test.certifications
-      .call({
+    test.checkin.delete().then(r => r.json());
+    await test
+      .certifications({
         type: 'shows',
       })
       .then(r => r.json());
 
-    await test.calendars.my.shows.get
-      .call({
+    await test.calendars.my.shows
+      .get({
         start_date: '2009',
         days: 12,
         extended: 'full',
@@ -62,8 +64,8 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    await test.checkin.add
-      .call({
+    await test.checkin
+      .add({
         movie: {
           title: 'test',
           ids: {
@@ -77,8 +79,8 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    await test.checkin.add
-      .call({
+    await test.checkin
+      .add({
         episode: {
           ids: {
             trakt: 28,
@@ -95,8 +97,8 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    await test.checkin.add
-      .call({
+    await test.checkin
+      .add({
         episode: {
           season: 12,
           number: 123,
@@ -115,8 +117,8 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    await test.checkin.add
-      .call({
+    await test.checkin
+      .add({
         episode: {
           number_abs: 12,
         },
@@ -134,8 +136,8 @@ describe('traktClient', () => {
       })
       .then(r => r.json());
 
-    await test.comments.comment.recent
-      .call({
+    await test.comments.comment
+      .recent({
         pagination: {
           limit: 12,
         },

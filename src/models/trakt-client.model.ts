@@ -4,8 +4,6 @@ import type { HttpMethods } from '~/utils/http.utils';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
 
-import { ExtensibleFunction } from '~/utils/typescript.utils';
-
 export type TraktClientPagination = {
   itemCount: number;
   pageCount: number;
@@ -71,46 +69,39 @@ export type TraktApiTemplateOptions = {
   filters?: TraktApiFilters[];
 };
 
-export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams, R = unknown> = {
+export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = {
   method: HttpMethods;
   url: string;
   opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
-  /** Execute the request */
-  call?: (param?: P) => Promise<TraktApiResponse<R>>;
   /** Validate the parameters before performing request */
   validate?: (param: P) => boolean;
   /** Transform the parameters before performing request */
   transform?: (param: P) => P;
 };
 
-const stubCall = <P extends TraktApiParams = TraktApiParams, R = unknown>(param?: P): Promise<TraktApiResponse<R>> => {
-  console.error('Endpoint call function not implemented', param);
-  throw new Error('Endpoint call function not implemented');
-};
+export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (param?: P) => Promise<TraktApiResponse<R>>;
 
-export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown>
-  extends ExtensibleFunction<(param: P) => Promise<TraktApiResponse<R>>>
-  implements TraktApiTemplate<P, R>
-{
+export interface TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown> {
+  (param?: P): Promise<TraktApiResponse<R>>;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>> implements TraktApiTemplate<P> {
   method: HttpMethods;
   url: string;
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
   validate?: (param: P) => boolean;
-  call: (param?: P) => Promise<TraktApiResponse<R>>;
 
-  constructor(template: TraktApiTemplate<P, R>) {
-    super(template.call ?? stubCall<P, R>);
-
+  constructor(template: TraktApiTemplate<P>) {
     this.method = template.method;
     this.url = template.url;
     this.opts = template.opts ?? {};
     this.body = template.body;
 
     this.validate = template.validate;
-    this.call = template.call ?? stubCall<P, R>;
   }
 }
 
