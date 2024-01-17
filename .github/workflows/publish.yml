@@ -42,7 +42,7 @@ jobs:
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
-      - uses: actions/cache/save@v3
+      - uses: actions/cache/save@v4
         id: cache
         with:
           path: dist
