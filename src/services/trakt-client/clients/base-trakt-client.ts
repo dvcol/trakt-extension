@@ -1,11 +1,20 @@
 import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
-import type { TraktApiParams, TraktApiRequest, TraktApiResponse, TraktApiTemplate, TraktClientSettings } from '~/models/trakt-client.model';
+import type {
+  TraktApiParams,
+  TraktApiQuery,
+  TraktApiRequest,
+  TraktApiResponse,
+  TraktApiTemplate,
+  TraktClientSettings,
+} from '~/models/trakt-client.model';
 
 import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt-client.model';
 
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
+import { CancellableFetch } from '~/utils/fetch.utils';
+import { Observable, ObservableState } from '~/utils/observable.utils';
 
 /**
  * Parses body from {@link TraktApiTemplate} into stringifies {@link BodyInit}
@@ -39,10 +48,10 @@ export const isResponseOk = (response: Response) => {
  * Parse fetch response to extract {@TraktClientPagination} information.
  * @param response
  */
-const parseResponse = (response: Response): TraktApiResponse => {
+const parseResponse = <T>(response: Response): TraktApiResponse<T> => {
   isResponseOk(response);
 
-  const _response: TraktApiResponse = { ...response };
+  const _response = response as TraktApiResponse<T>;
 
   if (
     response.headers.has(TraktApiHeaders.XPaginationItemCount) ||
@@ -96,18 +105,27 @@ const parseResponse = (response: Response): TraktApiResponse => {
 
 export class BaseTraktClient {
   protected _settings: TraktClientSettings;
-  protected _authentication: TraktClientAuthentication;
+  protected _authentication: ObservableState<TraktClientAuthentication>;
+  protected _callListeners: Observable<TraktApiQuery<unknown>>;
 
-  constructor(settings: TraktClientSettings, authentication = {}) {
-    this._authentication = authentication;
-    this._settings = settings;
+  get auth() {
+    return this._authentication.state;
   }
 
-  /**
-   * Logs api request details
-   * @param req
-   * @protected
-   */
+  onAuthChange(observer: (data?: TraktClientAuthentication) => void) {
+    return this._authentication.subscribe(observer);
+  }
+
+  onCall(observer: (data: TraktApiQuery<unknown>) => void) {
+    return this._callListeners.subscribe(observer);
+  }
+
+  constructor(settings: TraktClientSettings, authentication = {}) {
+    this._settings = settings;
+    this._authentication = new ObservableState(authentication);
+    this._callListeners = new Observable();
+  }
+
   protected debug(req: TraktApiRequest) {
     if (this._settings.debug) {
       console.info({
@@ -129,8 +147,8 @@ export class BaseTraktClient {
       [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };
 
-    if (template.opts?.auth && this._authentication.access_token) {
-      headers.Authorization = `Bearer ${this._authentication.access_token}`;
+    if (template.opts?.auth && this.auth.access_token) {
+      headers.Authorization = `Bearer ${this.auth.access_token}`;
     } else if (template.opts?.auth === true && !this._settings.client_secret) {
       throw Error('OAuth required');
     }
@@ -152,16 +170,14 @@ export class BaseTraktClient {
     }
 
     this.debug(req);
-    const response = await fetch(req.input, req.init);
-    return parseResponse(response) as TraktApiResponse<R>;
+
+    const query = CancellableFetch.fetch<TraktApiResponse<R>>(req.input, req.init).then(parseResponse);
+
+    this._callListeners.update({ request: req, query });
+
+    return query;
   }
 
-  /**
-   * Parses {@link TraktApiTemplate} into fetch {@link RequestInfo}.
-   * @param template
-   * @param params
-   * @private
-   */
   private _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): RequestInfo {
     // fill query parameters i.e. ?variable
     const [pathPart, queryPart] = template.url.split('?');
@@ -172,8 +188,9 @@ export class BaseTraktClient {
     if (queryPart) {
       queryParams.forEach((value, key, parent) => {
         const _value = params[key] ?? value;
+
         // If a value is found we encode
-        if (_value !== undefined && value !== '') {
+        if (_value !== undefined && _value !== '') {
           queryParams.set(key, encodeURIComponent(typeof _value === 'string' ? _value : JSON.stringify(_value)));
         }
         // If the parameter is required we raise error
@@ -235,7 +252,8 @@ export class BaseTraktClient {
       queryParams.set('extended', `${params.extended}`);
     }
 
-    const url = queryParams?.size ? `${path}?${queryParams.toString()}` : path;
-    return [this._settings.endpoint, url].join('/');
+    const url = new URL(path, this._settings.endpoint);
+    url.search = queryParams.toString();
+    return url.toString();
   }
 }

@@ -14,7 +14,7 @@ const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
 
 <template>
   <div id="trakt-extension-root">
-    <NConfigProvider :theme="theme">
+    <NConfigProvider :theme="theme" abstract>
       <AppComponent />
     </NConfigProvider>
   </div>
@@ -50,5 +50,9 @@ const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#trakt-extension-root {
+  height: 100%;
 }
 </style>

@@ -46,7 +46,7 @@
     "lint": "eslint .",
     "lint:fix": "pnpm run lint --fix",
     "style": "stylelint **/*.{vue,css,scss,less,html} --go '{\"gitignore\":true}'",
-    "style:fix": "yarn style --fix",
+    "style:fix": "pnpm run style --fix",
     "release": "standard-version",
     "release:changelog": "extract-changelog-release > RELEASE.md"
   },
@@ -61,7 +61,7 @@
     "@commitlint/cli": "^18.0.0",
     "@commitlint/config-conventional": "^18.0.0",
     "@dvcol/eslint-plugin-presets": "^1.3.10",
-    "@dvcol/stylelint-plugin-presets": "^2.1.0",
+    "@dvcol/stylelint-plugin-presets": "^2.1.1",
     "@tsconfig/node20": "^20.1.2",
     "@types/chrome": "^0.0.259",
     "@types/fs-extra": "^11.0.1",

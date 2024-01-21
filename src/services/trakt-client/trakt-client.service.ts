@@ -18,6 +18,12 @@ export const traktClientSettings: TraktClientSettings = {
   useragent: Config.UserAgent,
 };
 
-console.info('TraktClient', { traktClientSettings, isProd });
-
 export const traktService = new TraktClient(traktClientSettings);
+
+traktService.onAuthChange(auth => {
+  console.info('TraktClient.onAuthChange', auth);
+});
+
+traktService.onCall(async call => {
+  console.info('TraktClient.onCall', call);
+});

@@ -4,11 +4,10 @@ import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
 import { LoginComponent } from '~/components/views/login';
-
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('global');
-const isAuthenticated = ref(true);
+const isAuthenticated = ref(false);
 </script>
 
 <template>
@@ -31,6 +30,9 @@ header {
 }
 
 main {
+  display: flex;
+  justify-content: center;
+  height: 100%;
   padding: 0 2rem;
 }
 </style>

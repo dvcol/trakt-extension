@@ -1,9 +1,14 @@
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
-
+import type { CancellablePromise } from '~/utils/fetch.utils';
 import type { HttpMethods } from '~/utils/http.utils';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
 
+/**
+ * Pagination data parsed from {@link TraktApiResponse} headers.
+ *
+ * @see [pagination]{@link https://trakt.docs.apiary.io/#introduction/pagination}
+ */
 export type TraktClientPagination = {
   itemCount: number;
   pageCount: number;
@@ -11,6 +16,9 @@ export type TraktClientPagination = {
   page: number;
 };
 
+/**
+ * Trakt.tv API client settings.
+ */
 export type TraktClientSettings = {
   /** Get this from your app settings. */
   client_id: string;
@@ -45,8 +53,16 @@ export const TraktApiExtended = {
   Comments: 'comments',
 } as const;
 
+/**
+ * Represents the supported extensions for the Trakt API.
+ * @see {TraktApiExtended}
+ * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
+ */
 export type TraktApiExtends = (typeof TraktApiExtended)[keyof typeof TraktApiExtended];
 
+/**
+ * Represents options that can be used in a Trakt API template.
+ */
 export type TraktApiTemplateOptions = {
   /** If the method supports or requires vip status */
   vip?: boolean | 'enhanced';
@@ -105,6 +121,8 @@ export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never
   }
 }
 
+export type TraktApiQuery<T> = { request: TraktApiRequest; query: CancellablePromise<T> };
+
 export type TraktApiRequest = {
   input: RequestInfo;
   init: RequestInit & { headers: RequestInit['headers'] };
@@ -147,6 +165,11 @@ export type TraktApiPagination = {
   limit?: number;
 };
 
+/**
+ * Filters are optional parameters you can send to filter the data returned.
+ *
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
+ */
 export type TraktApiParamsFilter<F extends TraktApiFilters | void = TraktApiFilters, V extends Primitive = Primitive> = F extends TraktApiFilters
   ? {
       /**

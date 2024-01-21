@@ -44,15 +44,17 @@ const isTraktApiTemplate = <T extends TraktApiParams = TraktApiParams>(
 /** To allow type extension */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class TraktApi extends BaseTraktClient implements ITraktEndpoints {
-  /* eslint-disable @typescript-eslint/no-explicit-any -- generic typing */
   /**
    * Binds BaseTraktClient _call instance to the endpoint instance and the call method of the endpoint
    *
    * @param api
    *
+   * @private
+   *
    * @example client.endpoints({ request })
    */
-  bindToEndpoint(api: ITraktApi<any>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
+  private bindToEndpoint(api: ITraktApi<any>) {
     const client = { ...api };
     Object.entries(client).forEach(([endpoint, template]) => {
       if (isTraktApiTemplate(template) && isTraktApiTemplate(client[endpoint])) {
@@ -60,6 +62,7 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
         Object.entries(client[endpoint]).forEach(([key, value]) => {
           Object.defineProperty(fn, key, { value });
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
         client[endpoint] = fn as any;
       } else {
         client[endpoint] = this.bindToEndpoint(client[endpoint] as ITraktApi);
@@ -67,7 +70,6 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
     });
     return client;
   }
-  /* eslint-enable @typescript-eslint/no-explicit-any -- generic typing */
 
   constructor(settings: TraktClientSettings, authentication = {}, api = traktApi) {
     super(settings, authentication);
@@ -96,10 +98,6 @@ export class TraktClient extends TraktApi {
     });
   }
 
-  /**
-   * Exchange oauth token to authenticate client's calls
-   * @param request
-   */
   private async _exchange(request: Pick<TraktAuthenticationCodeRequest, 'code'> | Pick<TraktAuthenticationRefreshRequest, 'refresh_token'>) {
     const _request: TraktAuthenticationBaseRequest = {
       client_id: this._settings.client_id,
@@ -119,9 +117,12 @@ export class TraktClient extends TraktApi {
 
       const body = await response.json();
 
-      this._authentication.refresh_token = body.refresh_token;
-      this._authentication.access_token = body.access_token;
-      this._authentication.expires = (body.created_at + body.expires_in) * 1000;
+      this._authentication.update(auth => ({
+        ...auth,
+        refresh_token: body.refresh_token,
+        access_token: body.access_token,
+        expires: (body.created_at + body.expires_in) * 1000,
+      }));
 
       return body;
     } catch (error) {
@@ -129,15 +130,11 @@ export class TraktClient extends TraktApi {
     }
   }
 
-  /**
-   * Revoke current authentication
-   * @param request
-   */
   private async _revoke(request: Partial<TraktAuthenticationRevokeRequest> = {}) {
-    if (!request && !this._authentication.access_token) throw new Error('No access token found.');
+    if (!request && !this.auth.access_token) throw new Error('No access token found.');
 
     const _request: TraktAuthenticationRevokeRequest = {
-      token: this._authentication.access_token!,
+      token: this.auth.access_token!,
       client_id: this._settings.client_id,
       client_secret: this._settings.client_secret,
       ...request,
@@ -150,10 +147,6 @@ export class TraktClient extends TraktApi {
     return response;
   }
 
-  /**
-   * Get remember device code to paste on login screen
-   * @param code
-   */
   private async _device(code?: string) {
     try {
       let response: TraktApiResponse<TraktAuthentication | TraktDeviceAuthentication>;
@@ -174,74 +167,55 @@ export class TraktClient extends TraktApi {
     }
   }
 
-  /**
-   * Get authentication codes for devices
-   */
   deviceGetCode() {
     return this._device();
   }
 
-  /**
-   * Poll with authentication code
-   */
   devicePollToken(codes: TraktDeviceAuthentication) {
     // TODO polling logic
     return this._device(codes.device_code);
   }
 
   /**
-   * Get authentication url for browsers
+   * Generate URL to the Trakt website which will request auth credentials.
+   * If the user isn't signed into Trakt, it will ask them to do so.
+   *
+   * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
    */
   authorizeUrl(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> = {}) {
-    this._authentication.state = request.state ?? randomHex();
+    this._authentication.update(auth => ({ ...auth, state: request.state ?? randomHex() }));
     return this.authentication.oAuth.authorize({
       response_type: 'code',
       client_id: this._settings.client_id,
       redirect_uri: this._settings.redirect_uri,
-      state: this._authentication.state,
+      state: this.auth.state,
       ...request,
     });
   }
 
-  /**
-   * Verify code. (optional state)
-   * @param code
-   * @param state
-   */
   exchangeCode(code: string, state?: string) {
-    if (state && state !== this._authentication.state) throw Error('Invalid CSRF (State)');
+    if (state && state !== this.auth.state) throw Error('Invalid CSRF (State)');
     return this._exchange({ code });
   }
 
-  /**
-   * Refresh access token
-   */
   refreshToken() {
-    if (!this._authentication.refresh_token) {
+    if (!this.auth.refresh_token) {
       throw new Error('No refresh token found.');
     }
-    return this._exchange({ refresh_token: this._authentication.refresh_token });
+    return this._exchange({ refresh_token: this.auth.refresh_token });
   }
-  /**
-   * Revoke authentication
-   */
+
   async revokeAuthentication(): Promise<void> {
-    if (this._authentication.access_token) {
+    if (this.auth.access_token) {
       await this._revoke();
-      this._authentication = {};
+      this._authentication.update({});
     }
   }
 
-  /**
-   * Import tokens
-   * @param auth
-   */
   async importAuthentication(auth: TraktClientAuthentication): Promise<TraktClientAuthentication> {
-    this._authentication.access_token = auth.access_token;
-    this._authentication.expires = auth.expires;
-    this._authentication.refresh_token = auth.refresh_token;
+    this._authentication.update(auth);
 
     if (auth.expires && auth.expires < Date.now()) await this.refreshToken();
-    return this._authentication;
+    return this.auth;
   }
 }
