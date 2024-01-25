@@ -30,8 +30,6 @@ export type TraktClientSettings = {
   endpoint: string;
   /** The consumer client identifier */
   useragent: string;
-  /** Enable/disables debug logs */
-  debug?: boolean;
 };
 
 /**
@@ -85,22 +83,29 @@ export type TraktApiTemplateOptions = {
   filters?: TraktApiFilters[];
 };
 
+export type TraktApiInit = Omit<Partial<TraktApiRequest['init']>, 'method'>;
+
 export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = {
   method: HttpMethods;
   url: string;
   opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
+  /** Partial fetch request init */
+  init?: TraktApiInit;
   /** Validate the parameters before performing request */
   validate?: (param: P) => boolean;
   /** Transform the parameters before performing request */
   transform?: (param: P) => P;
 };
 
-export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (param?: P) => Promise<TraktApiResponse<R>>;
+export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (
+  param?: P,
+  init?: TraktApiInit,
+) => Promise<TraktApiResponse<R>>;
 
 export interface TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown> {
-  (param?: P): Promise<TraktApiResponse<R>>;
+  (param?: P, init?: TraktApiInit): Promise<TraktApiResponse<R>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -109,12 +114,14 @@ export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never
   url: string;
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
+  init?: TraktApiInit;
   validate?: (param: P) => boolean;
 
   constructor(template: TraktApiTemplate<P>) {
     this.method = template.method;
     this.url = template.url;
     this.opts = template.opts ?? {};
+    this.init = template.init ?? {};
     this.body = template.body;
 
     this.validate = template.validate;
@@ -209,9 +216,7 @@ export type TraktApiParams<
   E extends TraktApiExtends = TraktApiExtends,
   F extends TraktApiFilters = TraktApiFilters,
   P extends true | false = true,
-> = P extends true
-  ? T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & TraktApiParamsPagination
-  : T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F>;
+> = TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & (P extends true ? T & TraktApiParamsPagination : T);
 
 export type PartialTraktApiParams<
   T extends RecursiveRecord | void = void,

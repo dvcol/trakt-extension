@@ -41,6 +41,10 @@ export const authentication = {
     authorize: new TraktClientEndpoint<TraktAuthenticationAuthorizeRequest>({
       method: HttpMethod.GET,
       url: '/oauth/authorize?response_type=code&client_id=&redirect_uri=&state=',
+      init: {
+        redirect: 'manual',
+        credentials: 'omit',
+      },
       opts: {
         parameters: {
           query: {

@@ -104,7 +104,7 @@ export class ObservableState<T> extends Observable<T> {
    */
   private _update(state: T) {
     if (this._mutable) this._state = state;
-    else this._state = Object.freeze(this._state);
+    else this._state = Object.freeze(state);
   }
 
   /**

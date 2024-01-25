@@ -7,12 +7,18 @@ export enum Route {
   Progress = 'progress',
   Search = 'search',
   Settings = 'settings',
+  Login = 'login',
 }
 
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     redirect: Route.Progress,
+  },
+  {
+    path: `/${Route.Login}`,
+    name: Route.Login,
+    component: () => import('../components/views/login/LoginComponent.vue'),
   },
   {
     path: `/${Route.Calendar}`,

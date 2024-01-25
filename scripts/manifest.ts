@@ -34,7 +34,13 @@ export const manifest: Manifest.WebExtensionManifest = {
   background: {
     service_worker: 'scripts/background.js',
   },
-  permissions: ['storage'],
+  permissions: ['storage', 'tabs'],
+  web_accessible_resources: [
+    {
+      resources: ['/views/options/index.html'],
+      matches: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
+    },
+  ],
   host_permissions: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
   content_security_policy: {
     // Adds localhost for vite hot reload

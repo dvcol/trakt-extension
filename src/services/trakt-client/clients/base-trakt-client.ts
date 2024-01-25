@@ -1,5 +1,6 @@
 import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
 import type {
+  TraktApiInit,
   TraktApiParams,
   TraktApiQuery,
   TraktApiRequest,
@@ -40,6 +41,7 @@ const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemp
  * @param response
  */
 export const isResponseOk = (response: Response) => {
+  if (response.type === 'opaqueredirect') return response;
   if (!response.ok || response.status >= 400) throw response;
   return response;
 };
@@ -126,19 +128,10 @@ export class BaseTraktClient {
     this._callListeners = new Observable();
   }
 
-  protected debug(req: TraktApiRequest) {
-    if (this._settings.debug) {
-      console.info({
-        method: req.init?.method,
-        input: req.input,
-        req,
-      });
-    }
-  }
-
   protected async _call<P extends TraktApiParams = TraktApiParams, R = unknown>(
     template: TraktApiTemplate<P>,
     params: P = {} as P,
+    init?: TraktApiInit,
   ): Promise<TraktApiResponse<R>> {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
@@ -160,16 +153,20 @@ export class BaseTraktClient {
     const req: TraktApiRequest = {
       input: this._parse(template, _params),
       init: {
+        ...template.init,
+        ...init,
         method: template.method,
-        headers,
+        headers: {
+          ...template.init?.headers,
+          ...headers,
+          ...init?.headers,
+        },
       },
     };
 
     if (template.method !== 'GET' && template.body) {
       req.init.body = parseBody(template.body, _params);
     }
-
-    this.debug(req);
 
     const query = CancellableFetch.fetch<TraktApiResponse<R>>(req.input, req.init).then(parseResponse);
 
@@ -191,7 +188,7 @@ export class BaseTraktClient {
 
         // If a value is found we encode
         if (_value !== undefined && _value !== '') {
-          queryParams.set(key, encodeURIComponent(typeof _value === 'string' ? _value : JSON.stringify(_value)));
+          queryParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
         }
         // If the parameter is required we raise error
         else if (template.opts?.parameters?.query?.[key] === true) {

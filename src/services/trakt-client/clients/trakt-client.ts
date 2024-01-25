@@ -12,23 +12,31 @@ import type {
   TraktClientAuthentication,
   TraktDeviceAuthentication,
 } from '~/models/trakt-authentication.model';
-import type { ITraktApi, TraktApiParams, TraktApiResponse, TraktClientEndpointCall, TraktClientSettings } from '~/models/trakt-client.model';
+import type {
+  ITraktApi,
+  TraktApiInit,
+  TraktApiParams,
+  TraktApiResponse,
+  TraktClientEndpointCall,
+  TraktClientSettings,
+} from '~/models/trakt-client.model';
 
 import { TraktApiHeaders, TraktClientEndpoint } from '~/models/trakt-client.model';
 import { randomHex } from '~/utils/crypto.utils';
 
-const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'statusCode' in error;
+const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'status' in error;
 
 const handleError = <T>(error: T | Response) => {
-  if (!isResponse(error)) throw error;
+  if (!isResponse(error)) return error;
 
   if (error.status === 401 && error.headers.has('www-authenticate')) {
-    throw Error(error.headers.get('www-authenticate')!);
-  } else if (error.status === 429 && error.headers.has(TraktApiHeaders.XRatelimit)) {
-    throw new Error(error.headers.get(TraktApiHeaders.XRatelimit)!);
+    return Error(error.headers.get('www-authenticate')!);
+  }
+  if (error.status === 429 && error.headers.has(TraktApiHeaders.XRatelimit)) {
+    return new Error(error.headers.get(TraktApiHeaders.XRatelimit)!);
   }
 
-  throw error;
+  return error;
 };
 
 type ITraktEndpoints = typeof traktApi;
@@ -58,7 +66,7 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
     const client = { ...api };
     Object.entries(client).forEach(([endpoint, template]) => {
       if (isTraktApiTemplate(template) && isTraktApiTemplate(client[endpoint])) {
-        const fn: TraktClientEndpointCall = param => this._call(template, param);
+        const fn: TraktClientEndpointCall = (param, init) => this._call(template, param, init);
         Object.entries(client[endpoint]).forEach(([key, value]) => {
           Object.defineProperty(fn, key, { value });
         });
@@ -78,6 +86,8 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
 }
 
 export class TraktClient extends TraktApi {
+  private polling: ReturnType<typeof setTimeout> | undefined;
+
   constructor({
     client_id,
     client_secret,
@@ -85,8 +95,6 @@ export class TraktClient extends TraktApi {
 
     useragent,
     endpoint,
-
-    debug,
   }: TraktClientSettings) {
     super({
       client_id,
@@ -94,7 +102,6 @@ export class TraktClient extends TraktApi {
       redirect_uri,
       useragent,
       endpoint,
-      debug,
     });
   }
 
@@ -126,7 +133,7 @@ export class TraktClient extends TraktApi {
 
       return body;
     } catch (error) {
-      handleError(error);
+      throw handleError(error);
     }
   }
 
@@ -147,7 +154,7 @@ export class TraktClient extends TraktApi {
     return response;
   }
 
-  private async _device(code?: string) {
+  private async _device<T extends string | null>(code: T): Promise<T extends null ? TraktDeviceAuthentication : TraktAuthentication> {
     try {
       let response: TraktApiResponse<TraktAuthentication | TraktDeviceAuthentication>;
       if (code) {
@@ -161,19 +168,64 @@ export class TraktClient extends TraktApi {
           client_id: this._settings.client_id,
         });
       }
-      return response.json();
+      return (await response.json()) as T extends null ? TraktDeviceAuthentication : TraktAuthentication;
     } catch (error) {
-      handleError(error);
+      throw handleError(error);
     }
   }
 
-  deviceGetCode() {
-    return this._device();
+  private async _devicePolling(poll: TraktDeviceAuthentication, timeout: number) {
+    if (timeout <= Date.now()) {
+      clearInterval(this.polling);
+      throw new Error('Polling expired');
+    }
+
+    try {
+      const body = await this._device(poll.device_code);
+
+      this._authentication.update(auth => ({
+        ...auth,
+        refresh_token: body.refresh_token,
+        access_token: body.access_token,
+        expires: (body.created_at + body.expires_in) * 1000,
+      }));
+
+      clearInterval(this.polling);
+      return body;
+    } catch (error) {
+      // do nothing on 400
+      if (isResponse(error) && error.status === 400) {
+        console.info('Polling in progress...');
+        return;
+      }
+
+      clearInterval(this.polling);
+      throw error;
+    }
   }
 
-  devicePollToken(codes: TraktDeviceAuthentication) {
-    // TODO polling logic
-    return this._device(codes.device_code);
+  getDeviceCode() {
+    return this._device(null);
+  }
+
+  pollWithDeviceCode(poll: TraktDeviceAuthentication) {
+    if (this.polling) {
+      clearInterval(this.polling);
+      console.warn('Polling already in progress, cancelling previous one...');
+    }
+
+    const timeout = Date.now() + poll.expires_in * 1000;
+
+    return new Promise((resolve, reject) => {
+      const pollDevice = () =>
+        this._devicePolling(poll, timeout)
+          .then(body => {
+            if (body) resolve(body);
+          })
+          .catch(reject);
+
+      this.polling = setInterval(pollDevice, poll.interval * 1000);
+    });
   }
 
   /**
@@ -182,18 +234,26 @@ export class TraktClient extends TraktApi {
    *
    * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
    */
-  authorizeUrl(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> = {}) {
+  redirectToAuthentication(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & { redirect?: RequestRedirect } = {}) {
     this._authentication.update(auth => ({ ...auth, state: request.state ?? randomHex() }));
-    return this.authentication.oAuth.authorize({
-      response_type: 'code',
-      client_id: this._settings.client_id,
-      redirect_uri: this._settings.redirect_uri,
-      state: this.auth.state,
-      ...request,
-    });
+    const init: TraktApiInit = {};
+    if (request.redirect) {
+      init.redirect = request.redirect;
+      delete request.redirect;
+    }
+    return this.authentication.oAuth.authorize(
+      {
+        response_type: 'code',
+        client_id: this._settings.client_id,
+        redirect_uri: this._settings.redirect_uri,
+        state: this.auth.state,
+        ...request,
+      },
+      init,
+    );
   }
 
-  exchangeCode(code: string, state?: string) {
+  exchangeCodeForToken(code: string, state?: string) {
     if (state && state !== this.auth.state) throw Error('Invalid CSRF (State)');
     return this._exchange({ code });
   }
