@@ -1,10 +1,10 @@
-import type { TraktSharing } from '~/models/trakt-entity.model';
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktList } from '~/models/trakt-list.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
-import type { TraktShow } from '~/models/trakt-show.model';
-import type { TraktUser } from '~/models/trakt-user.model';
+import type { TraktSharing } from '~/models/trakt/trakt-entity.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktList } from '~/models/trakt/trakt-list.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 import type { ExclusiveUnion, RequireAtLeastOne } from '~/utils/typescript.utils';
 
 export type TraktComment = {

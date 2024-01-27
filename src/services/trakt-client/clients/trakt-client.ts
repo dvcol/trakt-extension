@@ -11,7 +11,7 @@ import type {
   TraktAuthenticationRevokeRequest,
   TraktClientAuthentication,
   TraktDeviceAuthentication,
-} from '~/models/trakt-authentication.model';
+} from '~/models/trakt/trakt-authentication.model';
 import type {
   ITraktApi,
   TraktApiInit,
@@ -19,9 +19,9 @@ import type {
   TraktApiResponse,
   TraktClientEndpointCall,
   TraktClientSettings,
-} from '~/models/trakt-client.model';
+} from '~/models/trakt/trakt-client.model';
 
-import { TraktApiHeaders, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiHeaders, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { randomHex } from '~/utils/crypto.utils';
 
 const isResponse = <T>(error: T | Response): error is Response => error && typeof error === 'object' && 'status' in error;

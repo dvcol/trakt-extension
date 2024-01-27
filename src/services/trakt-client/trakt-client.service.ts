@@ -1,4 +1,4 @@
-import type { TraktClientSettings } from '~/models/trakt-client.model';
+import type { TraktClientSettings } from '~/models/trakt/trakt-client.model';
 
 import { TraktClient } from '~/services/trakt-client/clients/trakt-client';
 import { Config, Production, Staging } from '~/settings/traktv.api';

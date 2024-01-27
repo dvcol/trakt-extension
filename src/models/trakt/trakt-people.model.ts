@@ -1,4 +1,4 @@
-import type { TraktApiIds } from '~/models/trakt-id.model';
+import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 
 export type BaseTraktPerson = {
   name: string;

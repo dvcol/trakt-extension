@@ -1,5 +1,5 @@
-import type { TraktApiIds } from '~/models/trakt-id.model';
-import type { TraktCast } from '~/models/trakt-people.model';
+import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
+import type { TraktCast } from '~/models/trakt/trakt-people.model';
 
 export type TraktMovieShort = {
   title: string;

@@ -1,4 +1,4 @@
-import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
+import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
 import type {
   TraktApiInit,
   TraktApiParams,
@@ -7,11 +7,11 @@ import type {
   TraktApiResponse,
   TraktApiTemplate,
   TraktClientSettings,
-} from '~/models/trakt-client.model';
+} from '~/models/trakt/trakt-client.model';
 
 import type { Primitive } from '~/utils/typescript.utils';
 
-import { TraktApiHeaders } from '~/models/trakt-client.model';
+import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 import { CancellableFetch } from '~/utils/fetch.utils';

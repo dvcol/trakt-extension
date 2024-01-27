@@ -1,11 +1,11 @@
-import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt-calendar.model';
-import type { TraktApiParams, TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt-client.model';
+import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt-calendar.model';
+import type { TraktApiParams, TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt/trakt-client.model';
 
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
-import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
-import { validateStartDate } from '~/models/trakt-entity.model';
+import { validateStartDate } from '~/models/trakt/trakt-entity.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 
 import { HttpMethod } from '~/utils/http.utils';

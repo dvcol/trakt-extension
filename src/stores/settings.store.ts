@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
+import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
 
 export const useSettingsStore = defineStore('settings', () => {
   const auth = ref<TraktClientAuthentication>();

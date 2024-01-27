@@ -1,7 +1,7 @@
 import type { Primitive } from '~/utils/typescript.utils';
 
-import { TraktEpisodeTypeValues } from '~/models/trakt-episode.model';
-import { TraktShowStatusValues } from '~/models/trakt-show.model';
+import { TraktEpisodeTypeValues } from '~/models/trakt/trakt-episode.model';
+import { TraktShowStatusValues } from '~/models/trakt/trakt-show.model';
 
 import { DecimalRange, DigitRange, LargeRange, PercentageRange, VeryLargeRange } from '~/utils/regex.utils';
 

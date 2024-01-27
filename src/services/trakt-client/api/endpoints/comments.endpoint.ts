@@ -1,9 +1,9 @@
-import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
+import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 
-import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt-comment.model';
-import type { TraktLike } from '~/models/trakt-like.model';
+import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt/trakt-comment.model';
+import type { TraktLike } from '~/models/trakt/trakt-like.model';
 
-import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 

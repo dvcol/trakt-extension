@@ -5,9 +5,9 @@ import type {
   TraktAuthenticationRefreshRequest,
   TraktAuthenticationRevokeRequest,
   TraktDeviceAuthentication,
-} from '~/models/trakt-authentication.model';
+} from '~/models/trakt/trakt-authentication.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 export const authentication = {

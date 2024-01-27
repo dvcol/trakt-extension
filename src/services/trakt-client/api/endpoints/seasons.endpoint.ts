@@ -1,12 +1,12 @@
-import type { TraktComment } from '~/models/trakt-comment.model';
-import type { TraktRating, TraktTranslation } from '~/models/trakt-entity.model';
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktList } from '~/models/trakt-list.model';
-import type { TraktSeason, TraktSeasonCast, TraktSeasonStats } from '~/models/trakt-season.model';
+import type { TraktComment } from '~/models/trakt/trakt-comment.model';
+import type { TraktRating, TraktTranslation } from '~/models/trakt/trakt-entity.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktList } from '~/models/trakt/trakt-list.model';
+import type { TraktSeason, TraktSeasonCast, TraktSeasonStats } from '~/models/trakt/trakt-season.model';
 
-import type { TraktUser } from '~/models/trakt-user.model';
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 export const seasons = {

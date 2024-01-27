@@ -1,8 +1,8 @@
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
-import type { TraktShow } from '~/models/trakt-show.model';
-import type { BaseSyncRequestItem, TraktSyncRequest } from '~/models/trakt-sync.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { BaseSyncRequestItem, TraktSyncRequest } from '~/models/trakt/trakt-sync.model';
 
 type TraktHistoryItem<T extends 'movie' | 'episode' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
   type: T extends 'any' ? 'movie' | 'episode' : T;

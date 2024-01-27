@@ -1,5 +1,5 @@
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 
 type BaseTraktProgressEpisode = {
   number: number;

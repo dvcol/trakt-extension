@@ -1,25 +1,25 @@
-import type { TraktCollection, TraktCollectionAdded, TraktCollectionRemoved, TraktCollectionRequest } from '~/models/trakt-collection.model';
+import type { TraktCollection, TraktCollectionAdded, TraktCollectionRemoved, TraktCollectionRequest } from '~/models/trakt/trakt-collection.model';
 import type {
   TraktFavoriteAdded,
   TraktFavoriteItem,
   TraktFavoriteList,
   TraktFavoriteRemoved,
   TraktFavoriteRequest,
-} from '~/models/trakt-favorite.model';
+} from '~/models/trakt/trakt-favorite.model';
 import type {
   TraktHistory,
   TraktHistoryAdded,
   TraktHistoryRemoved,
   TraktHistoryRemovedRequest,
   TraktHistoryRequest,
-} from '~/models/trakt-history.model';
-import type { TraktListReordered } from '~/models/trakt-list.model';
-import type { TraktRating, TraktRatingAdded, TraktRatingRemoved, TraktRatingRequest } from '~/models/trakt-rating.model';
-import type { TraktSyncActivities, TraktSyncProgress, TraktSyncRequest, TraktSyncUpdateRequest } from '~/models/trakt-sync.model';
-import type { TraktWatched } from '~/models/trakt-watched.model';
-import type { TraktWatchlist, TraktWatchlistAdded, TraktWatchlistList, TraktWatchlistRemoved } from '~/models/trakt-watchlist.model';
+} from '~/models/trakt/trakt-history.model';
+import type { TraktListReordered } from '~/models/trakt/trakt-list.model';
+import type { TraktRating, TraktRatingAdded, TraktRatingRemoved, TraktRatingRequest } from '~/models/trakt/trakt-rating.model';
+import type { TraktSyncActivities, TraktSyncProgress, TraktSyncRequest, TraktSyncUpdateRequest } from '~/models/trakt/trakt-sync.model';
+import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
+import type { TraktWatchlist, TraktWatchlistAdded, TraktWatchlistList, TraktWatchlistRemoved } from '~/models/trakt/trakt-watchlist.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**

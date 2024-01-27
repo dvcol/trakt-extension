@@ -1,7 +1,7 @@
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
-import type { TraktShow } from '~/models/trakt-show.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
 export type TraktSyncActivity = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
