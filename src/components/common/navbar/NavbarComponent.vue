@@ -28,7 +28,7 @@ const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route
 
 <style lang="scss" scoped>
 nav {
-  margin-top: 2rem;
+  margin: 1rem 0;
   font-size: 12px;
   text-align: center;
 }

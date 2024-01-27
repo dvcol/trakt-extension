@@ -1,6 +1,6 @@
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktShow } from '~/models/trakt-show.model';
-import type { TraktUser } from '~/models/trakt-user.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 import type { ExclusiveUnion } from '~/utils/typescript.utils';
 
 type BaseTraktRecommendation = {

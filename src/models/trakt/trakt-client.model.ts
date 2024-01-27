@@ -1,9 +1,14 @@
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
-
+import type { CancellablePromise } from '~/utils/fetch.utils';
 import type { HttpMethods } from '~/utils/http.utils';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
 
+/**
+ * Pagination data parsed from {@link TraktApiResponse} headers.
+ *
+ * @see [pagination]{@link https://trakt.docs.apiary.io/#introduction/pagination}
+ */
 export type TraktClientPagination = {
   itemCount: number;
   pageCount: number;
@@ -11,6 +16,9 @@ export type TraktClientPagination = {
   page: number;
 };
 
+/**
+ * Trakt.tv API client settings.
+ */
 export type TraktClientSettings = {
   /** Get this from your app settings. */
   client_id: string;
@@ -22,8 +30,6 @@ export type TraktClientSettings = {
   endpoint: string;
   /** The consumer client identifier */
   useragent: string;
-  /** Enable/disables debug logs */
-  debug?: boolean;
 };
 
 /**
@@ -45,8 +51,16 @@ export const TraktApiExtended = {
   Comments: 'comments',
 } as const;
 
+/**
+ * Represents the supported extensions for the Trakt API.
+ * @see {TraktApiExtended}
+ * @see [extended-info]{@link https://trakt.docs.apiary.io/#introduction/extended-info}
+ */
 export type TraktApiExtends = (typeof TraktApiExtended)[keyof typeof TraktApiExtended];
 
+/**
+ * Represents options that can be used in a Trakt API template.
+ */
 export type TraktApiTemplateOptions = {
   /** If the method supports or requires vip status */
   vip?: boolean | 'enhanced';
@@ -69,22 +83,29 @@ export type TraktApiTemplateOptions = {
   filters?: TraktApiFilters[];
 };
 
+export type TraktApiInit = Omit<Partial<TraktApiRequest['init']>, 'method'>;
+
 export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = {
   method: HttpMethods;
   url: string;
   opts?: TraktApiTemplateOptions;
   /** Boolean record or required (truthy) or optional fields (falsy) */
   body?: Record<string, boolean>;
+  /** Partial fetch request init */
+  init?: TraktApiInit;
   /** Validate the parameters before performing request */
   validate?: (param: P) => boolean;
   /** Transform the parameters before performing request */
   transform?: (param: P) => P;
 };
 
-export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (param?: P) => Promise<TraktApiResponse<R>>;
+export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (
+  param?: P,
+  init?: TraktApiInit,
+) => Promise<TraktApiResponse<R>>;
 
 export interface TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown> {
-  (param?: P): Promise<TraktApiResponse<R>>;
+  (param?: P, init?: TraktApiInit): Promise<TraktApiResponse<R>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -93,17 +114,21 @@ export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never
   url: string;
   opts: TraktApiTemplateOptions;
   body?: Record<string, boolean>;
+  init?: TraktApiInit;
   validate?: (param: P) => boolean;
 
   constructor(template: TraktApiTemplate<P>) {
     this.method = template.method;
     this.url = template.url;
     this.opts = template.opts ?? {};
+    this.init = template.init ?? {};
     this.body = template.body;
 
     this.validate = template.validate;
   }
 }
+
+export type TraktApiQuery<T> = { request: TraktApiRequest; query: CancellablePromise<T> };
 
 export type TraktApiRequest = {
   input: RequestInfo;
@@ -147,6 +172,11 @@ export type TraktApiPagination = {
   limit?: number;
 };
 
+/**
+ * Filters are optional parameters you can send to filter the data returned.
+ *
+ * @see [filters]{@link https://trakt.docs.apiary.io/#introduction/filters}
+ */
 export type TraktApiParamsFilter<F extends TraktApiFilters | void = TraktApiFilters, V extends Primitive = Primitive> = F extends TraktApiFilters
   ? {
       /**
@@ -186,9 +216,7 @@ export type TraktApiParams<
   E extends TraktApiExtends = TraktApiExtends,
   F extends TraktApiFilters = TraktApiFilters,
   P extends true | false = true,
-> = P extends true
-  ? T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & TraktApiParamsPagination
-  : T & TraktApiParamsExtended<E> & TraktApiParamsFilter<F>;
+> = TraktApiParamsExtended<E> & TraktApiParamsFilter<F> & (P extends true ? T & TraktApiParamsPagination : T);
 
 export type PartialTraktApiParams<
   T extends RecursiveRecord | void = void,

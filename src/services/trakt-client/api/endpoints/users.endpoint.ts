@@ -1,8 +1,8 @@
-import type { TraktCollection } from '~/models/trakt-collection.model';
-import type { TraktComment, TraktCommentItem } from '~/models/trakt-comment.model';
-import type { TraktFavoriteItem } from '~/models/trakt-favorite.model';
-import type { TraktHistory } from '~/models/trakt-history.model';
-import type { TraktLike } from '~/models/trakt-like.model';
+import type { TraktCollection } from '~/models/trakt/trakt-collection.model';
+import type { TraktComment, TraktCommentItem } from '~/models/trakt/trakt-comment.model';
+import type { TraktFavoriteItem } from '~/models/trakt/trakt-favorite.model';
+import type { TraktHistory } from '~/models/trakt/trakt-history.model';
+import type { TraktLike } from '~/models/trakt/trakt-like.model';
 import type {
   TraktList,
   TraktListItem,
@@ -11,10 +11,10 @@ import type {
   TraktUserListItemRemoved,
   TraktUserListItemRemoveRequest,
   TraktUserListItemRequest,
-} from '~/models/trakt-list.model';
-import type { TraktNoteItem, TraktNoteTypes } from '~/models/trakt-note.model';
-import type { TraktRating } from '~/models/trakt-rating.model';
-import type { TraktStats } from '~/models/trakt-stats.model';
+} from '~/models/trakt/trakt-list.model';
+import type { TraktNoteItem, TraktNoteTypes } from '~/models/trakt/trakt-note.model';
+import type { TraktRating } from '~/models/trakt/trakt-rating.model';
+import type { TraktStats } from '~/models/trakt/trakt-stats.model';
 import type {
   TraktUser,
   TraktUserFilter,
@@ -29,12 +29,12 @@ import type {
   TraktUserHiddenRequest,
   TraktUserLikeComment,
   TraktUserSettings,
-} from '~/models/trakt-user.model';
+} from '~/models/trakt/trakt-user.model';
 
-import type { TraktWatched, TraktWatching } from '~/models/trakt-watched.model';
-import type { TraktWatchlist } from '~/models/trakt-watchlist.model';
+import type { TraktWatched, TraktWatching } from '~/models/trakt/trakt-watched.model';
+import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**

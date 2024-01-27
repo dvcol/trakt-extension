@@ -1,9 +1,9 @@
-import type { TraktApiExtended, TraktApiParams, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt-client.model';
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktList } from '~/models/trakt-list.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktPerson } from '~/models/trakt-people.model';
-import type { TraktShow } from '~/models/trakt-show.model';
+import type { TraktApiExtended, TraktApiParams, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktList } from '~/models/trakt/trakt-list.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktPerson } from '~/models/trakt/trakt-people.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 

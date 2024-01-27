@@ -1,7 +1,7 @@
-import type { TraktList, TraktListItem } from '~/models/trakt-list.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktShow } from '~/models/trakt-show.model';
-import type { BaseSyncRequestItem } from '~/models/trakt-sync.model';
+import type { TraktList, TraktListItem } from '~/models/trakt/trakt-list.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { BaseSyncRequestItem } from '~/models/trakt/trakt-sync.model';
 
 export type TraktFavoriteList = TraktList<'favorites'>;
 

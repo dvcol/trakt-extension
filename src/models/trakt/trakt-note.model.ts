@@ -1,9 +1,9 @@
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktPerson } from '~/models/trakt-people.model';
-import type { TraktSeason } from '~/models/trakt-season.model';
-import type { TraktShow } from '~/models/trakt-show.model';
-import type { TraktUser } from '~/models/trakt-user.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktPerson } from '~/models/trakt/trakt-people.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
 type BaseTraktNote = {

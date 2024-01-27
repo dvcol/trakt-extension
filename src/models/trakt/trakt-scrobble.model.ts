@@ -1,7 +1,7 @@
-import type { TraktSharing } from '~/models/trakt-entity.model';
-import type { TraktEpisode } from '~/models/trakt-episode.model';
-import type { TraktMovie } from '~/models/trakt-movie.model';
-import type { TraktShow } from '~/models/trakt-show.model';
+import type { TraktSharing } from '~/models/trakt/trakt-entity.model';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
 type TraktScrobbleRequestMovie = {
   /** Movie to be checked-in */

@@ -1,7 +1,7 @@
 import type { Primitive } from '~/utils/typescript.utils';
 
-import { TraktEpisodeTypeValues } from '~/models/trakt-episode.model';
-import { TraktShowStatusValues } from '~/models/trakt-show.model';
+import { TraktEpisodeTypeValues } from '~/models/trakt/trakt-episode.model';
+import { TraktShowStatusValues } from '~/models/trakt/trakt-show.model';
 
 import { DecimalRange, DigitRange, LargeRange, PercentageRange, VeryLargeRange } from '~/utils/regex.utils';
 
@@ -242,7 +242,7 @@ export const TraktApiFilterValidator = {
     const values = Array.isArray(value) ? value : [value];
 
     if (filter === TraktApiShowFilter.Status && !values.some(v => TraktShowStatusValues.includes(v.toString()))) {
-      if (error) throw new Error(`Filter '${filter}' is invalid.`);
+      if (error) throw new Error(`Filter '${filter}' is invalid: unknown status '${value}'.`);
       return false;
     }
     return true;
@@ -251,7 +251,7 @@ export const TraktApiFilterValidator = {
     const values = Array.isArray(value) ? value : [value];
 
     if (filter === TraktApiEpisodeFilter.EpisodeTypes && !values.some(v => TraktEpisodeTypeValues.includes(v.toString()))) {
-      if (error) throw new Error(`Filter '${filter}' is invalid.`);
+      if (error) throw new Error(`Filter '${filter}' is invalid: unknown episode type '${value}'.`);
       return false;
     }
     return true;

@@ -5,9 +5,9 @@ import type {
   TraktAuthenticationRefreshRequest,
   TraktAuthenticationRevokeRequest,
   TraktDeviceAuthentication,
-} from '~/models/trakt-authentication.model';
+} from '~/models/trakt/trakt-authentication.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 export const authentication = {
@@ -41,6 +41,10 @@ export const authentication = {
     authorize: new TraktClientEndpoint<TraktAuthenticationAuthorizeRequest>({
       method: HttpMethod.GET,
       url: '/oauth/authorize?response_type=code&client_id=&redirect_uri=&state=',
+      init: {
+        redirect: 'manual',
+        credentials: 'omit',
+      },
       opts: {
         parameters: {
           query: {

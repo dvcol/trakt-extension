@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
-import { LoginComponent } from '~/components/views/login';
-
+import { useSettingsStore } from '~/stores/settings.store';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('global');
-const isAuthenticated = ref(true);
+const { isAuthenticated } = useSettingsStore();
 </script>
 
 <template>
-  <LoginComponent v-if="!isAuthenticated" />
-  <template v-else>
-    <header>
-      <NavbarComponent />
-    </header>
-    <main>
-      <RouterView />
-    </main>
-  </template>
+  <header v-if="isAuthenticated">
+    <NavbarComponent />
+  </header>
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style lang="scss" scoped>
@@ -31,6 +26,10 @@ header {
 }
 
 main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   padding: 0 2rem;
 }
 </style>

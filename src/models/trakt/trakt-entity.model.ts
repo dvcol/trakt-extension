@@ -1,5 +1,5 @@
-import type { TraktApiTemplate } from '~/models/trakt-client.model';
-import type { TraktApiIds } from '~/models/trakt-id.model';
+import type { TraktApiTemplate } from '~/models/trakt/trakt-client.model';
+import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
 import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';

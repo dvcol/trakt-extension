@@ -1,18 +1,35 @@
-import type { TraktClientAuthentication } from '~/models/trakt-authentication.model';
-import type { TraktApiParams, TraktApiRequest, TraktApiResponse, TraktApiTemplate, TraktClientSettings } from '~/models/trakt-client.model';
+import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
+import type {
+  TraktApiInit,
+  TraktApiParams,
+  TraktApiQuery,
+  TraktApiRequest,
+  TraktApiResponse,
+  TraktApiTemplate,
+  TraktClientSettings,
+} from '~/models/trakt/trakt-client.model';
 
 import type { Primitive } from '~/utils/typescript.utils';
 
-import { TraktApiHeaders } from '~/models/trakt-client.model';
+import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
+import { CancellableFetch } from '~/utils/fetch.utils';
+import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
 
 /**
  * Parses body from {@link TraktApiTemplate} into stringifies {@link BodyInit}
- * @param body
- * @param params
+ *
+ * @private
+ *
+ * @template T - The type of the parameters.
+ *
+ * @param {TraktApiTemplate<T>['body']} [body={}] - The expected body structure.
+ * @param {T} params - The actual parameters.
+ *
+ * @returns {BodyInit} The parsed request body.
  */
-const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemplate<T>['body'] = {}, params: T): BodyInit => {
+export const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemplate<T>['body'] = {}, params: T): BodyInit => {
   const _body: Record<string, unknown> = {};
 
   Object.entries(params).forEach(([key, value]) => {
@@ -20,29 +37,44 @@ const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemp
   });
 
   Object.keys(body).forEach(key => {
-    if (body[key] === true && !(key in _body)) throw new Error(`Required field '${key}' is missing in request boyd.`);
+    if (body[key] === true && !(key in _body)) throw new Error(`Missing mandatory body parameter: '${key}'`);
   });
 
   return JSON.stringify(_body);
 };
 
 /**
- * Throw {@link Error} when status code is not ok
- * @param response
+ * Checks if the fetch response is OK and handles redirects.
+ *
+ * @private
+ *
+ * @param  response - The fetch response.
+ *
+ * @returns  The same response object if OK.
+ *
+ * @throws Throws the response if not OK.
  */
 export const isResponseOk = (response: Response) => {
+  if (response.type === 'opaqueredirect') return response;
   if (!response.ok || response.status >= 400) throw response;
   return response;
 };
 
 /**
- * Parse fetch response to extract {@TraktClientPagination} information.
- * @param response
+ * Parses a Trakt API response to extract {@link TraktClientPagination} and other information.
+ *
+ * @private
+ *
+ * @template T - The type of the response.
+ *
+ * @param {Response} response - The fetch response.
+ *
+ * @returns {TraktApiResponse<T>} The parsed Trakt API response.
  */
-const parseResponse = (response: Response): TraktApiResponse => {
+export const parseResponse = <T>(response: Response): TraktApiResponse<T> => {
   isResponseOk(response);
 
-  const _response: TraktApiResponse = { ...response };
+  const _response = response as TraktApiResponse<T>;
 
   if (
     response.headers.has(TraktApiHeaders.XPaginationItemCount) ||
@@ -94,33 +126,95 @@ const parseResponse = (response: Response): TraktApiResponse => {
   return _response;
 };
 
+/**
+ * Represents a Trakt API client with common functionality.
+ *
+ * @class BaseTraktClient
+ */
 export class BaseTraktClient {
   protected _settings: TraktClientSettings;
-  protected _authentication: TraktClientAuthentication;
+  protected _authentication: ObservableState<TraktClientAuthentication>;
+  protected _callListeners: Observable<TraktApiQuery<unknown>>;
 
-  constructor(settings: TraktClientSettings, authentication = {}) {
-    this._authentication = authentication;
-    this._settings = settings;
+  /**
+   * Gets the authentication information.
+   *
+   * @readonly
+   * @type {TraktClientAuthentication}
+   */
+  get auth() {
+    return this._authentication.state;
   }
 
   /**
-   * Logs api request details
-   * @param req
+   * Updates the authentication information.
+   * @param auth - The new authentication information.
+   *
    * @protected
    */
-  protected debug(req: TraktApiRequest) {
-    if (this._settings.debug) {
-      console.info({
-        method: req.init?.method,
-        input: req.input,
-        req,
-      });
-    }
+  protected updateAuth(auth: Updater<TraktClientAuthentication>) {
+    this._authentication.update(auth);
   }
 
+  /**
+   * Subscribes to changes in authentication information.
+   * Emits the current authentication information on auth related changes (oAuth calls, token revocation, token refresh, etc.).
+   *
+   * @param observer - The observer function.
+   * @returns A function to unsubscribe from changes.
+   */
+  onAuthChange(observer: Observer<TraktClientAuthentication | undefined>) {
+    return this._authentication.subscribe(observer);
+  }
+
+  /**
+   * Subscribes to Trakt API queries.
+   * Emits query information on every call to the Trakt API.
+   *
+   * @param observer - The observer function.
+   * @returns A function to unsubscribe from queries.
+   */
+  onCall(observer: Observer<TraktApiQuery<unknown>>) {
+    return this._callListeners.subscribe(observer);
+  }
+
+  /**
+   * Unsubscribes observers from authentication and call listeners.
+   * If no observer is provided, unsubscribes all observers.
+   *
+   * @param observer - The observer to be removed.
+   */
+  unsubscribe(observer?: Observer<TraktClientAuthentication | undefined | TraktApiQuery<unknown>>) {
+    return {
+      auth: this._authentication.unsubscribe(observer),
+      call: this._callListeners.unsubscribe(observer),
+    };
+  }
+
+  constructor(settings: TraktClientSettings, authentication = {}) {
+    this._settings = settings;
+    this._authentication = new ObservableState(authentication);
+    this._callListeners = new Observable();
+  }
+
+  /**
+   * Calls the Trakt API with the given template and parameters.
+   *
+   * @protected
+   *
+   * @template P - The type of the parameters.
+   * @template R - The type of the response.
+   *
+   * @param {TraktApiTemplate<P>} template - The template for the API endpoint.
+   * @param {P} [params={}] - The parameters for the API call.
+   * @param {TraktApiInit} [init] - Additional initialization options.
+   *
+   * @returns {Promise<TraktApiResponse<R>>} A promise that resolves to the API response.
+   */
   protected async _call<P extends TraktApiParams = TraktApiParams, R = unknown>(
     template: TraktApiTemplate<P>,
     params: P = {} as P,
+    init?: TraktApiInit,
   ): Promise<TraktApiResponse<R>> {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
@@ -129,10 +223,10 @@ export class BaseTraktClient {
       [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };
 
-    if (template.opts?.auth && this._authentication.access_token) {
-      headers.Authorization = `Bearer ${this._authentication.access_token}`;
-    } else if (template.opts?.auth === true && !this._settings.client_secret) {
-      throw Error('OAuth required');
+    if (template.opts?.auth && this.auth.access_token) {
+      headers.Authorization = `Bearer ${this.auth.access_token}`;
+    } else if (template.opts?.auth === true && !this.auth.access_token) {
+      throw Error('OAuth required: access_token is missing');
     }
 
     const _params = template.transform?.(params) ?? params;
@@ -142,8 +236,14 @@ export class BaseTraktClient {
     const req: TraktApiRequest = {
       input: this._parse(template, _params),
       init: {
+        ...template.init,
+        ...init,
         method: template.method,
-        headers,
+        headers: {
+          ...template.init?.headers,
+          ...headers,
+          ...init?.headers,
+        },
       },
     };
 
@@ -151,18 +251,28 @@ export class BaseTraktClient {
       req.init.body = parseBody(template.body, _params);
     }
 
-    this.debug(req);
-    const response = await fetch(req.input, req.init);
-    return parseResponse(response) as TraktApiResponse<R>;
+    const query = CancellableFetch.fetch<TraktApiResponse<R>>(req.input, req.init).then(parseResponse);
+
+    this._callListeners.update({ request: req, query });
+
+    return query;
   }
 
   /**
-   * Parses {@link TraktApiTemplate} into fetch {@link RequestInfo}.
-   * @param template
-   * @param params
+   * Parses the parameters and constructs the URL for a Trakt API request.
+   *
    * @private
+   *
+   * @template T - The type of the parameters.
+   *
+   * @param {TraktApiTemplate<T>} template - The template for the API endpoint.
+   * @param {T} params - The parameters for the API call.
+   *
+   * @returns {RequestInfo} The URL for the Trakt API request.
+   *
+   * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
-  private _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): RequestInfo {
+  protected _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): RequestInfo {
     // fill query parameters i.e. ?variable
     const [pathPart, queryPart] = template.url.split('?');
 
@@ -172,13 +282,14 @@ export class BaseTraktClient {
     if (queryPart) {
       queryParams.forEach((value, key, parent) => {
         const _value = params[key] ?? value;
+
         // If a value is found we encode
-        if (_value !== undefined && value !== '') {
-          queryParams.set(key, encodeURIComponent(typeof _value === 'string' ? _value : JSON.stringify(_value)));
+        if (_value !== undefined && _value !== '') {
+          queryParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
         }
         // If the parameter is required we raise error
         else if (template.opts?.parameters?.query?.[key] === true) {
-          throw Error(`Missing mandatory query parameter: ${key}`);
+          throw Error(`Missing mandatory query parameter: '${key}'`);
         }
         // else we remove the empty field from parameters
         else {
@@ -195,8 +306,8 @@ export class BaseTraktClient {
           if (segment.match(/^:/)) {
             const name = segment.substring(1);
             const value = params[name];
-            if (value === undefined && template.opts?.parameters?.path?.[name] === true) {
-              throw Error(`Missing mandatory path parameter: ${name}`);
+            if ((value === undefined || value === '') && template.opts?.parameters?.path?.[name] === true) {
+              throw Error(`Missing mandatory path parameter: '${name}'`);
             }
             return value ?? '';
           }
@@ -210,11 +321,11 @@ export class BaseTraktClient {
     if (template.opts?.filters?.length && params.filters) {
       Object.entries(params.filters as { [s: string]: Primitive | Primitive[] }).forEach(([key, value]) => {
         if (!isFilter(key) || !template.opts?.filters?.includes(key)) {
-          throw Error(`Filter is not supported: ${key}`);
+          throw Error(`Filter is not supported: '${key}'`);
         }
 
         if (!TraktApiFilterValidator.validate(key, value, true)) {
-          throw Error(`Filter '${key}' is invalid: ${value}`);
+          throw Error(`Filter '${key}' is invalid: '${value}'`);
         }
 
         queryParams.set(key, `${value}`);
@@ -235,7 +346,8 @@ export class BaseTraktClient {
       queryParams.set('extended', `${params.extended}`);
     }
 
-    const url = queryParams?.size ? `${path}?${queryParams.toString()}` : path;
-    return [this._settings.endpoint, url].join('/');
+    const url = new URL(path, this._settings.endpoint);
+    url.search = queryParams.toString();
+    return url.toString();
   }
 }

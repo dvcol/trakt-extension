@@ -1,8 +1,8 @@
-import type { TraktApiParamsPagination } from '~/models/trakt-client.model';
+import type { TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 
-import type { TraktCertification, TraktCountry, TraktGenre, TraktLanguage, TraktNetwork } from '~/models/trakt-entity.model';
+import type { TraktCertification, TraktCountry, TraktGenre, TraktLanguage, TraktNetwork } from '~/models/trakt/trakt-entity.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
 import { authentication } from '~/services/trakt-client/api/endpoints/authentication.endpoint';
 import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';

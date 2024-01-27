@@ -1,5 +1,5 @@
-import type { TraktComment } from '~/models/trakt-comment.model';
-import type { TraktList } from '~/models/trakt-list.model';
+import type { TraktComment } from '~/models/trakt/trakt-comment.model';
+import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type {
   TraktMovie,
   TraktMovieAnticipated,
@@ -11,9 +11,9 @@ import type {
   TraktMovieStats,
   TraktMovieTrending,
   TraktMovieUpdate,
-} from '~/models/trakt-movie.model';
+} from '~/models/trakt/trakt-movie.model';
 
-import type { TraktUser } from '~/models/trakt-user.model';
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 
 import {
   TraktApiExtended,
@@ -22,7 +22,7 @@ import {
   type TraktApiParamsPagination,
   type TraktApiTemplateOptions,
   TraktClientEndpoint,
-} from '~/models/trakt-client.model';
+} from '~/models/trakt/trakt-client.model';
 import {
   type StartDateParam,
   type TraktAlias,
@@ -31,7 +31,7 @@ import {
   type TraktTranslation,
   transformStartDate,
   validateStartDate,
-} from '~/models/trakt-entity.model';
+} from '~/models/trakt/trakt-entity.model';
 import { type TraktApiMovieFilters, TraktApiMovieFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 import { HttpMethod } from '~/utils/http.utils';
 

@@ -1,6 +1,6 @@
-import type { TraktIdLookup, TraktSearch, TraktSearchResult } from '~/models/trakt-search.model';
+import type { TraktIdLookup, TraktSearch, TraktSearchResult } from '~/models/trakt/trakt-search.model';
 
-import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
 import { HttpMethod } from '~/utils/http.utils';

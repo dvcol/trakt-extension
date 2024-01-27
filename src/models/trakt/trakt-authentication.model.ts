@@ -1,10 +1,10 @@
 export type TraktAuthentication = {
   access_token: string;
-  token_type: string;
-  expires_in: number;
   refresh_token: string;
-  scope: string;
   created_at: number;
+  expires_in: number;
+  token_type: string;
+  scope: string;
 };
 
 export type TraktDeviceAuthentication = {

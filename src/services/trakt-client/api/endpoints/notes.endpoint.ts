@@ -1,6 +1,6 @@
-import type { TraktNote, TraktNoteItem, TraktNoteRequest } from '~/models/trakt-note.model';
+import type { TraktNote, TraktNoteItem, TraktNoteRequest } from '~/models/trakt/trakt-note.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 

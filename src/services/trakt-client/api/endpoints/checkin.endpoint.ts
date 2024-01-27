@@ -1,6 +1,6 @@
-import type { TraktCheckin, TraktCheckinRequest } from '~/models/trakt-checkin.model';
+import type { TraktCheckin, TraktCheckinRequest } from '~/models/trakt/trakt-checkin.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
 import { HttpMethod } from '~/utils/http.utils';
 

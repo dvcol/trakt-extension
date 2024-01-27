@@ -1,6 +1,6 @@
-import type { TraktScrobble, TraktScrobbleRequest } from '~/models/trakt-scrobble.model';
+import type { TraktScrobble, TraktScrobbleRequest } from '~/models/trakt/trakt-scrobble.model';
 
-import { TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**

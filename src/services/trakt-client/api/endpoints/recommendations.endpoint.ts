@@ -1,6 +1,6 @@
-import type { TraktRecommendation } from '~/models/trakt-recommendation.model';
+import type { TraktRecommendation } from '~/models/trakt/trakt-recommendation.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt-client.model';
+import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**

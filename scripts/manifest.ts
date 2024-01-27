@@ -6,6 +6,11 @@ import { getDirName, isDev, port, resolveParent } from './utils';
 
 import type { Manifest } from 'webextension-polyfill';
 
+export const Endpoints = {
+  Production: 'https://api.trakt.tv',
+  Staging: 'https://api-staging.trakt.tv',
+} as const;
+
 export const manifest: Manifest.WebExtensionManifest = {
   manifest_version: 3,
   name: pkg.title || pkg.name,
@@ -29,7 +34,14 @@ export const manifest: Manifest.WebExtensionManifest = {
   background: {
     service_worker: 'scripts/background.js',
   },
-  permissions: ['storage'],
+  permissions: ['storage', 'tabs'],
+  web_accessible_resources: [
+    {
+      resources: ['/views/options/index.html'],
+      matches: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
+    },
+  ],
+  host_permissions: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
   content_security_policy: {
     // Adds localhost for vite hot reload
     extension_pages: isDev
