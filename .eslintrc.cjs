@@ -12,5 +12,7 @@ module.exports = {
         ignorePatterns: ['^v-.*'],
       },
     ],
+    'vitest/no-hooks': 'off',
+    'vitest/max-expects': ['warn', { max: 10 }],
   },
 };
