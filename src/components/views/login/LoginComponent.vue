@@ -7,7 +7,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import type { LoginAuthResponse } from '~/models/login/login-auth-response';
 
-import type { TraktDeviceAuthentication } from '~/models/trakt-authentication.model';
+import type { TraktDeviceAuthentication } from '~/models/trakt/trakt-authentication.model';
 
 import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 
