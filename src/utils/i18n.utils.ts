@@ -5,6 +5,11 @@ import type { Locale } from '~/models/i18n.model';
 import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
 
+/**
+ * Setup i18n function to either use chrome i18n resolver or a local store (for web use).
+ * @param roots modules names
+ * @see chrome.i18n.getMessage
+ */
 export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> => {
   if (!window?.chrome?.i18n) {
     const store = useI18nStore();
@@ -23,7 +28,7 @@ export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> =>
         .catch(err => console.error(`Failed to fetch locale '${store.lang}'`, err));
     }
 
-    return (value, modules) => store.i18n(value, ...(modules?.length ? modules : roots));
+    return (value, ...modules) => store.i18n(value, ...(modules?.length ? modules : roots));
   }
 
   return chromeUseI18n(...roots);

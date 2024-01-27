@@ -1,5 +1,6 @@
-type Observer<T> = (data: T) => void;
-type UpdateFunction<T> = (state: T) => T;
+export type Observer<T> = (data: T) => void;
+export type UpdateFunction<T> = (state: T) => T;
+export type Updater<T> = T | UpdateFunction<T>;
 
 const isFunction = <T>(value: T | UpdateFunction<T>): value is UpdateFunction<T> => typeof value === 'function';
 
@@ -114,7 +115,7 @@ export class ObservableState<T> extends Observable<T> {
    * @param {T | UpdateFunction<T>} state - The new state or an update function.
    * @memberof ObservableState
    */
-  update(state: T | UpdateFunction<T>) {
+  update(state: Updater<T>) {
     if (isFunction(state)) this._update(state(this._state));
     else this._update(state);
     super.update(this._state);
