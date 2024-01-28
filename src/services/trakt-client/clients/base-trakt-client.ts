@@ -6,9 +6,11 @@ import type {
   TraktApiRequest,
   TraktApiResponse,
   TraktApiTemplate,
+  TraktClientOptions,
   TraktClientSettings,
 } from '~/models/trakt/trakt-client.model';
 
+import type { CacheStore } from '~/utils/cache.utils';
 import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
@@ -132,9 +134,21 @@ export const parseResponse = <T>(response: Response): TraktApiResponse<T> => {
  * @class BaseTraktClient
  */
 export class BaseTraktClient {
+  protected _cache: CacheStore<TraktApiResponse>;
   protected _settings: TraktClientSettings;
   protected _authentication: ObservableState<TraktClientAuthentication>;
   protected _callListeners: Observable<TraktApiQuery<unknown>>;
+
+  /**
+   * Clears the cache entry for the specified key.
+   * If no key is provided, clears the entire cache.
+   *
+   * @param key - The cache key.
+   */
+  clearCache(key?: string) {
+    if (key) return this._cache?.delete(key);
+    return this._cache?.clear();
+  }
 
   /**
    * Gets the authentication information.
@@ -191,10 +205,11 @@ export class BaseTraktClient {
     };
   }
 
-  constructor(settings: TraktClientSettings, authentication = {}) {
+  constructor({ cacheStore, ...settings }: TraktClientOptions, authentication = {}) {
     this._settings = settings;
     this._authentication = new ObservableState(authentication);
     this._callListeners = new Observable();
+    this._cache = cacheStore ?? new Map();
   }
 
   /**

@@ -1,4 +1,5 @@
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
+import type { CacheStore } from '~/utils/cache.utils';
 import type { CancellablePromise } from '~/utils/fetch.utils';
 import type { HttpMethods } from '~/utils/http.utils';
 
@@ -30,6 +31,14 @@ export type TraktClientSettings = {
   endpoint: string;
   /** The consumer client identifier */
   useragent: string;
+};
+
+/**
+ * Trakt.tv API client options.
+ */
+export type TraktClientOptions = TraktClientSettings & {
+  /** Optional cache store to manage cache read/write */
+  cacheStore?: CacheStore<TraktApiResponse>;
 };
 
 /**
@@ -116,6 +125,7 @@ export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never
   body?: Record<string, boolean>;
   init?: TraktApiInit;
   validate?: (param: P) => boolean;
+  cached: Omit<this, 'cached'> & ((param?: P, init?: TraktApiInit) => Promise<TraktApiResponse>);
 
   constructor(template: TraktApiTemplate<P>) {
     this.method = template.method;
@@ -125,6 +135,7 @@ export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never
     this.body = template.body;
 
     this.validate = template.validate;
+    this.cached = this;
   }
 }
 

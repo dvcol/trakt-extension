@@ -9,6 +9,8 @@ import { traktClientSettings } from '../trakt-client.service';
 import { TraktClient } from './trakt-client';
 
 import type { TraktAuthentication, TraktDeviceAuthentication } from '../../../models/trakt/trakt-authentication.model';
+import type { TraktApiResponse } from '../../../models/trakt/trakt-client.model';
+import type { CacheStore } from '../../../utils/cache.utils';
 
 import type { RecursiveRecord } from '../../../utils/typescript.utils';
 
@@ -28,6 +30,7 @@ describe('trakt-client.ts', () => {
 
   afterEach(async () => {
     await traktClient.importAuthentication({});
+    await traktClient.clearCache();
 
     vi.clearAllMocks();
   });
@@ -73,6 +76,84 @@ describe('trakt-client.ts', () => {
       });
 
       expect(fetch).toHaveBeenCalledWith(new URL('/certifications/shows', traktClientSettings.endpoint).toString(), payload);
+    });
+
+    describe('cache', () => {
+      it('should not cache calls', async () => {
+        expect.assertions(2);
+
+        await traktClient.certifications({ type: 'movies' });
+        await traktClient.certifications({ type: 'movies' });
+        await traktClient.certifications({ type: 'movies' });
+
+        expect(fetch).toHaveBeenCalledTimes(3);
+        expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
+      });
+
+      it('should cache subsequent calls', async () => {
+        expect.assertions(2);
+
+        await traktClient.certifications.cached({ type: 'movies' });
+        await traktClient.certifications.cached({ type: 'movies' });
+        await traktClient.certifications.cached({ type: 'movies' });
+
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache cleared', async () => {
+        expect.assertions(2);
+
+        await traktClient.certifications.cached({ type: 'movies' });
+        await traktClient.certifications.cached({ type: 'movies' });
+        await traktClient.clearCache();
+        await traktClient.certifications.cached({ type: 'movies' });
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
+      });
+
+      it('should clear cache after error', async () => {
+        expect.assertions(3);
+
+        const error = new Error('Error');
+        fetch.mockRejectedValueOnce(error);
+
+        let err: unknown;
+        try {
+          await traktClient.certifications.cached({ type: 'movies' });
+        } catch (e) {
+          err = e;
+        } finally {
+          expect(err).toBe(error);
+        }
+        await traktClient.certifications.cached({ type: 'movies' });
+        await traktClient.certifications.cached({ type: 'movies' });
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired', async () => {
+        expect.assertions(2);
+
+        const cacheStore: CacheStore<TraktApiResponse> = new Map();
+        cacheStore.retention = 100;
+        const _traktClient = new TraktClient({ ...traktClientSettings, cacheStore });
+
+        await _traktClient.certifications.cached({ type: 'movies' });
+        await _traktClient.certifications.cached({ type: 'movies' });
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 200);
+        });
+
+        await _traktClient.certifications.cached({ type: 'movies' });
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
+      });
     });
 
     const deviceAuthentication: TraktDeviceAuthentication = {

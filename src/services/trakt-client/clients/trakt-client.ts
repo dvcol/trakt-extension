@@ -18,6 +18,7 @@ import type {
   TraktApiParams,
   TraktApiResponse,
   TraktClientEndpointCall,
+  TraktClientOptions,
   TraktClientSettings,
 } from '~/models/trakt/trakt-client.model';
 
@@ -90,11 +91,40 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
     Object.entries(client).forEach(([endpoint, template]) => {
       if (isTraktApiTemplate(template) && isTraktApiTemplate(client[endpoint])) {
         const fn: TraktClientEndpointCall = (param, init) => this._call(template, param, init);
+
+        const cachedFn: TraktClientEndpointCall = async (param, init) => {
+          const key = JSON.stringify({ param, init });
+          const cached = await this._cache.get(key);
+          if (cached) {
+            if (!this._cache.retention) return cached.value;
+            const expires = cached.cachedAt + this._cache.retention;
+            if (expires > Date.now()) return cached.value;
+          }
+          try {
+            const result = await fn(param, init);
+            await this._cache.set(key, {
+              cachedAt: Date.now(),
+              value: result,
+            });
+            return result;
+          } catch (error) {
+            this._cache.delete(key);
+            throw error;
+          }
+        };
+
         Object.entries(client[endpoint]).forEach(([key, value]) => {
-          Object.defineProperty(fn, key, { value });
+          if (key === 'cached') {
+            Object.defineProperty(fn, 'cached', { value: cachedFn });
+          } else {
+            Object.defineProperty(fn, key, { value });
+            Object.defineProperty(cachedFn, key, { value });
+          }
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
-        client[endpoint] = fn as any;
+
+        Object.defineProperty(fn, 'cached', { value: cachedFn });
+
+        client[endpoint] = fn as (typeof client)[typeof endpoint];
       } else {
         client[endpoint] = this.bindToEndpoint(client[endpoint] as ITraktApi);
       }
@@ -118,21 +148,8 @@ class TraktApi extends BaseTraktClient implements ITraktEndpoints {
 export class TraktClient extends TraktApi {
   private polling: ReturnType<typeof setTimeout> | undefined;
 
-  constructor({
-    client_id,
-    client_secret,
-    redirect_uri,
-
-    useragent,
-    endpoint,
-  }: TraktClientSettings) {
-    super({
-      client_id,
-      client_secret,
-      redirect_uri,
-      useragent,
-      endpoint,
-    });
+  constructor(options: TraktClientOptions) {
+    super(options);
   }
 
   /**

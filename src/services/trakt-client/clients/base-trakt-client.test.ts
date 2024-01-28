@@ -8,7 +8,8 @@ import { traktClientSettings } from '../trakt-client.service';
 import { BaseTraktClient, parseBody, parseResponse } from './base-trakt-client';
 
 import type { TraktClientAuthentication } from '../../../models/trakt/trakt-authentication.model';
-import type { TraktApiInit, TraktApiParams, TraktApiQuery, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
+import type { TraktApiInit, TraktApiParams, TraktApiQuery, TraktApiResponse, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
+import type { CacheStore } from '../../../utils/cache.utils';
 import type { CancellablePromise } from '../../../utils/fetch.utils';
 import type { Updater } from '../../../utils/observable.utils';
 
@@ -31,7 +32,13 @@ class TestableTraktClient extends BaseTraktClient {
 }
 
 describe('base-trakt-client.ts', () => {
-  const client = new TestableTraktClient(traktClientSettings);
+  const cacheStore: CacheStore<TraktApiResponse> = {
+    get: vi.fn(),
+    set: vi.fn(),
+    clear: vi.fn(),
+    delete: vi.fn(),
+  };
+  const client = new TestableTraktClient({ ...traktClientSettings, cacheStore });
   const auth: TraktClientAuthentication = {
     refresh_token: 'refresh_token',
     access_token: 'access_token',
@@ -61,6 +68,24 @@ describe('base-trakt-client.ts', () => {
 
     expect(client).toBeDefined();
     expect(client.auth).toBeDefined();
+  });
+
+  describe('cache', () => {
+    it('should delete a cached entry', async () => {
+      expect.assertions(1);
+
+      await client.clearCache('key');
+
+      expect(cacheStore.delete).toHaveBeenCalledWith('key');
+    });
+
+    it('should delete a cached entry', async () => {
+      expect.assertions(1);
+
+      await client.clearCache();
+
+      expect(cacheStore.clear).toHaveBeenCalledWith();
+    });
   });
 
   describe('observers', () => {
