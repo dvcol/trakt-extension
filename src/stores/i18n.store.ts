@@ -1,16 +1,15 @@
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { ChromeI18nInput } from '@dvcol/web-extension-utils/lib/chrome/models';
-
 import type { Locale, Locales } from '~/models/i18n.model';
+import type { BrowserI18nInput } from '~/utils/browser/browser-i18n.utils';
 
 export const useI18nStore = defineStore('i18n', () => {
   const lang = ref<string>('en');
   const locales = ref<Locales>({});
   const locale = computed<Locale>(() => locales.value[lang.value]);
 
-  const i18n = (value: string | ChromeI18nInput, ...modules: string[]) => {
+  const i18n = (value: string | BrowserI18nInput, ...modules: string[]) => {
     const path: string = Array.isArray(modules) ? modules.join('__') : modules;
 
     let key: string;
@@ -40,3 +39,5 @@ export const useI18nStore = defineStore('i18n', () => {
 
   return { lang, locales, locale, i18n, addLocale };
 });
+
+export const useI18nStoreRefs = () => storeToRefs(useI18nStore());

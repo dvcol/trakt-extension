@@ -1,16 +1,15 @@
-import { useI18n as chromeUseI18n } from '@dvcol/web-extension-utils/lib/chrome/utils/i18n.utils';
-
 import type { Locale } from '~/models/i18n.model';
 
 import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
+import { useI18nTranslate } from '~/utils/browser/browser-i18n.utils';
 
 /**
  * Setup i18n function to either use chrome i18n resolver or a local store (for web use).
  * @param roots modules names
  * @see chrome.i18n.getMessage
  */
-export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> => {
+export const useI18n = (...roots: string[]): ReturnType<typeof useI18nTranslate> => {
   if (!window?.chrome?.i18n) {
     const store = useI18nStore();
     const router = useRouterStore();
@@ -31,5 +30,5 @@ export const useI18n = (...roots: string[]): ReturnType<typeof chromeUseI18n> =>
     return (value, ...modules) => store.i18n(value, ...(modules?.length ? modules : roots));
   }
 
-  return chromeUseI18n(...roots);
+  return useI18nTranslate(...roots);
 };

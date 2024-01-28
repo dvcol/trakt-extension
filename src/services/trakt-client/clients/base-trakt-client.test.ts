@@ -3,14 +3,17 @@ import { describe, expect, it } from 'vitest';
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 
 import { CancellableFetch } from '../../../utils/fetch.utils';
-import { traktClientSettings } from '../trakt-client.service';
+
+import { traktClientSettings } from '../trakt-client.config';
 
 import { BaseTraktClient, parseBody, parseResponse } from './base-trakt-client';
 
 import type { TraktClientAuthentication } from '../../../models/trakt/trakt-authentication.model';
 import type { TraktApiInit, TraktApiParams, TraktApiQuery, TraktApiResponse, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
+
 import type { CacheStore } from '../../../utils/cache.utils';
 import type { CancellablePromise } from '../../../utils/fetch.utils';
+
 import type { Updater } from '../../../utils/observable.utils';
 
 class TestableTraktClient extends BaseTraktClient {

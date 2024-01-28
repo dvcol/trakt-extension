@@ -1,4 +1,3 @@
-import * as WebExUtils from '@dvcol/web-extension-utils/lib/chrome/utils/i18n.utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as I18nStore from '../stores/i18n.store';
@@ -6,6 +5,7 @@ import * as I18nStore from '../stores/i18n.store';
 import { useI18n } from './i18n.utils';
 
 import * as RouterStore from '~/stores/router.store';
+import * as I18nUtils from '~/utils/browser/browser-i18n.utils';
 
 describe('i18n.utils.ts', () => {
   afterEach(() => {
@@ -16,7 +16,7 @@ describe('i18n.utils.ts', () => {
   const chromeI18nMock = vi.fn();
   vi.spyOn(I18nStore, 'useI18nStore').mockReturnValue(i18nStoreMock as never);
   vi.spyOn(RouterStore, 'useRouterStore').mockReturnValue({ baseUrl: './' } as never);
-  vi.spyOn(WebExUtils, 'useI18n').mockImplementation(chromeI18nMock);
+  vi.spyOn(I18nUtils, 'useI18nTranslate').mockImplementation(chromeI18nMock);
 
   it('should use the local store to resolve i18n', () => {
     expect.assertions(4);

@@ -4,7 +4,8 @@ import { TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
 
 import { CancellableFetch } from '../../../utils/fetch.utils';
 import { traktApi } from '../api/trakt-api.endpoints';
-import { traktClientSettings } from '../trakt-client.service';
+
+import { traktClientSettings } from '../trakt-client.config';
 
 import { TraktClient } from './trakt-client';
 
