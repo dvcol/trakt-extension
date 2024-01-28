@@ -2,7 +2,7 @@ import { createRouter as createVueRouter, createWebHashHistory } from 'vue-route
 
 import { Route, routes } from '~/router/routes';
 import { useRouterStore } from '~/stores/router.store';
-import { useSettingsStore } from '~/stores/settings.store';
+import { useSettingsStoreRefs } from '~/stores/settings.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
@@ -24,12 +24,12 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     ],
   });
 
-  const { isAuthenticated } = useSettingsStore();
+  const { isAuthenticated } = useSettingsStoreRefs();
   router.beforeResolve(async to => {
     const query: Record<string, string> = { ...routeParam };
     if (routeParam) setRouteParam(undefined);
 
-    if (!isAuthenticated && to.name !== Route.Login) {
+    if (!isAuthenticated.value && to.name !== Route.Login) {
       query.redirect = to.fullPath;
       // redirect the user to the login page
       return { name: Route.Login, query };
