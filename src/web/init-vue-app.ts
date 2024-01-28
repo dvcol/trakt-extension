@@ -7,6 +7,7 @@ import type { App, Component } from 'vue';
 import type { RouterOptions } from '~/router';
 
 import { createRouter } from '~/router';
+import { initServices } from '~/web/init-services';
 
 export type InitVueAppOption = RouterOptions;
 export const initVueApp = (component: Component, options: InitVueAppOption = {}) => {
@@ -17,6 +18,8 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
 
   const router = createRouter(options);
   app.use(router);
+
+  initServices();
 
   return app;
 };

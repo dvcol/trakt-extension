@@ -13,6 +13,7 @@ import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 
 import { traktService } from '~/services/trakt-client/trakt-client.service';
 import { useI18n } from '~/utils';
+import { createTab } from '~/utils/browser/browser.utils';
 
 type LoginQueryParams = {
   redirect: string;
@@ -38,7 +39,7 @@ const auth = ref<TraktDeviceAuthentication>();
 const redirect = async () => {
   try {
     const response = await traktService.redirectToAuthentication();
-    await chrome.tabs.create({ url: response.url });
+    await createTab({ url: response.url });
   } catch (error) {
     console.error('Error:', error);
   }

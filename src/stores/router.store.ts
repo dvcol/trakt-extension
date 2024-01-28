@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
 export const useRouterStore = defineStore('router', () => {
@@ -20,3 +20,5 @@ export const useRouterStore = defineStore('router', () => {
 
   return { baseName, setBaseName, baseUrl, setBaseUrl, initialLocation, routeParam, setRouteParam };
 });
+
+export const useRouterStoreRefs = () => storeToRefs(useRouterStore());

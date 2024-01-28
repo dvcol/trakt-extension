@@ -2,11 +2,11 @@
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
-import { useSettingsStore } from '~/stores/settings.store';
+import { useSettingsStoreRefs } from '~/stores/settings.store';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('global');
-const { isAuthenticated } = useSettingsStore();
+const { isAuthenticated } = useSettingsStoreRefs();
 </script>
 
 <template>
@@ -29,7 +29,6 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
   padding: 0 2rem;
 }
 </style>
