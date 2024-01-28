@@ -1,5 +1,3 @@
-import { traktApi } from '../api/trakt-api.endpoints';
-
 import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
 import type {
@@ -12,17 +10,9 @@ import type {
   TraktClientAuthentication,
   TraktDeviceAuthentication,
 } from '~/models/trakt/trakt-authentication.model';
-import type {
-  ITraktApi,
-  TraktApiInit,
-  TraktApiParams,
-  TraktApiResponse,
-  TraktClientEndpointCall,
-  TraktClientOptions,
-  TraktClientSettings,
-} from '~/models/trakt/trakt-client.model';
+import type { TraktApiInit, TraktApiResponse } from '~/models/trakt/trakt-client.model';
 
-import { TraktApiHeaders, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
+import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { randomHex } from '~/utils/crypto.utils';
 
 /**
@@ -50,107 +40,14 @@ const handleError = <T>(error: T | Response) => {
 };
 
 /**
- * The extracted type signature of the TraktApi
- */
-type ITraktEndpoints = typeof traktApi;
-
-/** Needed to type Object assignment */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-interface TraktApi extends ITraktEndpoints {}
-
-/**
- * Type guard to check if the template is a TraktClientEndpoint
- * @param template - TraktClientEndpoint or ITraktApi
- */
-const isTraktApiTemplate = <T extends TraktApiParams = TraktApiParams>(
-  template: TraktClientEndpoint<T> | ITraktApi<T>,
-): template is TraktClientEndpoint<T> => template instanceof TraktClientEndpoint;
-
-/**
- * TraktClient is a wrapper around the TraktApi to provide a more user-friendly interface.
- *
- *  @class TraktClient
- *
- *  @extends {BaseTraktClient}
- *  @implements {ITraktEndpoints}
- */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging -- To allow type extension
-class TraktApi extends BaseTraktClient implements ITraktEndpoints {
-  /**
-   * Binds BaseTraktClient _call instance to the endpoint instance and the call method of the endpoint
-   *
-   * @private
-   *
-   * @param api - The TraktApi to bind to
-   *
-   * @example client.endpoints({ request })
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
-  private bindToEndpoint(api: ITraktApi<any>) {
-    const client = { ...api };
-    Object.entries(client).forEach(([endpoint, template]) => {
-      if (isTraktApiTemplate(template) && isTraktApiTemplate(client[endpoint])) {
-        const fn: TraktClientEndpointCall = (param, init) => this._call(template, param, init);
-
-        const cachedFn: TraktClientEndpointCall = async (param, init) => {
-          const key = JSON.stringify({ param, init });
-          const cached = await this._cache.get(key);
-          if (cached) {
-            if (!this._cache.retention) return cached.value;
-            const expires = cached.cachedAt + this._cache.retention;
-            if (expires > Date.now()) return cached.value;
-          }
-          try {
-            const result = await fn(param, init);
-            await this._cache.set(key, {
-              cachedAt: Date.now(),
-              value: result,
-            });
-            return result;
-          } catch (error) {
-            this._cache.delete(key);
-            throw error;
-          }
-        };
-
-        Object.entries(client[endpoint]).forEach(([key, value]) => {
-          if (key === 'cached') {
-            Object.defineProperty(fn, 'cached', { value: cachedFn });
-          } else {
-            Object.defineProperty(fn, key, { value });
-            Object.defineProperty(cachedFn, key, { value });
-          }
-        });
-
-        Object.defineProperty(fn, 'cached', { value: cachedFn });
-
-        client[endpoint] = fn as (typeof client)[typeof endpoint];
-      } else {
-        client[endpoint] = this.bindToEndpoint(client[endpoint] as ITraktApi);
-      }
-    });
-    return client;
-  }
-
-  constructor(settings: TraktClientSettings, authentication = {}, api = traktApi) {
-    super(settings, authentication);
-    Object.assign(this, this.bindToEndpoint(api));
-  }
-}
-
-/**
  * TraktClient is a wrapper around the TraktApi to provide basic authentication and state management.
  *
  * @class TraktClient
  *
- * @extends {TraktApi}
+ * @extends {BaseTraktClient}
  */
-export class TraktClient extends TraktApi {
+export class TraktClient extends BaseTraktClient {
   private polling: ReturnType<typeof setTimeout> | undefined;
-
-  constructor(options: TraktClientOptions) {
-    super(options);
-  }
 
   /**
    * Exchanges an authorization code or refresh token for an access token.
