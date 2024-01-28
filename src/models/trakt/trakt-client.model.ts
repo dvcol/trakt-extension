@@ -1,9 +1,17 @@
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
-import type { CacheStore } from '~/utils/cache.utils';
-import type { CancellablePromise } from '~/utils/fetch.utils';
-import type { HttpMethods } from '~/utils/http.utils';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
+
+import {
+  type BaseInit,
+  type BaseOptions,
+  type BaseQuery,
+  type BaseRequest,
+  type BaseTemplate,
+  type BaseTemplateOptions,
+  ClientEndpoint,
+  type ResponseOrTypedResponse,
+} from '~/services/common/base-client';
 
 /**
  * Pagination data parsed from {@link TraktApiResponse} headers.
@@ -36,10 +44,7 @@ export type TraktClientSettings = {
 /**
  * Trakt.tv API client options.
  */
-export type TraktClientOptions = TraktClientSettings & {
-  /** Optional cache store to manage cache read/write */
-  cacheStore?: CacheStore<TraktApiResponse>;
-};
+export type TraktClientOptions = BaseOptions<TraktClientSettings, TraktApiResponse>;
 
 /**
  * By default, all methods will return minimal info for movies, shows, episodes, people, and users.
@@ -70,7 +75,7 @@ export type TraktApiExtends = (typeof TraktApiExtended)[keyof typeof TraktApiExt
 /**
  * Represents options that can be used in a Trakt API template.
  */
-export type TraktApiTemplateOptions = {
+export type TraktApiTemplateOptions = BaseTemplateOptions & {
   /** If the method supports or requires vip status */
   vip?: boolean | 'enhanced';
   /** If the method supports or requires authentication */
@@ -79,76 +84,26 @@ export type TraktApiTemplateOptions = {
   pagination?: boolean | 'optional';
   /** If the method receive or return emoji codes */
   emoji?: boolean;
-  /** Boolean record or required (truthy) or optional parameters (falsy) */
-  parameters?: {
-    /** Boolean record or required (truthy) or optional path parameters (falsy) */
-    path?: Record<string, boolean | 'vip'>;
-    /** Boolean record or required (truthy) or optional query parameters (falsy) */
-    query?: Record<string, boolean | 'vip'>;
-  };
   /** If the method supports extended information */
   extended?: TraktApiExtends[];
   /** If the method supports filtering */
   filters?: TraktApiFilters[];
 };
 
-export type TraktApiInit = Omit<Partial<TraktApiRequest['init']>, 'method'>;
+export type TraktApiInit = BaseInit;
 
-export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = {
-  method: HttpMethods;
-  url: string;
-  opts?: TraktApiTemplateOptions;
-  /** Boolean record or required (truthy) or optional fields (falsy) */
-  body?: Record<string, boolean>;
-  /** Partial fetch request init */
-  init?: TraktApiInit;
-  /** Validate the parameters before performing request */
-  validate?: (param: P) => boolean;
-  /** Transform the parameters before performing request */
-  transform?: (param: P) => P;
-};
-
-export type TraktClientEndpointCall<P extends TraktApiParams = Record<string, never>, R = unknown> = (
-  param?: P,
-  init?: TraktApiInit,
-) => Promise<TraktApiResponse<R>>;
+export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = BaseTemplate<P, TraktApiTemplateOptions>;
 
 export interface TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown> {
   (param?: P, init?: TraktApiInit): Promise<TraktApiResponse<R>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>> implements TraktApiTemplate<P> {
-  method: HttpMethods;
-  url: string;
-  opts: TraktApiTemplateOptions;
-  body?: Record<string, boolean>;
-  init?: TraktApiInit;
-  validate?: (param: P) => boolean;
-  cached: Omit<this, 'cached'> & ((param?: P, init?: TraktApiInit) => Promise<TraktApiResponse>);
+export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>> extends ClientEndpoint<P, TraktApiTemplateOptions> {}
 
-  constructor(template: TraktApiTemplate<P>) {
-    this.method = template.method;
-    this.url = template.url;
-    this.opts = template.opts ?? {};
-    this.init = template.init ?? {};
-    this.body = template.body;
+export type TraktApiRequest = BaseRequest;
 
-    this.validate = template.validate;
-    this.cached = this;
-  }
-}
-
-export type TraktApiQuery<T> = { request: TraktApiRequest; query: CancellablePromise<T> };
-
-export type TraktApiRequest = {
-  input: RequestInfo;
-  init: RequestInit & { headers: RequestInit['headers'] };
-};
-
-type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
-
-type ResponseOrTypedResponse<T> = T extends never ? Response : TypedResponse<T>;
+export type TraktApiQuery<T = unknown> = BaseQuery<TraktApiRequest, T>;
 
 export type TraktApiResponse<T = unknown> = ResponseOrTypedResponse<T> & {
   pagination?: TraktClientPagination;
@@ -239,7 +194,8 @@ export type PartialTraktApiParams<
   (F extends void ? Record<string, never> : TraktApiParamsFilter<F>) &
   (P extends false ? Record<string, never> : TraktApiParamsPagination);
 
-export type ITraktApi<T extends TraktApiParams = TraktApiParams> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
+export type ITraktApi<T extends TraktApiParams = any> = {
   [key: string]: TraktClientEndpoint<T> | ITraktApi<T>;
 };
 

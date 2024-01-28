@@ -1,49 +1,21 @@
 import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
 import type {
-  TraktApiInit,
+  ITraktApi,
   TraktApiParams,
   TraktApiQuery,
-  TraktApiRequest,
   TraktApiResponse,
   TraktApiTemplate,
   TraktClientOptions,
   TraktClientSettings,
 } from '~/models/trakt/trakt-client.model';
 
-import type { CacheStore } from '~/utils/cache.utils';
 import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
+import { BaseClient, parseBody, parseUrl } from '~/services/common/base-client';
+import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
-import { CancellableFetch } from '~/utils/fetch.utils';
-import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
-
-/**
- * Parses body from {@link TraktApiTemplate} and stringifies a {@link BodyInit}
- *
- * @private
- *
- * @template T - The type of the parameters.
- *
- * @param {TraktApiTemplate<T>['body']} [body={}] - The expected body structure.
- * @param {T} params - The actual parameters.
- *
- * @returns {BodyInit} The parsed request body.
- */
-export const parseBody = <T extends TraktApiParams = TraktApiParams>(body: TraktApiTemplate<T>['body'] = {}, params: T): BodyInit => {
-  const _body: Record<string, unknown> = {};
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (key in body) _body[key] = value;
-  });
-
-  Object.keys(body).forEach(key => {
-    if (body[key] === true && !(key in _body)) throw new Error(`Missing mandatory body parameter: '${key}'`);
-  });
-
-  return JSON.stringify(_body);
-};
 
 /**
  * Checks if the fetch response is OK and handles redirects.
@@ -129,108 +101,48 @@ export const parseResponse = <T>(response: Response): TraktApiResponse<T> => {
 };
 
 /**
+ * The extracted type signature of the TraktApi
+ */
+type ITraktEndpoints = typeof traktApi;
+
+/** Needed to type Object assignment */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
+export interface BaseTraktClient extends ITraktEndpoints {}
+
+/**
  * Represents a Trakt API client with common functionality.
  *
  * @class BaseTraktClient
  */
-export class BaseTraktClient {
-  protected _cache: CacheStore<TraktApiResponse>;
-  protected _settings: TraktClientSettings;
-  protected _authentication: ObservableState<TraktClientAuthentication>;
-  protected _callListeners: Observable<TraktApiQuery<unknown>>;
-
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
+export class BaseTraktClient
+  extends BaseClient<TraktApiQuery, TraktApiResponse, TraktClientSettings, TraktClientAuthentication>
+  implements ITraktEndpoints
+{
   /**
-   * Clears the cache entry for the specified key.
-   * If no key is provided, clears the entire cache.
-   *
-   * @param key - The cache key.
+   * Creates an instance of BaseTraktClient.
+   * @param options - The options for the client.
+   * @param authentication - The authentication for the client.
+   * @param api - The API endpoints for the client.
    */
-  clearCache(key?: string) {
-    if (key) return this._cache?.delete(key);
-    return this._cache?.clear();
+  constructor(options: TraktClientOptions, authentication: TraktClientAuthentication = {}, api: ITraktApi = traktApi) {
+    super(options, authentication, api);
   }
 
   /**
-   * Gets the authentication information.
-   *
-   * @readonly
-   * @type {TraktClientAuthentication}
-   */
-  get auth() {
-    return this._authentication.state;
-  }
-
-  /**
-   * Updates the authentication information.
-   * @param auth - The new authentication information.
-   *
-   * @protected
-   */
-  protected updateAuth(auth: Updater<TraktClientAuthentication>) {
-    this._authentication.update(auth);
-  }
-
-  /**
-   * Subscribes to changes in authentication information.
-   * Emits the current authentication information on auth related changes (oAuth calls, token revocation, token refresh, etc.).
-   *
-   * @param observer - The observer function.
-   * @returns A function to unsubscribe from changes.
-   */
-  onAuthChange(observer: Observer<TraktClientAuthentication | undefined>) {
-    return this._authentication.subscribe(observer);
-  }
-
-  /**
-   * Subscribes to Trakt API queries.
-   * Emits query information on every call to the Trakt API.
-   *
-   * @param observer - The observer function.
-   * @returns A function to unsubscribe from queries.
-   */
-  onCall(observer: Observer<TraktApiQuery<unknown>>) {
-    return this._callListeners.subscribe(observer);
-  }
-
-  /**
-   * Unsubscribes observers from authentication and call listeners.
-   * If no observer is provided, unsubscribes all observers.
-   *
-   * @param observer - The observer to be removed.
-   */
-  unsubscribe(observer?: Observer<TraktClientAuthentication | undefined | TraktApiQuery<unknown>>) {
-    return {
-      auth: this._authentication.unsubscribe(observer),
-      call: this._callListeners.unsubscribe(observer),
-    };
-  }
-
-  constructor({ cacheStore, ...settings }: TraktClientOptions, authentication = {}) {
-    this._settings = settings;
-    this._authentication = new ObservableState(authentication);
-    this._callListeners = new Observable();
-    this._cache = cacheStore ?? new Map();
-  }
-
-  /**
-   * Calls the Trakt API with the given template and parameters.
+   * Parses the template to construct the headers for a Trakt API request.
    *
    * @protected
    *
-   * @template P - The type of the parameters.
-   * @template R - The type of the response.
+   * @template T - The type of the parameters.
    *
-   * @param {TraktApiTemplate<P>} template - The template for the API endpoint.
-   * @param {P} [params={}] - The parameters for the API call.
-   * @param {TraktApiInit} [init] - Additional initialization options.
+   * @param {TraktApiTemplate<T>} template - The template for the API endpoint.
    *
-   * @returns {Promise<TraktApiResponse<R>>} A promise that resolves to the API response.
+   * @returns {HeadersInit} The parsed request headers.
+   *
+   * @throws {Error} Throws an error if OAuth is required and the access token is missing.
    */
-  protected async _call<P extends TraktApiParams = TraktApiParams, R = unknown>(
-    template: TraktApiTemplate<P>,
-    params: P = {} as P,
-    init?: TraktApiInit,
-  ): Promise<TraktApiResponse<R>> {
+  protected _parseHeaders<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>): HeadersInit {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
       [TraktApiHeaders.ContentType]: 'application/json',
@@ -243,40 +155,13 @@ export class BaseTraktClient {
     } else if (template.opts?.auth === true && !this.auth.access_token) {
       throw Error('OAuth required: access_token is missing');
     }
-
-    const _params = template.transform?.(params) ?? params;
-
-    template.validate?.(_params);
-
-    const req: TraktApiRequest = {
-      input: this._parse(template, _params),
-      init: {
-        ...template.init,
-        ...init,
-        method: template.method,
-        headers: {
-          ...template.init?.headers,
-          ...headers,
-          ...init?.headers,
-        },
-      },
-    };
-
-    if (template.method !== 'GET' && template.body) {
-      req.init.body = parseBody(template.body, _params);
-    }
-
-    const query = CancellableFetch.fetch<TraktApiResponse<R>>(req.input, req.init).then(parseResponse);
-
-    this._callListeners.update({ request: req, query });
-
-    return query;
+    return headers;
   }
 
   /**
    * Parses the parameters and constructs the URL for a Trakt API request.
    *
-   * @private
+   * @protected
    *
    * @template T - The type of the parameters.
    *
@@ -287,50 +172,9 @@ export class BaseTraktClient {
    *
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
-  protected _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): string {
-    // fill query parameters i.e. ?variable
-    const [pathPart, queryPart] = template.url.split('?');
-
-    let path = pathPart;
-    const queryParams: URLSearchParams = new URLSearchParams(queryPart);
-
-    if (queryPart) {
-      queryParams.forEach((value, key, parent) => {
-        const _value = params[key] ?? value;
-
-        // If a value is found we encode
-        if (_value !== undefined && _value !== '') {
-          queryParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
-        }
-        // If the parameter is required we raise error
-        else if (template.opts?.parameters?.query?.[key] === true) {
-          throw Error(`Missing mandatory query parameter: '${key}'`);
-        }
-        // else we remove the empty field from parameters
-        else {
-          parent.delete(key);
-        }
-      });
-    }
-
-    // fill query path parameter i.e :variable
-    if (pathPart.includes(':')) {
-      path = pathPart
-        .split('/')
-        .map(segment => {
-          if (segment.match(/^:/)) {
-            const name = segment.substring(1);
-            const value = params[name];
-            if ((value === undefined || value === '') && template.opts?.parameters?.path?.[name] === true) {
-              throw Error(`Missing mandatory path parameter: '${name}'`);
-            }
-            return value ?? '';
-          }
-          return segment;
-        })
-        .filter(Boolean)
-        .join('/');
-    }
+  protected _parseUrl<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): URL {
+    const url = parseUrl<T>(template, params, this._settings.endpoint);
+    const queryParams = url.searchParams;
 
     // Adds Filters query parameters
     if (template.opts?.filters?.length && params.filters) {
@@ -361,8 +205,35 @@ export class BaseTraktClient {
       queryParams.set('extended', `${params.extended}`);
     }
 
-    const url = new URL(path, this._settings.endpoint);
-    url.search = queryParams.toString();
-    return url.toString();
+    return url;
+  }
+
+  /**
+   * Parses body from a template and stringifies a {@link BodyInit}
+   *
+   * @protected
+   *
+   * @template T - The type of the parameters.
+   *
+   * @param template - The expected body structure.
+   * @param {T} params - The actual parameters.
+   *
+   * @returns {BodyInit} The parsed request body.
+   */
+  // eslint-disable-next-line class-methods-use-this -- implemented from abstract class
+  protected _parseBody<T extends TraktApiParams = TraktApiParams>(template: Record<string, string | boolean>, params: T): BodyInit {
+    return parseBody(template, params);
+  }
+
+  /**
+   * Parses the response from the API before returning from the call.
+   * @param response - The response from the API.
+   *
+   * @returns {TraktApiResponse} The parsed response.
+   * @protected
+   */
+  // eslint-disable-next-line class-methods-use-this -- implemented from abstract class
+  protected _parseResponse(response: Response): TraktApiResponse {
+    return parseResponse<TraktApiParams>(response);
   }
 }

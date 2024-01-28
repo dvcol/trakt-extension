@@ -3,9 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 
 import { traktClientSettings } from '../../../settings/traktv.api';
+
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
-import { BaseTraktClient, parseBody, parseResponse } from './base-trakt-client';
+import { BaseTraktClient, parseResponse } from './base-trakt-client';
 
 import type { TraktClientAuthentication } from '../../../models/trakt/trakt-authentication.model';
 import type { TraktApiInit, TraktApiParams, TraktApiQuery, TraktApiResponse, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
@@ -24,12 +25,16 @@ class TestableTraktClient extends BaseTraktClient {
     return this.updateAuth(auth);
   }
 
-  publicCall<P extends TraktApiParams, R = unknown>(template: TraktApiTemplate<P>, params: P = {} as P, init?: TraktApiInit) {
-    return this._call<P, R>(template, params, init);
+  publicCall<P extends TraktApiParams>(template: TraktApiTemplate<P>, params: P = {} as P, init?: TraktApiInit) {
+    return this._call<P>(template, params, init);
+  }
+
+  publicParseBody<T extends TraktApiParams = TraktApiParams>(template: Record<string, string | boolean>, params: T): BodyInit {
+    return this._parseBody(template, params);
   }
 
   publicParse<T extends TraktApiParams>(template: TraktApiTemplate<T>, params: T) {
-    return this._parse(template, params);
+    return this._parseUrl(template, params).toString();
   }
 }
 
@@ -47,7 +52,7 @@ describe('base-trakt-client.ts', () => {
     expires: 1234567890,
     state: 'state',
   };
-  const query: TraktApiQuery<unknown> = {
+  const query: TraktApiQuery = {
     request: {
       input: 'https://api.trakt.tv/oauth/device/code',
       init: {
@@ -285,7 +290,7 @@ describe('base-trakt-client.ts', () => {
     it('should parse body to JSON string', () => {
       expect.assertions(1);
 
-      const result = parseBody<TraktApiParams<Params>>(mockTemplate.body, mockParams);
+      const result = client.publicParseBody<TraktApiParams<Params>>(mockTemplate.body!, mockParams);
       expect(result).toBe('{"requiredBody":"requiredBody"}');
     });
 
@@ -294,7 +299,7 @@ describe('base-trakt-client.ts', () => {
 
       const mockBody: Record<string, unknown> = { ...mockParams, optionalBody: 'optionalBody' };
       delete mockBody.requiredBody;
-      const testFunction = () => parseBody(mockTemplate.body, mockBody);
+      const testFunction = () => client.publicParseBody(mockTemplate.body!, mockBody);
       expect(testFunction).toThrow("Missing mandatory body parameter: 'requiredBody'");
     });
   });
