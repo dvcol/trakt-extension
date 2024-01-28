@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
 
+import { traktClientSettings } from '../../../settings/traktv.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
-import { traktApi } from '../api/trakt-api.endpoints';
 
-import { traktClientSettings } from '../trakt-client.config';
+import { traktApi } from '../api/trakt-api.endpoints';
 
 import { TraktClient } from './trakt-client';
 
