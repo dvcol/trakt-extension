@@ -2,8 +2,6 @@ import type { CacheStore } from '~/utils/cache.utils';
 import type { HttpMethods } from '~/utils/http.utils';
 import type { RecursiveRecord } from '~/utils/typescript.utils';
 
-import { type TraktApiInit } from '~/models/trakt/trakt-client.model';
-
 import { CancellableFetch, type CancellablePromise } from '~/utils/fetch.utils';
 import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
 
@@ -71,7 +69,7 @@ export class ClientEndpoint<P extends RecursiveRecord = Record<string, never>, O
   url: string;
   opts: O;
   body?: Record<string, boolean>;
-  init?: TraktApiInit;
+  init?: BaseInit;
   validate?: (param: P) => boolean;
   cached: Omit<this, 'cached'> & ((param?: P, init?: BaseInit) => Promise<ResponseOrTypedResponse>);
 
@@ -87,7 +85,7 @@ export class ClientEndpoint<P extends RecursiveRecord = Record<string, never>, O
   }
 }
 
-type IApi<T extends RecursiveRecord = RecursiveRecord> = {
+export type IApi<T extends RecursiveRecord = RecursiveRecord> = {
   [key: string]: ClientEndpoint<T> | IApi<T>;
 };
 
@@ -283,7 +281,7 @@ export abstract class BaseClient<
         method: template.method,
         headers: {
           ...template.init?.headers,
-          ...this._parseHeaders(template, _params),
+          ...this._parseHeaders?.(template, _params),
           ...init?.headers,
         },
       },
@@ -293,7 +291,7 @@ export abstract class BaseClient<
       req.init.body = this._parseBody(template.body, _params);
     }
 
-    const query = CancellableFetch.fetch<ResponseType>(req.input, req.init).then(this._parseResponse);
+    const query = CancellableFetch.fetch<ResponseType>(req.input, req.init).then(this._parseResponse ?? (response => response));
 
     this._callListeners.update({ request: req, query } as QueryType);
 
@@ -313,7 +311,7 @@ export abstract class BaseClient<
    * @protected
    * @abstract
    */
-  protected abstract _parseHeaders<T extends RecursiveRecord = RecursiveRecord>(template: BaseTemplate<T>, params: T): HeadersInit;
+  protected abstract _parseHeaders?<T extends RecursiveRecord = RecursiveRecord>(template: BaseTemplate<T>, params: T): HeadersInit;
 
   /**
    * Parses the parameters and constructs the URL for a API request.
@@ -355,7 +353,7 @@ export abstract class BaseClient<
    *
    * @protected
    */
-  protected abstract _parseResponse(response: Response): Response;
+  protected abstract _parseResponse?(response: Response): Response;
 }
 
 /**

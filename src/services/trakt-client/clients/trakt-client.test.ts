@@ -139,7 +139,7 @@ describe('trakt-client.ts', () => {
         expect.assertions(2);
 
         const cacheStore: CacheStore<TraktApiResponse> = new Map();
-        cacheStore.retention = 100;
+        cacheStore.retention = 15;
         const _traktClient = new TraktClient({ ...traktClientSettings, cacheStore });
 
         await _traktClient.certifications.cached({ type: 'movies' });
@@ -147,7 +147,7 @@ describe('trakt-client.ts', () => {
 
         // Wait for cache to expire
         await new Promise(resolve => {
-          setTimeout(resolve, 200);
+          setTimeout(resolve, 20);
         });
 
         await _traktClient.certifications.cached({ type: 'movies' });
@@ -162,7 +162,7 @@ describe('trakt-client.ts', () => {
       user_code: 'user_code',
       verification_url: 'verification_url',
       expires_in: new Date().getTime() + 10000,
-      interval: 1,
+      interval: 0.01,
     };
 
     it('should get device code', async () => {

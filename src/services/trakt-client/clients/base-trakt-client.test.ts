@@ -9,10 +9,7 @@ import { CancellableFetch } from '../../../utils/fetch.utils';
 import { BaseTraktClient, parseResponse } from './base-trakt-client';
 
 import type { TraktClientAuthentication } from '../../../models/trakt/trakt-authentication.model';
-import type { TraktApiInit, TraktApiParams, TraktApiQuery, TraktApiResponse, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
-
-import type { CacheStore } from '../../../utils/cache.utils';
-import type { CancellablePromise } from '../../../utils/fetch.utils';
+import type { TraktApiInit, TraktApiParams, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
 
 import type { Updater } from '../../../utils/observable.utils';
 
@@ -39,32 +36,7 @@ class TestableTraktClient extends BaseTraktClient {
 }
 
 describe('base-trakt-client.ts', () => {
-  const cacheStore: CacheStore<TraktApiResponse> = {
-    get: vi.fn(),
-    set: vi.fn(),
-    clear: vi.fn(),
-    delete: vi.fn(),
-  };
-  const client = new TestableTraktClient({ ...traktClientSettings, cacheStore });
-  const auth: TraktClientAuthentication = {
-    refresh_token: 'refresh_token',
-    access_token: 'access_token',
-    expires: 1234567890,
-    state: 'state',
-  };
-  const query: TraktApiQuery = {
-    request: {
-      input: 'https://api.trakt.tv/oauth/device/code',
-      init: {
-        headers: {
-          'Content-Type': 'application/json',
-          'trakt-api-key': 'client_id',
-          'trakt-api-version': '2',
-        },
-      },
-    },
-    query: new Promise(() => {}) as CancellablePromise<unknown>,
-  };
+  const client = new TestableTraktClient(traktClientSettings);
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -75,110 +47,6 @@ describe('base-trakt-client.ts', () => {
 
     expect(client).toBeDefined();
     expect(client.auth).toBeDefined();
-  });
-
-  describe('cache', () => {
-    it('should delete a cached entry', async () => {
-      expect.assertions(1);
-
-      await client.clearCache('key');
-
-      expect(cacheStore.delete).toHaveBeenCalledWith('key');
-    });
-
-    it('should delete a cached entry', async () => {
-      expect.assertions(1);
-
-      await client.clearCache();
-
-      expect(cacheStore.clear).toHaveBeenCalledWith();
-    });
-  });
-
-  describe('observers', () => {
-    const authObserver = vi.fn();
-    const callObserver = vi.fn();
-
-    afterEach(() => {
-      client.publicUpdateAuth({});
-    });
-
-    it('should subscribe an observer to authentication state changes', () => {
-      expect.assertions(5);
-
-      client.onAuthChange(authObserver);
-
-      client.publicUpdateAuth(auth);
-      expect(authObserver).toHaveBeenCalledWith(auth);
-      expect(client.auth.state).toBe(auth.state);
-
-      const newState = 'new-state';
-      client.publicUpdateAuth(_auth => ({ ..._auth, state: newState }));
-      expect(authObserver).toHaveBeenCalledWith({ ...auth, state: newState });
-      expect(client.auth.state).toBe(newState);
-
-      expect(authObserver).toHaveBeenCalledTimes(2);
-    });
-
-    it('should subscribe an observer to calls', () => {
-      expect.assertions(2);
-
-      client.onCall(callObserver);
-
-      client.callListeners.update(query);
-      expect(callObserver).toHaveBeenCalledWith(query);
-      expect(callObserver).toHaveBeenCalledTimes(1);
-    });
-
-    it('should unsubscribe an observer', () => {
-      expect.assertions(6);
-
-      client.onAuthChange(authObserver);
-      client.onCall(callObserver);
-
-      client.callListeners.update(query);
-      client.publicUpdateAuth(auth);
-
-      expect(authObserver).toHaveBeenCalledTimes(1);
-      expect(callObserver).toHaveBeenCalledTimes(1);
-
-      client.unsubscribe(authObserver);
-
-      client.callListeners.update(query);
-      client.publicUpdateAuth(auth);
-
-      expect(authObserver).toHaveBeenCalledTimes(1);
-      expect(callObserver).toHaveBeenCalledTimes(2);
-
-      client.unsubscribe(callObserver);
-
-      client.callListeners.update(query);
-      client.publicUpdateAuth(auth);
-
-      expect(authObserver).toHaveBeenCalledTimes(1);
-      expect(callObserver).toHaveBeenCalledTimes(2);
-    });
-
-    it('should unsubscribe all observers', () => {
-      expect.assertions(4);
-
-      client.onCall(callObserver);
-      client.onAuthChange(authObserver);
-
-      client.publicUpdateAuth(auth);
-      client.callListeners.update(query);
-
-      expect(authObserver).toHaveBeenCalledTimes(1);
-      expect(callObserver).toHaveBeenCalledTimes(1);
-
-      client.unsubscribe();
-
-      client.publicUpdateAuth(auth);
-      client.callListeners.update(query);
-
-      expect(authObserver).toHaveBeenCalledTimes(1);
-      expect(callObserver).toHaveBeenCalledTimes(1);
-    });
   });
 
   type Params = {
