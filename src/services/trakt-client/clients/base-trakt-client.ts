@@ -20,7 +20,7 @@ import { CancellableFetch } from '~/utils/fetch.utils';
 import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
 
 /**
- * Parses body from {@link TraktApiTemplate} into stringifies {@link BodyInit}
+ * Parses body from {@link TraktApiTemplate} and stringifies a {@link BodyInit}
  *
  * @private
  *
@@ -283,11 +283,11 @@ export class BaseTraktClient {
    * @param {TraktApiTemplate<T>} template - The template for the API endpoint.
    * @param {T} params - The parameters for the API call.
    *
-   * @returns {RequestInfo} The URL for the Trakt API request.
+   * @returns {string} The URL for the Trakt API request.
    *
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
-  protected _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): RequestInfo {
+  protected _parse<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): string {
     // fill query parameters i.e. ?variable
     const [pathPart, queryPart] = template.url.split('?');
 

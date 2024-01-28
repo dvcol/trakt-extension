@@ -1,3 +1,5 @@
+import type { TraktClientSettings } from '~/models/trakt/trakt-client.model';
+
 export const Config = {
   UserAgent: `${import.meta.env.PKG_NAME}/${import.meta.env.PKG_VERSION}`,
 };
@@ -15,3 +17,16 @@ export const Staging = {
   TraktEndpoint: 'https://api-staging.trakt.tv',
   RedirectionUrl: 'chrome-extension://eiljcfkgmgjbjglhhhnchonnjefhncad/views/options/index.html',
 } as const;
+
+const isProd = import.meta.env.PROD;
+
+const client = isProd ? Production : Staging;
+
+export const traktClientSettings: TraktClientSettings = {
+  client_id: client.ID,
+  client_secret: client.Secret,
+  redirect_uri: client.RedirectionUrl,
+  endpoint: client.TraktEndpoint,
+
+  useragent: Config.UserAgent,
+};

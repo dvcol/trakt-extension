@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 
+import { traktClientSettings } from '../../../settings/traktv.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
-
-import { traktClientSettings } from '../trakt-client.config';
 
 import { BaseTraktClient, parseBody, parseResponse } from './base-trakt-client';
 
