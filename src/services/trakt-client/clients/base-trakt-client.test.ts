@@ -6,11 +6,13 @@ import { traktClientSettings } from '../../../settings/traktv.api';
 
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
+import { HttpMethod } from '../../../utils/http.utils';
+
 import { BaseTraktClient, parseResponse } from './base-trakt-client';
 
 import type { TraktClientAuthentication } from '../../../models/trakt/trakt-authentication.model';
-import type { TraktApiInit, TraktApiParams, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
 
+import type { TraktApiInit, TraktApiParams, TraktApiTemplate } from '../../../models/trakt/trakt-client.model';
 import type { Updater } from '../../../utils/observable.utils';
 
 class TestableTraktClient extends BaseTraktClient {
@@ -76,7 +78,7 @@ describe('base-trakt-client.ts', () => {
   // Mock TraktApiTemplate for testing
   const mockTemplate: TraktApiTemplate<Params> = {
     url: '/movies/:requiredPath/:optionalPath/popular?requiredQuery=&optionalQuery=',
-    method: 'POST',
+    method: HttpMethod.POST,
     opts: {
       parameters: {
         query: {
@@ -340,7 +342,7 @@ describe('base-trakt-client.ts', () => {
           'trakt-api-key': 'e3fe38d76cbd787f74ada8f043a69dfc8b20a86569e51ee125bf0c084d6c553c',
           'trakt-api-version': '2',
         },
-        method: 'POST',
+        method: HttpMethod.POST,
       },
     );
 

@@ -1,18 +1,19 @@
+import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
-type BaseTraktWatchlistItem<E extends 'extended' | 'short' | 'any' = 'any'> = {
+type BaseTraktWatchlistItem<E extends EntityTypes = Any> = {
   movie: TraktMovie<E>;
   show: TraktShow<E>;
   season: TraktSeason<E>;
   episode: TraktEpisode<E>;
 };
 
-type TraktWatchlistItem<T extends 'movie' | 'show' | 'season' | 'episode' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
-  type: T extends 'any' ? 'movie' | 'show' | 'season' | 'episode' : T;
+type TraktWatchlistItem<T extends 'movie' | 'show' | 'season' | 'episode' | Any = Any, E extends EntityTypes = Any> = {
+  type: T extends Any ? 'movie' | 'show' | 'season' | 'episode' : T;
 } & (T extends 'movie'
   ? Pick<BaseTraktWatchlistItem<E>, 'movie'>
   : T extends 'show'
@@ -27,7 +28,7 @@ type TraktWatchlistItem<T extends 'movie' | 'show' | 'season' | 'episode' | 'any
             | Pick<BaseTraktWatchlistItem<E>, 'season' | 'show'>
             | Pick<BaseTraktWatchlistItem<E>, 'episode' | 'show'>);
 
-export type TraktWatchlist<T extends 'movie' | 'show' | 'season' | 'episode' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktWatchlist<T extends 'movie' | 'show' | 'season' | 'episode' | Any = Any, E extends EntityTypes = Any> = {
   rank: number;
   id: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */

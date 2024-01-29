@@ -5,6 +5,7 @@ import { TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
 import { traktClientSettings } from '../../../settings/traktv.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
+import { HttpMethod } from '../../../utils/http.utils';
 import { traktApi } from '../api/trakt-api.endpoints';
 
 import { TraktClient } from './trakt-client';
@@ -26,7 +27,7 @@ describe('trakt-client.ts', () => {
       'trakt-api-key': traktClientSettings.client_id,
       'trakt-api-version': '2',
     },
-    method: 'GET',
+    method: HttpMethod.GET,
   };
 
   afterEach(async () => {
@@ -174,7 +175,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/device/code', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({ client_id: traktClientSettings.client_id }),
       });
 
@@ -204,7 +205,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/device/token', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({
           client_id: traktClientSettings.client_id,
           client_secret: traktClientSettings.client_secret,
@@ -235,7 +236,7 @@ describe('trakt-client.ts', () => {
         expect(error?.status).toBe(500);
         expect(fetch).toHaveBeenCalledWith(new URL('/oauth/device/token', traktClientSettings.endpoint).toString(), {
           ...payload,
-          method: 'POST',
+          method: HttpMethod.POST,
           body: JSON.stringify({
             client_id: traktClientSettings.client_id,
             client_secret: traktClientSettings.client_secret,
@@ -268,7 +269,7 @@ describe('trakt-client.ts', () => {
           'trakt-api-key': traktClientSettings.client_id,
           'trakt-api-version': '2',
         },
-        method: 'GET',
+        method: HttpMethod.GET,
         redirect: 'manual',
       });
     });
@@ -284,7 +285,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/token', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({
           client_id: traktClientSettings.client_id,
           client_secret: traktClientSettings.client_secret,
@@ -325,7 +326,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/token', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({
           client_id: traktClientSettings.client_id,
           client_secret: traktClientSettings.client_secret,
@@ -362,7 +363,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/revoke', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({
           token: authentication.access_token,
           client_id: traktClientSettings.client_id,
@@ -379,7 +380,7 @@ describe('trakt-client.ts', () => {
 
       expect(fetch).toHaveBeenCalledWith(new URL('/oauth/token', traktClientSettings.endpoint).toString(), {
         ...payload,
-        method: 'POST',
+        method: HttpMethod.POST,
         body: JSON.stringify({
           client_id: traktClientSettings.client_id,
           client_secret: traktClientSettings.client_secret,

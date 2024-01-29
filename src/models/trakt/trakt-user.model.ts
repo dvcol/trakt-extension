@@ -1,4 +1,5 @@
 import type { TraktComment, TraktCommentMedia } from '~/models/trakt/trakt-comment.model';
+import type { Any, EntityTypes, Extended, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -39,7 +40,7 @@ export type TraktUserVip = TraktPublicUser & {
   vip_cover_image: string;
 };
 
-export type TraktUser<T extends 'extended' | 'vip' | 'private' | 'public' | 'any' = 'public'> = T extends 'extended'
+export type TraktUser<T extends Extended | 'vip' | 'private' | 'public' | Any = 'public'> = T extends Extended
   ? TraktUserExtended
   : T extends 'vip'
     ? TraktUserVip
@@ -93,28 +94,28 @@ export type TraktUserSettings = {
   limits: TraktUserLimits;
 };
 
-export type TraktUserFollowRequest<T extends 'extended' | 'public' = 'public'> = {
+export type TraktUserFollowRequest<T extends Extended | 'public' = 'public'> = {
   id: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   requested_at: string;
-  user: T extends 'extended' ? TraktUser<'extended'> : TraktUser<'public'>;
+  user: T extends Extended ? TraktUser<Extended> : TraktUser<'public'>;
 };
 
-export type TraktUserFollower<T extends 'extended' | 'public' = 'public'> = {
+export type TraktUserFollower<T extends Extended | 'public' = 'public'> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   followed_at: string;
-  user: T extends 'extended' ? TraktUser<'extended'> : TraktUser<'public'>;
+  user: T extends Extended ? TraktUser<Extended> : TraktUser<'public'>;
 };
 
-export type TraktUserFollowing<T extends 'extended' | 'public' = 'public'> = TraktUserFollower<T>;
+export type TraktUserFollowing<T extends Extended | 'public' = 'public'> = TraktUserFollower<T>;
 
-export type TraktUserFriend<T extends 'extended' | 'public' = 'public'> = {
+export type TraktUserFriend<T extends Extended | 'public' = 'public'> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   friends_at: string;
-  user: T extends 'extended' ? TraktUser<'extended'> : TraktUser<'public'>;
+  user: T extends Extended ? TraktUser<Extended> : TraktUser<'public'>;
 };
 
-export type TraktUserFollow<T extends 'extended' | 'public' = 'public'> = {
+export type TraktUserFollow<T extends Extended | 'public' = 'public'> = {
   /**
    * If the user has a private profile, the follow request will require approval (approved_at will be null).
    * If a user is public, they will be followed immediately (approved_at will have a date).
@@ -124,7 +125,7 @@ export type TraktUserFollow<T extends 'extended' | 'public' = 'public'> = {
    * Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
    */
   approved_at?: string;
-  user: T extends 'extended' ? TraktUser<'extended'> : TraktUser<'public'>;
+  user: T extends Extended ? TraktUser<Extended> : TraktUser<'public'>;
 };
 
 export type TraktUserFilter = {
@@ -138,10 +139,10 @@ export type TraktUserFilter = {
   updated_at: string;
 };
 
-export type TraktUserHiddenItem<T extends 'movie' | 'show' | 'any' = 'any'> = {
+export type TraktUserHiddenItem<T extends 'movie' | 'show' | Any = Any> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   hidden_at: string;
-} & { type: T extends 'any' ? 'movie' | 'show' : T } & (T extends 'movie'
+} & { type: T extends Any ? 'movie' | 'show' : T } & (T extends 'movie'
     ? { movie: TraktMovie }
     : T extends 'show'
       ? { show: TraktShow }
@@ -154,9 +155,9 @@ type BaseTraktUserHiddenRequestItem = {
   users: (Partial<TraktUser> & Pick<TraktUser, 'ids'>)[];
 };
 
-export type TraktUserHiddenRequest<
-  T extends 'calendar' | 'progress_watched' | 'progress_collected' | 'recommendations' | 'comments' | 'any' = 'any',
-> = { section: T extends 'any' ? 'calendar' | 'progress_watched' | 'progress_collected' | 'recommendations' | 'comments' : T } & (T extends 'calendar'
+export type TraktUserHiddenRequest<T extends 'calendar' | 'progress_watched' | 'progress_collected' | 'recommendations' | 'comments' | Any = Any> = {
+  section: T extends Any ? 'calendar' | 'progress_watched' | 'progress_collected' | 'recommendations' | 'comments' : T;
+} & (T extends 'calendar'
   ? RequireAtLeastOne<Pick<BaseTraktUserHiddenRequestItem, 'movies' | 'shows'>>
   : T extends 'progress_watched'
     ? RequireAtLeastOne<Pick<BaseTraktUserHiddenRequestItem, 'shows' | 'seasons'>>
@@ -199,9 +200,9 @@ export type TraktUserHiddenDeleted = {
 };
 
 export type TraktUserLike<
-  T extends 'comment' | 'list' | 'any' = 'any',
-  E extends 'extended' | 'short' | 'any' = 'any',
-  C extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any',
+  T extends 'comment' | 'list' | Any = Any,
+  E extends EntityTypes = Any,
+  C extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any,
 > = T extends 'comment' ? TraktUserLikeComment<E, C> : T extends 'list' ? TraktUserLikeList : TraktUserLikeComment<E, C> | TraktUserLikeList;
 
 export type TraktUserLikeList = {
@@ -218,15 +219,15 @@ type BaseTraktUserLikeComment = {
   comment: TraktComment;
 };
 
-type TraktUserLikeCommentExtended<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = BaseTraktUserLikeComment & {
-  comment_type: T extends 'any' ? 'movie' | 'show' | 'season' | 'episode' | 'list' : T;
+type TraktUserLikeCommentExtended<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any> = BaseTraktUserLikeComment & {
+  comment_type: T extends Any ? 'movie' | 'show' | 'season' | 'episode' | 'list' : T;
 } & Omit<TraktCommentMedia<T>, 'type'>;
 
 export type TraktUserLikeComment<
-  E extends 'extended' | 'short' | 'any' = 'any',
-  C extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any',
-> = E extends 'extended'
+  E extends EntityTypes = Any,
+  C extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any,
+> = E extends Extended
   ? TraktUserLikeCommentExtended<C>
-  : E extends 'short'
+  : E extends Short
     ? BaseTraktUserLikeComment
     : TraktUserLikeCommentExtended<C> | BaseTraktUserLikeComment;

@@ -1,4 +1,4 @@
-import type { TraktSharing } from '~/models/trakt/trakt-entity.model';
+import type { TraktSharing, Any } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
@@ -9,7 +9,7 @@ type BaseTraktCheckin = {
   show: TraktShow;
 };
 
-export type TypedTraktCheckin<T extends 'any' | 'movie' | 'show' | 'episode'> = T extends 'movie'
+export type TypedTraktCheckin<T extends Any | 'movie' | 'show' | 'episode'> = T extends 'movie'
   ? Pick<BaseTraktCheckin, 'movie'>
   : T extends 'show'
     ? Pick<BaseTraktCheckin, 'show'>
@@ -17,7 +17,7 @@ export type TypedTraktCheckin<T extends 'any' | 'movie' | 'show' | 'episode'> = 
       ? Pick<BaseTraktCheckin, 'episode'>
       : Partial<BaseTraktCheckin>;
 
-export type TraktCheckin<T extends 'any' | 'movie' | 'show' | 'episode' = 'any'> = {
+export type TraktCheckin<T extends Any | 'movie' | 'show' | 'episode' = Any> = {
   id: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   watched_at: string;
@@ -49,7 +49,7 @@ type TraktCheckinRequestEpisode = {
   episode: Partial<TraktEpisode> & Pick<TraktEpisode, 'ids'>;
 };
 
-type TraktCheckinRequestItem<T extends 'movie' | 'show' | 'episode' | 'any' = 'any'> = T extends 'movie'
+type TraktCheckinRequestItem<T extends 'movie' | 'show' | 'episode' | Any = Any> = T extends 'movie'
   ? TraktCheckinRequestMovie
   : T extends 'show'
     ? TraktCheckinRequestShow
@@ -57,7 +57,7 @@ type TraktCheckinRequestItem<T extends 'movie' | 'show' | 'episode' | 'any' = 'a
       ? TraktCheckinRequestEpisode
       : TraktCheckinRequestMovie | TraktCheckinRequestEpisode | TraktCheckinRequestShow;
 
-export type TraktCheckinRequest<T extends 'movie' | 'show' | 'episode' | 'any' = 'any'> = {
+export type TraktCheckinRequest<T extends 'movie' | 'show' | 'episode' | Any = Any> = {
   /**
    * Control sharing to any connected social networks.
    *

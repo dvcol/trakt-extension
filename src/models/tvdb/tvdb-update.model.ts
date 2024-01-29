@@ -1,0 +1,49 @@
+export type TvdbUpdate = {
+  entityType: string;
+  methodInt: number;
+  method: string;
+  extraInfo: string;
+  userId: number;
+  recordType: string;
+  recordId: number;
+  timeStamp: number;
+  seriesId: number;
+  mergeToId: number;
+  mergeToEntityType: string;
+};
+
+export type TvdbUpdateTypes =
+  | 'artwork'
+  | 'award_nominees'
+  | 'companies'
+  | 'episodes'
+  | 'lists'
+  | 'people'
+  | 'seasons'
+  | 'series'
+  | 'seriespeople'
+  | 'artworktypes'
+  | 'award_categories'
+  | 'awards'
+  | 'company_types'
+  | 'content_ratings'
+  | 'countries'
+  | 'entity_types'
+  | 'genres'
+  | 'languages'
+  | 'movies'
+  | 'movie_genres'
+  | 'movie_status'
+  | 'peopletypes'
+  | 'seasontypes'
+  | 'sourcetypes'
+  | 'tag_options'
+  | 'tags'
+  | 'translatedcharacters'
+  | 'translatedcompanies'
+  | 'translatedepisodes'
+  | 'translatedlists'
+  | 'translatedmovies'
+  | 'translatedpeople'
+  | 'translatedseasons'
+  | 'translatedserierk';

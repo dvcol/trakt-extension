@@ -1,3 +1,4 @@
+import type { Any, EntityTypes, Extended, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 
 export type BaseTraktPerson = {
@@ -40,58 +41,58 @@ export type TraktPersonExtended = BaseTraktPerson & {
   updated_at: string;
 };
 
-export type TraktPerson<P extends 'short' | 'extended' | 'any' = 'short'> = P extends 'short'
+export type TraktPerson<P extends EntityTypes = Short> = P extends Short
   ? BaseTraktPerson
-  : P extends 'extended'
+  : P extends Extended
     ? TraktPersonExtended
     : BaseTraktPerson & Partial<TraktPersonExtended>;
 
-type BaseTraktCastMember<P extends 'short' | 'extended' | 'any' = 'short'> = {
+type BaseTraktCastMember<P extends EntityTypes = Short> = {
   characters: string[];
   person: TraktPerson<P>;
 };
 
-export type TraktCastMember<T extends 'episodes' | 'any' | 'short' = 'any', P extends 'short' | 'extended' | 'any' = 'short'> = T extends 'episodes'
+export type TraktCastMember<T extends 'episodes' | Any | Short = Any, P extends EntityTypes = Short> = T extends 'episodes'
   ? BaseTraktCastMember<P> & { episode_count: number; series_regular?: boolean }
-  : T extends 'short'
+  : T extends Short
     ? BaseTraktCastMember<P>
     : BaseTraktCastMember<P> & { episode_count?: number; series_regular?: boolean };
 
-type BaseTraktCrewMember<P extends 'short' | 'extended' | 'any' = 'short'> = {
+type BaseTraktCrewMember<P extends EntityTypes = Short> = {
   jobs: string[];
   person: TraktPerson<P>;
 };
 
-export type TraktCrewMember<T extends 'episodes' | 'any' | 'short' = 'any', P extends 'short' | 'extended' | 'any' = 'short'> = T extends 'episodes'
+export type TraktCrewMember<T extends 'episodes' | Any | Short = Any, P extends EntityTypes = Short> = T extends 'episodes'
   ? BaseTraktCrewMember<P> & { episode_count: number }
-  : T extends 'short'
+  : T extends Short
     ? BaseTraktCrewMember<P>
     : BaseTraktCrewMember<P> & { episode_count?: number };
 
-export type TraktCrew<T extends 'episodes' | 'any' | 'short' = 'any', P extends 'short' | 'extended' | 'any' = 'short'> = Partial<
+export type TraktCrew<T extends 'episodes' | Any | Short = Any, P extends EntityTypes = Short> = Partial<
   Record<TraktPersonJobs | 'created-by', TraktCrewMember<T, P>[]>
 >;
 
-type BaseTraktCast<T extends 'episodes' | 'any' | 'short' = 'any', P extends 'short' | 'extended' | 'any' = 'short'> = {
+type BaseTraktCast<T extends 'episodes' | Any | Short = Any, P extends EntityTypes = Short> = {
   cast: TraktCastMember<T, P>[];
   crew: TraktCrew<T, P>;
 };
 
-type TraktCastExtended<T extends 'episodes' | 'any' | 'short' = 'any', P extends 'short' | 'extended' | 'any' = 'short'> = BaseTraktCast<T, P> & {
+type TraktCastExtended<T extends 'episodes' | Any | Short = Any, P extends EntityTypes = Short> = BaseTraktCast<T, P> & {
   guest_stars: TraktCastMember<T, P>[];
 };
 
 export type TraktCast<
-  T extends 'guest_stars' | 'short' | 'any' = 'short',
-  E extends 'episodes' | 'any' | 'short' = 'any',
-  P extends 'short' | 'extended' | 'any' = 'short',
+  T extends 'guest_stars' | Short | Any = Short,
+  E extends 'episodes' | Any | Short = Any,
+  P extends EntityTypes = Short,
 > = T extends 'guest_stars'
   ? TraktCastExtended<E, P>
-  : T extends 'short'
+  : T extends Short
     ? BaseTraktCast<E, P>
     : BaseTraktCast<E, P> & Partial<TraktCastExtended<E, P>>;
 
-export type TraktPersonUpdate<P extends 'short' | 'extended' | 'any' = 'any'> = {
+export type TraktPersonUpdate<P extends EntityTypes = Any> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   updated_at: string;
   person: TraktPerson<P>;

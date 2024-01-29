@@ -1,3 +1,4 @@
+import type { Any } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -68,7 +69,7 @@ export type BaseTraktListMedia = {
   person: TraktPerson;
 };
 
-export type TraktListItem<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'person' = 'any'> = BaseTraktListItem &
+export type TraktListItem<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'person' = Any> = BaseTraktListItem &
   (T extends 'movie'
     ? Pick<BaseTraktListMedia, 'movie'> & { type: 'movie' }
     : T extends 'show'
@@ -89,7 +90,7 @@ export type BaseTraktUserListItemMedia = {
   person: Partial<TraktPerson> & Pick<TraktPerson, 'ids'>;
 };
 
-export type TraktUserListItem<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'person' = 'any'> = T extends 'movie'
+export type TraktUserListItem<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'person' = Any> = T extends 'movie'
   ? Pick<BaseTraktUserListItemMedia, 'movie'>
   : T extends 'show'
     ? Pick<BaseTraktUserListItemMedia, 'show'>

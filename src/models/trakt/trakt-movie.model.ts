@@ -1,3 +1,4 @@
+import type { Any, EntityTypes, Extended, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktCast } from '~/models/trakt/trakt-people.model';
 
@@ -32,40 +33,40 @@ export type TraktMovieExtended = TraktMovieShort & {
   certification: string;
 };
 
-export type TraktMovie<T extends 'extended' | 'short' | 'any' = 'short'> = T extends 'extended'
+export type TraktMovie<T extends EntityTypes = Short> = T extends Extended
   ? TraktMovieExtended
-  : T extends 'short'
+  : T extends Short
     ? TraktMovieShort
     : TraktMovieShort & Partial<TraktMovieExtended>;
 
-export type TraktMovieTrending<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMovieTrending<T extends EntityTypes = Any> = {
   watchers: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieFavorited<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMovieFavorited<T extends EntityTypes = Any> = {
   user_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMoviePlayed<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMoviePlayed<T extends EntityTypes = Any> = {
   watcher_count: number;
   play_count: number;
   collected_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieAnticipated<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMovieAnticipated<T extends EntityTypes = Any> = {
   list_count: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieBoxOffice<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMovieBoxOffice<T extends EntityTypes = Any> = {
   revenue: number;
   movie: TraktMovie<T>;
 };
 
-export type TraktMovieUpdate<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktMovieUpdate<T extends EntityTypes = Any> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   updated_at: string;
   movie: TraktMovie<T>;
@@ -80,7 +81,7 @@ export type TraktMovieRelease = {
   note: string;
 };
 
-export type TraktMovieCast = TraktCast<'short', 'short', 'any'>;
+export type TraktMovieCast = TraktCast<Short, Short, Any>;
 
 export type TraktMovieStats = {
   watchers: number;

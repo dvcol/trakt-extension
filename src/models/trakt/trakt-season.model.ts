@@ -1,3 +1,4 @@
+import type { Any, EntityTypes, Extended, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktCast } from '~/models/trakt/trakt-people.model';
@@ -25,15 +26,15 @@ export type TraktSeasonEpisodes = TraktSeasonShort & {
   episodes: TraktEpisode[];
 };
 
-export type TraktSeason<T extends 'extended' | 'episodes' | 'short' | 'any' = 'short'> = T extends 'extended'
+export type TraktSeason<T extends 'episodes' | EntityTypes = Short> = T extends Extended
   ? TraktSeasonExtended
   : T extends 'episodes'
     ? TraktSeasonEpisodes
-    : T extends 'short'
+    : T extends Short
       ? TraktSeasonShort
       : TraktSeasonShort & Partial<TraktSeasonExtended> & Partial<TraktSeasonEpisodes>;
 
-export type TraktSeasonCast = TraktCast<'any', 'episodes', 'any'>;
+export type TraktSeasonCast = TraktCast<Any, 'episodes', Any>;
 
 export type TraktSeasonStats = {
   watchers: number;

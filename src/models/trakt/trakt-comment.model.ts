@@ -1,4 +1,4 @@
-import type { TraktSharing } from '~/models/trakt/trakt-entity.model';
+import type { Any, TraktSharing } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -36,8 +36,8 @@ type BaseTraktCommentMedia = {
   list: TraktList;
 };
 
-export type TraktCommentMedia<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = {
-  type: T extends 'any' ? BaseTraktCommentMedia['type'] : T;
+export type TraktCommentMedia<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any> = {
+  type: T extends Any ? BaseTraktCommentMedia['type'] : T;
 } & (T extends 'movie'
   ? Pick<BaseTraktCommentMedia, 'movie'>
   : T extends 'show'
@@ -50,7 +50,7 @@ export type TraktCommentMedia<T extends 'any' | 'movie' | 'show' | 'season' | 'e
           ? Pick<BaseTraktCommentMedia, 'list'>
           : RequireAtLeastOne<BaseTraktCommentMedia>);
 
-export type TraktCommentItem<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = TraktCommentMedia<T> & {
+export type TraktCommentItem<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any> = TraktCommentMedia<T> & {
   comment: TraktComment;
 };
 
@@ -67,7 +67,7 @@ type BaseTraktCommentRequest = {
   list: Pick<TraktList, 'ids'>;
 };
 
-export type TraktCommentRequest<T extends 'any' | 'movie' | 'show' | 'season' | 'episode' | 'list' = 'any'> = {
+export type TraktCommentRequest<T extends Any | 'movie' | 'show' | 'season' | 'episode' | 'list' = Any> = {
   /** Text for the comment. */
   comment: string;
   /** Is this a spoiler? Defaults to false */

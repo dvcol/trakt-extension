@@ -1,4 +1,5 @@
 import type { TraktApiExtended, TraktApiParams, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
+import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -37,7 +38,7 @@ export type TraktSearch = TraktApiParams<
   true
 >;
 
-type BaseTraktSearchResultItem<I extends 'extended' | 'short' | 'any' = 'any'> = {
+type BaseTraktSearchResultItem<I extends EntityTypes = Any> = {
   movie: TraktMovie<I>;
   show: TraktShow<I>;
   episode: TraktEpisode<I>;
@@ -52,10 +53,10 @@ type BaseTraktSearchResultItem<I extends 'extended' | 'short' | 'any' = 'any'> =
  *
  * @see [search]{@link https://trakt.docs.apiary.io/#reference/search}
  */
-export type TraktSearchResult<
-  T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | 'any' = 'any',
-  I extends 'extended' | 'short' | 'any' = 'any',
-> = { score: number; type: T extends 'any' ? 'movie' | 'show' | 'episode' | 'person' | 'list' : T } & (T extends 'movie'
+export type TraktSearchResult<T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | Any = Any, I extends EntityTypes = Any> = {
+  score: number;
+  type: T extends Any ? 'movie' | 'show' | 'episode' | 'person' | 'list' : T;
+} & (T extends 'movie'
   ? Pick<BaseTraktSearchResultItem<I>, 'movie'>
   : T extends 'show'
     ? Pick<BaseTraktSearchResultItem<I>, 'show'>

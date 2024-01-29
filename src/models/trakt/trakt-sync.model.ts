@@ -1,3 +1,4 @@
+import type { Any } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
@@ -57,18 +58,18 @@ export type TraktSyncActivities = {
   noted: Pick<TraktSyncActivity, 'updated_at'>;
 };
 
-export type TraktSyncProgress<T extends 'movie' | 'episode' | 'any' = 'any'> = {
+export type TraktSyncProgress<T extends 'movie' | 'episode' | Any = Any> = {
   progress: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   paused_at: number;
   id: number;
-} & { type: T extends 'any' ? 'movie' | 'episode' : T } & (T extends 'movie'
+} & { type: T extends Any ? 'movie' | 'episode' : T } & (T extends 'movie'
     ? { movie: TraktMovie }
     : T extends 'episode'
       ? { episode: TraktEpisode; show: TraktShow }
       : { movie: TraktMovie } | { episode: TraktEpisode; show: TraktShow });
 
-export type BaseSyncRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | 'any' = 'any'> = T extends 'movies'
+export type BaseSyncRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | Any = Any> = T extends 'movies'
   ? Partial<TraktMovie> & Pick<TraktMovie, 'ids'>
   : T extends 'shows'
     ? Partial<TraktShow> & Pick<TraktShow, 'ids'> & { seasons?: Pick<TraktSeason, 'number'> & Partial<TraktSeason<'episodes'>>[] }
