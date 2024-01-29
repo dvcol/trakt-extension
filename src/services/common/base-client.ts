@@ -15,6 +15,11 @@ export const BaseApiHeaders = {
   ContentType: 'Content-Type',
 } as const;
 
+export const BaseHeaderContentType = {
+  Json: 'application/json',
+  Text: 'text/plain',
+} as const;
+
 export type BaseRequest = {
   input: RequestInfo;
   init: RequestInit & { headers: RequestInit['headers'] };

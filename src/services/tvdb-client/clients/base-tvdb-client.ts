@@ -10,7 +10,8 @@ import type {
   TvdbClientSettings,
 } from '~/models/tvdb/tvdb-client.model';
 
-import { BaseApiHeaders, BaseClient, parseBody, parseUrl } from '~/services/common/base-client';
+import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
+import { BaseApiHeaders, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
 import { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
 
 /**
@@ -58,14 +59,14 @@ export class BaseTvdbClient
   protected _parseHeaders<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>): HeadersInit {
     const headers: HeadersInit = {
       [BaseApiHeaders.UserAgent]: this._settings.useragent,
-      [BaseApiHeaders.ContentType]: 'application/json',
+      [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
     };
 
     if (!template.opts?.auth) return headers;
 
     if (!this.auth.access_token) throw Error('OAuth required: access_token is missing');
 
-    headers.Authorization = `Bearer ${this.auth.access_token}`;
+    headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.access_token}`;
 
     return headers;
   }
@@ -114,9 +115,12 @@ export class BaseTvdbClient
    */
   // eslint-disable-next-line class-methods-use-this -- implemented from abstract class
   protected _parseResponse(response: TvdbApiResponse<TvdbApiResponseData>): TvdbApiResponse {
+    if (!response.ok || response.status >= 400) throw response;
+
     const parsed: TvdbApiResponse = response;
+    const _json = parsed.json as TvdbApiResponse<TvdbApiResponseData>['json'];
     parsed.json = async () => {
-      const result = await response.json();
+      const result = await _json.bind(parsed)();
       if (result.status !== 'success') throw result;
       return result.links ? { data: result.data, pagination: result.links } : result.data;
     };
