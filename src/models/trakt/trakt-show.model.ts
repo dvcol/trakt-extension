@@ -1,3 +1,4 @@
+import type { Any, EntityTypes, Extended, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktCast } from '~/models/trakt/trakt-people.model';
 
@@ -58,37 +59,37 @@ export type TraktShowExtended = TraktShowShort & {
   aired_episodes: number;
 };
 
-export type TraktShow<T extends 'extended' | 'short' | 'any' = 'short'> = T extends 'extended'
+export type TraktShow<T extends EntityTypes = Short> = T extends Extended
   ? TraktShowExtended
-  : T extends 'short'
+  : T extends Short
     ? TraktShowShort
     : TraktShowShort & Partial<TraktShowExtended>;
 
-export type TraktShowCast = TraktCast<'any', 'episodes', 'any'>;
+export type TraktShowCast = TraktCast<Any, 'episodes', Any>;
 
-export type TraktShowTrending<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktShowTrending<T extends EntityTypes = Any> = {
   watchers: number;
   show: TraktShow<T>;
 };
 
-export type TraktShowFavorited<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktShowFavorited<T extends EntityTypes = Any> = {
   user_count: number;
   show: TraktShow<T>;
 };
 
-export type TraktShowPlayed<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktShowPlayed<T extends EntityTypes = Any> = {
   watcher_count: number;
   play_count: number;
   collected_count: number;
   show: TraktShow<T>;
 };
 
-export type TraktShowAnticipated<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktShowAnticipated<T extends EntityTypes = Any> = {
   list_count: number;
   show: TraktShow<T>;
 };
 
-export type TraktShowUpdate<T extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktShowUpdate<T extends EntityTypes = Any> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   updated_at: string;
   show: TraktShow<T>;

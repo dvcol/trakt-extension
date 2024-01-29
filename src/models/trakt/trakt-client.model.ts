@@ -3,6 +3,7 @@ import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filt
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
 
 import {
+  BaseApiHeaders,
   type BaseInit,
   type BaseOptions,
   type BaseQuery,
@@ -235,7 +236,9 @@ export const TraktApiHeaders = {
   /** Actual sort order asc or desc. */
   XAppliedSortHow: 'X-Applied-Sort-How',
   /** The user agent of the consumer client */
-  UserAgent: 'User-Agent',
+  UserAgent: BaseApiHeaders.UserAgent,
   /** The content type of the payload  */
-  ContentType: 'Content-Type',
+  ContentType: BaseApiHeaders.ContentType,
+  /** The authorization token bearer */
+  Authorization: BaseApiHeaders.Authorization,
 } as const;

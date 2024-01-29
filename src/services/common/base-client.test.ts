@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { CancellableFetch } from '../../utils/fetch.utils';
 
+import { HttpMethod } from '../../utils/http.utils';
+
 import {
   BaseClient,
   type BaseOptions,
@@ -74,15 +76,15 @@ describe('base-client.ts', () => {
 
   const api: IApi = {
     endpoint: new ClientEndpoint({
-      method: 'GET',
+      method: HttpMethod.GET,
       url: '/endpoint',
     }),
     anotherEndpoint: new ClientEndpoint({
-      method: 'GET',
+      method: HttpMethod.GET,
       url: '/another-endpoint',
     }),
     endpointWithParams: new ClientEndpoint({
-      method: 'GET',
+      method: HttpMethod.GET,
       url: '/endpoint/:param',
       opts: {
         parameters: {
@@ -93,7 +95,7 @@ describe('base-client.ts', () => {
       },
     }),
     endpointWithValidation: new ClientEndpoint({
-      method: 'GET',
+      method: HttpMethod.GET,
       url: '/endpoint/:param',
       opts: {
         parameters: {
@@ -107,14 +109,14 @@ describe('base-client.ts', () => {
       },
     }),
     endpointWithBody: new ClientEndpoint({
-      method: 'POST',
+      method: HttpMethod.POST,
       url: '/endpoint',
       body: {
         param: true,
       },
     }),
     endpointWithInit: new ClientEndpoint({
-      method: 'GET',
+      method: HttpMethod.GET,
       url: '/endpoint',
       init: {
         headers: {
@@ -294,7 +296,7 @@ describe('base-client.ts', () => {
   // Mock TraktApiTemplate for testing
   const mockTemplate: BaseTemplate<Params> = {
     url: '/movies/:requiredPath/:optionalPath/popular?requiredQuery=&optionalQuery=',
-    method: 'POST',
+    method: HttpMethod.POST,
     opts: {
       parameters: {
         query: {
@@ -371,7 +373,7 @@ describe('base-client.ts', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        method: HttpMethod.POST,
       });
 
       expect(result).toBe(response);

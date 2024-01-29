@@ -1,3 +1,4 @@
+import type { Any } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
@@ -46,7 +47,7 @@ export const TraktNoteType = {
 
 export type TraktNoteTypes = (typeof TraktNoteType)[keyof typeof TraktNoteType];
 
-type TraktNoteRequestItem<T extends TraktNoteTypes | 'any' = 'any'> = T extends 'movie'
+type TraktNoteRequestItem<T extends TraktNoteTypes | Any = Any> = T extends 'movie'
   ? Pick<BaseTraktNoteRequestItem, 'movie'>
   : T extends 'show'
     ? Pick<BaseTraktNoteRequestItem, 'show'>
@@ -58,7 +59,7 @@ type TraktNoteRequestItem<T extends TraktNoteTypes | 'any' = 'any'> = T extends 
           ? Pick<BaseTraktNoteRequestItem, 'person'>
           : RequireAtLeastOne<BaseTraktNoteRequestItem>;
 
-export type TraktNoteRequest<T extends TraktNoteTypes | 'any' = 'any', I extends TraktNoteItemTypes | 'any' = 'any'> = BaseTraktNote &
+export type TraktNoteRequest<T extends TraktNoteTypes | Any = Any, I extends TraktNoteItemTypes | Any = Any> = BaseTraktNote &
   (T extends 'movie'
     ? TraktNoteRequestItem<'movie'>
     : T extends 'show'
@@ -103,9 +104,9 @@ type BaseTraktNoteItem = {
   person: TraktPerson;
 };
 
-export type TraktNoteItem<T extends TraktNoteTypes | 'any' = 'any'> = {
-  type: T extends 'any' ? TraktNoteTypes : T;
-  attached_to: { type: T extends 'any' ? TraktNoteTypes : T };
+export type TraktNoteItem<T extends TraktNoteTypes | Any = Any> = {
+  type: T extends Any ? TraktNoteTypes : T;
+  attached_to: { type: T extends Any ? TraktNoteTypes : T };
 } & (T extends 'movie'
   ? Pick<BaseTraktNoteItem, 'movie'>
   : T extends 'show'

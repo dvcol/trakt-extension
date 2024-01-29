@@ -1,3 +1,4 @@
+import type { Any, EntityTypes, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
@@ -49,52 +50,41 @@ export type TraktCollectionMetadata = {
   '3d': boolean;
 };
 
-export type TraktCollectionEpisode<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+export type TraktCollectionEpisode<M extends 'metadata' | Short | Any = Any> = {
   number: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   collected_at: string;
-} & (M extends 'metadata'
-  ? { metadata: TraktCollectionMetadata }
-  : M extends 'short'
-    ? Record<string, never>
-    : { metadata?: TraktCollectionMetadata });
+} & (M extends 'metadata' ? { metadata: TraktCollectionMetadata } : M extends Short ? Record<string, never> : { metadata?: TraktCollectionMetadata });
 
-export type TraktCollectionSeason<M extends 'metadata' | 'short' | 'any' = 'any'> = {
+export type TraktCollectionSeason<M extends 'metadata' | Short | Any = Any> = {
   number: number;
   episodes: TraktCollectionEpisode<M>[];
 };
 
-type TraktCollectionShow<M extends 'metadata' | 'short' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
+type TraktCollectionShow<M extends 'metadata' | Short | Any = Any, E extends EntityTypes = Any> = {
   last_collected_at: string;
   last_updated_at: string;
   show: TraktShow<E>;
   seasons: TraktCollectionSeason<M>[];
 };
 
-type TraktCollectionMovie<M extends 'metadata' | 'short' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
+type TraktCollectionMovie<M extends 'metadata' | Short | Any = Any, E extends EntityTypes = Any> = {
   collected_at: string;
   updated_at: string;
   movie: TraktMovie<E>;
-} & (M extends 'metadata'
-  ? { metadata: TraktCollectionMetadata }
-  : M extends 'short'
-    ? Record<string, never>
-    : { metadata?: TraktCollectionMetadata });
+} & (M extends 'metadata' ? { metadata: TraktCollectionMetadata } : M extends Short ? Record<string, never> : { metadata?: TraktCollectionMetadata });
 
 export type TraktCollection<
-  T extends 'movie' | 'show' | 'any' = 'any',
-  M extends 'metadata' | 'short' | 'any' = 'any',
-  E extends 'extended' | 'short' | 'any' = 'any',
+  T extends 'movie' | 'show' | Any = Any,
+  M extends 'metadata' | Short | Any = Any,
+  E extends EntityTypes = Any,
 > = T extends 'movie'
   ? TraktCollectionMovie<M, E>
   : T extends 'show'
     ? TraktCollectionShow<M, E>
     : TraktCollectionMovie<M, E> | TraktCollectionShow<M, E>;
 
-export type TraktCollectionRequestItem<
-  T extends 'movies' | 'shows' | 'seasons' | 'episodes' | 'any' = 'any',
-  M extends 'metadata' | 'short' = 'short',
-> = {
+export type TraktCollectionRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | Any = Any, M extends 'metadata' | Short = Short> = {
   /**
    * UTC datetime when the item was collected. - Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
    * Set to released to automatically use the inital release date + runtime (episodes only)).
@@ -102,7 +92,7 @@ export type TraktCollectionRequestItem<
   collected_at?: string;
 } & (M extends 'metadata' ? Partial<TraktCollectionMetadata> & BaseSyncRequestItem<T> : BaseSyncRequestItem<T>);
 
-export type TraktCollectionRequest<T extends 'metadata' | 'short' = 'short'> = {
+export type TraktCollectionRequest<T extends 'metadata' | Short = Short> = {
   movies?: TraktCollectionRequestItem<'movies', T>[];
   shows?: TraktCollectionRequestItem<'shows', T>[];
   seasons?: TraktCollectionRequestItem<'seasons', T>[];

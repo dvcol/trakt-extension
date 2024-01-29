@@ -78,6 +78,18 @@ export type StartDateParam = {
   start_date?: string;
 };
 
+export const EntityType = {
+  Short: 'short',
+  Extended: 'extended',
+  Any: 'any',
+} as const;
+
+export type Any = typeof EntityType.Any;
+export type Short = typeof EntityType.Short;
+export type Extended = typeof EntityType.Extended;
+
+export type EntityTypes = (typeof EntityType)[keyof typeof EntityType];
+
 export const validateStartDate: TraktApiTemplate<StartDateParam>['validate'] = param => {
   if (param.start_date) TraktApiValidators.date(param.start_date);
   return true;

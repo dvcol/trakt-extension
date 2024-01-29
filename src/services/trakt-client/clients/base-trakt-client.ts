@@ -136,7 +136,7 @@ export class BaseTraktClient
    *
    * @template T - The type of the parameters.
    *
-   * @param {TraktApiTemplate<T>} template - The template for the API endpoint.
+   * @param template - The template for the API endpoint.
    *
    * @returns {HeadersInit} The parsed request headers.
    *
@@ -150,11 +150,12 @@ export class BaseTraktClient
       [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };
 
-    if (template.opts?.auth && this.auth.access_token) {
-      headers.Authorization = `Bearer ${this.auth.access_token}`;
-    } else if (template.opts?.auth === true && !this.auth.access_token) {
+    if (template.opts?.auth === true && !this.auth.access_token) {
       throw Error('OAuth required: access_token is missing');
+    } else if (template.opts?.auth && this.auth.access_token) {
+      headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.access_token}`;
     }
+
     return headers;
   }
 
@@ -165,7 +166,7 @@ export class BaseTraktClient
    *
    * @template T - The type of the parameters.
    *
-   * @param {TraktApiTemplate<T>} template - The template for the API endpoint.
+   * @param template - The template for the API endpoint.
    * @param {T} params - The parameters for the API call.
    *
    * @returns {string} The URL for the Trakt API request.

@@ -1,3 +1,4 @@
+import type { Any, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
@@ -14,11 +15,11 @@ export type TraktWatchedSeason = {
   episodes: TraktWatchedEpisode[];
 };
 
-export type TraktWatchedShow<N extends 'no-seasons' | 'short' | 'any' = 'any'> = N extends 'no-seasons'
+export type TraktWatchedShow<N extends 'no-seasons' | Short | Any = Any> = N extends 'no-seasons'
   ? { show: TraktShow }
   : { show: TraktShow; seasons: TraktWatchedSeason[] };
 
-export type TraktWatched<T extends 'movie' | 'show' | 'any' = 'any', N extends 'no-seasons' | 'short' | 'any' = 'any'> = {
+export type TraktWatched<T extends 'movie' | 'show' | Any = Any, N extends 'no-seasons' | Short | Any = Any> = {
   plays: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   last_watched_at: string;
@@ -32,11 +33,11 @@ export type TraktWatched<T extends 'movie' | 'show' | 'any' = 'any', N extends '
     ? TraktWatchedShow<N>
     : { movie: TraktMovie } | TraktWatchedShow<N>;
 
-export type TraktWatching<T extends 'movie' | 'show' | 'any' = 'any'> = {
+export type TraktWatching<T extends 'movie' | 'show' | Any = Any> = {
   expires_at: string;
   started_at: string;
   action: 'scrobble';
-  type: T extends 'any' ? 'movie' | 'show' : T;
+  type: T extends Any ? 'movie' | 'show' : T;
 } & (T extends 'movie'
   ? { movie: TraktMovie }
   : T extends 'show'

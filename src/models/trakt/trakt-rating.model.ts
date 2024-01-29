@@ -1,18 +1,19 @@
+import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { BaseSyncRequestItem } from '~/models/trakt/trakt-sync.model';
 
-type BaseTraktRatingItem<E extends 'extended' | 'short' | 'any' = 'any'> = {
+type BaseTraktRatingItem<E extends EntityTypes = Any> = {
   movie: TraktMovie<E>;
   show: TraktShow<E>;
   season: TraktSeason<E>;
   episode: TraktEpisode<E>;
 };
 
-type TraktRatingItem<T extends 'movie' | 'show' | 'season' | 'episode' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
-  type: T extends 'any' ? 'movie' | 'show' | 'season' | 'episode' : T;
+type TraktRatingItem<T extends 'movie' | 'show' | 'season' | 'episode' | Any = Any, E extends EntityTypes = Any> = {
+  type: T extends Any ? 'movie' | 'show' | 'season' | 'episode' : T;
 } & (T extends 'movie'
   ? Pick<BaseTraktRatingItem<E>, 'movie'>
   : T extends 'show'
@@ -27,13 +28,13 @@ type TraktRatingItem<T extends 'movie' | 'show' | 'season' | 'episode' | 'any' =
             | Pick<BaseTraktRatingItem<E>, 'season' | 'show'>
             | Pick<BaseTraktRatingItem<E>, 'episode' | 'show'>);
 
-export type TraktRating<T extends 'movie' | 'show' | 'season' | 'episode' | 'any' = 'any', E extends 'extended' | 'short' | 'any' = 'any'> = {
+export type TraktRating<T extends 'movie' | 'show' | 'season' | 'episode' | Any = Any, E extends EntityTypes = Any> = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   rated_at: string;
   rating: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 } & TraktRatingItem<T, E>;
 
-export type TraktRatingRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | 'any' = 'any'> = {
+export type TraktRatingRequestItem<T extends 'movies' | 'shows' | 'seasons' | 'episodes' | Any = Any> = {
   /**
    * UTC datetime when the item was rated. - Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ)
    */

@@ -1,9 +1,19 @@
 import type { CacheStore } from '~/utils/cache.utils';
-import type { HttpMethods } from '~/utils/http.utils';
+
 import type { RecursiveRecord } from '~/utils/typescript.utils';
 
 import { CancellableFetch, type CancellablePromise } from '~/utils/fetch.utils';
+import { HttpMethod, type HttpMethods } from '~/utils/http.utils';
 import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
+
+export const BaseApiHeaders = {
+  /** The authorization token bearer */
+  Authorization: 'Authorization',
+  /** The user agent of the consumer client */
+  UserAgent: 'User-Agent',
+  /** The content type of the payload  */
+  ContentType: 'Content-Type',
+} as const;
 
 export type BaseRequest = {
   input: RequestInfo;
@@ -48,7 +58,7 @@ export type BaseTemplate<P extends RecursiveRecord = RecursiveRecord, O extends 
   transform?: (param: P) => P;
 };
 
-type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
+export type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
 
 export type ResponseOrTypedResponse<T = unknown> = T extends never ? Response : TypedResponse<T>;
 
@@ -287,7 +297,7 @@ export abstract class BaseClient<
       },
     };
 
-    if (template.method !== 'GET' && template.body) {
+    if (template.method !== HttpMethod.GET && template.body) {
       req.init.body = this._parseBody(template.body, _params);
     }
 
