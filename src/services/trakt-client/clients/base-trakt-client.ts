@@ -13,7 +13,7 @@ import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
-import { BaseClient, parseBody, parseUrl } from '~/services/common/base-client';
+import { BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
 import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
@@ -145,7 +145,7 @@ export class BaseTraktClient
   protected _parseHeaders<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>): HeadersInit {
     const headers: HeadersInit = {
       [TraktApiHeaders.UserAgent]: this._settings.useragent,
-      [TraktApiHeaders.ContentType]: 'application/json',
+      [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
       [TraktApiHeaders.TraktApiVersion]: '2',
       [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
     };

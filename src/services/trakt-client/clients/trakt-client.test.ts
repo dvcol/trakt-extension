@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
+import { TraktApiHeaders, TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
 
 import { traktClientSettings } from '../../../settings/traktv.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
 import { HttpMethod } from '../../../utils/http.utils';
+import { BaseHeaderContentType } from '../../common/base-client';
 import { traktApi } from '../api/trakt-api.endpoints';
 
 import { TraktClient } from './trakt-client';
@@ -22,10 +23,10 @@ describe('trakt-client.ts', () => {
 
   const payload = {
     headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': '@dvcol/trakt-extension/1.2.0',
-      'trakt-api-key': traktClientSettings.client_id,
-      'trakt-api-version': '2',
+      [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
+      [TraktApiHeaders.UserAgent]: traktClientSettings.useragent,
+      [TraktApiHeaders.TraktApiKey]: traktClientSettings.client_id,
+      [TraktApiHeaders.TraktApiVersion]: '2',
     },
     method: HttpMethod.GET,
   };
@@ -264,10 +265,10 @@ describe('trakt-client.ts', () => {
       expect(fetch).toHaveBeenCalledWith(url.toString(), {
         credentials: 'omit',
         headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': traktClientSettings.useragent,
-          'trakt-api-key': traktClientSettings.client_id,
-          'trakt-api-version': '2',
+          [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
+          [TraktApiHeaders.UserAgent]: traktClientSettings.useragent,
+          [TraktApiHeaders.TraktApiKey]: traktClientSettings.client_id,
+          [TraktApiHeaders.TraktApiVersion]: '2',
         },
         method: HttpMethod.GET,
         redirect: 'manual',

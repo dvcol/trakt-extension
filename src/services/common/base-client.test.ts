@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
+import { TraktApiHeaders } from '../../models/trakt/trakt-client.model';
+
 import { CancellableFetch } from '../../utils/fetch.utils';
 
 import { HttpMethod } from '../../utils/http.utils';
 
 import {
+  BaseApiHeaders,
   BaseClient,
+  BaseHeaderContentType,
   type BaseOptions,
   type BaseQuery,
   type BaseTemplate,
@@ -42,7 +46,7 @@ class TestableBaseClient extends BaseClient {
   // eslint-disable-next-line class-methods-use-this -- abstract method
   _parseHeaders(): HeadersInit {
     return {
-      'Content-Type': 'application/json',
+      [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
     };
   }
 
@@ -138,9 +142,9 @@ describe('base-client.ts', () => {
       input: 'https://api.trakt.tv/oauth/device/code',
       init: {
         headers: {
-          'Content-Type': 'application/json',
-          'trakt-api-key': 'client_id',
-          'trakt-api-version': '2',
+          [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
+          [TraktApiHeaders.TraktApiKey]: 'client_id',
+          [TraktApiHeaders.TraktApiVersion]: '2',
         },
       },
     },
@@ -371,7 +375,7 @@ describe('base-client.ts', () => {
       expect(spyFetch).toHaveBeenCalledWith(`${mockEndpoint}/movies/requiredPath/popular?requiredQuery=requiredQuery`, {
         body: '{"requiredBody":"requiredBody"}',
         headers: {
-          'Content-Type': 'application/json',
+          [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
         },
         method: HttpMethod.POST,
       });
