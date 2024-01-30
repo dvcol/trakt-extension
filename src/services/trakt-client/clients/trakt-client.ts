@@ -52,22 +52,21 @@ export class TraktClient extends BaseTraktClient {
   /**
    * Exchanges an authorization code or refresh token for an access token.
    *
-   * @private
-   *
    * @param request - The request object containing the code or refresh token.
    *
    * @returns A promise resolving to the updated Trakt authentication information.
    *
    * @throws Error Throws an error if the exchange fails or an error is received from the server.
    *
+   * @private
+   *
    * @see handleError
-   * @memberof TraktClient
    */
   private async _exchange(request: Pick<TraktAuthenticationCodeRequest, 'code'> | Pick<TraktAuthenticationRefreshRequest, 'refresh_token'>) {
     const _request: TraktAuthenticationBaseRequest = {
-      client_id: this._settings.client_id,
-      client_secret: this._settings.client_secret,
-      redirect_uri: this._settings.redirect_uri,
+      client_id: this.settings.client_id,
+      client_secret: this.settings.client_secret,
+      redirect_uri: this.settings.redirect_uri,
       grant_type: 'code' in request ? 'authorization_code' : 'refresh_token',
       ...request,
     };
@@ -98,24 +97,23 @@ export class TraktClient extends BaseTraktClient {
   /**
    * Revokes the current authentication by invalidating the access token.
    *
-   * @private
-   *
    * @paramrequest - Additional parameters for revoking authentication.
    *
    * @returns A promise resolving when the authentication is successfully revoked.
    *
    * @throws Error Throws an error if no access token is found.
    *
+   * @private
+   *
    * @see isResponseOk
-   * @memberof TraktClient
    */
   private async _revoke(request: Partial<TraktAuthenticationRevokeRequest> = {}) {
     if (!request && !this.auth.access_token) throw new Error('No access token found.');
 
     const _request: TraktAuthenticationRevokeRequest = {
       token: this.auth.access_token!,
-      client_id: this._settings.client_id,
-      client_secret: this._settings.client_secret,
+      client_id: this.settings.client_id,
+      client_secret: this.settings.client_secret,
       ...request,
     };
 
@@ -129,8 +127,6 @@ export class TraktClient extends BaseTraktClient {
   /**
    * Initiates device authentication and retrieves the device code.
    *
-   * @private
-   *
    * @template T - The type of the authentication information to be returned (string means auth token, null means codes).
    *
    * @param {T extends string | null} code - The device code (if polling) or null to initiate a new device authentication.
@@ -139,21 +135,22 @@ export class TraktClient extends BaseTraktClient {
    *
    * @throws Error Throws an error if the device authentication fails.
    *
+   * @private
+   *
    * @see handleError
-   * @memberof TraktClient
    */
   private async _device<T extends string | null>(code: T): Promise<T extends null ? TraktDeviceAuthentication : TraktAuthentication> {
     try {
       let response: TraktApiResponse<TraktAuthentication | TraktDeviceAuthentication>;
       if (code) {
         response = await this.authentication.device.token({
-          client_id: this._settings.client_id,
-          client_secret: this._settings.client_secret,
+          client_id: this.settings.client_id,
+          client_secret: this.settings.client_secret,
           code,
         });
       } else {
         response = await this.authentication.device.code({
-          client_id: this._settings.client_id,
+          client_id: this.settings.client_id,
         });
       }
       return (await response.json()) as T extends null ? TraktDeviceAuthentication : TraktAuthentication;
@@ -162,6 +159,18 @@ export class TraktClient extends BaseTraktClient {
     }
   }
 
+  /**
+   * Polls the device authentication endpoint to complete the authentication.
+   * If the timeout is reached, the polling is cancelled and an error is thrown.
+   * If the authentication is successful, the polling is cancelled and the authentication information is returned.
+   *
+   * @param poll - The device authentication information.
+   * @param timeout - The timeout in milliseconds.
+   *
+   * @returns A promise resolving to the authentication information if successful
+   *
+   * @private
+   */
   private async _devicePolling(poll: TraktDeviceAuthentication, timeout: number) {
     if (timeout <= Date.now()) {
       clearInterval(this.polling);
@@ -198,8 +207,6 @@ export class TraktClient extends BaseTraktClient {
    * The code should then be used in conjunction with the {@link pollWithDeviceCode} method to finish authentication.
    *
    * @returns A promise resolving to the device authentication information.
-   *
-   * @memberof TraktClient
    */
   getDeviceCode() {
     return this._device(null);
@@ -211,8 +218,6 @@ export class TraktClient extends BaseTraktClient {
    * @param  poll - The device authentication information.
    *
    * @returns  A promise resolving to the completed authentication information or `undefined`.
-   *
-   * @memberof TraktClient
    */
   pollWithDeviceCode(poll: TraktDeviceAuthentication) {
     if (this.polling) {
@@ -244,8 +249,6 @@ export class TraktClient extends BaseTraktClient {
    * @returns A promise resolving to the response from the Trakt website.
    *
    * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
-   *
-   * @memberof TraktClient
    */
   redirectToAuthentication(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & { redirect?: RequestRedirect } = {}) {
     this.updateAuth(auth => ({ ...auth, state: request.state ?? randomHex() }));
@@ -257,8 +260,8 @@ export class TraktClient extends BaseTraktClient {
     return this.authentication.oAuth.authorize(
       {
         response_type: 'code',
-        client_id: this._settings.client_id,
-        redirect_uri: this._settings.redirect_uri,
+        client_id: this.settings.client_id,
+        redirect_uri: this.settings.redirect_uri,
         state: this.auth.state,
         ...request,
       },
@@ -275,8 +278,6 @@ export class TraktClient extends BaseTraktClient {
    * @returns  A promise resolving to the Trakt authentication information.
    *
    * @throws Error Throws an error if the CSRF token is invalid.
-   *
-   * @memberof TraktClient
    */
   exchangeCodeForToken(code: string, state?: string) {
     if (state && state !== this.auth.state) throw Error('Invalid CSRF (State)');
@@ -289,8 +290,6 @@ export class TraktClient extends BaseTraktClient {
    * @returns  A promise resolving to the updated Trakt authentication information.
    *
    * @throws Error Throws an error if no refresh token is found.
-   *
-   * @memberof TraktClient
    */
   refreshToken() {
     if (!this.auth.refresh_token) {
@@ -305,8 +304,6 @@ export class TraktClient extends BaseTraktClient {
    * @returns  A promise resolving when the authentication is successfully revoked.
    *
    * @throws Error Throws an error if no access token is found.
-   *
-   * @memberof TraktClient
    */
   async revokeAuthentication(): Promise<void> {
     if (this.auth.access_token) {
@@ -322,8 +319,6 @@ export class TraktClient extends BaseTraktClient {
    * @param auth - The Trakt authentication information to import.
    *
    * @returns A promise resolving to the imported Trakt authentication information.
-   *
-   * @memberof TraktClient
    */
   async importAuthentication(auth: TraktClientAuthentication): Promise<TraktClientAuthentication> {
     this.updateAuth(auth);

@@ -14,11 +14,13 @@ import {
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}
  */
 export type TvdbClientSettings = {
-  /** The domain name (i.e. https://api4.thetvdb.com/v4) */
+  /** The domain name (e.g. https://api4.thetvdb.com) */
   endpoint: string;
+  /** The api version (e.g. v4) */
+  version: string;
   /** The consumer client identifier */
   useragent: string;
-  /** The app secret  */
+  /** The app api key  */
   apiKey: string;
   /** token time-to-live (28 days) */
   tokenTTL: number;
@@ -27,8 +29,8 @@ export type TvdbClientSettings = {
 export type TvdbClientOptions = BaseOptions<TvdbClientSettings, TvdbApiResponse>;
 
 export type TvdbClientAuthentication = {
-  access_token?: string;
-  user_pin?: string;
+  accessToken?: string;
+  userPin?: string;
   expires?: number;
 };
 

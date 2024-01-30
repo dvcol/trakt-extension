@@ -1,4 +1,5 @@
 import { traktService } from '~/services/trakt-client/trakt-client.service';
+import { tvdbService } from '~/services/tvdb-client/tvdb-client.service';
 import { useSettingsStore } from '~/stores/settings.store';
 
 export const initServices = async () => {
@@ -15,5 +16,13 @@ export const initServices = async () => {
 
   traktService.onCall(async call => {
     console.info('TraktClient.onCall', call);
+  });
+
+  tvdbService.onAuthChange(_auth => {
+    console.info('TvdbClient.onAuthChange', _auth);
+  });
+
+  tvdbService.onCall(async call => {
+    console.info('TvdbClient.onCall', call);
   });
 };

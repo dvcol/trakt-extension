@@ -58,15 +58,15 @@ export class BaseTvdbClient
    */
   protected _parseHeaders<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>): HeadersInit {
     const headers: HeadersInit = {
-      [BaseApiHeaders.UserAgent]: this._settings.useragent,
+      [BaseApiHeaders.UserAgent]: this.settings.useragent,
       [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
     };
 
     if (!template.opts?.auth) return headers;
 
-    if (!this.auth.access_token) throw Error('OAuth required: access_token is missing');
+    if (!this.auth.accessToken) throw Error('OAuth required: access_token is missing');
 
-    headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.access_token}`;
+    headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.accessToken}`;
 
     return headers;
   }
@@ -86,7 +86,8 @@ export class BaseTvdbClient
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
   protected _parseUrl<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>, params: T): URL {
-    return parseUrl<T>(template, params, this._settings.endpoint);
+    if (!template.url.startsWith('/v4')) template.url = `/v4${template.url}`;
+    return parseUrl<T>(template, params, this.settings.endpoint);
   }
 
   /**

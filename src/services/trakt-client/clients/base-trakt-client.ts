@@ -144,10 +144,10 @@ export class BaseTraktClient
    */
   protected _parseHeaders<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>): HeadersInit {
     const headers: HeadersInit = {
-      [TraktApiHeaders.UserAgent]: this._settings.useragent,
+      [TraktApiHeaders.UserAgent]: this.settings.useragent,
       [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
       [TraktApiHeaders.TraktApiVersion]: '2',
-      [TraktApiHeaders.TraktApiKey]: this._settings.client_id,
+      [TraktApiHeaders.TraktApiKey]: this.settings.client_id,
     };
 
     if (template.opts?.auth === true && !this.auth.access_token) {
@@ -174,7 +174,7 @@ export class BaseTraktClient
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
   protected _parseUrl<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): URL {
-    const url = parseUrl<T>(template, params, this._settings.endpoint);
+    const url = parseUrl<T>(template, params, this.settings.endpoint);
     const queryParams = url.searchParams;
 
     // Adds Filters query parameters

@@ -1,3 +1,5 @@
+import type { TvdbClientAuthentication } from '~/models/tvdb/tvdb-client.model';
+
 import { BaseTvdbClient } from '~/services/tvdb-client/clients/base-tvdb-client';
 
 /**
@@ -7,4 +9,43 @@ import { BaseTvdbClient } from '~/services/tvdb-client/clients/base-tvdb-client'
  *
  * @extends {BaseTvdbClient}
  */
-export class TvdbClient extends BaseTvdbClient {}
+export class TvdbClient extends BaseTvdbClient {
+  /**
+   * Authenticates the client with the setting's secret and an optionally provided user pin.
+   * The access token is stored in the client and used for all subsequent requests.
+   * The token expires after 28 days and will need to be refreshed.
+   *
+   * @param userPin - The user pin to use for authentication.
+   */
+  async authenticate(userPin?: string) {
+    const auth = await this.login({
+      apiKey: this.settings.apiKey,
+      pin: userPin,
+    });
+
+    const { token } = await auth.json();
+
+    this.updateAuth({
+      accessToken: token,
+      userPin,
+      expires: Date.now() + this.settings.tokenTTL,
+    });
+
+    return auth;
+  }
+
+  /**
+   * Imports the provided authentication information into the client.
+   * If the access token is expired, it attempts to refresh it.
+   *
+   * @param auth - The  authentication information to import.
+   *
+   * @returns A promise resolving to the imported authentication information.
+   */
+  async importAuthentication(auth: TvdbClientAuthentication): Promise<TvdbClientAuthentication> {
+    this.updateAuth(auth);
+
+    if (auth.expires && auth.expires < Date.now()) await this.authenticate(auth.userPin);
+    return this.auth;
+  }
+}

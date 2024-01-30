@@ -122,20 +122,13 @@ export abstract class BaseClient<
   SettingsType extends RecursiveRecord = RecursiveRecord,
   AuthenticationType extends RecursiveRecord = RecursiveRecord,
 > {
-  protected _cache: CacheStore<ResponseType>;
-  protected _settings: SettingsType;
-  protected _authentication: ObservableState<AuthenticationType>;
-  protected _callListeners: Observable<QueryType>;
+  private readonly _settings: SettingsType;
+  private _cache: CacheStore<ResponseType>;
+  private _authentication: ObservableState<AuthenticationType>;
+  private _callListeners: Observable<QueryType>;
 
-  /**
-   * Clears the cache entry for the specified key.
-   * If no key is provided, clears the entire cache.
-   *
-   * @param key - The cache key.
-   */
-  clearCache(key?: string) {
-    if (key) return this._cache?.delete(key);
-    return this._cache?.clear();
+  protected get settings() {
+    return this._settings;
   }
 
   /**
@@ -190,6 +183,17 @@ export abstract class BaseClient<
       auth: this._authentication.unsubscribe(observer),
       call: this._callListeners.unsubscribe(observer),
     };
+  }
+
+  /**
+   * Clears the cache entry for the specified key.
+   * If no key is provided, clears the entire cache.
+   *
+   * @param key - The cache key.
+   */
+  clearCache(key?: string) {
+    if (key) return this._cache?.delete(key);
+    return this._cache?.clear();
   }
 
   /**
@@ -421,26 +425,6 @@ export const parseUrl = <P extends RecursiveRecord = RecursiveRecord, O extends 
   const [pathPart, queryPart] = template.url.split('?');
 
   let path = pathPart;
-  const queryParams: URLSearchParams = new URLSearchParams(queryPart);
-
-  if (queryPart) {
-    queryParams.forEach((value, key, parent) => {
-      const _value = params[key] ?? value;
-
-      // If a value is found we encode
-      if (_value !== undefined && _value !== '') {
-        queryParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
-      }
-      // If the parameter is required we raise error
-      else if (template.opts?.parameters?.query?.[key] === true) {
-        throw Error(`Missing mandatory query parameter: '${key}'`);
-      }
-      // else we remove the empty field from parameters
-      else {
-        parent.delete(key);
-      }
-    });
-  }
 
   // fill query path parameter i.e :variable
   if (pathPart.includes(':')) {
@@ -462,6 +446,20 @@ export const parseUrl = <P extends RecursiveRecord = RecursiveRecord, O extends 
   }
 
   const url = new URL(path, endpoint);
-  url.search = queryParams.toString();
+
+  if (queryPart) {
+    new URLSearchParams(queryPart).forEach((value, key) => {
+      const _value = params[key] ?? value;
+
+      // If a value is found we encode
+      if (_value !== undefined && _value !== '') {
+        url.searchParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
+      }
+      // If the parameter is required we raise error
+      else if (template.opts?.parameters?.query?.[key] === true) {
+        throw Error(`Missing mandatory query parameter: '${key}'`);
+      }
+    });
+  }
   return url;
 };
