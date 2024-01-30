@@ -25,11 +25,12 @@ export const checkin = {
    *
    * @see [check-into-an-item]{@link https://trakt.docs.apiary.io/#reference/checkin/checkin/check-into-an-item}
    */
-  add: new TraktClientEndpoint<TraktCheckinRequest, TraktCheckin>({
+  add: new TraktClientEndpoint<TraktCheckinRequest, TraktCheckin, false>({
     method: HttpMethod.POST,
     url: '/checkin',
     opts: {
       auth: true,
+      cache: false,
     },
     body: {
       sharing: false,
@@ -45,11 +46,12 @@ export const checkin = {
    *
    * @see [delete-any-active-checkins]{@link https://trakt.docs.apiary.io/#reference/checkin/checkin/delete-any-active-checkins}
    */
-  delete: new TraktClientEndpoint({
+  delete: new TraktClientEndpoint<Record<string, never>, unknown, false>({
     method: HttpMethod.DELETE,
     url: '/checkin',
     opts: {
       auth: true,
+      cache: false,
     },
   }),
 };

@@ -200,8 +200,8 @@ export type PartialTraktApiParams<
   (P extends false ? Record<string, never> : TraktApiParamsPagination);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
-export type ITraktApi<T extends TraktApiParams = any> = {
-  [key: string]: TraktClientEndpoint<T> | ITraktApi<T>;
+export type ITraktApi<Parameter extends TraktApiParams = any, Response = unknown, Cache extends boolean = boolean> = {
+  [key: string]: TraktClientEndpoint<Parameter, Response, Cache> | ITraktApi<Parameter>;
 };
 
 export const TraktApiHeaders = {

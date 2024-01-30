@@ -42,10 +42,14 @@ export const tvdbApi = {
     },
     {
       token: string;
-    }
+    },
+    false
   >({
     method: HttpMethod.POST,
     url: '/login',
+    opts: {
+      cache: false,
+    },
     body: {
       apiKey: true,
       pin: false,

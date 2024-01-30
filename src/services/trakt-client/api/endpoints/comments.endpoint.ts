@@ -53,12 +53,13 @@ export const comments = {
      *
      * @see [post-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/comments/post-a-comment}
      */
-    add: new TraktClientEndpoint<TraktCommentRequest, TraktComment>({
+    add: new TraktClientEndpoint<TraktCommentRequest, TraktComment, false>({
       method: HttpMethod.POST,
       url: '/comments',
       opts: {
         auth: true,
         emoji: true,
+        cache: false,
       },
       body: {
         comment: true,
@@ -110,13 +111,15 @@ export const comments = {
         /** A specific comment ID. */
         id: number;
       },
-      TraktComment
+      TraktComment,
+      false
     >({
       method: HttpMethod.PUT,
       url: '/comments/:id',
       opts: {
         auth: true,
         emoji: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -138,14 +141,19 @@ export const comments = {
      *
      * @see [delete-a-comment-or-reply]{@link https://trakt.docs.apiary.io/#reference/comments/comment/delete-a-comment-or-reply}
      */
-    remove: new TraktClientEndpoint<{
-      /** A specific comment ID. */
-      id: number;
-    }>({
+    remove: new TraktClientEndpoint<
+      {
+        /** A specific comment ID. */
+        id: number;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/comments/:id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -196,13 +204,15 @@ export const comments = {
           /** Is this a spoiler? Defaults to false */
           spoiler?: boolean;
         },
-        TraktComment
+        TraktComment,
+        false
       >({
         method: HttpMethod.POST,
         url: '/comments/:id/replies',
         opts: {
           auth: true,
           emoji: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -273,14 +283,19 @@ export const comments = {
      * @see [like-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/replies/like-a-comment}
      */
     like: {
-      add: new TraktClientEndpoint<{
-        /** A specific comment ID. */
-        id: number;
-      }>({
+      add: new TraktClientEndpoint<
+        {
+          /** A specific comment ID. */
+          id: number;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.POST,
         url: '/comments/:id/like',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -295,14 +310,19 @@ export const comments = {
        *
        * @see [remove-like-on-a-comment]{@link https://trakt.docs.apiary.io/#reference/comments/like/remove-like-on-a-comment}
        */
-      remove: new TraktClientEndpoint<{
-        /** A specific comment ID. */
-        id: number;
-      }>({
+      remove: new TraktClientEndpoint<
+        {
+          /** A specific comment ID. */
+          id: number;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.DELETE,
         url: '/comments/:id/like',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,

@@ -141,14 +141,19 @@ export const sync = {
      *
      * @see [remove-playback-item]{@link https://trakt.docs.apiary.io/#reference/sync/remove-playback/remove-a-playback-item}
      */
-    remove: new TraktClientEndpoint<{
-      /** playback ID */
-      id: number;
-    }>({
+    remove: new TraktClientEndpoint<
+      {
+        /** playback ID */
+        id: number;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/sync/playback/:id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -206,9 +211,10 @@ export const sync = {
      *
      * @see [add-to-collection]{@link https://trakt.docs.apiary.io/#reference/sync/add-to-collection/add-items-to-collection}
      */
-    add: new TraktClientEndpoint<TraktCollectionRequest<'metadata'>, TraktCollectionAdded>({
+    add: new TraktClientEndpoint<TraktCollectionRequest<'metadata'>, TraktCollectionAdded, false>({
       opts: {
         auth: true,
+        cache: false,
       },
       method: HttpMethod.POST,
       url: '/sync/collection',
@@ -226,11 +232,12 @@ export const sync = {
      *
      * @see [remove-items-from-collection]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-collection/remove-items-from-collection}
      */
-    remove: new TraktClientEndpoint<TraktSyncRequest, TraktCollectionRemoved>({
+    remove: new TraktClientEndpoint<TraktSyncRequest, TraktCollectionRemoved, false>({
       method: HttpMethod.POST,
       url: '/sync/collection/remove',
       opts: {
         auth: true,
+        cache: false,
       },
       body: {
         movies: false,
@@ -340,11 +347,12 @@ export const sync = {
      *
      * @see [add-items-to-watched-history]{@link https://trakt.docs.apiary.io/#reference/sync/add-to-history/add-items-to-watched-history}
      */
-    add: new TraktClientEndpoint<TraktHistoryRequest, TraktHistoryAdded>({
+    add: new TraktClientEndpoint<TraktHistoryRequest, TraktHistoryAdded, false>({
       method: HttpMethod.POST,
       url: '/sync/history',
       opts: {
         auth: true,
+        cache: false,
       },
       body: {
         movies: false,
@@ -365,11 +373,12 @@ export const sync = {
      *
      * @see [remove-items-from-history]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-history/remove-items-from-history}
      */
-    remove: new TraktClientEndpoint<TraktHistoryRemovedRequest, TraktHistoryRemoved>({
+    remove: new TraktClientEndpoint<TraktHistoryRemovedRequest, TraktHistoryRemoved, false>({
       method: HttpMethod.POST,
       url: '/sync/history/remove',
       opts: {
         auth: true,
+        cache: false,
       },
       body: {
         movies: false,
@@ -427,9 +436,10 @@ export const sync = {
      *
      * @see [add-new-ratings]{@link https://trakt.docs.apiary.io/#reference/sync/add-ratings/add-new-ratings}
      */
-    add: new TraktClientEndpoint<TraktRatingRequest, TraktRatingAdded>({
+    add: new TraktClientEndpoint<TraktRatingRequest, TraktRatingAdded, false>({
       opts: {
         auth: true,
+        cache: false,
       },
       method: HttpMethod.POST,
       url: '/sync/ratings',
@@ -447,11 +457,12 @@ export const sync = {
      *
      * @see [remove-ratings]{@link https://trakt.docs.apiary.io/#reference/sync/remove-ratings/remove-ratings}
      */
-    remove: new TraktClientEndpoint<TraktSyncRequest, TraktRatingRemoved>({
+    remove: new TraktClientEndpoint<TraktSyncRequest, TraktRatingRemoved, false>({
       method: HttpMethod.POST,
       url: '/sync/ratings/remove',
       opts: {
         auth: true,
+        cache: false,
       },
       body: {
         movies: false,
@@ -524,11 +535,12 @@ export const sync = {
        *
        * @see [update-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/update-watchlist}
        */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlistList>({
+      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlistList, false>({
         method: HttpMethod.PUT,
         url: '/sync/watchlist',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           description: false,
@@ -558,12 +570,13 @@ export const sync = {
        *
        * @see [add-items-to-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/add-items-to-watchlist}
        */
-      add: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistAdded>({
+      add: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistAdded, false>({
         method: HttpMethod.POST,
         url: '/sync/watchlist',
         opts: {
           auth: true,
           emoji: true,
+          cache: false,
           vip: 'enhanced',
         },
         body: {
@@ -580,11 +593,12 @@ export const sync = {
        *
        * @see [remove-items-from-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-watchlist/remove-items-from-watchlist}
        */
-      remove: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistRemoved>({
+      remove: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistRemoved, false>({
         method: HttpMethod.POST,
         url: '/sync/watchlist/remove',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           movies: false,
@@ -605,12 +619,14 @@ export const sync = {
           /** Array of list ids in the new order. */
           rank: number[];
         },
-        TraktListReordered
+        TraktListReordered,
+        false
       >({
         method: HttpMethod.POST,
         url: '/sync/watchlist/reorder',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           rank: true,
@@ -626,17 +642,22 @@ export const sync = {
      *
      * @see [update-a-watchlist-item]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist-item/update-a-watchlist-item}
      */
-    updateItem: new TraktClientEndpoint<{
-      /** List Item ID */
-      list_item_id: number;
-      notes: string;
-    }>({
+    updateItem: new TraktClientEndpoint<
+      {
+        /** List Item ID */
+        list_item_id: number;
+        notes: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.PUT,
       url: '/sync/watchlist/:list_item_id',
       opts: {
         auth: true,
         emoji: true,
         vip: true,
+        cache: false,
         parameters: {
           path: {
             list_item_id: true,
@@ -696,11 +717,12 @@ export const sync = {
        *
        * @see [update-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/update-favorites}
        */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavoriteList>({
+      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavoriteList, false>({
         method: HttpMethod.PUT,
         url: '/sync/favorites',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           description: false,
@@ -726,11 +748,12 @@ export const sync = {
        *
        * @see [add-items-to-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/add-items-to-favorites}
        */
-      add: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteAdded>({
+      add: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteAdded, false>({
         method: HttpMethod.POST,
         url: '/sync/favorites',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           movies: false,
@@ -746,11 +769,12 @@ export const sync = {
        *
        * @see [remove-items-from-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-favorites/remove-items-from-favorites}
        */
-      remove: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteRemoved>({
+      remove: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteRemoved, false>({
         method: HttpMethod.POST,
         url: '/sync/favorites/remove',
         opts: {
           auth: true,
+          cache: false,
         },
         body: {
           movies: false,
@@ -770,10 +794,12 @@ export const sync = {
           /** Array of list ids in the new order. */
           rank: number[];
         },
-        TraktListReordered
+        TraktListReordered,
+        false
       >({
         opts: {
           auth: true,
+          cache: false,
         },
         method: HttpMethod.POST,
         url: '/sync/favorites/reorder',
@@ -789,16 +815,21 @@ export const sync = {
        *
        * @see [update-a-favorite-item]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorite-item/update-a-favorite-item}
        */
-      updateItem: new TraktClientEndpoint<{
-        /** List Item ID */
-        list_item_id: number;
-        notes: string;
-      }>({
+      updateItem: new TraktClientEndpoint<
+        {
+          /** List Item ID */
+          list_item_id: number;
+          notes: string;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.PUT,
         url: '/sync/favorites/:list_item_id',
         opts: {
           auth: true,
           emoji: true,
+          cache: false,
           parameters: {
             path: {
               list_item_id: true,

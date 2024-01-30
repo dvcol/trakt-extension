@@ -27,13 +27,14 @@ export const notes = {
    * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
    * @auth required
    */
-  add: new TraktClientEndpoint<TraktNoteRequest, TraktNote>({
+  add: new TraktClientEndpoint<TraktNoteRequest, TraktNote, false>({
     method: HttpMethod.POST,
     url: '/notes',
     opts: {
       auth: true,
       vip: true,
       emoji: true,
+      cache: false,
     },
     body: {
       note: true,
@@ -94,7 +95,8 @@ export const notes = {
       /** A specific note ID */
       id: number;
     },
-    TraktNote
+    TraktNote,
+    false
   >({
     method: HttpMethod.PUT,
     url: '/notes/:id',
@@ -102,6 +104,7 @@ export const notes = {
       auth: true,
       vip: true,
       emoji: true,
+      cache: false,
       parameters: {
         path: {
           id: true,
@@ -117,15 +120,20 @@ export const notes = {
    *
    * @see [delete-a-note]{@link https://trakt.docs.apiary.io/#reference/notes/note/delete-a-note}
    */
-  delete: new TraktClientEndpoint<{
-    /** A specific note ID */
-    id: number;
-  }>({
+  delete: new TraktClientEndpoint<
+    {
+      /** A specific note ID */
+      id: number;
+    },
+    unknown,
+    false
+  >({
     method: HttpMethod.DELETE,
     url: '/notes/:id',
     opts: {
       auth: true,
       vip: true,
+      cache: false,
       parameters: {
         path: {
           id: true,

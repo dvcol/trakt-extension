@@ -30,11 +30,12 @@ export const favorites = {
    *
    * @see [create-user-favorite]{@link https://thetvdb.github.io/v4-api/#/Favorites/createUserFavorites}
    */
-  add: new TvdbClientEndpoint<Record<string, never>, TvdbFavorite>({
+  add: new TvdbClientEndpoint<Record<string, never>, TvdbFavorite, false>({
     method: HttpMethod.POST,
     url: '/user/favorites',
     opts: {
       auth: true,
+      cache: false,
     },
     body: {
       series: false,

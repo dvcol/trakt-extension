@@ -85,6 +85,6 @@ export class TvdbClientEndpoint<
 > extends ClientEndpoint<Parameter, Response, Cache, TvdbApiTemplateOptions> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
-export type ITvdbApi<T extends TvdbApiParam = any> = {
-  [key: string]: TvdbClientEndpoint<T> | ITvdbApi<T>;
+export type ITvdbApi<Parameter extends TvdbApiParam = any, Response = unknown, Cache extends boolean = boolean> = {
+  [key: string]: TvdbClientEndpoint<Parameter, Response, Cache> | ITvdbApi<Parameter>;
 };
