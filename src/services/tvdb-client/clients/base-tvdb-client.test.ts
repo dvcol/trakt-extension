@@ -33,6 +33,10 @@ class TestableTvdbClient extends BaseTvdbClient {
     return this._parseHeaders(template);
   }
 
+  publicParseUrl<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>, params: T): URL {
+    return this._parseUrl(template, params);
+  }
+
   publicCall<P extends TvdbApiParam>(template: TvdbApiTemplate<P>, params: P = {} as P, init?: BaseInit) {
     return this._call<P>(template, params, init);
   }
@@ -42,9 +46,9 @@ describe('base-tvdb-client.ts', () => {
   const client = new TestableTvdbClient(tvdbClientSettings);
 
   const mockAuth: TvdbClientAuthentication = {
-    access_token: 'access_token',
+    accessToken: 'access_token',
     expires: 1000,
-    user_pin: 'user_pin',
+    userPin: 'user_pin',
   };
 
   type Params = {
@@ -105,6 +109,24 @@ describe('base-tvdb-client.ts', () => {
     expect(client.auth).toBeDefined();
   });
 
+  describe('_parseUrl', () => {
+    it('should prefix the url with /v4 if it does not start with it', () => {
+      expect.assertions(1);
+
+      const url = client.publicParseUrl({ ...mockTemplate }, mockParams);
+
+      expect(url.pathname).toBe('/v4/movies/requiredPath/popular');
+    });
+
+    it('should not prefix the url with /v4 if it starts with it', () => {
+      expect.assertions(1);
+
+      const url = client.publicParseUrl({ ...mockTemplate, url: `/v4${mockTemplate.url}` }, mockParams);
+
+      expect(url.pathname).toBe('/v4/movies/requiredPath/popular');
+    });
+  });
+
   describe('_parseHeaders', () => {
     it('should parse headers without auth', async () => {
       expect.assertions(1);
@@ -126,7 +148,7 @@ describe('base-tvdb-client.ts', () => {
       expect(parsed).toMatchObject({
         [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
         [BaseApiHeaders.UserAgent]: tvdbClientSettings.useragent,
-        [TraktApiHeaders.Authorization]: `Bearer ${mockAuth.access_token}`,
+        [TraktApiHeaders.Authorization]: `Bearer ${mockAuth.accessToken}`,
       });
     });
 
@@ -212,7 +234,7 @@ describe('base-tvdb-client.ts', () => {
 
     const result = await client.publicCall(mockTemplate, mockParams);
 
-    expect(spyFetch).toHaveBeenCalledWith('https://api4.thetvdb.com/movies/requiredPath/popular?requiredQuery=requiredQuery', {
+    expect(spyFetch).toHaveBeenCalledWith('https://api4.thetvdb.com/v4/movies/requiredPath/popular?requiredQuery=requiredQuery', {
       body: '{"requiredBody":"requiredBody"}',
       headers: {
         [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,

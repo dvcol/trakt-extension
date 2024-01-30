@@ -51,6 +51,7 @@ export type TvdbSearchQuery = {
 };
 
 export type TvdbSearch = {
+  objectID: string;
   aliases: string[];
   companies: string[];
   companyType: string;
@@ -64,7 +65,6 @@ export type TvdbSearch = {
   is_official: boolean;
   name_translated: string;
   network: string;
-  objectID: string;
   officialList: string;
   overview: string;
   /** Record of languages with their translations */
