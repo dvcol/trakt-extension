@@ -554,13 +554,15 @@ export const shows = {
         /** Trakt ID, Trakt slug, or IMDB ID */
         id: string;
       },
-      TraktProgressReset
+      TraktProgressReset,
+      false
     >({
       method: HttpMethod.POST,
       url: '/shows/:id/progress/watched/reset',
       opts: {
         auth: true,
         vip: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -576,15 +578,20 @@ export const shows = {
      *
      * @see [undo-reset-show-progress]{@link https://trakt.docs.apiary.io/#reference/shows/reset-watched-progress/undo-reset-show-progress}
      */
-    undoReset: new TraktClientEndpoint<{
-      /** Trakt ID, Trakt slug, or IMDB ID */
-      id: string;
-    }>({
+    undoReset: new TraktClientEndpoint<
+      {
+        /** Trakt ID, Trakt slug, or IMDB ID */
+        id: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/shows/:id/progress/watched/reset',
       opts: {
         auth: true,
         vip: true,
+        cache: false,
         parameters: {
           path: {
             id: true,

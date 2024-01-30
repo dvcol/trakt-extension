@@ -38,7 +38,7 @@ export const authentication = {
      *
      * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
      */
-    authorize: new TraktClientEndpoint<TraktAuthenticationAuthorizeRequest>({
+    authorize: new TraktClientEndpoint<TraktAuthenticationAuthorizeRequest, unknown, false>({
       method: HttpMethod.GET,
       url: '/oauth/authorize?response_type=code&client_id=&redirect_uri=&state=',
       init: {
@@ -46,6 +46,7 @@ export const authentication = {
         credentials: 'omit',
       },
       opts: {
+        cache: false,
         parameters: {
           query: {
             response_type: true,
@@ -71,9 +72,12 @@ export const authentication = {
        *
        * @see [exchange-code-for-access_token]{@link https://trakt.docs.apiary.io/reference/authentication-oauth/get-token/exchange-code-for-access_token}
        */
-      code: new TraktClientEndpoint<TraktAuthenticationCodeRequest, TraktAuthentication>({
+      code: new TraktClientEndpoint<TraktAuthenticationCodeRequest, TraktAuthentication, false>({
         method: HttpMethod.POST,
         url: '/oauth/token',
+        opts: {
+          cache: false,
+        },
         body: {
           code: true,
           client_id: true,
@@ -91,9 +95,12 @@ export const authentication = {
        *
        * @see [exchange-refresh_token-for-access_token]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/get-token/exchange-refresh_token-for-access_token}
        */
-      refresh: new TraktClientEndpoint<TraktAuthenticationRefreshRequest, TraktAuthentication>({
+      refresh: new TraktClientEndpoint<TraktAuthenticationRefreshRequest, TraktAuthentication, false>({
         method: HttpMethod.POST,
         url: '/oauth/token',
+        opts: {
+          cache: false,
+        },
         body: {
           refresh_token: true,
           client_id: true,
@@ -109,9 +116,12 @@ export const authentication = {
      *
      * @see [revoke-token]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/revoke-token}
      */
-    revoke: new TraktClientEndpoint<TraktAuthenticationRevokeRequest>({
+    revoke: new TraktClientEndpoint<TraktAuthenticationRevokeRequest, unknown, false>({
       method: HttpMethod.POST,
       url: '/oauth/revoke',
+      opts: {
+        cache: false,
+      },
       body: {
         token: true,
         client_id: true,
@@ -158,10 +168,14 @@ export const authentication = {
         /** Get this from your app settings. */
         client_id: string;
       },
-      TraktDeviceAuthentication
+      TraktDeviceAuthentication,
+      false
     >({
       method: HttpMethod.POST,
       url: '/oauth/device/code',
+      opts: {
+        cache: false,
+      },
       body: {
         client_id: true,
       },
@@ -197,10 +211,14 @@ export const authentication = {
         /** Get this from your app settings. */
         client_secret: string;
       },
-      TraktAuthentication
+      TraktAuthentication,
+      false
     >({
       method: HttpMethod.POST,
       url: '/oauth/device/token',
+      opts: {
+        cache: false,
+      },
       body: {
         code: true,
         client_id: true,

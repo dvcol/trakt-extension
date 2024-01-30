@@ -123,14 +123,19 @@ export const lists = {
      *
      * @see [remove-like-on-a-list]{@link https://trakt.docs.apiary.io/#reference/lists/list-like/remove-like-on-a-list}
      */
-    remove: new TraktClientEndpoint<{
-      /** Trakt ID (i.e. 15) */
-      id: number;
-    }>({
+    remove: new TraktClientEndpoint<
+      {
+        /** Trakt ID (i.e. 15) */
+        id: number;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/lists/:id/like',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,

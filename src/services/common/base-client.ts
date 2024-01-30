@@ -116,8 +116,8 @@ export class ClientEndpoint<
   }
 }
 
-export type IApi<T extends RecursiveRecord = RecursiveRecord> = {
-  [key: string]: ClientEndpoint<T> | IApi<T>;
+export type IApi<Parameter extends RecursiveRecord = RecursiveRecord, Response = unknown, Cache extends boolean = boolean> = {
+  [key: string]: ClientEndpoint<Parameter, Response, Cache> | IApi<Parameter>;
 };
 
 /**
@@ -221,8 +221,7 @@ export abstract class BaseClient<
    *
    * @example client.endpoints({ request })
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
-  protected bindToEndpoint(api: IApi<any>) {
+  protected bindToEndpoint(api: IApi) {
     const client = { ...api };
     Object.entries(client).forEach(([endpoint, template]) => {
       if (isApiTemplate(template) && isApiTemplate(client[endpoint])) {

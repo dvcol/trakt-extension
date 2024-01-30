@@ -125,12 +125,14 @@ export const users = {
         /** ID of the follower request. */
         id: number;
       },
-      TraktUserFollower
+      TraktUserFollower,
+      false
     >({
       method: HttpMethod.POST,
       url: '/users/requests/:id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -145,14 +147,19 @@ export const users = {
      *
      * @see [deny-follow-request]{@link https://trakt.docs.apiary.io/#reference/users/approve-or-deny-follower-requests/deny-follow-request}
      */
-    deny: new TraktClientEndpoint<{
-      /** ID of the follower request. */
-      id: number;
-    }>({
+    deny: new TraktClientEndpoint<
+      {
+        /** ID of the follower request. */
+        id: number;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/users/requests/:id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -235,11 +242,12 @@ export const users = {
        *
        * @see [add-hidden-items]{@link https://trakt.docs.apiary.io/#reference/users/add-hidden-items/add-hidden-items}
        */
-      add: new TraktClientEndpoint<TraktUserHiddenRequest, TraktUserHiddenAdded>({
+      add: new TraktClientEndpoint<TraktUserHiddenRequest, TraktUserHiddenAdded, false>({
         method: HttpMethod.POST,
         url: '/users/hidden/:section',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               section: true,
@@ -260,11 +268,12 @@ export const users = {
        *
        * @see [remove-hidden-items]{@link https://trakt.docs.apiary.io/#reference/users/remove-hidden-items/remove-hidden-items}
        */
-      remove: new TraktClientEndpoint<TraktUserHiddenRequest, TraktUserHiddenDeleted>({
+      remove: new TraktClientEndpoint<TraktUserHiddenRequest, TraktUserHiddenDeleted, false>({
         method: HttpMethod.POST,
         url: '/users/hidden/:section/remove',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               section: true,
@@ -551,12 +560,14 @@ export const users = {
           | 'collected';
         sort_how?: 'asc' | 'desc';
       },
-      TraktList
+      TraktList,
+      false
     >({
       method: HttpMethod.POST,
       url: '/users/:id/lists',
       opts: {
         auth: true,
+        cache: false,
         vip: 'enhanced',
         parameters: {
           path: {
@@ -586,12 +597,14 @@ export const users = {
         /** Array of list ids in the new order. */
         rank: number[];
       },
-      Omit<TraktListReordered, 'list'>
+      Omit<TraktListReordered, 'list'>,
+      false
     >({
       method: HttpMethod.POST,
       url: '/users/:id/lists/reorder',
       opts: {
         auth: true,
+        cache: false,
       },
       body: {
         rank: true,
@@ -706,12 +719,14 @@ export const users = {
           | 'collected';
         sort_how?: 'asc' | 'desc';
       },
-      TraktList
+      TraktList,
+      false
     >({
       method: HttpMethod.PUT,
       url: '/users/:id/lists/:list_id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -734,16 +749,21 @@ export const users = {
      *
      * @see [delete-a-user's-personal-list]{@link https://trakt.docs.apiary.io/#reference/users/list/delete-a-user's-personal-list}
      */
-    delete: new TraktClientEndpoint<{
-      /** User slug */
-      id: string;
-      /** List Trakt ID or Trakt slug */
-      list_id: string;
-    }>({
+    delete: new TraktClientEndpoint<
+      {
+        /** User slug */
+        id: string;
+        /** List Trakt ID or Trakt slug */
+        list_id: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/users/:id/lists/:list_id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -790,16 +810,21 @@ export const users = {
        *
        * @see [like-a-list]{@link https://trakt.docs.apiary.io/#reference/users/list-like/like-a-list}
        */
-      add: new TraktClientEndpoint<{
-        /** User slug */
-        id: string;
-        /** List Trakt ID or Trakt slug */
-        list_id: string;
-      }>({
+      add: new TraktClientEndpoint<
+        {
+          /** User slug */
+          id: string;
+          /** List Trakt ID or Trakt slug */
+          list_id: string;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/like',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -815,16 +840,21 @@ export const users = {
        *
        * @see [remove-like-on-a-list]{@link https://trakt.docs.apiary.io/#reference/users/list-like/remove-like-on-a-list}
        */
-      remove: new TraktClientEndpoint<{
-        /** User slug */
-        id: string;
-        /** List Trakt ID or Trakt slug */
-        list_id: string;
-      }>({
+      remove: new TraktClientEndpoint<
+        {
+          /** User slug */
+          id: string;
+          /** List Trakt ID or Trakt slug */
+          list_id: string;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.DELETE,
         url: '/users/:id/lists/:list_id/like',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -913,12 +943,14 @@ export const users = {
           /** List Trakt ID or Trakt slug */
           list_id: string;
         } & TraktUserListItemRequest,
-        TraktUserListItemAdded
+        TraktUserListItemAdded,
+        false
       >({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/items',
         opts: {
           auth: true,
+          cache: false,
           vip: 'enhanced',
           emoji: true,
           parameters: {
@@ -950,12 +982,14 @@ export const users = {
           /** List Trakt ID or Trakt slug */
           list_id: string;
         } & TraktUserListItemRemoveRequest,
-        TraktUserListItemRemoved
+        TraktUserListItemRemoved,
+        false
       >({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/items/remove',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -987,12 +1021,14 @@ export const users = {
           /** Array of list item ids in the new order. */
           rank: number[];
         },
-        TraktListReordered
+        TraktListReordered,
+        false
       >({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/items/reorder',
         opts: {
           auth: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -1013,22 +1049,27 @@ export const users = {
        *
        * @see [update-list-item/update-a-list-item]{@link https://trakt.docs.apiary.io/#reference/users/update-list-item/update-a-list-item}
        */
-      update: new TraktClientEndpoint<{
-        /** User slug */
-        id: string;
-        /** List Trakt ID or Trakt slug */
-        list_id: string;
-        /** List item ID */
-        list_item_id: string;
-        /** List item notes */
-        notes: string;
-      }>({
+      update: new TraktClientEndpoint<
+        {
+          /** User slug */
+          id: string;
+          /** List Trakt ID or Trakt slug */
+          list_id: string;
+          /** List item ID */
+          list_item_id: string;
+          /** List item notes */
+          notes: string;
+        },
+        unknown,
+        false
+      >({
         method: HttpMethod.PUT,
         url: 'users/:id/lists/:list_id/items/:list_item_id',
         opts: {
           auth: true,
           vip: true,
           emoji: true,
+          cache: false,
           parameters: {
             path: {
               id: true,
@@ -1101,12 +1142,14 @@ export const users = {
         /** User slug */
         id: string;
       },
-      TraktUserFollow
+      TraktUserFollow,
+      false
     >({
       method: HttpMethod.POST,
       url: '/users/:id/follow',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,
@@ -1121,14 +1164,19 @@ export const users = {
      *
      * @see [unfollow-this-user]{@link https://trakt.docs.apiary.io/#reference/users/follow/unfollow-this-user}
      */
-    remove: new TraktClientEndpoint<{
-      /** User slug */
-      id: string;
-    }>({
+    remove: new TraktClientEndpoint<
+      {
+        /** User slug */
+        id: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/users/:id/follow',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,

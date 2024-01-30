@@ -19,11 +19,12 @@ export const scrobble = {
    *
    * @see [start-watching-in-a-media-center]{@link https://trakt.docs.apiary.io/#reference/scrobble/start/start-watching-in-a-media-center}
    */
-  start: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'start'>>({
+  start: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'start'>, false>({
     method: HttpMethod.POST,
     url: '/scrobble/start',
     opts: {
       auth: true,
+      cache: false,
     },
     body: {
       progress: true,
@@ -40,11 +41,12 @@ export const scrobble = {
    *
    * @see [pause-watching-in-a-media-center]{@link https://trakt.docs.apiary.io/#reference/scrobble/pause/pause-watching-in-a-media-center}
    */
-  pause: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'pause'>>({
+  pause: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'pause'>, false>({
     method: HttpMethod.POST,
     url: '/scrobble/pause',
     opts: {
       auth: true,
+      cache: false,
     },
     body: {
       progress: true,
@@ -76,11 +78,12 @@ export const scrobble = {
    *
    * @see [stop-or-finish-watching-in-a-media-center]{@link https://trakt.docs.apiary.io/#reference/scrobble/stop/stop-or-finish-watching-in-a-media-center}
    */
-  stop: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'stop'>>({
+  stop: new TraktClientEndpoint<TraktScrobbleRequest, TraktScrobble<'stop'>, false>({
     method: HttpMethod.POST,
     url: '/scrobble/stop',
     opts: {
       auth: true,
+      cache: false,
     },
     body: {
       progress: true,
