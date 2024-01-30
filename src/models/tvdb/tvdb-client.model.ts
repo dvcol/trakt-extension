@@ -71,14 +71,18 @@ export type TvdbApiTemplateOptions = BaseTemplateOptions & {
   auth?: boolean;
 };
 
-export type TvdbApiTemplate<P extends TvdbApiParam = TvdbApiParam> = BaseTemplate<P, TvdbApiTemplateOptions>;
+export type TvdbApiTemplate<Parameter extends TvdbApiParam = TvdbApiParam> = BaseTemplate<Parameter, TvdbApiTemplateOptions>;
 
-export interface TvdbClientEndpoint<P extends TvdbApiParam = Record<string, never>, R = unknown> {
-  (param?: P, init?: BodyInit): Promise<TvdbApiResponse<R>>;
+export interface TvdbClientEndpoint<Parameter extends TvdbApiParam = Record<string, never>, Response = unknown> {
+  (param?: Parameter, init?: BodyInit): Promise<TvdbApiResponse<Response>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class TvdbClientEndpoint<P extends TvdbApiParam = Record<string, never>> extends ClientEndpoint<P, TvdbApiTemplateOptions> {}
+export class TvdbClientEndpoint<
+  Parameter extends TvdbApiParam = Record<string, never>,
+  Response = unknown,
+  Cache extends boolean = true,
+> extends ClientEndpoint<Parameter, Response, Cache, TvdbApiTemplateOptions> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
 export type ITvdbApi<T extends TvdbApiParam = any> = {

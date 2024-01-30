@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TraktApiHeaders } from '../../models/trakt/trakt-client.model';
+import { TraktApiHeaders, type TraktApiResponse } from '../../models/trakt/trakt-client.model';
 
 import { CancellableFetch } from '../../utils/fetch.utils';
 
@@ -28,14 +28,95 @@ import type { RecursiveRecord } from '../../utils/typescript.utils';
 
 const mockEndpoint = 'https://api-endpoint.url';
 
+const api = {
+  endpoint: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint',
+  }),
+  anotherEndpoint: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/another-endpoint',
+  }),
+  endpointWithParams: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-param/:param',
+    opts: {
+      parameters: {
+        path: {
+          param: true,
+        },
+      },
+    },
+  }),
+  endpointWithValidation: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-validation/:param',
+    opts: {
+      parameters: {
+        path: {
+          param: true,
+        },
+      },
+      validate: {
+        param: (value: string) => value === 'valid',
+      },
+    },
+  }),
+  endpointWithBody: new ClientEndpoint({
+    method: HttpMethod.POST,
+    url: '/endpoint-with-body',
+    body: {
+      param: true,
+    },
+  }),
+  endpointWithInit: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-init',
+    init: {
+      headers: {
+        'X-Custom-Header': 'custom-value',
+      },
+    },
+  }),
+  endpointWithCache: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-cache',
+    opts: {
+      cache: true,
+    },
+  }),
+  endpointWitCacheRetention: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-cache-retention',
+    opts: {
+      cache: 20,
+    },
+  }),
+  endpointWithoutCache: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-without-cache',
+    opts: {
+      cache: false,
+    },
+  }),
+} satisfies IApi;
+
+type IEndpoints = typeof api;
+
 type TestableAuthentication = Record<string, string | number>;
 
-class TestableBaseClient extends BaseClient {
-  constructor(settings: BaseOptions, authentication: TestableAuthentication, api: IApi) {
-    super(settings, authentication, api);
+/** Needed to type Object assignment */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
+interface TestableBaseClient extends IEndpoints {}
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
+class TestableBaseClient extends BaseClient implements IEndpoints {
+  constructor(settings: BaseOptions, authentication: TestableAuthentication = {}, _api: IApi = api) {
+    super(settings, authentication, _api);
   }
 
   get callListeners() {
+    // @ts-expect-error -- private property
     return this._callListeners;
   }
 
@@ -71,66 +152,24 @@ class TestableBaseClient extends BaseClient {
 }
 
 describe('base-client.ts', () => {
-  const cacheStore: CacheStore<ResponseOrTypedResponse> = {
-    get: vi.fn(),
-    set: vi.fn(),
-    clear: vi.fn(),
-    delete: vi.fn(),
+  const cacheStore: CacheStore<ResponseOrTypedResponse> = new Map();
+  const spyCacheStore = {
+    get: vi.spyOn(cacheStore, 'get'),
+    set: vi.spyOn(cacheStore, 'set'),
+    clear: vi.spyOn(cacheStore, 'clear'),
+    delete: vi.spyOn(cacheStore, 'delete'),
   };
 
-  const api: IApi = {
-    endpoint: new ClientEndpoint({
-      method: HttpMethod.GET,
-      url: '/endpoint',
-    }),
-    anotherEndpoint: new ClientEndpoint({
-      method: HttpMethod.GET,
-      url: '/another-endpoint',
-    }),
-    endpointWithParams: new ClientEndpoint({
-      method: HttpMethod.GET,
-      url: '/endpoint/:param',
-      opts: {
-        parameters: {
-          path: {
-            param: true,
-          },
-        },
-      },
-    }),
-    endpointWithValidation: new ClientEndpoint({
-      method: HttpMethod.GET,
-      url: '/endpoint/:param',
-      opts: {
-        parameters: {
-          path: {
-            param: true,
-          },
-        },
-        validate: {
-          param: (value: string) => value === 'valid',
-        },
-      },
-    }),
-    endpointWithBody: new ClientEndpoint({
-      method: HttpMethod.POST,
-      url: '/endpoint',
-      body: {
-        param: true,
-      },
-    }),
-    endpointWithInit: new ClientEndpoint({
-      method: HttpMethod.GET,
-      url: '/endpoint',
-      init: {
-        headers: {
-          'X-Custom-Header': 'custom-value',
-        },
-      },
-    }),
+  const client: TestableBaseClient = new TestableBaseClient({ cacheStore });
+  const fetch = vi.spyOn(CancellableFetch, 'fetch').mockResolvedValue(new Response());
+
+  const payload = {
+    headers: {
+      [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
+    },
+    method: HttpMethod.GET,
   };
 
-  const client = new TestableBaseClient({ cacheStore }, {}, api);
   const auth: TestableAuthentication = {
     refresh_token: 'refresh_token',
     access_token: 'access_token',
@@ -151,9 +190,21 @@ describe('base-client.ts', () => {
     query: new Promise(() => {}) as CancellablePromise<unknown>,
   };
 
-  afterEach(() => {
+  afterEach(async () => {
+    await client.clearCache();
     vi.clearAllMocks();
   });
+
+  const hasTemplateProperty = (_client: ClientEndpoint | ClientEndpoint['cached'], template: BaseTemplate, recursive = true) => {
+    expect(_client).toBeTypeOf('function');
+    expect(_client.method).toBeDefined();
+    expect(_client.url).toBeDefined();
+    expect(_client.opts).toBeDefined();
+    if (template.validate) expect(_client.validate).toBeDefined();
+    if (template.body) expect(_client.body).toBeDefined();
+    if (template.init) expect(_client.init).toBeDefined();
+    if (recursive && template.opts?.cache) hasTemplateProperty((_client as ClientEndpoint).cached, template, false);
+  };
 
   const hasOwnProperty = (template: RecursiveRecord, _client: RecursiveRecord) =>
     Object.keys(template).forEach(endpoint => {
@@ -161,13 +212,7 @@ describe('base-client.ts', () => {
       if (!(template[endpoint] instanceof ClientEndpoint)) {
         hasOwnProperty(template[endpoint], _client[endpoint]);
       } else {
-        expect(_client[endpoint]).toBeTypeOf('function');
-        expect(_client[endpoint].method).toBeDefined();
-        expect(_client[endpoint].url).toBeDefined();
-        expect(_client[endpoint].opts).toBeDefined();
-        if (template[endpoint].validate) expect(_client[endpoint].validate).toBeDefined();
-        if (template[endpoint].body) expect(_client[endpoint].body).toBeDefined();
-        if (template[endpoint].init) expect(_client[endpoint].init).toBeDefined();
+        hasTemplateProperty(_client[endpoint], template[endpoint]);
       }
     });
 
@@ -183,7 +228,7 @@ describe('base-client.ts', () => {
 
       await client.clearCache('key');
 
-      expect(cacheStore.delete).toHaveBeenCalledWith('key');
+      expect(spyCacheStore.delete).toHaveBeenCalledWith('key');
     });
 
     it('should delete a cached entry', async () => {
@@ -191,7 +236,142 @@ describe('base-client.ts', () => {
 
       await client.clearCache();
 
-      expect(cacheStore.clear).toHaveBeenCalledWith();
+      expect(spyCacheStore.clear).toHaveBeenCalledWith();
+    });
+
+    describe('cache', () => {
+      it('should not have cache function', async () => {
+        expect.assertions(1);
+
+        expect(client.endpointWithoutCache.cached).toBeUndefined();
+      });
+
+      it('should not cache calls', async () => {
+        expect.assertions(2);
+
+        await client.endpointWithCache();
+        await client.endpointWithCache();
+        await client.endpointWithCache();
+
+        expect(fetch).toHaveBeenCalledTimes(3);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
+
+      it('should cache subsequent calls', async () => {
+        expect.assertions(2);
+
+        await client.endpointWithCache.cached();
+        await client.endpointWithCache.cached();
+        await client.endpointWithCache.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache cleared', async () => {
+        expect.assertions(2);
+
+        await client.endpointWithCache.cached();
+        await client.endpointWithCache.cached();
+        await client.clearCache();
+        await client.endpointWithCache.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
+
+      it('should clear cache after error', async () => {
+        expect.assertions(3);
+
+        const error = new Error('Error');
+        fetch.mockRejectedValueOnce(error);
+
+        let err: unknown;
+        try {
+          await client.endpointWithCache.cached();
+        } catch (e) {
+          err = e;
+        } finally {
+          expect(err).toBe(error);
+        }
+        await client.endpointWithCache.cached();
+        await client.endpointWithCache.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired using endpoint retention', async () => {
+        expect.assertions(2);
+
+        await client.endpointWitCacheRetention.cached();
+        await client.endpointWitCacheRetention.cached();
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 20);
+        });
+
+        await client.endpointWitCacheRetention.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-retention', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired using param force', async () => {
+        expect.assertions(2);
+
+        await client.endpointWitCacheRetention.cached();
+        await client.endpointWitCacheRetention.cached(undefined, undefined, { force: true });
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 20);
+        });
+
+        await client.endpointWitCacheRetention.cached(undefined, undefined, { force: true });
+
+        expect(fetch).toHaveBeenCalledTimes(3);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-retention', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired using param retention', async () => {
+        expect.assertions(2);
+
+        await client.endpointWithCache.cached(undefined, undefined, { retention: 10 });
+        await client.endpointWithCache.cached(undefined, undefined, { retention: 10 });
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 10);
+        });
+
+        await client.endpointWithCache.cached(undefined, undefined, { retention: 10 });
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired using store retention', async () => {
+        expect.assertions(2);
+
+        const _cacheStore: CacheStore<TraktApiResponse> = new Map();
+        _cacheStore.retention = 15;
+        const _client = new TestableBaseClient({ cacheStore: _cacheStore });
+
+        await _client.endpointWithCache.cached();
+        await _client.endpointWithCache.cached();
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 15);
+        });
+
+        await _client.endpointWithCache.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
+      });
     });
   });
 

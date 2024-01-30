@@ -93,14 +93,18 @@ export type TraktApiTemplateOptions = BaseTemplateOptions & {
 
 export type TraktApiInit = BaseInit;
 
-export type TraktApiTemplate<P extends TraktApiParams = TraktApiParams> = BaseTemplate<P, TraktApiTemplateOptions>;
+export type TraktApiTemplate<Parameter extends TraktApiParams = TraktApiParams> = BaseTemplate<Parameter, TraktApiTemplateOptions>;
 
-export interface TraktClientEndpoint<P extends TraktApiParams = Record<string, never>, R = unknown> {
-  (param?: P, init?: TraktApiInit): Promise<TraktApiResponse<R>>;
+export interface TraktClientEndpoint<Parameter extends TraktApiParams = Record<string, never>, Response = unknown> {
+  (param?: Parameter, init?: TraktApiInit): Promise<TraktApiResponse<Response>>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class TraktClientEndpoint<P extends TraktApiParams = Record<string, never>> extends ClientEndpoint<P, TraktApiTemplateOptions> {}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
+export class TraktClientEndpoint<
+  Parameter extends TraktApiParams = Record<string, never>,
+  Response = unknown,
+  Cache extends boolean = true,
+> extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions> {}
 
 export type TraktApiRequest = BaseRequest;
 

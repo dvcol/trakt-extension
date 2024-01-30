@@ -38,6 +38,11 @@ export type BaseOptions<S extends RecursiveRecord = RecursiveRecord, R extends R
 };
 
 export type BaseTemplateOptions = {
+  /**
+   * Enables caching of requests (defaults to true).
+   * If a number is provided, it will be used as the retention time in milliseconds.
+   */
+  cache?: boolean | number;
   /** Boolean record or required (truthy) or optional parameters (falsy) */
   parameters?: {
     /** Boolean record or required (truthy) or optional path parameters (falsy) */
@@ -67,36 +72,47 @@ export type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
 
 export type ResponseOrTypedResponse<T = unknown> = T extends never ? Response : TypedResponse<T>;
 
-type ClientEndpointCall<P extends Record<string, never> = Record<string, never>, R = unknown> = (
-  param?: P,
+type ClientEndpointCall<Parameter extends Record<string, never> = Record<string, never>, Response = unknown> = (
+  param?: Parameter,
   init?: BaseInit,
-) => Promise<ResponseOrTypedResponse<R>>;
+) => Promise<ResponseOrTypedResponse<Response>>;
 
-export interface ClientEndpoint<P extends RecursiveRecord = Record<string, never>> {
-  (param?: P, init?: BaseInit): Promise<ResponseOrTypedResponse>;
+export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>> {
+  (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse>;
 }
+type BaseCacheOption = { force?: boolean; retention?: number };
+
+type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
+  param?: Parameter,
+  init?: BaseInit,
+  cacheOptions?: BaseCacheOption,
+) => Promise<ResponseOrTypedResponse<Response>>;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class ClientEndpoint<P extends RecursiveRecord = Record<string, never>, O extends BaseTemplateOptions = BaseTemplateOptions>
-  implements BaseTemplate<P, O>
+export class ClientEndpoint<
+  Parameter extends RecursiveRecord = Record<string, never>,
+  Response = unknown,
+  Cache extends boolean = true,
+  Option extends BaseTemplateOptions = BaseTemplateOptions,
+> implements BaseTemplate<Parameter, Option>
 {
   method: HttpMethods;
   url: string;
-  opts: O;
+  opts: Option;
   body?: Record<string, boolean>;
   init?: BaseInit;
-  validate?: (param: P) => boolean;
-  cached: Omit<this, 'cached'> & ((param?: P, init?: BaseInit) => Promise<ResponseOrTypedResponse>);
+  validate?: (param: Parameter) => boolean;
+  cached: Cache extends true ? Omit<this, 'cached'> & ClientEndpointCache<Parameter, Response> : never;
 
-  constructor(template: BaseTemplate<P, O>) {
+  constructor(template: BaseTemplate<Parameter, Option>) {
     this.method = template.method;
     this.url = template.url;
-    this.opts = template.opts ?? ({} as O);
+    this.opts = { cache: true, ...template.opts } as Option;
     this.init = template.init ?? {};
     this.body = template.body;
 
     this.validate = template.validate;
-    this.cached = this;
+    this.cached = (template.opts?.cache ? this : null) as never;
   }
 }
 
@@ -212,13 +228,17 @@ export abstract class BaseClient<
       if (isApiTemplate(template) && isApiTemplate(client[endpoint])) {
         const fn: ClientEndpointCall = (param, init) => this._call(template, param, init);
 
-        const cachedFn: ClientEndpointCall = async (param, init) => {
+        const cachedFn: ClientEndpointCache = async (param, init, cacheOptions) => {
           const key = JSON.stringify({ param, init });
-          const cached = await this._cache.get(key);
-          if (cached) {
-            if (!this._cache.retention) return cached.value;
-            const expires = cached.cachedAt + this._cache.retention;
-            if (expires > Date.now()) return cached.value;
+          if (!cacheOptions?.force) {
+            const cached = await this._cache.get(key);
+            if (cached) {
+              const templateRetention = typeof template.opts?.cache === 'number' ? template.opts.cache : undefined;
+              const retention = cacheOptions?.retention ?? templateRetention ?? this._cache.retention;
+              if (!retention) return cached.value;
+              const expires = cached.cachedAt + retention;
+              if (expires > Date.now()) return cached.value;
+            }
           }
           try {
             const result = await fn(param, init);
@@ -235,14 +255,12 @@ export abstract class BaseClient<
 
         Object.entries(client[endpoint]).forEach(([key, value]) => {
           if (key === 'cached') {
-            Object.defineProperty(fn, 'cached', { value: cachedFn });
+            if (template.opts?.cache) Object.defineProperty(fn, 'cached', { value: cachedFn });
           } else {
             Object.defineProperty(fn, key, { value });
-            Object.defineProperty(cachedFn, key, { value });
+            if (template.opts?.cache) Object.defineProperty(cachedFn, key, { value });
           }
         });
-
-        Object.defineProperty(fn, 'cached', { value: cachedFn });
 
         client[endpoint] = fn as (typeof client)[typeof endpoint];
       } else {
