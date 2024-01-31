@@ -31,7 +31,7 @@ export class TvdbClient extends BaseTvdbClient {
       expires: Date.now() + this.settings.tokenTTL,
     });
 
-    return auth;
+    return this.auth;
   }
 
   /**
@@ -45,7 +45,7 @@ export class TvdbClient extends BaseTvdbClient {
   async importAuthentication(auth: TvdbClientAuthentication): Promise<TvdbClientAuthentication> {
     this.updateAuth(auth);
 
-    if (auth.expires && auth.expires < Date.now()) await this.authenticate(auth.userPin);
+    if (auth.expires !== undefined && auth.expires < Date.now()) await this.authenticate(auth.userPin);
     return this.auth;
   }
 }
