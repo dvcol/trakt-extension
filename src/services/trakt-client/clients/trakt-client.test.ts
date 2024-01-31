@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { TraktApiHeaders, TraktClientEndpoint } from '../../../models/trakt/trakt-client.model';
+import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 
 import { traktClientSettings } from '../../../settings/traktv.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
 import { HttpMethod } from '../../../utils/http.utils';
 import { BaseHeaderContentType } from '../../common/base-client';
+import { hasOwnProperty } from '../../common/test.utils';
 import { traktApi } from '../api/trakt-api.endpoints';
 
 import { TraktClient } from './trakt-client';
@@ -14,8 +15,6 @@ import { TraktClient } from './trakt-client';
 import type { TraktAuthentication, TraktDeviceAuthentication } from '../../../models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '../../../models/trakt/trakt-client.model';
 import type { CacheStore } from '../../../utils/cache.utils';
-
-import type { RecursiveRecord } from '../../../utils/typescript.utils';
 
 describe('trakt-client.ts', () => {
   const traktClient = new TraktClient(traktClientSettings);
@@ -39,29 +38,13 @@ describe('trakt-client.ts', () => {
   });
 
   describe('traktClient', () => {
-    const hasOwnProperty = (template: RecursiveRecord, client: RecursiveRecord) =>
-      Object.keys(template).forEach(endpoint => {
-        expect(client).toHaveProperty(endpoint);
-        if (!(template[endpoint] instanceof TraktClientEndpoint)) {
-          hasOwnProperty(template[endpoint], client[endpoint]);
-        } else {
-          expect(client[endpoint]).toBeTypeOf('function');
-          expect(client[endpoint].method).toBeDefined();
-          expect(client[endpoint].url).toBeDefined();
-          expect(client[endpoint].opts).toBeDefined();
-          if (template[endpoint].validate) expect(client[endpoint].validate).toBeDefined();
-          if (template[endpoint].body) expect(client[endpoint].body).toBeDefined();
-          if (template[endpoint].init) expect(client[endpoint].init).toBeDefined();
-        }
-      });
-
     it('should have every endpoint', () => {
       expect.hasAssertions();
 
       hasOwnProperty(traktApi, traktClient);
     });
 
-    it('should query certifications with call method', async () => {
+    it('should query certifications method', async () => {
       expect.assertions(1);
 
       await traktClient.certifications({
@@ -69,16 +52,6 @@ describe('trakt-client.ts', () => {
       });
 
       expect(fetch).toHaveBeenCalledWith(new URL('/certifications/movies', traktClientSettings.endpoint).toString(), payload);
-    });
-
-    it('should query certifications with direct call', async () => {
-      expect.assertions(1);
-
-      await traktClient.certifications({
-        type: 'shows',
-      });
-
-      expect(fetch).toHaveBeenCalledWith(new URL('/certifications/shows', traktClientSettings.endpoint).toString(), payload);
     });
 
     describe('cache', () => {

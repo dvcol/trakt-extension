@@ -323,7 +323,7 @@ export class TraktClient extends BaseTraktClient {
   async importAuthentication(auth: TraktClientAuthentication): Promise<TraktClientAuthentication> {
     this.updateAuth(auth);
 
-    if (auth.expires && auth.expires < Date.now()) await this.refreshToken();
+    if (auth.expires !== undefined && auth.expires < Date.now()) await this.refreshToken();
     return this.auth;
   }
 }

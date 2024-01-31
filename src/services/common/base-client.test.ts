@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { TraktApiHeaders, type TraktApiResponse } from '../../models/trakt/trakt-client.model';
-
 import { CancellableFetch } from '../../utils/fetch.utils';
 
 import { HttpMethod } from '../../utils/http.utils';
@@ -20,9 +18,10 @@ import {
   type ResponseOrTypedResponse,
 } from './base-client';
 
+import { hasOwnProperty } from './test.utils';
+
 import type { CacheStore } from '../../utils/cache.utils';
 import type { CancellablePromise } from '../../utils/fetch.utils';
-
 import type { Updater } from '../../utils/observable.utils';
 import type { RecursiveRecord } from '../../utils/typescript.utils';
 
@@ -178,12 +177,11 @@ describe('base-client.ts', () => {
   };
   const query: BaseQuery = {
     request: {
-      input: 'https://api.trakt.tv/oauth/device/code',
+      input: 'https://api.domain.tv/oauth/device/code',
       init: {
         headers: {
-          [TraktApiHeaders.ContentType]: BaseHeaderContentType.Json,
-          [TraktApiHeaders.TraktApiKey]: 'client_id',
-          [TraktApiHeaders.TraktApiVersion]: '2',
+          [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
+          [BaseApiHeaders.UserAgent]: 'user_agent',
         },
       },
     },
@@ -194,27 +192,6 @@ describe('base-client.ts', () => {
     await client.clearCache();
     vi.clearAllMocks();
   });
-
-  const hasTemplateProperty = (_client: ClientEndpoint | ClientEndpoint['cached'], template: BaseTemplate, recursive = true) => {
-    expect(_client).toBeTypeOf('function');
-    expect(_client.method).toBeDefined();
-    expect(_client.url).toBeDefined();
-    expect(_client.opts).toBeDefined();
-    if (template.validate) expect(_client.validate).toBeDefined();
-    if (template.body) expect(_client.body).toBeDefined();
-    if (template.init) expect(_client.init).toBeDefined();
-    if (recursive && template.opts?.cache) hasTemplateProperty((_client as ClientEndpoint).cached, template, false);
-  };
-
-  const hasOwnProperty = (template: RecursiveRecord, _client: RecursiveRecord) =>
-    Object.keys(template).forEach(endpoint => {
-      expect(_client).toHaveProperty(endpoint);
-      if (!(template[endpoint] instanceof ClientEndpoint)) {
-        hasOwnProperty(template[endpoint], _client[endpoint]);
-      } else {
-        hasTemplateProperty(_client[endpoint], template[endpoint]);
-      }
-    });
 
   it('should have every endpoint', () => {
     expect.hasAssertions();
@@ -355,7 +332,7 @@ describe('base-client.ts', () => {
       it('should ignore cache if cache expired using store retention', async () => {
         expect.assertions(2);
 
-        const _cacheStore: CacheStore<TraktApiResponse> = new Map();
+        const _cacheStore: CacheStore = new Map();
         _cacheStore.retention = 15;
         const _client = new TestableBaseClient({ cacheStore: _cacheStore });
 
@@ -477,7 +454,7 @@ describe('base-client.ts', () => {
     requiredBody: 'requiredBody',
   };
 
-  // Mock TraktApiTemplate for testing
+  // Mock template for testing
   const mockTemplate: BaseTemplate<Params> = {
     url: '/movies/:requiredPath/:optionalPath/popular?requiredQuery=&optionalQuery=',
     method: HttpMethod.POST,
@@ -518,7 +495,7 @@ describe('base-client.ts', () => {
   });
 
   describe('parseUrl', () => {
-    it('should construct a valid URL for Trakt API request', async () => {
+    it('should construct a valid URL for API request', async () => {
       expect.assertions(2);
 
       const result = parseUrl(mockTemplate, mockParams, mockEndpoint);
