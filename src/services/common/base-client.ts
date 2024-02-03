@@ -13,6 +13,8 @@ export const BaseApiHeaders = {
   UserAgent: 'User-Agent',
   /** The content type of the payload  */
   ContentType: 'Content-Type',
+  /** The content type accepted */
+  Accept: 'accept',
 } as const;
 
 export const BaseHeaderContentType = {
