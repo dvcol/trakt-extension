@@ -1,10 +1,10 @@
-export type CacheStoreEntity<T> = {
+export type CacheStoreEntity<T = unknown> = {
   value: T;
   cachedAt: number;
   accessedAt?: number;
 };
 
-export type CacheStore<T> = {
+export type CacheStore<T = unknown> = {
   get(key: string): CacheStoreEntity<T> | Promise<CacheStoreEntity<T>> | undefined;
   set(key: string, value: CacheStoreEntity<T>): CacheStore<T> | Promise<CacheStore<T>>;
   delete(key: string): boolean | Promise<boolean>;

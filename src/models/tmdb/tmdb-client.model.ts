@@ -47,11 +47,13 @@ export type TmdbApiPagination = {
   total_results?: number;
 };
 
-export type TmdbApiResponsePageData<T = unknown> = TmdbApiPagination & {
-  results: T[];
-};
+export type TmdbApiResponsePageData<T = unknown, C = Record<string, string>> = Partial<TmdbApiResponseData> &
+  TmdbApiPagination & {
+    results: T[];
+  } & C;
 
-export type TmdbPaginatedData<T = unknown> = {
+export type TmdbPaginatedData<T = unknown, C = unknown> = {
+  common?: C;
   data: T[];
   pagination: TmdbApiPagination;
 };
@@ -62,6 +64,8 @@ export type TmdbApiQuery<T = unknown> = BaseQuery<BaseRequest, T>;
 export type TmdbApiTemplateOptions = BaseTemplateOptions & {
   /** If the method requires user authentication */
   auth?: boolean;
+  /** The api version (3 or 4) */
+  version: number | string;
 };
 
 export type TmdbApiTemplate<Parameter extends TmdbApiParam = TmdbApiParam> = BaseTemplate<Parameter, TmdbApiTemplateOptions>;

@@ -57,3 +57,9 @@ export type TmdbKeyword = {
   id: number;
   name: string;
 };
+
+export type TmdbAccountRating = {
+  /** Creation timestamp in ISO 8601 format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
+  created_at: string;
+  value: number;
+};

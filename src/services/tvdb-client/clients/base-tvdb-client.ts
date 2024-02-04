@@ -86,7 +86,7 @@ export class BaseTvdbClient
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
   protected _parseUrl<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>, params: T): URL {
-    if (!template.url.startsWith('/v4')) template.url = `/v4${template.url}`;
+    if (this.settings.version && !template.url.startsWith(`/${this.settings.version}`)) template.url = `/${this.settings.version}${template.url}`;
     return parseUrl<T>(template, params, this.settings.endpoint);
   }
 

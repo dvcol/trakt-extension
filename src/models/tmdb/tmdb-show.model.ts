@@ -1,4 +1,14 @@
-import type { EntityTypes, Extended, Short, TmdbCompany, TmdbCountry, TmdbGenre, TmdbLanguage, TmdbNetwork } from '~/models/tmdb/tmdb-entity.model';
+import type {
+  EntityTypes,
+  Extended,
+  Short,
+  TmdbAccountRating,
+  TmdbCompany,
+  TmdbCountry,
+  TmdbGenre,
+  TmdbLanguage,
+  TmdbNetwork,
+} from '~/models/tmdb/tmdb-entity.model';
 import type { TmdbEpisode } from '~/models/tmdb/tmdb-episode.model';
 import type { TmdbSeason } from '~/models/tmdb/tmdb-season.model';
 
@@ -11,6 +21,7 @@ export type TmdbPersonShow = {
 };
 
 export type TmdbShowShort = {
+  media_type?: 'tv';
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -55,3 +66,7 @@ export type TmdbShow<T extends EntityTypes = Short> = T extends Extended
   : T extends Short
     ? TmdbShowShort
     : TmdbShowShort | TmdbShowExtended;
+
+export type TmdbShowRating = TmdbShowShort & {
+  account_rating: TmdbAccountRating;
+};

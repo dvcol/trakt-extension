@@ -25,20 +25,29 @@ type ITmdbEndpoints = typeof tmdbApi;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
 export interface BaseTmdbClient extends ITmdbEndpoints {}
 
-const parseResponse = (response: TmdbApiResponseData) => {
-  if (!response.success) throw response;
+const isPageResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData): response is TmdbApiResponsePageData =>
+  'page' in response && 'total_pages' in response && 'total_results' in response;
 
-  const _result: Record<string, unknown> = { ...response };
+const parsePageResponse = ({ page, total_pages, total_results, results, ...common }: TmdbApiResponsePageData): TmdbPaginatedData => {
+  const response: TmdbPaginatedData = { data: results, pagination: { page, total_pages, total_results } };
+  if (Object.keys(common).length) response.common = common;
+  return response;
+};
+
+const parseResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData) => {
+  if ('success' in response && !response.success) throw response;
+
+  let _result: Record<string, unknown> = { ...response };
 
   delete _result.status_code;
   delete _result.status_message;
   delete _result.success;
-  return response;
+
+  if (isPageResponse(response)) _result = parsePageResponse(response);
+  if ('results' in _result && Object.keys(_result).length === 1) return _result.results;
+
+  return _result;
 };
-
-const parsePageResponse = ({ results, ...pagination }: TmdbApiResponsePageData): TmdbPaginatedData => ({ data: results, pagination });
-
-const isPageResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData): response is TmdbApiResponsePageData => 'results' in response;
 
 /**
  * Represents a Tmdb API client with common functionality.
@@ -57,7 +66,7 @@ export class BaseTmdbClient
    * @param api - The API endpoints for the client.
    */
   constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = tmdbApi) {
-    super(options, authentication, api);
+    super(options, { readToken: options.readToken, ...authentication }, api);
   }
 
   /**
@@ -83,7 +92,7 @@ export class BaseTmdbClient
     } else if (template.opts?.auth) {
       headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.accessToken}`;
     } else {
-      headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.readToken}`;
+      headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.readToken ?? this.settings.readToken}`;
     }
 
     return headers;
@@ -104,6 +113,7 @@ export class BaseTmdbClient
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
   protected _parseUrl<T extends TmdbApiParam = TmdbApiParam>(template: TmdbApiTemplate<T>, params: T): URL {
+    if (template.opts?.version && !template.url.startsWith(`/${template.opts.version}`)) template.url = `/${template.opts.version}${template.url}`;
     return parseUrl<T>(template, params, this.settings.endpoint);
   }
 
@@ -139,7 +149,6 @@ export class BaseTmdbClient
     const _json = parsed.json as TmdbApiResponse<TmdbApiResponseData>['json'];
     parsed.json = async () => {
       const result = await _json.bind(parsed)();
-      if (isPageResponse(result)) return parsePageResponse(result);
       return parseResponse(result);
     };
     return response;
