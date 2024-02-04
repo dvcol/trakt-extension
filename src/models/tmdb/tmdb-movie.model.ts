@@ -1,7 +1,17 @@
 import type { TmdbCollection } from '~/models/tmdb/tmdb-collection.model';
-import type { EntityTypes, Extended, Short, TmdbCompany, TmdbCountry, TmdbGenre, TmdbLanguage } from '~/models/tmdb/tmdb-entity.model';
+import type {
+  EntityTypes,
+  Extended,
+  Short,
+  TmdbAccountRating,
+  TmdbCompany,
+  TmdbCountry,
+  TmdbGenre,
+  TmdbLanguage,
+} from '~/models/tmdb/tmdb-entity.model';
 
 export type TmdbMovieShort = {
+  media_type?: 'movie';
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -39,3 +49,7 @@ export type TmdbMovie<T extends EntityTypes = Short> = T extends Extended
   : T extends Short
     ? TmdbMovieShort
     : TmdbMovieShort | TmdbMovieExtended;
+
+export type TmdbMovieRating = TmdbMovie & {
+  account_rating: TmdbAccountRating;
+};

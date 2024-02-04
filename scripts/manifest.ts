@@ -7,8 +7,15 @@ import { getDirName, isDev, port, resolveParent } from './utils';
 import type { Manifest } from 'webextension-polyfill';
 
 export const Endpoints = {
-  Production: 'https://api.trakt.tv',
-  Staging: 'https://api-staging.trakt.tv',
+  trakt: {
+    Production: 'https://api.trakt.tv',
+    Staging: 'https://api-staging.trakt.tv',
+  },
+  tvdb: 'https://api4.thetvdb.co',
+  tmdb: {
+    api: 'https://api.themoviedb.org',
+    redirect: 'https://www.themoviedb.org',
+  },
 } as const;
 
 export const manifest: Manifest.WebExtensionManifest = {
@@ -38,10 +45,10 @@ export const manifest: Manifest.WebExtensionManifest = {
   web_accessible_resources: [
     {
       resources: ['/views/options/index.html'],
-      matches: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
+      matches: [`${Endpoints.trakt.Production}/*`, `${Endpoints.trakt.Staging}/*`, `${Endpoints.tvdb}/*`, `${Endpoints.tmdb.redirect}/*`],
     },
   ],
-  host_permissions: [`${Endpoints.Production}/*`, `${Endpoints.Staging}/*`],
+  host_permissions: [`${Endpoints.trakt.Production}/*`, `${Endpoints.trakt.Staging}/*`, `${Endpoints.tvdb}/*`, `${Endpoints.tmdb.api}/*`],
   content_security_policy: {
     // Adds localhost for vite hot reload
     extension_pages: isDev

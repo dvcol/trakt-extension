@@ -332,7 +332,7 @@ describe('base-client.ts', () => {
       it('should ignore cache if cache expired using store retention', async () => {
         expect.assertions(2);
 
-        const _cacheStore: CacheStore = new Map();
+        const _cacheStore: CacheStore<Response> = new Map();
         _cacheStore.retention = 15;
         const _client = new TestableBaseClient({ cacheStore: _cacheStore });
 

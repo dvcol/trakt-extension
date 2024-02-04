@@ -32,6 +32,9 @@ export const auth = {
    *   "redirect_to": "https://www.themoviedb.org/"
    * }
    *
+   * @auth read-token
+   * @version 4
+   *
    * @see [create-request-token]{@link https://developer.themoviedb.org/v4/reference/auth-create-request-token}
    */
   request: new TmdbClientEndpoint<
@@ -46,6 +49,7 @@ export const auth = {
     url: '/auth/request_token',
     opts: {
       cache: false,
+      version: 4,
     },
     body: {
       redirect_to: false,
@@ -62,6 +66,9 @@ export const auth = {
    *
    * Access tokens do not expire once they have been authenticated.
    *
+   * @auth read-token
+   * @version 4
+   *
    * @see [create-access-token]{@link https://developer.themoviedb.org/v4/reference/auth-create-access-token}
    */
   access: new TmdbClientEndpoint<
@@ -76,6 +83,7 @@ export const auth = {
     url: '/auth/access_token',
     opts: {
       cache: false,
+      version: 4,
     },
     body: {
       request_token: true,
@@ -83,6 +91,9 @@ export const auth = {
   }),
   /**
    * Log out of a session with the access token you received from the [create access token]{@link https://developer.themoviedb.org/v4/reference/auth-create-access-token} method.
+   *
+   * @auth read-token
+   * @version 4
    *
    * @see [delete-access-token]{@link https://developer.themoviedb.org/v4/reference/auth-logout}
    */
@@ -98,6 +109,7 @@ export const auth = {
     url: '/auth/access_token',
     opts: {
       cache: false,
+      version: 4,
     },
   }),
 };
