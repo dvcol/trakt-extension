@@ -2,7 +2,6 @@ import type { TmdbClientAuthentication } from '~/models/tmdb/tmdb-client.model';
 
 import { BaseTmdbClient } from '~/services/tmdb-client/clients/base-tmdb-client';
 import { Config } from '~/settings/tmdb.api';
-import { createTab } from '~/utils/browser/browser.utils';
 
 /**
  * TmdbClient is a wrapper around the TmdbApi to provide basic authentication and state management.
@@ -23,12 +22,10 @@ export class TmdbClient extends BaseTmdbClient {
    *
    * @returns A promise resolving to the request token and redirect information.
    */
-  async requestUserToken(redirect?: boolean, redirect_to?: string) {
+  async requestUserToken(redirect_to?: string) {
     const response = await this.v4.auth.request({ redirect_to });
 
     const { request_token } = await response.json();
-
-    if (redirect) createTab({ url: `${Config.requestTokenUrl}${request_token}` });
 
     return {
       request_token,
@@ -81,7 +78,7 @@ export class TmdbClient extends BaseTmdbClient {
    *
    * @returns A promise resolving to the imported authentication information.
    */
-  importAuthentication(auth: TmdbClientAuthentication): TmdbClientAuthentication {
+  importAuthentication(auth: TmdbClientAuthentication = {}): TmdbClientAuthentication {
     this.updateAuth(auth);
     return this.auth;
   }
