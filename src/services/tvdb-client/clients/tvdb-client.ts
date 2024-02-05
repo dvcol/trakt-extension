@@ -42,10 +42,10 @@ export class TvdbClient extends BaseTvdbClient {
    *
    * @returns A promise resolving to the imported authentication information.
    */
-  async importAuthentication(auth: TvdbClientAuthentication): Promise<TvdbClientAuthentication> {
+  async importAuthentication(auth: TvdbClientAuthentication = {}): Promise<TvdbClientAuthentication> {
     this.updateAuth(auth);
 
-    if (auth.expires !== undefined && auth.expires < Date.now()) await this.authenticate(auth.userPin);
+    if (auth?.expires !== undefined && auth.expires < Date.now()) await this.authenticate(auth.userPin);
     return this.auth;
   }
 }
