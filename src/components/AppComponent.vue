@@ -19,10 +19,23 @@ const { isAuthenticated } = useSettingsStoreRefs();
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/z-index' as layers;
+
 header {
+  position: sticky;
+  top: 0;
+  z-index: layers.$layer-ui;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: rgb(0 0 0 / 30%);
+  backdrop-filter: blur(2px);
+  transition: background 0.5s;
+  will-change: background;
+
+  &:hover {
+    background: rgb(0 0 0 / 60%);
+  }
 }
 
 main {

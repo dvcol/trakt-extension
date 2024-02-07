@@ -16,6 +16,10 @@
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgb(235 235 235 / 64%);
 
+  /* trakt.tv brand color */
+  --trakt-red: #ed1c24;
+  --trakt-red-dark: #ba080f;
+
   /* semantic color variables for this project */
   --section-gap: 160px;
   --color-background: var(--vt-c-black);
