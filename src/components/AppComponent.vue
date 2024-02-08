@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
@@ -14,7 +15,11 @@ const { isAuthenticated } = useSettingsStoreRefs();
     <NavbarComponent />
   </header>
   <main>
-    <RouterView />
+    <RouterView v-slot="{ Component, route }">
+      <Transition name="scale" mode="out-in">
+        <component :is="Component" :key="route.path" />
+      </Transition>
+    </RouterView>
   </main>
 </template>
 
@@ -43,5 +48,16 @@ main {
   align-items: center;
   justify-content: center;
   padding: 0 2rem;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.25s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  transform: scale(0.95);
+  opacity: 0;
 }
 </style>
