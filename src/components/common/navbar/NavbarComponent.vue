@@ -18,7 +18,7 @@ const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route
 
 <template>
   <nav>
-    <NTabs :value="route.name" class="tabs" type="segment" justify-content="space-evenly" animated>
+    <NTabs :value="route.name?.toString()" class="tabs" type="segment" justify-content="space-evenly" animated>
       <template v-for="_route in routes" :key="_route">
         <NTab class="tab" :name="_route.toLowerCase()" type="segment" @click="navigate(_route)">
           {{ i18n(_route.toLowerCase()) }}
