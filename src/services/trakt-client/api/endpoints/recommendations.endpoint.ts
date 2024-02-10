@@ -114,14 +114,19 @@ export const recommendations = {
      *
      * @see [hide-a-show-recommendation]{@link https://trakt.docs.apiary.io/#reference/recommendations/hide-show/hide-a-show-recommendation}
      */
-    hide: new TraktClientEndpoint<{
-      /** Trakt ID, Trakt slug, or IMDB ID */
-      id: string;
-    }>({
+    hide: new TraktClientEndpoint<
+      {
+        /** Trakt ID, Trakt slug, or IMDB ID */
+        id: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/recommendations/shows/:id',
       opts: {
         auth: true,
+        cache: false,
         parameters: {
           path: {
             id: true,

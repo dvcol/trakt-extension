@@ -15,17 +15,6 @@ export type TmdbGenre = {
   name: string;
 };
 
-export type TmdbCompany = {
-  id: number;
-  logo_path?: string;
-  name: string;
-  origin_country: string;
-  parent_company?: TmdbCompany;
-  description?: string;
-  headquarters?: string;
-  homepage?: string;
-};
-
 export type TmdbCountry = {
   /** The ISO 3166-1 code of the country */
   iso_3166_1: string;
@@ -34,6 +23,7 @@ export type TmdbCountry = {
 
 export type TmdbLanguage = {
   english_name: string;
+  /** The ISO 639-1 code of the language */
   iso_639_1: string;
   name: string;
 };

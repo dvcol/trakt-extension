@@ -1,60 +1,23 @@
-export type TmdbCreditSeason = {
-  air_date: string;
-  episode_count: number;
-  id: number;
-  name: string;
-  overview: string;
-  poster_path: string;
-  season_number: number;
+import type { TmdbEpisodeShort } from '~/models/tmdb/tmdb-episode.model';
+import type { TmdbPersonShort } from '~/models/tmdb/tmdb-person.model';
+import type { TmdbSeasonShort } from '~/models/tmdb/tmdb-season.model';
+import type { TmdbShowShort } from '~/models/tmdb/tmdb-show.model';
+
+export type TmdbCreditSeason = Omit<TmdbSeasonShort, 'vote_average'> & {
   show_id: number;
 };
 
-export type TmdbCreditPerson = {
-  adult: boolean;
-  id: number;
-  name: string;
+export type TmdbCreditPerson = TmdbPersonShort & {
   original_name: string;
   media_type: string;
-  popularity: number;
-  gender: number;
-  known_for_department: string;
-  profile_path: string;
 };
 
-export type TmdbCreditEpisode = {
-  id: number;
-  name: string;
-  overview: string;
-  media_type: string;
-  vote_average: number;
-  vote_count: number;
-  /** Air date of the episode (YYYY-MM-DD) */
-  air_date: string;
-  episode_number: number;
+export type TmdbCreditEpisode = TmdbEpisodeShort & {
+  show_id: number;
   episode_type: string;
-  production_code: string;
-  runtime: number;
-  season_number: number;
-  show_id: number;
-  still_path: string;
 };
 
-export type TmdbCreditMedia = {
-  adult: boolean;
-  backdrop_path: string;
-  id: number;
-  name: string;
-  original_language: string;
-  original_name: string;
-  overview: string;
-  poster_path: string;
-  media_type: string;
-  genre_ids: number[];
-  popularity: number;
-  first_air_date: string;
-  vote_average: number;
-  vote_count: number;
-  origin_country: string[];
+export type TmdbCreditMedia = TmdbShowShort & {
   character: string;
   episodes: TmdbCreditEpisode[];
   seasons: TmdbCreditSeason[];

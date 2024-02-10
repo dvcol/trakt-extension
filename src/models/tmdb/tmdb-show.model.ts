@@ -3,7 +3,6 @@ import type {
   Extended,
   Short,
   TmdbAccountRating,
-  TmdbCompany,
   TmdbCountry,
   TmdbGenre,
   TmdbLanguage,
@@ -11,6 +10,7 @@ import type {
 } from '~/models/tmdb/tmdb-entity.model';
 import type { TmdbEpisode } from '~/models/tmdb/tmdb-episode.model';
 import type { TmdbSeason } from '~/models/tmdb/tmdb-season.model';
+import type { TmdbCompanyModel } from '~/models/tmdb/tmdb.company.model';
 
 export type TmdbPersonShow = {
   id: number;
@@ -52,7 +52,7 @@ export type TmdbShowExtended = TmdbShowShort & {
   networks: TmdbNetwork[];
   number_of_episodes: number;
   number_of_seasons: number;
-  production_companies: TmdbCompany[];
+  production_companies: TmdbCompanyModel[];
   production_countries: TmdbCountry[];
   seasons: TmdbSeason[];
   spoken_languages: TmdbLanguage[];
@@ -69,4 +69,7 @@ export type TmdbShow<T extends EntityTypes = Short> = T extends Extended
 
 export type TmdbShowRating = TmdbShowShort & {
   account_rating: TmdbAccountRating;
+};
+export type TmdbShowGuestRating = TmdbShowShort & {
+  rating: number;
 };

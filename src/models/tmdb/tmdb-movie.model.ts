@@ -1,14 +1,6 @@
 import type { TmdbCollection } from '~/models/tmdb/tmdb-collection.model';
-import type {
-  EntityTypes,
-  Extended,
-  Short,
-  TmdbAccountRating,
-  TmdbCompany,
-  TmdbCountry,
-  TmdbGenre,
-  TmdbLanguage,
-} from '~/models/tmdb/tmdb-entity.model';
+import type { EntityTypes, Extended, Short, TmdbAccountRating, TmdbCountry, TmdbGenre, TmdbLanguage } from '~/models/tmdb/tmdb-entity.model';
+import type { TmdbCompanyModel } from '~/models/tmdb/tmdb.company.model';
 
 export type TmdbMovieShort = {
   media_type?: 'movie';
@@ -35,7 +27,7 @@ export type TmdbMovieExtended = TmdbMovieShort & {
   genres: TmdbGenre[];
   homepage: string;
   imdb_id: string;
-  production_companies: TmdbCompany[];
+  production_companies: TmdbCompanyModel[];
   production_countries: TmdbCountry[];
   revenue: number;
   runtime: number;
@@ -52,4 +44,8 @@ export type TmdbMovie<T extends EntityTypes = Short> = T extends Extended
 
 export type TmdbMovieRating = TmdbMovie & {
   account_rating: TmdbAccountRating;
+};
+
+export type TmdbMovieGuestRating = TmdbMovie & {
+  rating: number;
 };
