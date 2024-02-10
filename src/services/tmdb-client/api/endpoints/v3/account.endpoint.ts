@@ -23,7 +23,7 @@ export const account = {
    */
   details: new TmdbClientEndpoint<
     {
-      account_id: string;
+      account_id: string | number;
       session_id?: string;
     },
     TmdbAccount
@@ -53,7 +53,7 @@ export const account = {
      * @see [add-to-favorites]{@link https://developer.themoviedb.org/reference/account-add-favorite}
      */
     add: new TmdbClientEndpoint<{
-      account_id: string;
+      account_id: string | number;
       session_id?: string;
 
       media_type: 'movie' | 'tv';
@@ -90,7 +90,7 @@ export const account = {
      */
     movies: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -126,7 +126,7 @@ export const account = {
      */
     tv: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -163,7 +163,7 @@ export const account = {
      * @see [add-to-watchlist]{@link https://developer.themoviedb.org/reference/account-add-to-watchlist}
      */
     add: new TmdbClientEndpoint<{
-      account_id: string;
+      account_id: string | number;
       session_id?: string;
 
       media_type: 'movie' | 'tv';
@@ -200,7 +200,7 @@ export const account = {
      */
     movies: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -228,7 +228,7 @@ export const account = {
     }),
     tv: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -266,7 +266,7 @@ export const account = {
      */
     movies: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -302,7 +302,7 @@ export const account = {
      */
     tv: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -338,7 +338,7 @@ export const account = {
      */
     episodes: new TmdbClientEndpoint<
       {
-        account_id: string;
+        account_id: string | number;
         session_id?: string;
 
         language?: string;
@@ -375,7 +375,7 @@ export const account = {
    */
   lists: new TmdbClientEndpoint<
     {
-      account_id: string;
+      account_id: string | number;
       session_id?: string;
     } & TmdbParamPagination,
     TmdbPaginatedData<TmdbListV3>

@@ -21,11 +21,13 @@ export const authentification = {
     {
       quest_session_id: string;
       expires_at: string;
-    }
+    },
+    false
   >({
     method: HttpMethod.GET,
     url: '/authentication/guest_session/new',
     opts: {
+      cache: false,
       version: 3,
     },
   }),
@@ -44,11 +46,13 @@ export const authentification = {
     {
       request_token: string;
       expires_at: string;
-    }
+    },
+    false
   >({
     method: HttpMethod.GET,
     url: '/authentication/token/new',
     opts: {
+      cache: false,
       version: 3,
     },
   }),
@@ -69,7 +73,8 @@ export const authentification = {
       },
       {
         session_id: string;
-      }
+      },
+      false
     >({
       method: HttpMethod.POST,
       url: '/authentication/session/new',
@@ -77,6 +82,7 @@ export const authentification = {
         request_token: true,
       },
       opts: {
+        cache: false,
         version: 3,
       },
     }),
@@ -98,7 +104,8 @@ export const authentification = {
         },
         {
           session_id: string;
-        }
+        },
+        false
       >({
         method: HttpMethod.POST,
         url: '/authentication/session/convert/4',
@@ -107,6 +114,7 @@ export const authentification = {
         },
         opts: {
           version: 3,
+          cache: false,
         },
       }),
     },
@@ -135,7 +143,8 @@ export const authentification = {
       {
         request_token: string;
         expires_at: string;
-      }
+      },
+      false
     >({
       method: HttpMethod.POST,
       url: '/authentication/token/validate_with_login',
@@ -146,6 +155,7 @@ export const authentification = {
       },
       opts: {
         version: 3,
+        cache: false,
       },
     }),
     /**
@@ -155,12 +165,17 @@ export const authentification = {
      *
      * @see [delete-session]{@link https://developer.themoviedb.org/reference/authentication-delete-session}
      */
-    delete: new TmdbClientEndpoint<{
-      session_id: string;
-    }>({
+    delete: new TmdbClientEndpoint<
+      {
+        session_id: string;
+      },
+      unknown,
+      false
+    >({
       method: HttpMethod.DELETE,
       url: '/authentication/session',
       opts: {
+        cache: false,
         version: 3,
       },
     }),
@@ -172,10 +187,11 @@ export const authentification = {
    *
    * @see [validate]{@link https://developer.themoviedb.org/reference/authentication-validate-key}
    */
-  validate: new TmdbClientEndpoint({
+  validate: new TmdbClientEndpoint<Record<string, never>, unknown, false>({
     method: HttpMethod.GET,
     url: '/authentication',
     opts: {
+      cache: false,
       version: 3,
     },
   }),
