@@ -414,7 +414,7 @@ export const parseBody = <T extends RecursiveRecord = RecursiveRecord>(template:
   });
 
   Object.keys(template).forEach(key => {
-    if (template[key] === true && !(key in _body)) throw new Error(`Missing mandatory body parameter: '${key}'`);
+    if (template[key] === true && [undefined, null, ''].includes(params[key])) throw new Error(`Missing mandatory body parameter: '${key}'`);
   });
 
   return JSON.stringify(_body);
@@ -471,7 +471,7 @@ export const parseUrl = <P extends RecursiveRecord = RecursiveRecord, O extends 
       const _value = params[key] ?? value;
 
       // If a value is found we encode
-      if (_value !== undefined && _value !== '') {
+      if (![undefined, null, ''].includes(_value)) {
         url.searchParams.set(key, typeof _value === 'object' ? JSON.stringify(_value) : _value);
       }
       // If the parameter is required we raise error

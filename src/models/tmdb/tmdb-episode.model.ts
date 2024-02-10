@@ -41,3 +41,8 @@ export type TmdbEpisode<T extends EntityTypes = Short> = T extends Extended
   : T extends Short
     ? TmdbEpisodeShort
     : TmdbEpisodeExtended | TmdbEpisodeShort;
+
+export type TmdbEpisodeRating = TmdbEpisode & {
+  show_id: number;
+  rating: number;
+};

@@ -88,7 +88,7 @@ export class TraktClient extends BaseTraktClient {
         expires: (body.created_at + body.expires_in) * 1000,
       }));
 
-      return body;
+      return this.auth;
     } catch (error) {
       throw handleError(error);
     }
@@ -321,9 +321,9 @@ export class TraktClient extends BaseTraktClient {
    * @returns A promise resolving to the imported Trakt authentication information.
    */
   async importAuthentication(auth: TraktClientAuthentication = {}): Promise<TraktClientAuthentication> {
-    this.updateAuth(auth);
+    if (auth.expires !== undefined && auth.expires < Date.now()) return this.refreshToken();
 
-    if (auth.expires !== undefined && auth.expires < Date.now()) await this.refreshToken();
+    this.updateAuth(auth);
     return this.auth;
   }
 }

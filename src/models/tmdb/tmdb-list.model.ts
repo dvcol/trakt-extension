@@ -35,9 +35,16 @@ export type TmdbListV4 = BaseTmdbList & {
   item_count: number;
   object_ids: Record<string, string>;
   sort_by: string;
+};
 
-  // page: number;
-  // results: TmdbMovieShort[];
-  // total_pages: number;
-  // total_results: number;
+export type TmdbListV3 = {
+  id: number;
+  item_count: number;
+  description: string;
+  favorite_count: number;
+  /** The ISO 639-1 code of the language */
+  iso_639_1: string;
+  list_type: 'movie' | 'tv';
+  name: string;
+  poster_path: string;
 };

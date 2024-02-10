@@ -15,6 +15,8 @@ export type TmdbClientSettings = {
   endpoint: string;
   /** The consumer client identifier */
   useragent: string;
+  /** The app api key  */
+  apiKey: string;
   /** The app read-only api key  */
   readToken: string;
   /** token time-to-live (15 minutes) */
@@ -24,8 +26,12 @@ export type TmdbClientSettings = {
 export type TmdbClientAuthentication = {
   /** User access token if there is an active session */
   accessToken?: string;
-  /** The app read-only api key  */
-  readToken?: string;
+  /** If the session id is for a guest session */
+  isGuest?: boolean;
+  /** The user session id  */
+  sessionId?: string;
+  /** The user sessionId expire date */
+  expiresAt?: string;
 };
 
 export type TmdbParamPagination = {
@@ -63,7 +69,9 @@ export type TmdbApiResponse<T = unknown> = ResponseOrTypedResponse<T>;
 export type TmdbApiQuery<T = unknown> = BaseQuery<BaseRequest, T>;
 export type TmdbApiTemplateOptions = BaseTemplateOptions & {
   /** If the method requires user authentication */
-  auth?: boolean;
+  auth?: 'session' | 'token' | false;
+  /** If the method is authorized for a guest session id */
+  guest?: boolean;
   /** The api version (3 or 4) */
   version: number | string;
 };

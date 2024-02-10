@@ -66,7 +66,7 @@ export class BaseTmdbClient
    * @param api - The API endpoints for the client.
    */
   constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = tmdbApi) {
-    super(options, { readToken: options.readToken, ...authentication }, api);
+    super(options, authentication, api);
   }
 
   /**
@@ -87,12 +87,16 @@ export class BaseTmdbClient
       [BaseApiHeaders.ContentType]: BaseHeaderContentType.Json,
     };
 
-    if (template.opts?.auth && !this.auth.accessToken) {
-      throw Error('User auth required: access_token is missing');
-    } else if (template.opts?.auth) {
+    if (template.opts?.auth && this.auth.accessToken) {
       headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.accessToken}`;
-    } else {
-      headers[TraktApiHeaders.Authorization] = `Bearer ${this.auth.readToken ?? this.settings.readToken}`;
+    } else if (template.opts?.auth === 'token' && !this.auth.accessToken) {
+      throw Error('User auth required: access_token is missing');
+    } else if (template.opts?.auth === 'session' && !this.auth.sessionId) {
+      throw Error('User auth required: session_id is missing');
+    } else if (template.opts?.auth && !this.auth.accessToken && !this.auth.sessionId) {
+      throw Error('User auth required: session_id or access_token is missing');
+    } else if (this.settings.readToken) {
+      headers[TraktApiHeaders.Authorization] = `Bearer ${this.settings.readToken}`;
     }
 
     return headers;
@@ -114,6 +118,10 @@ export class BaseTmdbClient
    */
   protected _parseUrl<T extends TmdbApiParam = TmdbApiParam>(template: TmdbApiTemplate<T>, params: T): URL {
     if (template.opts?.version && !template.url.startsWith(`/${template.opts.version}`)) template.url = `/${template.opts.version}${template.url}`;
+    if (this.auth.sessionId) params.session_id = this.auth.sessionId;
+    if (this.settings.apiKey && !this.auth.accessToken && !this.settings.readToken) {
+      template.url = `${template.url}${template.url.includes('?') ? '&' : '?'}api_key=${this.settings.apiKey}`;
+    }
     return parseUrl<T>(template, params, this.settings.endpoint);
   }
 
