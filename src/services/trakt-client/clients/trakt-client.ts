@@ -291,11 +291,11 @@ export class TraktClient extends BaseTraktClient {
    *
    * @throws Error Throws an error if no refresh token is found.
    */
-  refreshToken() {
-    if (!this.auth.refresh_token) {
+  refreshToken(refresh_token = this.auth.refresh_token) {
+    if (!refresh_token) {
       throw new Error('No refresh token found.');
     }
-    return this._exchange({ refresh_token: this.auth.refresh_token });
+    return this._exchange({ refresh_token });
   }
 
   /**
@@ -321,7 +321,7 @@ export class TraktClient extends BaseTraktClient {
    * @returns A promise resolving to the imported Trakt authentication information.
    */
   async importAuthentication(auth: TraktClientAuthentication = {}): Promise<TraktClientAuthentication> {
-    if (auth.expires !== undefined && auth.expires < Date.now()) return this.refreshToken();
+    if (auth.expires !== undefined && auth.expires < Date.now()) return this.refreshToken(auth.refresh_token);
 
     this.updateAuth(auth);
     return this.auth;

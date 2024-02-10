@@ -351,7 +351,7 @@ export const users = {
         pagination: true,
         parameters: {
           path: {
-            username: true,
+            id: true,
             type: false,
           },
         },
@@ -392,7 +392,7 @@ export const users = {
         extended: [TraktApiExtended.Full, TraktApiExtended.Metadata],
         parameters: {
           path: {
-            username: true,
+            id: true,
             type: true,
           },
         },

@@ -66,12 +66,12 @@ export type TvdbApiQuery<T = unknown> = BaseQuery<BaseRequest, T>;
 /**
  * Represents options that can be used in a tvdb API template.
  */
-export type TvdbApiTemplateOptions = BaseTemplateOptions & {
+export type TvdbApiTemplateOptions<T extends string | number | symbol = string> = BaseTemplateOptions<T, boolean> & {
   /** If the method requires authentication */
   auth?: boolean;
 };
 
-export type TvdbApiTemplate<Parameter extends TvdbApiParam = TvdbApiParam> = BaseTemplate<Parameter, TvdbApiTemplateOptions>;
+export type TvdbApiTemplate<Parameter extends TvdbApiParam = TvdbApiParam> = BaseTemplate<Parameter, TvdbApiTemplateOptions<keyof Parameter>>;
 
 export interface TvdbClientEndpoint<Parameter extends TvdbApiParam = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: BodyInit): Promise<TvdbApiResponse<Response>>;
@@ -82,7 +82,7 @@ export class TvdbClientEndpoint<
   Parameter extends TvdbApiParam = Record<string, never>,
   Response = unknown,
   Cache extends boolean = true,
-> extends ClientEndpoint<Parameter, Response, Cache, TvdbApiTemplateOptions> {}
+> extends ClientEndpoint<Parameter, Response, Cache, TvdbApiTemplateOptions<keyof Parameter>> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
 export type ITvdbApi<Parameter extends TvdbApiParam = any, Response = unknown, Cache extends boolean = boolean> = {

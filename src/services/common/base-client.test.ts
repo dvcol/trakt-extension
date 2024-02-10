@@ -6,6 +6,7 @@ import { HttpMethod } from '../../utils/http.utils';
 
 import {
   BaseApiHeaders,
+  type BaseBody,
   BaseClient,
   BaseHeaderContentType,
   type BaseOptions,
@@ -61,7 +62,7 @@ const api = {
       },
     },
   }),
-  endpointWithBody: new ClientEndpoint({
+  endpointWithBody: new ClientEndpoint<RecursiveRecord>({
     method: HttpMethod.POST,
     url: '/endpoint-with-body',
     body: {
@@ -136,7 +137,7 @@ class TestableBaseClient extends BaseClient implements IEndpoints {
   }
 
   // eslint-disable-next-line class-methods-use-this -- abstract method
-  _parseBody<T extends RecursiveRecord = RecursiveRecord>(body: Record<string, string | boolean>, params: T): BodyInit {
+  _parseBody<T extends RecursiveRecord = RecursiveRecord>(body: BaseBody<string | keyof T>, params: T): BodyInit {
     return parseBody(body, params);
   }
 

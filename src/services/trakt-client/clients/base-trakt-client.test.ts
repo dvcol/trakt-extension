@@ -8,7 +8,7 @@ import { CancellableFetch } from '../../../utils/fetch.utils';
 
 import { HttpMethod } from '../../../utils/http.utils';
 
-import { BaseHeaderContentType } from '../../common/base-client';
+import { type BaseBody, BaseHeaderContentType } from '../../common/base-client';
 
 import { BaseTraktClient, parseResponse } from './base-trakt-client';
 
@@ -25,7 +25,7 @@ class TestableTraktClient extends BaseTraktClient {
     return this._call<P>(template, params, init);
   }
 
-  publicParseBody<T extends TraktApiParams = TraktApiParams>(template: Record<string, string | boolean>, params: T): BodyInit {
+  publicParseBody<T extends TraktApiParams = TraktApiParams>(template: BaseBody<string | keyof T>, params: T): BodyInit {
     return this._parseBody(template, params);
   }
 
