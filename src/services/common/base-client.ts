@@ -39,7 +39,10 @@ export type BaseOptions<S extends RecursiveRecord = RecursiveRecord, R extends R
   cacheStore?: CacheStore<R>;
 };
 
-export type BaseTemplateOptions = {
+export type BaseTemplateOptions<
+  T extends string | number | symbol = string | number | symbol,
+  V extends boolean | symbol | string = boolean | symbol | string,
+> = {
   /**
    * Enables caching of requests (defaults to true).
    * If a number is provided, it will be used as the retention time in milliseconds.
@@ -48,20 +51,25 @@ export type BaseTemplateOptions = {
   /** Boolean record or required (truthy) or optional parameters (falsy) */
   parameters?: {
     /** Boolean record or required (truthy) or optional path parameters (falsy) */
-    path?: Record<string, boolean | 'vip'>;
+    path?: Partial<Record<T, V>>;
     /** Boolean record or required (truthy) or optional query parameters (falsy) */
-    query?: Record<string, boolean | 'vip'>;
+    query?: Partial<Record<T, V>>;
   };
 };
 
 export type BaseInit = Omit<Partial<BaseRequest['init']>, 'method'>;
+
+export type BaseBody<
+  T extends string | number | symbol = string | number | symbol,
+  V extends boolean | symbol | string = boolean | symbol | string,
+> = Partial<Record<T, V>>;
 
 export type BaseTemplate<P extends RecursiveRecord = RecursiveRecord, O extends BaseTemplateOptions = BaseTemplateOptions> = {
   method: HttpMethods;
   url: string;
   opts?: O;
   /** Boolean record or required (truthy) or optional fields (falsy) */
-  body?: Record<string, boolean>;
+  body?: BaseBody<string | keyof P>;
   /** Partial fetch request init */
   init?: BaseInit;
   /** Validate the parameters before performing request */
@@ -101,7 +109,7 @@ export class ClientEndpoint<
   method: HttpMethods;
   url: string;
   opts: Option;
-  body?: Record<string, boolean>;
+  body?: BaseBody<string | keyof Parameter>;
   init?: BaseInit;
   validate?: (param: Parameter) => boolean;
   cached: Cache extends true ? Omit<this, 'cached'> & ClientEndpointCache<Parameter, Response> : never;
@@ -381,7 +389,7 @@ export abstract class BaseClient<
    * @protected
    * @abstract
    */
-  protected abstract _parseBody<T extends RecursiveRecord = RecursiveRecord>(body: Record<string, string | boolean>, params: T): BodyInit;
+  protected abstract _parseBody<T extends RecursiveRecord = RecursiveRecord>(body: BaseBody<string | keyof T>, params: T): BodyInit;
 
   /**
    * Parses the response from the API before returning from the call.
@@ -406,7 +414,7 @@ export abstract class BaseClient<
  *
  * @returns {BodyInit} The parsed request body.
  */
-export const parseBody = <T extends RecursiveRecord = RecursiveRecord>(template: Record<string, string | boolean> = {}, params: T): BodyInit => {
+export const parseBody = <T extends RecursiveRecord = RecursiveRecord>(template: BaseBody<string | keyof T> = {}, params: T): BodyInit => {
   const _body: Record<string, string> = {};
 
   Object.entries(params).forEach(([key, value]) => {

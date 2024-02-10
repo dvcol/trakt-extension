@@ -11,7 +11,7 @@ import type {
 } from '~/models/tvdb/tvdb-client.model';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
-import { BaseApiHeaders, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
 import { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
 
 /**
@@ -103,7 +103,7 @@ export class BaseTvdbClient
    * @returns {BodyInit} The parsed request body.
    */
   // eslint-disable-next-line class-methods-use-this -- implemented from abstract class
-  protected _parseBody<T extends TvdbApiParam = TvdbApiParam>(template: Record<string, string | boolean>, params: T): BodyInit {
+  protected _parseBody<T extends TvdbApiParam = TvdbApiParam>(template: BaseBody<string | keyof T>, params: T): BodyInit {
     return parseBody(template, params);
   }
 

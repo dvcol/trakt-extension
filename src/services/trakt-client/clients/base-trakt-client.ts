@@ -13,7 +13,7 @@ import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
-import { BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
 import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
@@ -222,7 +222,7 @@ export class BaseTraktClient
    * @returns {BodyInit} The parsed request body.
    */
   // eslint-disable-next-line class-methods-use-this -- implemented from abstract class
-  protected _parseBody<T extends TraktApiParams = TraktApiParams>(template: Record<string, string | boolean>, params: T): BodyInit {
+  protected _parseBody<T extends TraktApiParams = TraktApiParams>(template: BaseBody<string | keyof T>, params: T): BodyInit {
     return parseBody(template, params);
   }
 

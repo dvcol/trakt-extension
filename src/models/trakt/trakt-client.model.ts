@@ -76,7 +76,7 @@ export type TraktApiExtends = (typeof TraktApiExtended)[keyof typeof TraktApiExt
 /**
  * Represents options that can be used in a Trakt API template.
  */
-export type TraktApiTemplateOptions = BaseTemplateOptions & {
+export type TraktApiTemplateOptions<T extends string | number | symbol = string> = BaseTemplateOptions<T, boolean | 'vip'> & {
   /** If the method supports or requires vip status */
   vip?: boolean | 'enhanced';
   /** If the method supports or requires authentication */
@@ -93,7 +93,7 @@ export type TraktApiTemplateOptions = BaseTemplateOptions & {
 
 export type TraktApiInit = BaseInit;
 
-export type TraktApiTemplate<Parameter extends TraktApiParams = TraktApiParams> = BaseTemplate<Parameter, TraktApiTemplateOptions>;
+export type TraktApiTemplate<Parameter extends TraktApiParams = TraktApiParams> = BaseTemplate<Parameter, TraktApiTemplateOptions<keyof Parameter>>;
 
 export interface TraktClientEndpoint<Parameter extends TraktApiParams = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: TraktApiInit): Promise<TraktApiResponse<Response>>;
@@ -104,7 +104,7 @@ export class TraktClientEndpoint<
   Parameter extends TraktApiParams = Record<string, never>,
   Response = unknown,
   Cache extends boolean = true,
-> extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions> {}
+> extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions<keyof Parameter>> {}
 
 export type TraktApiRequest = BaseRequest;
 

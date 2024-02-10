@@ -31,6 +31,7 @@ export const scrobble = {
 
       movie: false,
       episode: false,
+      show: false,
     },
   }),
   /**
@@ -53,6 +54,7 @@ export const scrobble = {
 
       movie: false,
       episode: false,
+      show: false,
     },
   }),
   /**
@@ -90,6 +92,7 @@ export const scrobble = {
 
       movie: false,
       episode: false,
+      show: false,
     },
   }),
 };

@@ -67,7 +67,7 @@ export type TmdbPaginatedData<T = unknown, C = unknown> = {
 export type TmdbApiResponse<T = unknown> = ResponseOrTypedResponse<T>;
 
 export type TmdbApiQuery<T = unknown> = BaseQuery<BaseRequest, T>;
-export type TmdbApiTemplateOptions = BaseTemplateOptions & {
+export type TmdbApiTemplateOptions<T extends string | number | symbol = string> = BaseTemplateOptions<T, boolean> & {
   /** If the method requires user authentication */
   auth?: 'session' | 'token' | false;
   /** If the method is authorized for a guest session id */
@@ -76,7 +76,7 @@ export type TmdbApiTemplateOptions = BaseTemplateOptions & {
   version: number | string;
 };
 
-export type TmdbApiTemplate<Parameter extends TmdbApiParam = TmdbApiParam> = BaseTemplate<Parameter, TmdbApiTemplateOptions>;
+export type TmdbApiTemplate<Parameter extends TmdbApiParam = TmdbApiParam> = BaseTemplate<Parameter, TmdbApiTemplateOptions<keyof Parameter>>;
 
 export interface TmdbClientEndpoint<Parameter extends TmdbApiParam = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: BodyInit): Promise<TmdbApiResponse<Response>>;
@@ -87,7 +87,7 @@ export class TmdbClientEndpoint<
   Parameter extends TmdbApiParam = Record<string, never>,
   Response = unknown,
   Cache extends boolean = true,
-> extends ClientEndpoint<Parameter, Response, Cache, TmdbApiTemplateOptions> {}
+> extends ClientEndpoint<Parameter, Response, Cache, TmdbApiTemplateOptions<keyof Parameter>> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
 export type ITmdbApi<Parameter extends TmdbApiParam = any, Response = unknown, Cache extends boolean = boolean> = {
