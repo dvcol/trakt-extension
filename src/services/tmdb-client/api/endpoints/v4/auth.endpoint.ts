@@ -4,7 +4,7 @@ import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**
- * Authentication endpoints.
+ * Authentication v4 endpoints.
  */
 export const auth = {
   /**

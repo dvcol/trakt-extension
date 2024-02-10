@@ -8,7 +8,7 @@ import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } 
 import { HttpMethod } from '~/utils/http.utils';
 
 /**
- * Account Endpoints.
+ * Account v4 Endpoints.
  */
 export const account = {
   /**
@@ -28,7 +28,7 @@ export const account = {
     method: HttpMethod.GET,
     url: '/account/:account_id/lists?page=',
     opts: {
-      auth: true,
+      auth: 'token',
       version: 4,
       parameters: {
         path: {
@@ -59,7 +59,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/movie/favorites?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -90,7 +90,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/tv/favorites?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -123,7 +123,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/movie/rated?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -154,7 +154,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/tv/rated?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -187,7 +187,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/movie/recommendations?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -218,7 +218,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/tv/recommendations?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -251,7 +251,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/movie/watchlist?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {
@@ -282,7 +282,7 @@ export const account = {
       method: HttpMethod.GET,
       url: '/account/:account_id/tv/watchlist?language=&page=',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         parameters: {
           path: {

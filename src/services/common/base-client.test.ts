@@ -484,7 +484,7 @@ describe('base-client.ts', () => {
       expect(result).toBe('{"requiredBody":"requiredBody"}');
     });
 
-    it('should parse body to JSON string', () => {
+    it('should throw an error for missing mandatory body parameter', () => {
       expect.assertions(1);
 
       const mockBody: Record<string, unknown> = { ...mockParams, optionalBody: 'optionalBody' };

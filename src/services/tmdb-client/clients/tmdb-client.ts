@@ -79,6 +79,8 @@ export class TmdbClient extends BaseTmdbClient {
    * @returns A promise resolving to the imported authentication information.
    */
   importAuthentication(auth: TmdbClientAuthentication = {}): TmdbClientAuthentication {
+    if (auth.expiresAt && Date.parse(auth.expiresAt) < Date.now()) throw new Error('User auth required: access_token is expired');
+
     this.updateAuth(auth);
     return this.auth;
   }

@@ -8,6 +8,9 @@ import { HttpMethod } from '~/utils/http.utils';
 type TmdbListItem = { media_type: 'movie' | 'tv'; media_id: number; comment?: string };
 type TmdbListItemResponse = TmdbListItem & { success: boolean };
 
+/**
+ * Lists v4 Endpoints.
+ */
 export const lists = {
   /**
    * Retrieve a list's details by id.
@@ -29,7 +32,7 @@ export const lists = {
     method: HttpMethod.GET,
     url: '/list/:list_id?language=&page=',
     opts: {
-      auth: true,
+      auth: 'session',
       version: 4,
       parameters: {
         path: {
@@ -64,7 +67,7 @@ export const lists = {
       items: true,
     },
     opts: {
-      auth: true,
+      auth: 'token',
       cache: false,
       version: 4,
       parameters: {
@@ -95,7 +98,7 @@ export const lists = {
     method: HttpMethod.GET,
     url: '/list/:list_id/clear',
     opts: {
-      auth: true,
+      auth: 'token',
       version: 4,
       cache: false,
       parameters: {
@@ -140,7 +143,7 @@ export const lists = {
       public: false,
     },
     opts: {
-      auth: true,
+      auth: 'token',
       cache: false,
       version: 4,
     },
@@ -163,7 +166,7 @@ export const lists = {
     method: HttpMethod.DELETE,
     url: '/list/:list_id',
     opts: {
-      auth: true,
+      auth: 'token',
       version: 4,
       cache: false,
       parameters: {
@@ -198,7 +201,7 @@ export const lists = {
     method: HttpMethod.GET,
     url: '/list/:list_id/item_status?media_type=&media_id=',
     opts: {
-      auth: true,
+      auth: 'token',
       version: 4,
       parameters: {
         path: {
@@ -233,7 +236,7 @@ export const lists = {
       items: true,
     },
     opts: {
-      auth: true,
+      auth: 'token',
       version: 4,
       cache: false,
       parameters: {
@@ -266,7 +269,7 @@ export const lists = {
       method: HttpMethod.PUT,
       url: '/list/:list_id',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         cache: false,
         parameters: {
@@ -295,7 +298,7 @@ export const lists = {
       method: HttpMethod.PUT,
       url: '/list/:list_id/items',
       opts: {
-        auth: true,
+        auth: 'token',
         version: 4,
         cache: false,
         parameters: {
