@@ -1,5 +1,6 @@
-import type { TmdbClientAuthentication } from '~/models/tmdb/tmdb-client.model';
+import type { TmdbClientAuthentication, TmdbClientSettings } from '~/models/tmdb/tmdb-client.model';
 
+import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoint';
 import { BaseTmdbClient } from '~/services/tmdb-client/clients/base-tmdb-client';
 import { Config } from '~/settings/tmdb.api';
 
@@ -11,6 +12,15 @@ import { Config } from '~/settings/tmdb.api';
  * @extends {BaseTmdbClient}
  */
 export class TmdbClient extends BaseTmdbClient {
+  /**
+   * Creates an instance of TmdbClient, with the necessary endpoints and settings.
+   * @param settings - The settings for the client.
+   * @param authentication - The authentication for the client.
+   */
+  constructor(settings: TmdbClientSettings, authentication: TmdbClientAuthentication = {}) {
+    super(settings, authentication, tmdbApi);
+  }
+
   /**
    * This is step #1 from the [user authentication]{@link https://developer.themoviedb.org/v4/docs/authentication-user} page.
    *
