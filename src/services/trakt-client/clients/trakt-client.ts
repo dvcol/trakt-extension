@@ -10,9 +10,10 @@ import type {
   TraktClientAuthentication,
   TraktDeviceAuthentication,
 } from '~/models/trakt/trakt-authentication.model';
-import type { TraktApiInit, TraktApiResponse } from '~/models/trakt/trakt-client.model';
+import type { TraktApiInit, TraktApiResponse, TraktClientSettings } from '~/models/trakt/trakt-client.model';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
+import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { randomHex } from '~/utils/crypto.utils';
 
 /**
@@ -48,6 +49,15 @@ const handleError = <T>(error: T | Response) => {
  */
 export class TraktClient extends BaseTraktClient {
   private polling: ReturnType<typeof setTimeout> | undefined;
+
+  /**
+   * Creates an instance of TraktClient, with the necessary endpoints and settings.
+   * @param settings - The settings for the client.
+   * @param authentication - The authentication for the client.
+   */
+  constructor(settings: TraktClientSettings, authentication: TraktClientAuthentication = {}) {
+    super(settings, authentication, traktApi);
+  }
 
   /**
    * Exchanges an authorization code or refresh token for an access token.

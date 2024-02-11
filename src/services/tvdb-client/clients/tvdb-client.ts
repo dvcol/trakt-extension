@@ -1,5 +1,6 @@
-import type { TvdbClientAuthentication } from '~/models/tvdb/tvdb-client.model';
+import type { TvdbClientAuthentication, TvdbClientSettings } from '~/models/tvdb/tvdb-client.model';
 
+import { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
 import { BaseTvdbClient } from '~/services/tvdb-client/clients/base-tvdb-client';
 
 /**
@@ -10,6 +11,15 @@ import { BaseTvdbClient } from '~/services/tvdb-client/clients/base-tvdb-client'
  * @extends {BaseTvdbClient}
  */
 export class TvdbClient extends BaseTvdbClient {
+  /**
+   * Creates an instance of TvdbClient, with the necessary endpoints and settings.
+   * @param settings - The settings for the client.
+   * @param authentication - The authentication for the client.
+   */
+  constructor(settings: TvdbClientSettings, authentication: TvdbClientAuthentication = {}) {
+    super(settings, authentication, tvdbApi);
+  }
+
   /**
    * Authenticates the client with the setting's secret and an optionally provided user pin.
    * The access token is stored in the client and used for all subsequent requests.
