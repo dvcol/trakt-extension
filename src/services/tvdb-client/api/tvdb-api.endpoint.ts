@@ -237,3 +237,6 @@ export const tvdbApi = {
   user,
   favorites,
 };
+
+const { login } = tvdbApi;
+export const minimalTvdbApi = { login };

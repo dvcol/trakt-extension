@@ -9,10 +9,10 @@ import type {
   TvdbClientOptions,
   TvdbClientSettings,
 } from '~/models/tvdb/tvdb-client.model';
-import type { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { minimalTvdbApi, type tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
 
 /**
  * The extracted type signature of the TvdbApi
@@ -39,7 +39,7 @@ export class BaseTvdbClient
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TvdbClientOptions, authentication: TvdbClientAuthentication = {}, api: ITvdbApi = {}) {
+  constructor(options: TvdbClientOptions, authentication: TvdbClientAuthentication = {}, api: ITvdbApi = minimalTvdbApi) {
     super(options, authentication, api);
   }
 

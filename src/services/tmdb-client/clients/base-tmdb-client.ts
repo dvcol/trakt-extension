@@ -11,10 +11,10 @@ import type {
   TmdbClientSettings,
   TmdbPaginatedData,
 } from '~/models/tmdb/tmdb-client.model';
-import type { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoint';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { minimalTmdbApi, type tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoint';
 
 /**
  * The extracted type signature of the TmdbApi
@@ -65,7 +65,7 @@ export class BaseTmdbClient
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = {}) {
+  constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = minimalTmdbApi) {
     super(options, authentication, api);
   }
 

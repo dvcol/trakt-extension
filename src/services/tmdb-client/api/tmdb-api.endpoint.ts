@@ -5,3 +5,6 @@ export const tmdbApi = {
   v3,
   v4,
 };
+
+const { auth } = v4;
+export const minimalTmdbApi = { v4: { auth } };

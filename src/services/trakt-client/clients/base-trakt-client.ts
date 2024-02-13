@@ -9,11 +9,12 @@ import type {
   TraktClientSettings,
 } from '~/models/trakt/trakt-client.model';
 
-import type { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
+
 import { type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { minimalTraktApi, type traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
 /**
@@ -124,7 +125,7 @@ export class BaseTraktClient
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TraktClientOptions, authentication: TraktClientAuthentication = {}, api: ITraktApi = {}) {
+  constructor(options: TraktClientOptions, authentication: TraktClientAuthentication = {}, api: ITraktApi = minimalTraktApi) {
     super(options, authentication, api);
   }
 

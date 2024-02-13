@@ -154,3 +154,5 @@ export const traktApi = {
   sync,
   users,
 };
+
+export const minimalTraktApi = { authentication };
