@@ -48,3 +48,7 @@ export type TmdbListV3 = {
   name: string;
   poster_path: string;
 };
+
+export type TmdbShowListV3 = Omit<TmdbListV3, 'list_type'> & {
+  iso_3166_1: string;
+};

@@ -1,3 +1,4 @@
+import type { TmdbCompany } from '~/models/tmdb/tmdb-company.model';
 import type {
   EntityTypes,
   Extended,
@@ -9,8 +10,8 @@ import type {
   TmdbNetwork,
 } from '~/models/tmdb/tmdb-entity.model';
 import type { TmdbEpisode } from '~/models/tmdb/tmdb-episode.model';
+import type { TmdbImageShort } from '~/models/tmdb/tmdb-image.model';
 import type { TmdbSeason } from '~/models/tmdb/tmdb-season.model';
-import type { TmdbCompanyModel } from '~/models/tmdb/tmdb.company.model';
 
 export type TmdbPersonShow = {
   id: number;
@@ -52,7 +53,7 @@ export type TmdbShowExtended = TmdbShowShort & {
   networks: TmdbNetwork[];
   number_of_episodes: number;
   number_of_seasons: number;
-  production_companies: TmdbCompanyModel[];
+  production_companies: TmdbCompany[];
   production_countries: TmdbCountry[];
   seasons: TmdbSeason[];
   spoken_languages: TmdbLanguage[];
@@ -72,4 +73,17 @@ export type TmdbShowRating = TmdbShowShort & {
 };
 export type TmdbShowGuestRating = TmdbShowShort & {
   rating: number;
+};
+
+export type TmdbShowImages = {
+  id: number;
+  backdrops: TmdbImageShort[];
+  posters: TmdbImageShort[];
+  logos: TmdbImageShort[];
+};
+
+export type TmdbScreenedShow = {
+  id: number;
+  episode_number: number;
+  season_number: number;
 };

@@ -1,6 +1,7 @@
 import type { TmdbCollection } from '~/models/tmdb/tmdb-collection.model';
+import type { TmdbCompany } from '~/models/tmdb/tmdb-company.model';
 import type { EntityTypes, Extended, Short, TmdbAccountRating, TmdbCountry, TmdbGenre, TmdbLanguage } from '~/models/tmdb/tmdb-entity.model';
-import type { TmdbCompanyModel } from '~/models/tmdb/tmdb.company.model';
+import type { TmdbImageShort } from '~/models/tmdb/tmdb-image.model';
 
 export type TmdbMovieShort = {
   media_type?: 'movie';
@@ -27,7 +28,7 @@ export type TmdbMovieExtended = TmdbMovieShort & {
   genres: TmdbGenre[];
   homepage: string;
   imdb_id: string;
-  production_companies: TmdbCompanyModel[];
+  production_companies: TmdbCompany[];
   production_countries: TmdbCountry[];
   revenue: number;
   runtime: number;
@@ -48,4 +49,43 @@ export type TmdbMovieRating = TmdbMovie & {
 
 export type TmdbMovieGuestRating = TmdbMovie & {
   rating: number;
+};
+
+export type TmdbMovieTitle = {
+  iso_3166_1: string;
+  title: string;
+  type: string;
+};
+
+export type TmdbMovieTitles = {
+  /** The movie id */
+  id: number;
+  titles: TmdbMovieTitle[];
+};
+
+export type TmdbMovieImages = {
+  id: number;
+  backdrops: TmdbImageShort[];
+  posters: TmdbImageShort[];
+  logos: TmdbImageShort[];
+};
+
+export const TmdbMovieReleaseType = {
+  1: 'Premiere',
+  2: 'Theatrical (limited)',
+  3: 'Theatrical',
+  4: 'Digital',
+  5: 'Physical',
+  6: 'TV',
+} as const;
+
+export type TmdbMovieReleaseDate = {
+  certification: string;
+  descriptors: string[];
+  /** The ISO 3166-1 code of the country */
+  iso_3166_1: string;
+  note?: string;
+  /** Timestamp in ISO 8601 GMT format (YYYY-MM-DDThh:mm:ss.sssZ) */
+  release_date: string;
+  type: keyof typeof TmdbMovieReleaseType;
 };

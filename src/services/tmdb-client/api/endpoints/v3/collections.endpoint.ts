@@ -54,7 +54,7 @@ export const collections = {
     {
       collection_id: number | string;
       /** specify a comma separated list of ISO-639-1 values to query, for example: en,null */
-      include_image_language?: string;
+      include_image_language?: string | string[];
       language?: string;
     },
     TmdbCollectionImages
@@ -73,6 +73,8 @@ export const collections = {
         },
       },
     },
+    transform: params =>
+      Array.isArray(params.include_image_language) ? { ...params, include_image_language: params.include_image_language.join(',') } : params,
   }),
   /**
    * Get the list of translations for a given collection.

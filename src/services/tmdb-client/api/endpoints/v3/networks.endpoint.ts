@@ -1,66 +1,65 @@
-import type { TmdbCompany } from '~/models/tmdb/tmdb-company.model';
-import type { TmdbAlternativeNames } from '~/models/tmdb/tmdb-entity.model';
+import type { TmdbAlternativeNames, TmdbNetwork } from '~/models/tmdb/tmdb-entity.model';
 import type { TmdbImages } from '~/models/tmdb/tmdb-image.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**
- * Companies v3 endpoints.
+ * Networks v3 endpoints.
  */
-export const companies = {
+export const networks = {
   /**
-   * Get a company by id.
+   * Get the details of a network by ID.
    *
    * @version 3
    *
-   * @see [company-details]{@link https://developer.themoviedb.org/reference/company-details}
+   * @see [network-details]{@link https://developer.themoviedb.org/reference/network-details}
    */
   details: new TmdbClientEndpoint<
     {
-      company_id: number | string;
+      network_id: string | number;
     },
-    TmdbCompany
+    TmdbNetwork
   >({
     method: HttpMethod.GET,
-    url: '/company/:company_id',
+    url: '/network/:network_id',
     opts: {
       version: 3,
       parameters: {
         path: {
-          company_id: true,
+          network_id: true,
         },
       },
     },
   }),
   /**
-   * Get a company alternative names by id.
+   * Get the alternative names of a network.
    *
    * @version 3
    *
-   * @see [company-alternative-names]{@link https://developer.themoviedb.org/reference/company-alternative-names}
+   * @see [network-alternative-names]{@link https://developer.themoviedb.org/reference/details-copy}
    */
   names: new TmdbClientEndpoint<
     {
-      company_id: number | string;
+      network_id: string | number;
     },
     TmdbAlternativeNames
   >({
     method: HttpMethod.GET,
-    url: '/company/:company_id/alternative_names',
+    url: '/network/:network_id/alternative_names',
     opts: {
       version: 3,
       parameters: {
         path: {
-          company_id: true,
+          network_id: true,
         },
       },
     },
   }),
   /**
-   * Get the images for a company by id.
+   * Get the TV network logos by id.
    *
-   * * <b>Note:</b>
+   * * <b>Note</b>
    *
    * There are two image formats that are supported for companies, PNG's and SVG's.
    * You can see which type the original file is by looking at the file_type field.
@@ -69,21 +68,21 @@ export const companies = {
    *
    * @version 3
    *
-   * @see [company-images]{@link https://developer.themoviedb.org/reference/company-images}
+   * @see [network-logos]{@link https://developer.themoviedb.org/reference/alternative-names-copy}
    */
   images: new TmdbClientEndpoint<
     {
-      company_id: number | string;
+      network_id: string | number;
     },
     TmdbImages
   >({
     method: HttpMethod.GET,
-    url: '/company/:company_id/images',
+    url: '/network/:network_id/images',
     opts: {
       version: 3,
       parameters: {
         path: {
-          company_id: true,
+          network_id: true,
         },
       },
     },

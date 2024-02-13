@@ -1,3 +1,5 @@
+import type { TmdbCredit } from '~/models/tmdb/tmdb-credit.model';
+
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
@@ -9,9 +11,12 @@ export const credits = {
    *
    * @see [credit-details]{@link https://developer.themoviedb.org/reference/credit-details}
    */
-  details: new TmdbClientEndpoint<{
-    credit_id: string;
-  }>({
+  details: new TmdbClientEndpoint<
+    {
+      credit_id: string;
+    },
+    TmdbCredit
+  >({
     method: HttpMethod.GET,
     url: '/credit/:credit_id',
     opts: {
