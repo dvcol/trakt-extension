@@ -1,4 +1,6 @@
 import type { EntityTypes, Extended, Short } from '~/models/tmdb/tmdb-entity.model';
+import type { TmdbMovie } from '~/models/tmdb/tmdb-movie.model';
+import type { TmdbShow } from '~/models/tmdb/tmdb-show.model';
 
 export type TmdbPersonShort = {
   adult: boolean;
@@ -6,6 +8,7 @@ export type TmdbPersonShort = {
   id: number;
   known_for_department: string;
   name: string;
+  original_name?: string;
   popularity: number;
   profile_path: string;
 };
@@ -25,3 +28,7 @@ export type TmdbPerson<T extends EntityTypes = Short> = T extends Extended
   : T extends Short
     ? TmdbPersonShort
     : TmdbPersonShort | TmdbPersonExtended;
+
+export type TmdbPersonKnownFor = TmdbPerson & {
+  known_for: (TmdbMovie | TmdbShow)[];
+};

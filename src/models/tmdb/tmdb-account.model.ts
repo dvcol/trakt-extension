@@ -18,3 +18,29 @@ export type TmdbAccount = {
   iso_639_1: string;
   avatar: TmdbAccountAvatar;
 };
+
+export type TmdbAccountStatus = {
+  id: number;
+  favorite: boolean;
+  rated?:
+    | false
+    | {
+        value: number;
+      };
+  watchlist: boolean;
+};
+
+export type TmdbAccountEpisodeStatus = {
+  id: number;
+  episode_number: number;
+  rated:
+    | false
+    | {
+        value: number;
+      };
+};
+
+export type TmdbAccountSeasonStatus = {
+  id: number;
+  results: TmdbAccountEpisodeStatus[];
+};
