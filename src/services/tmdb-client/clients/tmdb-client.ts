@@ -1,4 +1,4 @@
-import type { TmdbClientAuthentication, TmdbClientSettings } from '~/models/tmdb/tmdb-client.model';
+import type { TmdbClientAuthentication, TmdbClientOptions } from '~/models/tmdb/tmdb-client.model';
 
 import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoint';
 import { BaseTmdbClient } from '~/services/tmdb-client/clients/base-tmdb-client';
@@ -17,7 +17,7 @@ export class TmdbClient extends BaseTmdbClient {
    * @param settings - The settings for the client.
    * @param authentication - The authentication for the client.
    */
-  constructor(settings: TmdbClientSettings, authentication: TmdbClientAuthentication = {}) {
+  constructor(settings: TmdbClientOptions, authentication: TmdbClientAuthentication = {}) {
     super(settings, authentication, tmdbApi);
   }
 

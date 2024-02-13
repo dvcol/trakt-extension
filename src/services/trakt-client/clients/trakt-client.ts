@@ -10,7 +10,7 @@ import type {
   TraktClientAuthentication,
   TraktDeviceAuthentication,
 } from '~/models/trakt/trakt-authentication.model';
-import type { TraktApiInit, TraktApiResponse, TraktClientSettings } from '~/models/trakt/trakt-client.model';
+import type { TraktApiInit, TraktApiResponse, TraktClientOptions } from '~/models/trakt/trakt-client.model';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
@@ -55,7 +55,7 @@ export class TraktClient extends BaseTraktClient {
    * @param settings - The settings for the client.
    * @param authentication - The authentication for the client.
    */
-  constructor(settings: TraktClientSettings, authentication: TraktClientAuthentication = {}) {
+  constructor(settings: TraktClientOptions, authentication: TraktClientAuthentication = {}) {
     super(settings, authentication, traktApi);
   }
 
