@@ -13,7 +13,7 @@ import type {
 import type { TraktApiInit, TraktApiResponse, TraktClientOptions } from '~/models/trakt/trakt-client.model';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
-import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
+import { minimalTraktApi } from '~/services/trakt-client/api/trakt-api-minimal.endpoints';
 import { randomHex } from '~/utils/crypto.utils';
 
 /**
@@ -56,7 +56,7 @@ export class TraktClient extends BaseTraktClient {
    * @param authentication - The authentication for the client.
    */
   constructor(settings: TraktClientOptions, authentication: TraktClientAuthentication = {}) {
-    super(settings, authentication, traktApi);
+    super(settings, authentication, minimalTraktApi);
   }
 
   /**

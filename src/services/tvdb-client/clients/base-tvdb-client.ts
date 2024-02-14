@@ -10,18 +10,14 @@ import type {
   TvdbClientSettings,
 } from '~/models/tvdb/tvdb-client.model';
 
+import type { TvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoints';
+
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
-import { minimalTvdbApi, type tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoint';
-
-/**
- * The extracted type signature of the TvdbApi
- */
-type ITvdbEndpoints = typeof tvdbApi;
 
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export interface BaseTvdbClient extends ITvdbEndpoints {}
+export interface BaseTvdbClient extends TvdbApi {}
 
 /**
  * Represents a Tvdb API client with common functionality.
@@ -29,17 +25,14 @@ export interface BaseTvdbClient extends ITvdbEndpoints {}
  * @class BaseTvdbClient
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export class BaseTvdbClient
-  extends BaseClient<TvdbApiQuery, TvdbApiResponse, TvdbClientSettings, TvdbClientAuthentication>
-  implements ITvdbEndpoints
-{
+export class BaseTvdbClient extends BaseClient<TvdbApiQuery, TvdbApiResponse, TvdbClientSettings, TvdbClientAuthentication> implements TvdbApi {
   /**
    * Creates an instance of BaseTvdbClient.
    * @param options - The options for the client.
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TvdbClientOptions, authentication: TvdbClientAuthentication = {}, api: ITvdbApi = minimalTvdbApi) {
+  constructor(options: TvdbClientOptions, authentication: TvdbClientAuthentication = {}, api: ITvdbApi = {}) {
     super(options, authentication, api);
   }
 

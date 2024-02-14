@@ -9,12 +9,12 @@ import type {
   TraktClientSettings,
 } from '~/models/trakt/trakt-client.model';
 
+import type { TraktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
 import { type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
-import { minimalTraktApi, type traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
 /**
@@ -100,14 +100,9 @@ export const parseResponse = <T>(response: Response): TraktApiResponse<T> => {
   return _response;
 };
 
-/**
- * The extracted type signature of the TraktApi
- */
-type ITraktEndpoints = typeof traktApi;
-
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export interface BaseTraktClient extends ITraktEndpoints {}
+export interface BaseTraktClient extends TraktApi {}
 
 /**
  * Represents a Trakt API client with common functionality.
@@ -115,17 +110,14 @@ export interface BaseTraktClient extends ITraktEndpoints {}
  * @class BaseTraktClient
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export class BaseTraktClient
-  extends BaseClient<TraktApiQuery, TraktApiResponse, TraktClientSettings, TraktClientAuthentication>
-  implements ITraktEndpoints
-{
+export class BaseTraktClient extends BaseClient<TraktApiQuery, TraktApiResponse, TraktClientSettings, TraktClientAuthentication> implements TraktApi {
   /**
    * Creates an instance of BaseTraktClient.
    * @param options - The options for the client.
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TraktClientOptions, authentication: TraktClientAuthentication = {}, api: ITraktApi = minimalTraktApi) {
+  constructor(options: TraktClientOptions, authentication: TraktClientAuthentication = {}, api: ITraktApi = {}) {
     super(options, authentication, api);
   }
 

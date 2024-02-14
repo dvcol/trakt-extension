@@ -7,7 +7,7 @@ import { HttpMethod } from '../../../utils/http.utils';
 import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client';
 
 import { hasOwnProperty } from '../../common/test.utils';
-import { tvdbApi } from '../api/tvdb-api.endpoint';
+import { tvdbApi } from '../api/tvdb-api.endpoints';
 
 import { TvdbClient } from './tvdb-client';
 

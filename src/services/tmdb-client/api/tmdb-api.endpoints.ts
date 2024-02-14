@@ -6,5 +6,4 @@ export const tmdbApi = {
   v4,
 };
 
-const { auth } = v4;
-export const minimalTmdbApi = { v4: { auth } };
+export type TmdbApi = typeof tmdbApi;

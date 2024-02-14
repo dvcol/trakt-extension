@@ -155,4 +155,4 @@ export const traktApi = {
   users,
 };
 
-export const minimalTraktApi = { authentication };
+export type TraktApi = typeof traktApi;
