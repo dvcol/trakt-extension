@@ -1,4 +1,4 @@
-export type Observer<T> = (data: T) => void;
+export type Observer<T> = (next: T, prev?: T) => void;
 export type UpdateFunction<T> = (state: T) => T;
 export type Updater<T> = T | UpdateFunction<T>;
 
@@ -71,6 +71,17 @@ export class Observable<T> {
 export class ObservableState<T> extends Observable<T> {
   private readonly _mutable: boolean;
   private _state: T;
+
+  /**
+   * Notifies all observers with optional data and previous state.
+   *
+   * @protected
+   * @param {T} data - The new data to be sent to observers.
+   * @memberof Observable
+   */
+  protected _notify(data: T) {
+    this._observers.forEach(observer => observer(data, this._state));
+  }
 
   /**
    * Gets the current state of the observable.
