@@ -83,7 +83,7 @@ export type TraktUserLimits = {
 };
 
 export type TraktUserSettings = {
-  user: TraktUser;
+  user: TraktUserExtended;
   account: TraktUserAccount;
   connections: TraktUserConnections;
   sharing_text: {
