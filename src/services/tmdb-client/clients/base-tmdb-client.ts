@@ -12,18 +12,14 @@ import type {
   TmdbPaginatedData,
 } from '~/models/tmdb/tmdb-client.model';
 
+import type { TmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
+
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
-import { minimalTmdbApi, type tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoint';
-
-/**
- * The extracted type signature of the TmdbApi
- */
-type ITmdbEndpoints = typeof tmdbApi;
 
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export interface BaseTmdbClient extends ITmdbEndpoints {}
+export interface BaseTmdbClient extends TmdbApi {}
 
 const isPageResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData): response is TmdbApiResponsePageData =>
   'page' in response && 'total_pages' in response && 'total_results' in response;
@@ -55,17 +51,14 @@ const parseResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData) 
  * @class BaseTmdbClient
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
-export class BaseTmdbClient
-  extends BaseClient<TmdbApiQuery, TmdbApiResponse, TmdbClientSettings, TmdbClientAuthentication>
-  implements ITmdbEndpoints
-{
+export class BaseTmdbClient extends BaseClient<TmdbApiQuery, TmdbApiResponse, TmdbClientSettings, TmdbClientAuthentication> implements TmdbApi {
   /**
    * Creates an instance of BaseTmdbClient.
    * @param options - The options for the client.
    * @param authentication - The authentication for the client.
    * @param api - The API endpoints for the client.
    */
-  constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = minimalTmdbApi) {
+  constructor(options: TmdbClientOptions, authentication: TmdbClientAuthentication = {}, api: ITmdbApi = {}) {
     super(options, authentication, api);
   }
 

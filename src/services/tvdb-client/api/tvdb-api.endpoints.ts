@@ -18,6 +18,7 @@ import { episodes } from '~/services/tvdb-client/api/endpoints/episodes.endpoint
 import { favorites } from '~/services/tvdb-client/api/endpoints/favorites.endpoint';
 import { genres } from '~/services/tvdb-client/api/endpoints/genres.endpoint';
 import { lists } from '~/services/tvdb-client/api/endpoints/lists.endpoint';
+import { login } from '~/services/tvdb-client/api/endpoints/login.endpoint';
 import { movies } from '~/services/tvdb-client/api/endpoints/movies.endpoint';
 import { people } from '~/services/tvdb-client/api/endpoints/people.endpoints';
 import { search } from '~/services/tvdb-client/api/endpoints/search.endpoint';
@@ -30,31 +31,7 @@ import { HttpMethod } from '~/utils/http.utils';
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}
  */
 export const tvdbApi = {
-  /**
-   * Create an auth token. The token has one month validation length.
-   *
-   * @see [login]{@link https://thetvdb.github.io/v4-api/#/Login}
-   */
-  login: new TvdbClientEndpoint<
-    {
-      apiKey: string;
-      pin?: string;
-    },
-    {
-      token: string;
-    },
-    false
-  >({
-    method: HttpMethod.POST,
-    url: '/login',
-    opts: {
-      cache: false,
-    },
-    body: {
-      apiKey: true,
-      pin: false,
-    },
-  }),
+  login,
   artwork,
   awards,
   /**
@@ -238,5 +215,4 @@ export const tvdbApi = {
   favorites,
 };
 
-const { login } = tvdbApi;
-export const minimalTvdbApi = { login };
+export type TvdbApi = typeof tvdbApi;
