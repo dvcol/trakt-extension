@@ -2,7 +2,7 @@ import { createRouter as createVueRouter, createWebHashHistory } from 'vue-route
 
 import { Route, routes } from '~/router/routes';
 import { useRouterStore } from '~/stores/router.store';
-import { useSettingsStoreRefs } from '~/stores/settings.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
@@ -24,7 +24,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     ],
   });
 
-  const { isAuthenticated } = useSettingsStoreRefs();
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   router.beforeResolve(async to => {
     const query: Record<string, string> = { ...routeParam };
     if (routeParam) setRouteParam(undefined);

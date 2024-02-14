@@ -1,22 +1,38 @@
 import { tmdbService } from '~/services/tmdb-client/tmdb-client.service';
 import { traktService } from '~/services/trakt-client/trakt-client.service';
 import { tvdbService } from '~/services/tvdb-client/tvdb-client.service';
-import { useSettingsStore } from '~/stores/settings.store';
+import { useAuthSettingsStore, useAuthSettingsStoreRefs, useUserSettingsStore, useUserSettingsStoreRefs } from '~/stores/settings.store';
 
 export const initServices = async () => {
-  const { setAuth, syncRestoreAuth } = useSettingsStore();
+  const { setAuth, syncRestoreAuth, syncSetAuth } = useAuthSettingsStore();
+  const { setUserSetting, syncRestoreUser } = useUserSettingsStore();
 
-  const auth = await syncRestoreAuth();
+  const { user } = useUserSettingsStoreRefs();
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
+
+  const restoredSettings = await syncRestoreUser();
+  const restoredAuth = await syncRestoreAuth(restoredSettings?.user?.username);
 
   const restore = [];
-  if (auth.trakt) restore.push(traktService.importAuthentication(auth.trakt).then(_auth => console.info('TraktClient.importAuthentication', _auth)));
-  if (auth.tvdb) restore.push(tvdbService.importAuthentication(auth.tvdb).then(_auth => console.info('TvdbClient.importAuthentication', _auth)));
-  if (auth.tmdb) console.info('TmdbClient.importAuthentication', tmdbService.importAuthentication(auth.tmdb));
+  if (restoredAuth.trakt) restore.push(traktService.importAuthentication(restoredAuth.trakt).then(_auth => console.info('Trakt import', _auth)));
+  if (restoredAuth.tvdb) restore.push(tvdbService.importAuthentication(restoredAuth.tvdb).then(_auth => console.info('Tvdb import', _auth)));
+  if (restoredAuth.tmdb) console.info('TmdbClient.importAuthentication', tmdbService.importAuthentication(restoredAuth.tmdb));
   await Promise.all(restore);
 
-  traktService.onAuthChange(_auth => {
-    console.info('TraktClient.onAuthChange', _auth);
-    setAuth({ trakt: _auth });
+  if (isAuthenticated.value && user.value === 'default') {
+    console.info('TraktClient.users.settings', user.value);
+    const settings = await traktService.users.settings().then(res => res.json());
+    await setUserSetting(settings);
+    await syncSetAuth();
+  }
+
+  traktService.onAuthChange(async (_auth, prev) => {
+    console.info('TraktClient.onAuthChange', _auth, prev);
+    if (_auth?.access_token !== prev?.access_token) {
+      const settings = await traktService.users.settings().then(res => res.json());
+      await setUserSetting(settings);
+    }
+    await setAuth({ trakt: _auth });
   });
 
   traktService.onCall(async call => {
