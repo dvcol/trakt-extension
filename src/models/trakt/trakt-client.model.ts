@@ -1,18 +1,18 @@
+import type {
+  BaseInit,
+  BaseOptions,
+  BaseQuery,
+  BaseRequest,
+  BaseTemplate,
+  BaseTemplateOptions,
+  ResponseOrTypedResponse,
+} from '~/services/common/base-client';
+
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
 
-import {
-  BaseApiHeaders,
-  type BaseInit,
-  type BaseOptions,
-  type BaseQuery,
-  type BaseRequest,
-  type BaseTemplate,
-  type BaseTemplateOptions,
-  ClientEndpoint,
-  type ResponseOrTypedResponse,
-} from '~/services/common/base-client';
+import { BaseApiHeaders, ClientEndpoint } from '~/services/common/base-client';
 
 /**
  * Pagination data parsed from {@link TraktApiResponse} headers.
@@ -199,8 +199,12 @@ export type PartialTraktApiParams<
   (F extends void ? Record<string, never> : TraktApiParamsFilter<F>) &
   (P extends false ? Record<string, never> : TraktApiParamsPagination);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
-export type ITraktApi<Parameter extends TraktApiParams = any, Response = unknown, Cache extends boolean = boolean> = {
+export type ITraktApi<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a recursive type
+  Parameter extends TraktApiParams = any,
+  Response = unknown,
+  Cache extends boolean = boolean,
+> = {
   [key: string]: TraktClientEndpoint<Parameter, Response, Cache> | ITraktApi<Parameter>;
 };
 

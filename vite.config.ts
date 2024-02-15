@@ -132,22 +132,20 @@ export default defineConfig(() => ({
     hmr: {
       host: 'localhost',
     },
+    open: true,
   },
   preview: {
     port: 3304,
     cors: true,
+    open: true,
   },
   build: {
     outDir: resolveParent('dist'),
     sourcemap: isDev || sourcemap ? 'inline' : false,
+    minify: false,
     rollupOptions: {
       input: getInput(isDev, isWeb),
       output: {
-        manualChunks: id => {
-          if (id.includes('/services/tmdb') || id.includes('/models/tmdb')) return 'tmdb-client';
-          if (id.includes('/services/trakt') || id.includes('/models/trakt')) return 'trakt-client';
-          if (id.includes('/services/tvdb') || id.includes('/models/tvdb')) return 'tvdb-client';
-        },
         minifyInternalExports: false,
         chunkFileNames: 'chunks/[name]-[hash].chunk.js',
         entryFileNames: entry => {
