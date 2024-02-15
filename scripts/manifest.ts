@@ -8,6 +8,8 @@ import type { Manifest } from 'webextension-polyfill';
 
 export const Endpoints = {
   trakt: {
+    Domain: 'https://trakt.tv',
+    SubDomain: 'https://*.trakt.tv',
     Production: 'https://api.trakt.tv',
     Staging: 'https://api-staging.trakt.tv',
   },
@@ -48,7 +50,14 @@ export const manifest: Manifest.WebExtensionManifest = {
       matches: [`${Endpoints.trakt.Production}/*`, `${Endpoints.trakt.Staging}/*`, `${Endpoints.tvdb}/*`, `${Endpoints.tmdb.redirect}/*`],
     },
   ],
-  host_permissions: [`${Endpoints.trakt.Production}/*`, `${Endpoints.trakt.Staging}/*`, `${Endpoints.tvdb}/*`, `${Endpoints.tmdb.api}/*`],
+  host_permissions: [
+    `${Endpoints.trakt.Domain}/*`,
+    `${Endpoints.trakt.SubDomain}/*`,
+    `${Endpoints.trakt.Production}/*`,
+    `${Endpoints.trakt.Staging}/*`,
+    `${Endpoints.tvdb}/*`,
+    `${Endpoints.tmdb.api}/*`,
+  ],
   content_security_policy: {
     // Adds localhost for vite hot reload
     extension_pages: isDev
