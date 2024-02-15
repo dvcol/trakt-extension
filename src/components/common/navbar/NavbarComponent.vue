@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { NTab, NTabs } from 'naive-ui';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
 
 import { Route } from '~/router';
 import { useI18n } from '~/utils';
@@ -13,17 +16,39 @@ const navigate = (to: Route) => {
   router.push(to);
 };
 
-const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search, Route.Settings];
+const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search];
+
+const navElement = ref<HTMLElement>();
 </script>
 
 <template>
-  <nav>
-    <NTabs :value="route.name?.toString()" class="tabs" type="segment" justify-content="space-evenly" animated>
+  <nav ref="navElement">
+    <NTabs
+      :value="route.name?.toString()"
+      class="tabs"
+      type="segment"
+      justify-content="space-evenly"
+      animated
+    >
       <template v-for="_route in routes" :key="_route">
-        <NTab class="tab" :name="_route.toLowerCase()" type="segment" @click="navigate(_route)">
-          {{ i18n(_route.toLowerCase()) }}
+        <NTab
+          class="tab"
+          :name="_route.toLowerCase()"
+          type="segment"
+          @click="navigate(_route)"
+        >
+          <span> {{ i18n(_route.toLowerCase()) }}</span>
         </NTab>
       </template>
+      <NTab
+        class="tab"
+        style="position: relative"
+        :name="Route.Settings.toLowerCase()"
+        type="segment"
+        @click="navigate(Route.Settings)"
+      >
+        <NavbarSettingsDropdown v-if="navElement" :parent-element="navElement" />
+      </NTab>
     </NTabs>
   </nav>
 </template>
@@ -52,13 +77,25 @@ nav {
   .tabs {
     --n-bar-color: var(--trakt-red-dark) !important;
     --n-tab-text-color-active: var(--vt-c-white) !important;
-    --n-tab-text-color-hover: color-mix(in srgb, var(--trakt-red) 90%, var(--vt-c-white)) !important;
-    --n-tab-color-segment: color-mix(in srgb, var(--trakt-red) 50%, transparent) !important;
+    --n-tab-text-color-hover: color-mix(
+      in srgb,
+      var(--trakt-red) 90%,
+      var(--vt-c-white)
+    ) !important;
+    --n-tab-color-segment: color-mix(
+      in srgb,
+      var(--trakt-red) 50%,
+      transparent
+    ) !important;
     --n-color-segment: inherit !important;
 
     /* stylelint-disable-next-line selector-class-pattern -- overriding theme class  */
     .n-tabs-tab--active {
-      --n-tab-text-color-hover: color-mix(in srgb, var(--trakt-white) 99%, var(--vt-c-red)) !important;
+      --n-tab-text-color-hover: color-mix(
+        in srgb,
+        var(--trakt-white) 99%,
+        var(--vt-c-red)
+      ) !important;
     }
 
     .n-tabs-capsule {

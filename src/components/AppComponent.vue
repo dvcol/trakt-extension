@@ -3,11 +3,9 @@ import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
-import { useSettingsStoreRefs } from '~/stores/settings.store';
-import { useI18n } from '~/utils';
+import { useAuthSettingsStoreRefs } from '~/stores/settings.store';
 
-const i18n = useI18n('global');
-const { isAuthenticated } = useSettingsStoreRefs();
+const { isAuthenticated } = useAuthSettingsStoreRefs();
 </script>
 
 <template>
@@ -33,13 +31,13 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: rgb(0 0 0 / 30%);
-  backdrop-filter: blur(2px);
+  background: var(--bg-blur-black);
+  backdrop-filter: blur(var(--bg-blur));
   transition: background 0.5s;
   will-change: background;
 
   &:hover {
-    background: rgb(0 0 0 / 60%);
+    background: var(--bg-blur-black-hover);
   }
 }
 

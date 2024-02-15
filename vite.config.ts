@@ -132,7 +132,6 @@ export default defineConfig(() => ({
     hmr: {
       host: 'localhost',
     },
-    open: true,
   },
   preview: {
     port: 3304,

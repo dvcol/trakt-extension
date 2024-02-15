@@ -18,5 +18,6 @@ export type { TraktExtension, DefineComponent, WebComponents };
 declare global {
   interface Window {
     chrome: typeof chrome;
+    trakt: Record<string, unknown>;
   }
 }
