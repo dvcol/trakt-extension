@@ -15,4 +15,21 @@ module.exports = {
     'vitest/no-hooks': 'off',
     'vitest/max-expects': ['warn', { max: 10 }],
   },
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        'prettier/prettier': [
+          'warn',
+          {
+            printWidth: 90,
+            singleQuote: true,
+            trailingComma: 'all',
+            arrowParens: 'avoid',
+            bracketSpacing: true,
+          },
+        ],
+      },
+    },
+  ],
 };
