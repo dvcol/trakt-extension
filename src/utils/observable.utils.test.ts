@@ -34,9 +34,9 @@ describe('observable.utils.ts', () => {
     expect(observableState.state).toBe(0);
 
     observableState.update(1);
-    expect(observer).toHaveBeenCalledWith(1);
+    expect(observer).toHaveBeenCalledWith(1, 0);
 
     observableState.update(state => state + 1);
-    expect(observer).toHaveBeenCalledWith(2);
+    expect(observer).toHaveBeenCalledWith(2, 1);
   });
 });

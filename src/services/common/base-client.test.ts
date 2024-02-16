@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { CancellableFetch } from '../../utils/fetch.utils';
 
@@ -357,22 +357,27 @@ describe('base-client.ts', () => {
     const authObserver = vi.fn();
     const callObserver = vi.fn();
 
-    afterEach(() => {
+    beforeEach(() => {
       client.publicUpdateAuth({});
+      vi.clearAllMocks();
     });
 
     it('should subscribe an observer to authentication state changes', () => {
-      expect.assertions(5);
+      expect.assertions(6);
 
       client.onAuthChange(authObserver);
 
       client.publicUpdateAuth(auth);
-      expect(authObserver).toHaveBeenCalledWith(auth);
+      expect(authObserver).toHaveBeenCalledWith(auth, {});
       expect(client.auth.state).toBe(auth.state);
 
       const newState = 'new-state';
-      client.publicUpdateAuth(_auth => ({ ..._auth, state: newState }));
-      expect(authObserver).toHaveBeenCalledWith({ ...auth, state: newState });
+      const newAuth = { ...auth, state: newState };
+      client.publicUpdateAuth(_auth => {
+        expect(_auth).toStrictEqual(auth);
+        return newAuth;
+      });
+      expect(authObserver).toHaveBeenCalledWith(newAuth, auth);
       expect(client.auth.state).toBe(newState);
 
       expect(authObserver).toHaveBeenCalledTimes(2);

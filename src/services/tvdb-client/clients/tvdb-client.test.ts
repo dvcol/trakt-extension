@@ -9,12 +9,14 @@ import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client'
 import { hasOwnProperty } from '../../common/test.utils';
 import { tvdbApi } from '../api/tvdb-api.endpoints';
 
+import { minimalTvdbApi } from '../api/tvdb-minimal-api.endpoints';
+
 import { TvdbClient } from './tvdb-client';
 
 import type { TvdbClientAuthentication } from '../../../models/tvdb/tvdb-client.model';
 
 describe('tvdb-client.ts', () => {
-  const tvdbClient = new TvdbClient(tvdbClientSettings);
+  const tvdbClient = new TvdbClient(tvdbClientSettings, {}, tvdbApi);
 
   const data = {
     data: { results: 'result' },
@@ -58,6 +60,13 @@ describe('tvdb-client.ts', () => {
       expect.hasAssertions();
 
       hasOwnProperty(tvdbApi, tvdbClient);
+    });
+
+    it('should have only minimal endpoint', () => {
+      expect.hasAssertions();
+
+      const minimalClient = new TvdbClient(tvdbClientSettings, {});
+      hasOwnProperty(minimalTvdbApi, minimalClient);
     });
 
     it('should query companies endpoint', async () => {

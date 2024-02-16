@@ -24,13 +24,19 @@ export interface BaseTmdbClient extends TmdbApi {}
 const isPageResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData): response is TmdbApiResponsePageData =>
   'page' in response && 'total_pages' in response && 'total_results' in response;
 
-const parsePageResponse = ({ page, total_pages, total_results, results, ...common }: TmdbApiResponsePageData): TmdbPaginatedData => {
+export const parsePageResponse = <T = unknown, C = Record<string, string>>({
+  page,
+  total_pages,
+  total_results,
+  results,
+  ...common
+}: TmdbApiResponsePageData<T, C>): TmdbPaginatedData => {
   const response: TmdbPaginatedData = { data: results, pagination: { page, total_pages, total_results } };
   if (Object.keys(common).length) response.common = common;
   return response;
 };
 
-const parseResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData) => {
+export const parseResponse = (response: TmdbApiResponseData | TmdbApiResponsePageData) => {
   if ('success' in response && !response.success) throw response;
 
   let _result: Record<string, unknown> = { ...response };
@@ -111,11 +117,12 @@ export class BaseTmdbClient extends BaseClient<TmdbApiQuery, TmdbApiResponse, Tm
    */
   protected _parseUrl<T extends TmdbApiParam = TmdbApiParam>(template: TmdbApiTemplate<T>, params: T): URL {
     if (template.opts?.version && !template.url.startsWith(`/${template.opts.version}`)) template.url = `/${template.opts.version}${template.url}`;
-    if (this.auth.sessionId) params.session_id = this.auth.sessionId;
+    const _url = parseUrl<T>(template, params, this.settings.endpoint);
+    if (this.auth.sessionId) _url.searchParams.set('session_id', this.auth.sessionId);
     if (this.settings.apiKey && !this.auth.accessToken && !this.settings.readToken) {
-      template.url = `${template.url}${template.url.includes('?') ? '&' : '?'}api_key=${this.settings.apiKey}`;
+      _url.searchParams.set('api_key', this.settings.apiKey);
     }
-    return parseUrl<T>(template, params, this.settings.endpoint);
+    return _url;
   }
 
   /**
