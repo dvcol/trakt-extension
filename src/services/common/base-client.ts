@@ -238,7 +238,7 @@ export abstract class BaseClient<
         const fn: ClientEndpointCall = (param, init) => this._call(template, param, init);
 
         const cachedFn: ClientEndpointCache = async (param, init, cacheOptions) => {
-          const key = JSON.stringify({ param, init });
+          const key = JSON.stringify({ endpoint, param, init });
           if (!cacheOptions?.force) {
             const cached = await this._cache.get(key);
             if (cached) {

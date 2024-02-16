@@ -44,6 +44,8 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name = crypto.r
   };
 };
 
+export type StorageArea = ReturnType<typeof storageWrapper>;
+
 /**
  * This object is used to access the storage areas.
  */
