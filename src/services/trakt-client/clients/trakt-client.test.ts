@@ -3,11 +3,14 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 
 import { traktClientSettings } from '../../../settings/traktv.api';
+import { tvdbClientSettings } from '../../../settings/tvdb.api';
 import { CancellableFetch } from '../../../utils/fetch.utils';
 
 import { HttpMethod } from '../../../utils/http.utils';
 import { BaseHeaderContentType } from '../../common/base-client';
 import { hasOwnProperty } from '../../common/test.utils';
+import { minimalTvdbApi } from '../../tvdb-client/api/tvdb-minimal-api.endpoints';
+import { TvdbClient } from '../../tvdb-client/clients/tvdb-client';
 import { traktApi } from '../api/trakt-api.endpoints';
 
 import { TraktClient } from './trakt-client';
@@ -17,7 +20,7 @@ import type { TraktApiResponse } from '../../../models/trakt/trakt-client.model'
 import type { CacheStore } from '../../../utils/cache.utils';
 
 describe('trakt-client.ts', () => {
-  const traktClient = new TraktClient(traktClientSettings);
+  const traktClient = new TraktClient(traktClientSettings, {}, traktApi);
   const fetch = vi.spyOn(CancellableFetch, 'fetch').mockResolvedValue(new Response());
 
   const payload = {
@@ -42,6 +45,13 @@ describe('trakt-client.ts', () => {
       expect.hasAssertions();
 
       hasOwnProperty(traktApi, traktClient);
+    });
+
+    it('should have only minimal endpoint', () => {
+      expect.hasAssertions();
+
+      const minimalClient = new TvdbClient(tvdbClientSettings, {});
+      hasOwnProperty(minimalTvdbApi, minimalClient);
     });
 
     it('should query certifications method', async () => {
@@ -115,7 +125,7 @@ describe('trakt-client.ts', () => {
 
         const cacheStore: CacheStore<TraktApiResponse> = new Map();
         cacheStore.retention = 15;
-        const _traktClient = new TraktClient({ ...traktClientSettings, cacheStore });
+        const _traktClient = new TraktClient({ ...traktClientSettings, cacheStore }, {}, traktApi);
 
         await _traktClient.certifications.cached({ type: 'movies' });
         await _traktClient.certifications.cached({ type: 'movies' });

@@ -77,10 +77,11 @@ export class ObservableState<T> extends Observable<T> {
    *
    * @protected
    * @param {T} data - The new data to be sent to observers.
+   * @param  {T} prev - the previous data (defaults to this._state).
    * @memberof Observable
    */
-  protected _notify(data: T) {
-    this._observers.forEach(observer => observer(data, this._state));
+  protected _notify(data: T, prev: T = this._state) {
+    this._observers.forEach(observer => observer(data, prev));
   }
 
   /**
@@ -127,8 +128,8 @@ export class ObservableState<T> extends Observable<T> {
    * @memberof ObservableState
    */
   update(state: Updater<T>) {
-    if (isFunction(state)) this._update(state(this._state));
-    else this._update(state);
-    super.update(this._state);
+    const data = isFunction(state) ? state(this._state) : state;
+    super.update(data);
+    this._update(data);
   }
 }

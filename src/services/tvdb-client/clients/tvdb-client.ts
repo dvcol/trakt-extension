@@ -1,4 +1,4 @@
-import type { TvdbClientAuthentication, TvdbClientOptions } from '~/models/tvdb/tvdb-client.model';
+import type { ITvdbApi, TvdbClientAuthentication, TvdbClientOptions } from '~/models/tvdb/tvdb-client.model';
 
 import { minimalTvdbApi } from '~/services/tvdb-client/api/tvdb-minimal-api.endpoints';
 import { BaseTvdbClient } from '~/services/tvdb-client/clients/base-tvdb-client';
@@ -15,9 +15,10 @@ export class TvdbClient extends BaseTvdbClient {
    * Creates an instance of TvdbClient, with the necessary endpoints and settings.
    * @param settings - The settings for the client.
    * @param authentication - The authentication for the client.
+   * @param api - The API endpoints for the client.
    */
-  constructor(settings: TvdbClientOptions, authentication: TvdbClientAuthentication = {}) {
-    super(settings, authentication, minimalTvdbApi);
+  constructor(settings: TvdbClientOptions, authentication: TvdbClientAuthentication = {}, api: ITvdbApi = minimalTvdbApi) {
+    super(settings, authentication, api);
   }
 
   /**
