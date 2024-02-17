@@ -16,3 +16,5 @@ export type RecursiveRecord<T = any> =
   | Record<string, never>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic typing
 export type GenericFunction = (...args: any) => any;
+
+export type ArrayElement<ArrayType extends readonly unknown[] | undefined> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never;

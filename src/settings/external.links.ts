@@ -1,0 +1,21 @@
+export const ExternaLinks = {
+  trakt: {
+    production: 'https://trakt.tv/',
+    staging: 'https://staging.trakt.tv/',
+  },
+  tmdb: 'https://www.themoviedb.org/',
+  imdb: 'https://www.imdb.com/',
+  tvdb: 'https://thetvdb.com/',
+  omdb: 'https://www.omdbapi.com/',
+  fanart: 'https://fanart.tv/',
+  justwatch: 'https://www.justwatch.com/',
+  rottenTomatoes: 'https://www.rottentomatoes.com/',
+  metacritic: 'https://www.metacritic.com/',
+  wikipedia: 'https://www.wikipedia.org/',
+  facebook: 'https://www.facebook.com/',
+  twitter: 'https://twitter.com/',
+  instagram: 'https://www.instagram.com/',
+  youtube: 'https://www.youtube.com/',
+  reddit: 'https://www.reddit.com/',
+  discord: 'https://discord.com/',
+} as const;

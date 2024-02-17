@@ -13,6 +13,9 @@ export const localStorage: chrome.storage.LocalStorageArea = chrome?.storage?.lo
  */
 export const sessionStorage: chrome.storage.StorageArea = chrome?.storage?.session;
 
+const filterObject = (object: Record<string, unknown>, regex: string) =>
+  Object.fromEntries(Object.entries(object).filter(([key]) => new RegExp(regex).test(key)));
+
 /**
  * This function is used to wrap the storage areas to provide type inference and a more convenient interface.
  * @param area The storage area to wrap.
@@ -24,6 +27,7 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name = crypto.r
     const storage: Record<string, unknown> = {};
     window.trakt = { ...window.trakt, [name]: storage };
     return {
+      getAll: async <T>(regex?: string): Promise<T> => (regex ? filterObject(storage, regex) : storage) as T,
       get: async <T>(key: string): Promise<T> => storage[key] as T,
       set: async <T>(key: string, value: T): Promise<void> => {
         storage[key] = value;
@@ -37,6 +41,7 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name = crypto.r
     };
   }
   return {
+    getAll: <T>(regex?: string): Promise<T> => area.get().then(data => (regex ? filterObject(data, regex) : data) as T),
     get: <T>(key: string): Promise<T> => area.get(key).then(({ [key]: value }) => value),
     set: <T>(key: string, value: T): Promise<void> => area.set({ [key]: value }),
     remove: (key: string): Promise<void> => area.remove(key),

@@ -3,14 +3,15 @@ import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
-import { useAuthSettingsStoreRefs } from '~/stores/settings.store';
+
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 </script>
 
 <template>
-  <header v-if="isAuthenticated">
-    <NavbarComponent />
+  <header>
+    <NavbarComponent v-if="isAuthenticated" />
   </header>
   <main>
     <RouterView v-slot="{ Component, route }">
@@ -45,6 +46,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: calc(100vh - 2.75rem);
   padding: 0 2rem;
 }
 

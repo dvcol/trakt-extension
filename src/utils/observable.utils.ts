@@ -128,8 +128,9 @@ export class ObservableState<T> extends Observable<T> {
    * @memberof ObservableState
    */
   update(state: Updater<T>) {
+    const prev = typeof this._state === 'object' ? structuredClone({ ...this._state }) : this._state;
     const data = isFunction(state) ? state(this._state) : state;
-    super.update(data);
     this._update(data);
+    this._notify(data, prev);
   }
 }

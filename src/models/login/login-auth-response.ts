@@ -14,4 +14,6 @@ export type LoginAuthResponse<T extends 'success' | 'failure' | 'any' = 'any'> =
     ? LoginAuthResponseFailure
     : LoginAuthRequestSuccess | LoginAuthResponseFailure;
 
-export const isLoginAuthResponseSuccess = (response: LoginAuthResponse): response is LoginAuthRequestSuccess => 'code' in response;
+export const isLoginAuthResponseSuccess = <T extends Record<string, unknown>>(
+  response: LoginAuthResponse | T,
+): response is LoginAuthRequestSuccess & T => 'code' in response;
