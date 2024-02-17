@@ -3,7 +3,6 @@ import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
-
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
@@ -46,7 +45,6 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 2.75rem);
   padding: 0 2rem;
 }
 

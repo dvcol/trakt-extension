@@ -4,6 +4,7 @@ import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
+import { LoadingBarService } from '~/services/loading-bar.service';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
 import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
 import { TraktClient } from '~/services/trakt-client/clients/trakt-client';
@@ -101,6 +102,17 @@ export class TraktService {
 
     this.traktClient.onCall(async call => {
       console.info('TraktClient.onCall', call);
+
+      const timeout = setTimeout(() => LoadingBarService.instance?.start(), 500);
+      try {
+        await call.query;
+        LoadingBarService.instance?.finish();
+      } catch (error) {
+        LoadingBarService.instance?.error();
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
     });
 
     this.tvdbClient.onAuthChange(async _auth => {
