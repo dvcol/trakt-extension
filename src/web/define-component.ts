@@ -11,7 +11,7 @@ export const defineComponent = async (options: DefineOption = {}, component: Web
   } else {
     const [{ createElementInstance }, { lazyComponent }] = await Promise.all([import('~/web/create-wc'), import('~/utils/lazy.utils')]);
     const ContainerComponent = lazyComponent(() => import('~/components/web/ContainerComponent.ce.vue'));
-    const TraktExtensionWc = createElementInstance(ContainerComponent, options);
+    const TraktExtensionWc = createElementInstance(ContainerComponent, { name: component, ...options });
     customElements.define(component, TraktExtensionWc);
   }
 };
