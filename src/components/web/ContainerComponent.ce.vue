@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { darkTheme, lightTheme, NConfigProvider } from 'naive-ui';
+import { darkTheme, lightTheme, NConfigProvider, NLoadingBarProvider } from 'naive-ui';
 
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
+import LoadingBarProvider from '~/components/common/navbar/LoadingBarProvider.vue';
 import { watchPreferDark } from '~/utils';
 import { lazyComponent } from '~/utils/lazy.utils';
 
@@ -10,12 +11,24 @@ const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue')
 
 const isDark = watchPreferDark();
 const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
+
+const root = ref<HTMLElement>();
 </script>
 
 <template>
-  <div id="trakt-extension-root">
+  <div id="trakt-extension-root" ref="root">
     <NConfigProvider :theme="theme" abstract>
-      <AppComponent />
+      <NLoadingBarProvider
+        :to="root"
+        :loading-bar-style="{
+          loading: {
+            '--n-color-loading': 'white',
+          },
+        }"
+      >
+        <AppComponent />
+        <LoadingBarProvider />
+      </NLoadingBarProvider>
     </NConfigProvider>
   </div>
 </template>
