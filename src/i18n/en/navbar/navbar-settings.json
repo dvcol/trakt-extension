@@ -1,0 +1,18 @@
+{
+  "navbar_settings__logout": {
+    "message": "Sign out",
+    "description": "Clear current session."
+  },
+  "navbar_settings__login": {
+    "message": "Sign in",
+    "description": "Authorize session."
+  },
+  "navbar_settings__settings": {
+    "message": "Settings",
+    "description": "Settings page."
+  },
+  "navbar_settings__trakt": {
+    "message": "Trakt",
+    "description": "Open trakt website."
+  }
+}

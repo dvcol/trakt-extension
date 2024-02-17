@@ -1,12 +1,16 @@
 import { createRouter as createVueRouter, createWebHashHistory } from 'vue-router';
 
+import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 import { Route, routes } from '~/router/routes';
-import { useRouterStore } from '~/stores/router.store';
-import { useAuthSettingsStoreRefs } from '~/stores/settings.store';
+import { TraktService } from '~/services/trakt.service';
+import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
+
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
-  const { setBaseName, setBaseUrl, routeParam, setRouteParam } = useRouterStore();
+  const { setBaseName, setBaseUrl, setRouteParam } = useRouterStore();
+  const { routeParam } = useRouterStoreRefs();
 
   setBaseName(baseName);
   setBaseUrl(baseUrl);
@@ -26,8 +30,10 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
 
   const { isAuthenticated } = useAuthSettingsStoreRefs();
   router.beforeResolve(async to => {
-    const query: Record<string, string> = { ...routeParam };
-    if (routeParam) setRouteParam(undefined);
+    const query: Record<string, string> = { ...routeParam.value };
+    if (routeParam.value) setRouteParam(undefined);
+
+    if (isLoginAuthResponseSuccess(query)) await TraktService.login(query.code);
 
     if (!isAuthenticated.value && to.name !== Route.Login) {
       query.redirect = to.fullPath;

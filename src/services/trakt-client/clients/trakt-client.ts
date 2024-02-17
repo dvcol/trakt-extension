@@ -51,6 +51,20 @@ export class TraktClient extends BaseTraktClient {
   private polling: ReturnType<typeof setTimeout> | undefined;
 
   /**
+   * Indicates if the current environment is a staging environment.
+   */
+  get isStaging() {
+    return this.settings.endpoint.includes('staging');
+  }
+
+  /**
+   * The url to redirect to after the user has authorized the application.
+   */
+  get redirectUri() {
+    return this.settings.redirect_uri;
+  }
+
+  /**
    * Creates an instance of TraktClient, with the necessary endpoints and settings.
    * @param settings - The settings for the client.
    * @param authentication - The authentication for the client.
@@ -256,23 +270,28 @@ export class TraktClient extends BaseTraktClient {
    *
    * Once redirected back to the application, the code should be exchanged for an access token using {@link exchangeCodeForToken}.
    *
+   * @param redirect - The type of redirect to use (defaults to manual).
+   * @param redirect_uri - The URL to redirect to after the user has authorized the application (defaults to client settings).
    * @param request - Additional parameters for the authorization request.
    * @returns A promise resolving to the response from the Trakt website.
    *
    * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
    */
-  redirectToAuthentication(request: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & { redirect?: RequestRedirect } = {}) {
+  redirectToAuthentication({
+    redirect,
+    redirect_uri,
+    ...request
+  }: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & { redirect?: RequestRedirect; redirect_uri?: string } = {}) {
     this.updateAuth(auth => ({ ...auth, state: request.state ?? randomHex() }));
-    const init: TraktApiInit = {};
-    if (request.redirect) {
-      init.redirect = request.redirect;
-      delete request.redirect;
-    }
+    const init: TraktApiInit = {
+      credentials: 'omit',
+    };
+    if (redirect) init.redirect = redirect;
     return this.authentication.oAuth.authorize(
       {
         response_type: 'code',
         client_id: this.settings.client_id,
-        redirect_uri: this.settings.redirect_uri,
+        redirect_uri: redirect_uri ?? this.settings.redirect_uri,
         state: this.auth.state,
         ...request,
       },
