@@ -53,7 +53,7 @@ export class ChromeCacheStore<T> implements CacheStore<T> {
   prefix: string;
 
   constructor({
-    retention = 24 * 60 * 60,
+    retention = 24 * 60 * 60 * 1000,
     store = storage.local,
     prefix = 'http-cache',
   }: {
