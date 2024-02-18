@@ -13,7 +13,15 @@ import type {
 import type { TvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoints';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
-import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import {
+  BaseApiHeaders,
+  type BaseBody,
+  BaseClient,
+  BaseHeaderContentType,
+  injectCorsProxyPrefix,
+  parseBody,
+  parseUrl,
+} from '~/services/common/base-client';
 
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
@@ -80,6 +88,7 @@ export class BaseTvdbClient extends BaseClient<TvdbApiQuery, TvdbApiResponse, Tv
    */
   protected _parseUrl<T extends TvdbApiParam = TvdbApiParam>(template: TvdbApiTemplate<T>, params: T): URL {
     if (this.settings.version && !template.url.startsWith(`/${this.settings.version}`)) template.url = `/${this.settings.version}${template.url}`;
+    injectCorsProxyPrefix(template, this.settings);
     return parseUrl<T>(template, params, this.settings.endpoint);
   }
 
