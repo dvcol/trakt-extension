@@ -4,6 +4,7 @@ import {
   type BaseOptions,
   type BaseQuery,
   type BaseRequest,
+  type BaseSettings,
   type BaseTemplate,
   type BaseTemplateOptions,
   ClientEndpoint,
@@ -13,7 +14,7 @@ import {
 /**
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}
  */
-export type TvdbClientSettings = {
+export type TvdbClientSettings = BaseSettings<{
   /** The domain name (e.g. https://api4.thetvdb.com) */
   endpoint: string;
   /** The api version (e.g. v4) */
@@ -24,7 +25,7 @@ export type TvdbClientSettings = {
   apiKey: string;
   /** token time-to-live (28 days) */
   tokenTTL: number;
-};
+}>;
 
 export type TvdbClientOptions = BaseOptions<TvdbClientSettings, TvdbApiResponse>;
 

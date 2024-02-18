@@ -4,13 +4,14 @@ import {
   type BaseOptions,
   type BaseQuery,
   type BaseRequest,
+  type BaseSettings,
   type BaseTemplate,
   type BaseTemplateOptions,
   ClientEndpoint,
   type ResponseOrTypedResponse,
 } from '~/services/common/base-client';
 
-export type TmdbClientSettings = {
+export type TmdbClientSettings = BaseSettings<{
   /** The domain name (e.g. https://api4.thetmdb.com) */
   endpoint: string;
   /** The consumer client identifier */
@@ -21,7 +22,7 @@ export type TmdbClientSettings = {
   readToken: string;
   /** token time-to-live (15 minutes) */
   requestTokenTTL: number;
-};
+}>;
 
 export type TmdbClientAuthentication = {
   /** User access token if there is an active session */

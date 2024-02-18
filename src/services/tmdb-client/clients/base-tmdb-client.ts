@@ -15,7 +15,15 @@ import type {
 import type { TmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
-import { BaseApiHeaders, type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import {
+  BaseApiHeaders,
+  type BaseBody,
+  BaseClient,
+  BaseHeaderContentType,
+  injectCorsProxyPrefix,
+  parseBody,
+  parseUrl,
+} from '~/services/common/base-client';
 
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
@@ -117,6 +125,7 @@ export class BaseTmdbClient extends BaseClient<TmdbApiQuery, TmdbApiResponse, Tm
    */
   protected _parseUrl<T extends TmdbApiParam = TmdbApiParam>(template: TmdbApiTemplate<T>, params: T): URL {
     if (template.opts?.version && !template.url.startsWith(`/${template.opts.version}`)) template.url = `/${template.opts.version}${template.url}`;
+    injectCorsProxyPrefix(template, this.settings);
     const _url = parseUrl<T>(template, params, this.settings.endpoint);
     if (this.auth.sessionId) _url.searchParams.set('session_id', this.auth.sessionId);
     if (this.settings.apiKey && !this.auth.accessToken && !this.settings.readToken) {

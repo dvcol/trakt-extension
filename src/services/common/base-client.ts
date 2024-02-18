@@ -34,6 +34,13 @@ export type BaseQuery<R extends BaseRequest = BaseRequest, Q = unknown> = {
   query: CancellablePromise<Q>;
 };
 
+export type BaseSettings<S extends RecursiveRecord = RecursiveRecord> = S & {
+  /** A cors proxy endpoint to use for requests when in a browser */
+  corsProxy?: string;
+  /** A cors prefix to use for requests when in a browser */
+  corsPrefix?: string;
+};
+
 export type BaseOptions<S extends RecursiveRecord = RecursiveRecord, R extends Response = Response> = S & {
   /** Optional cache store to manage cache read/write */
   cacheStore?: CacheStore<R>;
@@ -157,7 +164,7 @@ const cloneResponse = <T>(response: TypedResponse<T>): TypedResponse<T> => {
 export abstract class BaseClient<
   QueryType extends BaseQuery = BaseQuery,
   ResponseType extends Response = Response,
-  SettingsType extends RecursiveRecord = RecursiveRecord,
+  SettingsType extends BaseSettings = BaseSettings,
   AuthenticationType extends RecursiveRecord = RecursiveRecord,
 > {
   private readonly _settings: SettingsType;
@@ -166,6 +173,7 @@ export abstract class BaseClient<
   private _callListeners: Observable<QueryType>;
 
   protected get settings() {
+    if (this._settings.corsProxy) return { ...this._settings, endpoint: this._settings.corsProxy };
     return this._settings;
   }
 
@@ -501,4 +509,20 @@ export const parseUrl = <P extends RecursiveRecord = RecursiveRecord, O extends 
     });
   }
   return url;
+};
+
+/**
+ * Injects the cors proxy prefix to the URL if it is not already present.
+ *
+ * @param template - The template for the API endpoint.
+ * @param settings - The client settings.
+ */
+export const injectCorsProxyPrefix = <T extends { url: string }, S extends BaseSettings>(template: T, settings: S) => {
+  if (!settings.corsPrefix) return template;
+
+  const prefix = `/${settings.corsPrefix}`;
+  if (template.url.startsWith(prefix)) return template;
+
+  template.url = `${prefix}${template.url}`;
+  return template;
 };
