@@ -138,6 +138,18 @@ const isApiTemplate = <T extends RecursiveRecord = RecursiveRecord>(template: Cl
   template instanceof ClientEndpoint;
 
 /**
+ * Clones a response object
+ * @param response - The response to clone
+ */
+const cloneResponse = <T>(response: TypedResponse<T>): TypedResponse<T> => {
+  const clone: Record<keyof TypedResponse<T>, unknown> = response.clone();
+  Object.entries(response).forEach(([key, value]) => {
+    if (typeof value !== 'function') clone[key as keyof TypedResponse<T>] = value;
+  });
+  return clone as TypedResponse<T>;
+};
+
+/**
  * Represents a client with common functionality.
  *
  * @class BaseClient
@@ -244,16 +256,16 @@ export abstract class BaseClient<
             if (cached) {
               const templateRetention = typeof template.opts?.cache === 'number' ? template.opts.cache : undefined;
               const retention = cacheOptions?.retention ?? templateRetention ?? this._cache.retention;
-              if (!retention) return cached.value;
+              if (!retention) return cloneResponse(cached.value);
               const expires = cached.cachedAt + retention;
-              if (expires > Date.now()) return cached.value;
+              if (expires > Date.now()) return cloneResponse(cached.value);
             }
           }
           try {
             const result = await fn(param, init);
             await this._cache.set(key, {
               cachedAt: Date.now(),
-              value: result as ResponseType,
+              value: cloneResponse(result) as ResponseType,
             });
             return result;
           } catch (error) {
