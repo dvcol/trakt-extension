@@ -14,7 +14,7 @@ import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
-import { type BaseBody, BaseClient, BaseHeaderContentType, parseBody, parseUrl } from '~/services/common/base-client';
+import { type BaseBody, BaseClient, BaseHeaderContentType, injectCorsProxyPrefix, parseBody, parseUrl } from '~/services/common/base-client';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
 /**
@@ -166,6 +166,7 @@ export class BaseTraktClient extends BaseClient<TraktApiQuery, TraktApiResponse,
    * @throws {Error} Throws an error if mandatory parameters are missing or if a filter is not supported.
    */
   protected _parseUrl<T extends TraktApiParams = TraktApiParams>(template: TraktApiTemplate<T>, params: T): URL {
+    injectCorsProxyPrefix(template, this.settings);
     const url = parseUrl<T>(template, params, this.settings.endpoint);
     const queryParams = url.searchParams;
 

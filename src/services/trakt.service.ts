@@ -79,8 +79,8 @@ export class TraktService {
     return this.saveAuth({ trakt, tvdb, tmdb });
   }
 
-  static async approve(redirect_uri?: string) {
-    return this.traktClient.redirectToAuthentication({ redirect_uri });
+  static async approve({ redirect_uri, redirect }: { redirect_uri?: string; redirect?: RequestRedirect } = {}) {
+    return this.traktClient.redirectToAuthentication({ redirect_uri, redirect });
   }
 
   static async login(token: string): Promise<{ auth: SettingsAuth; settings: UserSetting }> {

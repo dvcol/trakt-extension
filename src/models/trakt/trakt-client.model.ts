@@ -3,6 +3,7 @@ import type {
   BaseOptions,
   BaseQuery,
   BaseRequest,
+  BaseSettings,
   BaseTemplate,
   BaseTemplateOptions,
   ResponseOrTypedResponse,
@@ -29,7 +30,7 @@ export type TraktClientPagination = {
 /**
  * Trakt.tv API client settings.
  */
-export type TraktClientSettings = {
+export type TraktClientSettings = BaseSettings<{
   /** Get this from your app settings. */
   client_id: string;
   /** Get this from your app settings. */
@@ -40,7 +41,7 @@ export type TraktClientSettings = {
   endpoint: string;
   /** The consumer client identifier */
   useragent: string;
-};
+}>;
 
 /**
  * Trakt.tv API client options.
