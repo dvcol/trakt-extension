@@ -1,5 +1,6 @@
 import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 
+import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
@@ -14,10 +15,11 @@ import { traktClientSettings } from '~/settings/traktv.api';
 import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
+import { createTab } from '~/utils/browser/browser.utils';
 import { ChromeCacheStore } from '~/utils/cache.utils';
 
 export class TraktService {
-  private static traktClient: TraktClient;
+  static traktClient: TraktClient;
   private static tmdbClient: TmdbClient;
   private static tvdbClient: TvdbClient;
 
@@ -79,8 +81,9 @@ export class TraktService {
     return this.saveAuth({ trakt, tvdb, tmdb });
   }
 
-  static async approve({ redirect_uri, redirect }: { redirect_uri?: string; redirect?: RequestRedirect } = {}) {
-    return this.traktClient.redirectToAuthentication({ redirect_uri, redirect });
+  static async approve(params: TraktAuthenticationApprove = {}) {
+    const url = this.traktClient.redirectToAuthenticationUrl(params);
+    return createTab({ url });
   }
 
   static async login(token: string): Promise<{ auth: SettingsAuth; settings: UserSetting }> {

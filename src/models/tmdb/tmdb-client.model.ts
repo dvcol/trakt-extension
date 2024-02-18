@@ -12,8 +12,6 @@ import {
 } from '~/services/common/base-client';
 
 export type TmdbClientSettings = BaseSettings<{
-  /** The domain name (e.g. https://api4.thetmdb.com) */
-  endpoint: string;
   /** The consumer client identifier */
   useragent: string;
   /** The app api key  */

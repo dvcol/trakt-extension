@@ -40,7 +40,7 @@ export const authentication = {
      */
     authorize: new TraktClientEndpoint<TraktAuthenticationAuthorizeRequest, unknown, false>({
       method: HttpMethod.GET,
-      url: '/oauth/authorize?response_type=code&client_id=&redirect_uri=&state=',
+      url: '/oauth/authorize?response_type=code&client_id=&redirect_uri=&state=&signup=&prompt=',
       init: {
         redirect: 'manual',
         credentials: 'omit',
@@ -58,6 +58,7 @@ export const authentication = {
           },
         },
       },
+      transform: params => ({ ...params, prompt: params.prompt ? 'login' : params.prompt }),
     }),
     /** @see [get-token]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/get-token} */
     token: {

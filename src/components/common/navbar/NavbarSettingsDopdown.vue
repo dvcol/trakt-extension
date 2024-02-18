@@ -93,11 +93,6 @@ const options = computed<DropdownProps['options']>(() => {
   return baseOptions;
 });
 
-const login = async () => {
-  const response = await TraktService.approve();
-  return createTab({ url: response.url });
-};
-
 const loadUser = async (account: string) => {
   const auth = await syncRestoreAuth(account);
   return TraktService.importAuthentication(auth);
@@ -113,7 +108,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
         url: ExternaLinks.trakt[TraktService.isStaging ? 'staging' : 'production'],
       });
     case 'login':
-      return login();
+      return TraktService.approve({ prompt: true });
     case 'logout':
       await TraktService.logout();
       await setCurrentUser();

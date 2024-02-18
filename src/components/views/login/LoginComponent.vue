@@ -8,7 +8,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils';
-import { createTab } from '~/utils/browser/browser.utils';
 
 const i18n = useI18n('global');
 
@@ -28,8 +27,7 @@ onMounted(() => {
 
 const redirect = async () => {
   try {
-    const response = await TraktService.approve();
-    await createTab({ url: response.url });
+    await TraktService.approve();
   } catch (error) {
     console.error('Error:', error);
   }
