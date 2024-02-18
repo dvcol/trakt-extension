@@ -37,8 +37,6 @@ export type TraktClientSettings = BaseSettings<{
   client_secret: string;
   /** URI specified in your app settings. */
   redirect_uri: string;
-  /** The domain name (i.e. https://api.trakt.tv) */
-  endpoint: string;
   /** The consumer client identifier */
   useragent: string;
 }>;

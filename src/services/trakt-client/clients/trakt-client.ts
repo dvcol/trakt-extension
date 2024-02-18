@@ -2,7 +2,7 @@ import { BaseTraktClient, isResponseOk } from './base-trakt-client';
 
 import type {
   TraktAuthentication,
-  TraktAuthenticationAuthorizeRequest,
+  TraktAuthenticationApprove,
   TraktAuthenticationBaseRequest,
   TraktAuthenticationCodeRequest,
   TraktAuthenticationRefreshRequest,
@@ -277,11 +277,7 @@ export class TraktClient extends BaseTraktClient {
    *
    * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
    */
-  redirectToAuthentication({
-    redirect,
-    redirect_uri,
-    ...request
-  }: Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & { redirect?: RequestRedirect; redirect_uri?: string } = {}) {
+  redirectToAuthentication({ redirect, redirect_uri, ...request }: TraktAuthenticationApprove = {}) {
     this.updateAuth(auth => ({ ...auth, state: request.state ?? randomHex() }));
     const init: TraktApiInit = {
       credentials: 'omit',
@@ -297,6 +293,31 @@ export class TraktClient extends BaseTraktClient {
       },
       init,
     );
+  }
+
+  /**
+   * Initiates the OAuth process by generating a URL to the Trakt website.
+   * Users will be prompted to sign in and authorize the application.
+   *
+   * Once redirected back to the application, the code should be exchanged for an access token using {@link exchangeCodeForToken}.
+   *
+   * @param redirect - The type of redirect to use (defaults to manual).
+   * @param redirect_uri - The URL to redirect to after the user has authorized the application (defaults to client settings).
+   * @param request - Additional parameters for the authorization request.
+   * @returns A promise resolving to the url to authorize the application.
+   *
+   * @see [authorize]{@link https://trakt.docs.apiary.io/#reference/authentication-oauth/authorize}
+   */
+  redirectToAuthenticationUrl({ redirect, redirect_uri, ...request }: TraktAuthenticationApprove = {}) {
+    return this.authentication.oAuth.authorize
+      .resolve({
+        response_type: 'code',
+        client_id: this.settings.client_id,
+        redirect_uri: redirect_uri ?? this.settings.redirect_uri,
+        state: this.auth.state,
+        ...request,
+      })
+      .toString();
   }
 
   /**

@@ -35,6 +35,8 @@ export type BaseQuery<R extends BaseRequest = BaseRequest, Q = unknown> = {
 };
 
 export type BaseSettings<S extends RecursiveRecord = RecursiveRecord> = S & {
+  /** The domain name (i.e. https://api.domain.ext) */
+  endpoint: string;
   /** A cors proxy endpoint to use for requests when in a browser */
   corsProxy?: string;
   /** A cors prefix to use for requests when in a browser */
@@ -118,8 +120,10 @@ export class ClientEndpoint<
   opts: Option;
   body?: BaseBody<string | keyof Parameter>;
   init?: BaseInit;
+  transform?: (param: Parameter) => Parameter;
   validate?: (param: Parameter) => boolean;
   cached: Cache extends true ? Omit<this, 'cached'> & ClientEndpointCache<Parameter, Response> : never;
+  resolve: (param?: Parameter) => URL;
 
   constructor(template: BaseTemplate<Parameter, Option>) {
     this.method = template.method;
@@ -129,7 +133,11 @@ export class ClientEndpoint<
     this.body = template.body;
 
     this.validate = template.validate;
+    this.transform = template.transform;
     this.cached = (template.opts?.cache ? this : null) as never;
+    this.resolve = () => {
+      throw new Error('Not implemented');
+    };
   }
 }
 
@@ -172,7 +180,7 @@ export abstract class BaseClient<
   private _authentication: ObservableState<AuthenticationType>;
   private _callListeners: Observable<QueryType>;
 
-  protected get settings() {
+  get settings() {
     if (this._settings.corsProxy) return { ...this._settings, endpoint: this._settings.corsProxy };
     return this._settings;
   }
@@ -282,9 +290,18 @@ export abstract class BaseClient<
           }
         };
 
+        const parseUrl = (param: Record<string, unknown> = {}) => {
+          const _params = template.transform?.(param) ?? param;
+          template.validate?.(_params);
+          return this._parseUrl(template, _params);
+        };
+
         Object.entries(client[endpoint]).forEach(([key, value]) => {
           if (key === 'cached') {
             if (template.opts?.cache) Object.defineProperty(fn, 'cached', { value: cachedFn });
+          } else if (key === 'resolve') {
+            Object.defineProperty(fn, 'resolve', { value: parseUrl });
+            if (template.opts?.cache) Object.defineProperty(cachedFn, 'resolve', { value: parseUrl });
           } else {
             Object.defineProperty(fn, key, { value });
             if (template.opts?.cache) Object.defineProperty(cachedFn, key, { value });

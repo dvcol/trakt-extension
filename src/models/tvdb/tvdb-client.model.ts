@@ -15,8 +15,6 @@ import {
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}
  */
 export type TvdbClientSettings = BaseSettings<{
-  /** The domain name (e.g. https://api4.thetvdb.com) */
-  endpoint: string;
   /** The api version (e.g. v4) */
   version: string;
   /** The consumer client identifier */

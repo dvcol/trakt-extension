@@ -39,7 +39,7 @@ export type TraktAuthenticationAuthorizeRequest = {
   /** Prefer the account sign up page to be the default. */
   signup?: boolean;
   /** Force the user to sign in and authorize your app. */
-  prompt?: 'login';
+  prompt?: 'login' | boolean;
 };
 
 export type TraktAuthenticationBaseRequest = {
@@ -74,4 +74,9 @@ export type TraktAuthenticationRevokeRequest = {
   client_id: string;
   /** Get this from your app settings. */
   client_secret: string;
+};
+
+export type TraktAuthenticationApprove = Pick<TraktAuthenticationAuthorizeRequest, 'state' | 'signup' | 'prompt'> & {
+  redirect?: RequestRedirect;
+  redirect_uri?: string;
 };
