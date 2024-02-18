@@ -26,7 +26,7 @@ describe('tmdb-client.ts', () => {
     ...data,
   };
 
-  const fetch = vi.spyOn(CancellableFetch, 'fetch').mockResolvedValue(new Response(JSON.stringify(mockResponse)));
+  const fetch = vi.spyOn(CancellableFetch, 'fetch');
 
   const mockAuth: TmdbClientAuthentication = {
     accessToken: 'access_token',
@@ -47,12 +47,13 @@ describe('tmdb-client.ts', () => {
   const mockNow = 100;
 
   beforeEach(async () => {
+    fetch.mockResolvedValue(new Response(JSON.stringify(mockResponse)));
     vi.spyOn(Date, 'now').mockReturnValue(mockNow);
-    await tmdbClient.importAuthentication(mockAuth);
+    tmdbClient.importAuthentication(mockAuth);
   });
 
   afterEach(async () => {
-    await tmdbClient.importAuthentication({});
+    tmdbClient.importAuthentication({});
     await tmdbClient.clearCache();
 
     vi.clearAllMocks();
