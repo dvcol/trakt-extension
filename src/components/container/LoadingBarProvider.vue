@@ -3,7 +3,9 @@ import { useLoadingBar } from 'naive-ui';
 
 import { LoadingBarService } from '~/services/loading-bar.service';
 
-const loadingBar = useLoadingBar();
-
-LoadingBarService.instance = loadingBar;
+LoadingBarService.instance = useLoadingBar();
 </script>
+
+<template>
+  <div id="loading-bar-provider" hidden style="display: none" />
+</template>
