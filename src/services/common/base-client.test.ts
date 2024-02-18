@@ -160,7 +160,7 @@ describe('base-client.ts', () => {
     delete: vi.spyOn(cacheStore, 'delete'),
   };
 
-  const client: TestableBaseClient = new TestableBaseClient({ cacheStore });
+  const client: TestableBaseClient = new TestableBaseClient({ endpoint: 'http://my-endpoint', cacheStore });
   const fetch = vi.spyOn(CancellableFetch, 'fetch').mockResolvedValue(new Response());
 
   const payload = {
@@ -335,7 +335,7 @@ describe('base-client.ts', () => {
 
         const _cacheStore: CacheStore<Response> = new Map();
         _cacheStore.retention = 15;
-        const _client = new TestableBaseClient({ cacheStore: _cacheStore });
+        const _client = new TestableBaseClient({ endpoint: 'http://my-endpoint', cacheStore: _cacheStore });
 
         await _client.endpointWithCache.cached();
         await _client.endpointWithCache.cached();

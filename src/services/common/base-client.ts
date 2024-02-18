@@ -43,7 +43,7 @@ export type BaseSettings<S extends RecursiveRecord = RecursiveRecord> = S & {
   corsPrefix?: string;
 };
 
-export type BaseOptions<S extends RecursiveRecord = RecursiveRecord, R extends Response = Response> = S & {
+export type BaseOptions<S extends BaseSettings = BaseSettings, R extends Response = Response> = S & {
   /** Optional cache store to manage cache read/write */
   cacheStore?: CacheStore<R>;
 };
