@@ -103,12 +103,12 @@ export class TraktService {
     this.traktClient.onCall(async call => {
       console.info('TraktClient.onCall', call);
 
-      const timeout = setTimeout(() => LoadingBarService.instance?.start(), 500);
+      const timeout = setTimeout(() => LoadingBarService.start(), 500);
       try {
         await call.query;
-        LoadingBarService.instance?.finish();
+        LoadingBarService.finish();
       } catch (error) {
-        LoadingBarService.instance?.error();
+        LoadingBarService.error();
         throw error;
       } finally {
         clearTimeout(timeout);
