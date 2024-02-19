@@ -1,3 +1,5 @@
+import type { RecursiveRecord } from '~/utils/typescript.utils';
+
 /**
  * @see [chrome.storage.sync](https://developer.chrome.com/docs/extensions/reference/storage/#type-SyncStorageArea)
  */
@@ -21,23 +23,38 @@ const filterObject = (object: Record<string, unknown>, regex: string) =>
  * @param area The storage area to wrap.
  * @param name The name of the storage area.
  */
-export const storageWrapper = (area: chrome.storage.StorageArea, name = crypto.randomUUID()) => {
+export const storageWrapper = (area: chrome.storage.StorageArea, name: string) => {
   if (!chrome?.storage) {
-    console.warn('Storage API is not available, using in-memory storage instead.');
-    const storage: Record<string, unknown> = {};
+    console.warn('Storage API is not available, using local storage instead.');
+
+    const storage = {
+      id: `trakt-${name}-storage`,
+      get values(): RecursiveRecord {
+        const _value = window.localStorage.getItem(this.id);
+        if (!_value) return {};
+        return JSON.parse(_value);
+      },
+      set values(value: unknown) {
+        window.localStorage.setItem(this.id, JSON.stringify(value));
+      },
+      setItem(key: string, value: unknown) {
+        this.values = { ...this.values, [key]: value };
+      },
+      removeItem(key: string) {
+        this.values = { ...this.values, [key]: undefined };
+      },
+      clear() {
+        this.values = {};
+      },
+    };
+
     window.trakt = { ...window.trakt, [name]: storage };
     return {
-      getAll: async <T>(regex?: string): Promise<T> => (regex ? filterObject(storage, regex) : storage) as T,
-      get: async <T>(key: string): Promise<T> => storage[key] as T,
-      set: async <T>(key: string, value: T): Promise<void> => {
-        storage[key] = value;
-      },
-      remove: async (key: string): Promise<void> => {
-        delete storage[key];
-      },
-      clear: async (): Promise<void> => {
-        Object.keys(storage).forEach(key => delete storage[key]);
-      },
+      getAll: async <T>(regex?: string): Promise<T> => (regex ? filterObject(storage.values, regex) : storage.values) as T,
+      get: async <T>(key: string): Promise<T> => storage.values[key] as T,
+      set: async <T>(key: string, value: T): Promise<void> => storage.setItem(key, value),
+      remove: async (key: string): Promise<void> => storage.removeItem(key),
+      clear: async (): Promise<void> => storage.clear(),
     };
   }
   return {
@@ -55,7 +72,7 @@ export type StorageArea = ReturnType<typeof storageWrapper>;
  * This object is used to access the storage areas.
  */
 export const storage = {
-  sync: storageWrapper(syncStorage),
-  local: storageWrapper(localStorage),
-  session: storageWrapper(sessionStorage),
+  sync: storageWrapper(syncStorage, 'sync'),
+  local: storageWrapper(localStorage, 'local'),
+  session: storageWrapper(sessionStorage, 'session'),
 };
