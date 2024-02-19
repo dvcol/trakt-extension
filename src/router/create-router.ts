@@ -1,8 +1,9 @@
-import { createRouter as createVueRouter, createWebHashHistory } from 'vue-router';
+import { createRouter as createVueRouter, createWebHashHistory, type LocationQueryRaw } from 'vue-router';
 
 import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 import { Route, routes } from '~/router/routes';
 import { TraktService } from '~/services/trakt.service';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
 
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
@@ -21,22 +22,32 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     history: createWebHashHistory(baseUrl),
     routes: [
       {
-        path: '/:pathMatch(.*)',
+        path: `${baseName}/:pathMatch(.*)`,
         redirect: `${baseName}/`,
       },
       ..._routes,
     ],
   });
 
+  const { waitAppReady } = useAppStateStoreRefs();
   const { isAuthenticated } = useAuthSettingsStoreRefs();
   router.beforeResolve(async to => {
-    const query: Record<string, string> = { ...routeParam.value };
+    const query: LocationQueryRaw = { ...routeParam.value };
     if (routeParam.value) setRouteParam(undefined);
 
-    if (isLoginAuthResponseSuccess(query)) await TraktService.login(query.code);
+    if (isLoginAuthResponseSuccess(query)) {
+      try {
+        await TraktService.login(query.code);
+      } catch (error) {
+        console.error('Failed to login with Trakt.tv');
+        console.error(error);
+      }
+    }
+
+    await waitAppReady.value;
 
     if (!isAuthenticated.value && to.name !== Route.Login) {
-      query.redirect = to.fullPath;
+      query.redirect = to.name?.toString();
       // redirect the user to the login page
       return { name: Route.Login, query };
     }

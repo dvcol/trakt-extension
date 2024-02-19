@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NButton, NFlex } from 'naive-ui';
 
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
@@ -17,11 +17,13 @@ const router = useRouter();
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 
 onMounted(() => {
-  const { redirect } = route.query;
-  if (redirect) router.push(route.query.redirect as string);
+  watch(isAuthenticated, authenticated => {
+    const { redirect } = route.query;
+    if (authenticated && redirect) router.push(route.query.redirect as string);
+  });
 });
 
-const redirect = async () => {
+const onRedirect = async () => {
   try {
     await TraktService.approve();
   } catch (error) {
@@ -34,7 +36,7 @@ const redirect = async () => {
   <NFlex vertical justify="space-around" align="center">
     <img alt="Vue logo" class="logo" src="/assets/logo.svg" width="125" height="125" />
     <span>This is a login component</span>
-    <NButton @click="redirect">Redirect Url</NButton>
+    <NButton @click="onRedirect">Redirect Url</NButton>
   </NFlex>
 </template>
 

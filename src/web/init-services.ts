@@ -1,8 +1,10 @@
 import { TraktService } from '~/services/trakt.service';
+import { useAppStateStore } from '~/stores/app-state.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 
 export const initServices = async () => {
+  const { setAppReady } = useAppStateStore();
   const { syncRestoreAuth } = useAuthSettingsStore();
   const { syncRestoreUser, syncRestoreAllUsers } = useUserSettingsStore();
 
@@ -16,4 +18,6 @@ export const initServices = async () => {
   TraktService.listen();
 
   await syncRestoreAllUsers();
+
+  setAppReady(true);
 };

@@ -3,6 +3,7 @@ import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
+import PageLoading from '~/components/common/loading/PageLoading.vue';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
@@ -15,7 +16,7 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
   <main>
     <RouterView v-slot="{ Component, route }">
       <Transition name="scale" mode="out-in">
-        <component :is="Component" :key="route.path" />
+        <component :is="Component ?? PageLoading" :key="route.path" />
       </Transition>
     </RouterView>
   </main>
@@ -24,6 +25,8 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 <style lang="scss" scoped>
 @use '~/styles/z-index' as layers;
 
+$header-height: 2.75rem;
+
 header {
   position: sticky;
   top: 0;
@@ -31,6 +34,7 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: $header-height;
   background: var(--bg-blur-black);
   backdrop-filter: blur(var(--bg-blur));
   transition: background 0.5s;
@@ -45,6 +49,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: calc(100% - #{$header-height});
   padding: 0 2rem;
 }
 
