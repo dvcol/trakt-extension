@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NAvatar, NDropdown, NEllipsis, NIcon, NSpace } from 'naive-ui';
 
-import { computed, defineProps, h } from 'vue';
+import { computed, defineProps, h, ref } from 'vue';
 
 import { useRouter } from 'vue-router';
 
@@ -28,7 +28,7 @@ import {
 import { Blurs, Colors } from '~/styles/colors.style';
 import { useI18n } from '~/utils';
 
-import { createTab } from '~/utils/browser/browser.utils';
+import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
 
 const i18n = useI18n('navbar_settings');
 const router = useRouter();
@@ -39,6 +39,12 @@ const { syncRestoreAuth } = useAuthSettingsStore();
 
 const avatar = computed(() => userSetting.value?.user?.images?.avatar?.full);
 const username = computed(() => userSetting.value?.user?.username);
+
+const fallback = ref<boolean>(!chromeRuntimeId);
+const onAvatarError = (event: Event) => {
+  console.error('Failed to fetch avatar', event);
+  fallback.value = true;
+};
 
 defineProps({
   parentElement: {
@@ -158,12 +164,13 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       </NEllipsis>
 
       <NAvatar
-        v-if="avatar"
+        v-if="!fallback && avatar"
         :src="avatar"
         round
         size="small"
         color="transparent"
         style="position: absolute; top: 0.125rem; right: 0.5rem; scale: 0.8"
+        :on-error="onAvatarError"
       />
       <NIcon v-else style="position: absolute; top: 0.4rem; right: 0.75rem" size="1.5em">
         <IconAccount />
