@@ -104,7 +104,7 @@ describe('base-trakt-client.ts', () => {
       const result = client.publicParse(mockTemplate, mockParams);
 
       expect(result).toBe(
-        'https://api-staging.trakt.tv/movies/requiredPath/popular?requiredQuery=requiredQuery&genres=action%2Cadventure&page=1&limit=10&extended=full',
+        `${traktClientSettings.endpoint}/movies/requiredPath/popular?requiredQuery=requiredQuery&genres=action%2Cadventure&page=1&limit=10&extended=full`,
       );
     });
 
@@ -362,7 +362,7 @@ describe('base-trakt-client.ts', () => {
     const result = await client.publicCall(mockTemplate, mockParams);
 
     expect(spyFetch).toHaveBeenCalledWith(
-      'https://api-staging.trakt.tv/movies/requiredPath/popular?requiredQuery=requiredQuery&genres=action%2Cadventure&page=1&limit=10&extended=full',
+      `${traktClientSettings.endpoint}/movies/requiredPath/popular?requiredQuery=requiredQuery&genres=action%2Cadventure&page=1&limit=10&extended=full`,
       {
         body: '{"requiredBody":"requiredBody"}',
         headers: {
