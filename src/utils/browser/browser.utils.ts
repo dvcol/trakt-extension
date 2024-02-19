@@ -10,7 +10,7 @@ const openTab = (options: chrome.tabs.CreateProperties) => window.open(options.u
 /**
  * @see [chrome.tabs.create](https://developer.chrome.com/docs/extensions/reference/tabs/#method-create)
  */
-export const createTab = chrome?.tabs?.create ?? openTab;
+export const createTab = (options: chrome.tabs.CreateProperties) => (chrome?.tabs?.create ?? openTab)(options);
 
 /**
  * The ID of the current extension.

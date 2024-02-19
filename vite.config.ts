@@ -167,6 +167,7 @@ export default defineConfig(() => ({
     coverage: {
       reportsDirectory: '../coverage',
     },
+    setupFiles: ['../vitest.setup.ts'],
   },
   optimizeDeps: {
     exclude: ['path', 'fast-glob'],

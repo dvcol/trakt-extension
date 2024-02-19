@@ -22,7 +22,7 @@ export const Staging = {
 
 const isProd = import.meta.env.PROD;
 
-const client = !isProd ? Production : Staging;
+const client = isProd ? Production : Staging;
 
 const browserRedirect = window.location.href.split('#').at(0) ?? client.RedirectionUrl;
 
