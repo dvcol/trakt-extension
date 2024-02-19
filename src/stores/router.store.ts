@@ -1,9 +1,14 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
+const parseQuery = (location: Location) => {
+  const params = new URLSearchParams(location.href.split('?').at(1));
+  return Object.fromEntries(params.entries());
+};
+
 export const useRouterStore = defineStore('router', () => {
   const initialLocation = ref({ ...window.location });
-  const routeParam = ref<Record<string, string> | undefined>(Object.fromEntries(new URLSearchParams(initialLocation.value.search).entries()));
+  const routeParam = ref<Record<string, string> | undefined>(parseQuery(initialLocation.value));
   const setRouteParam = (params?: Record<string, string>) => {
     routeParam.value = params;
   };

@@ -21,9 +21,7 @@ export const Staging = {
   RedirectionUrl: 'chrome-extension://eiljcfkgmgjbjglhhhnchonnjefhncad/views/options/index.html',
 } as const;
 
-const isProd = import.meta.env.PROD;
-
-const client = isProd ? Production : Staging;
+const client = Production;
 
 const traktClientSettings: TraktClientSettings = {
   client_id: client.ID,

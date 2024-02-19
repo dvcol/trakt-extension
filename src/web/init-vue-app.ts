@@ -19,7 +19,7 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
   const router = createRouter(options);
   app.use(router);
 
-  initServices();
+  initServices().then(() => console.info('Services initialized.'));
 
   return app;
 };
