@@ -47,6 +47,12 @@ defineProps({
   },
 });
 
+const users = computed(() => {
+  return Object.entries(userSettings.value).filter(
+    ([key, value]) => value && key !== username.value && key !== defaultUser,
+  );
+});
+
 const toOption = (
   key: string,
   icon: Component | string,
@@ -63,23 +69,16 @@ const toOption = (
   };
 };
 
-const baseOptions: DropdownProps['options'] = [
-  { type: 'divider', key: 'account-divider' },
-  toOption('settings', IconCog),
-  { type: 'divider', key: 'external-links' },
-  toOption('trakt', IconExternalLink),
-  { type: 'divider', key: 'session-divider' },
-  toOption('login', IconAccountAdd),
-  toOption('logout', IconLogOut),
-];
-
-const users = computed(() => {
-  return Object.entries(userSettings.value).filter(
-    ([key, value]) => value && key !== username.value && key !== defaultUser,
-  );
-});
-
 const options = computed<DropdownProps['options']>(() => {
+  const baseOptions: DropdownProps['options'] = [
+    toOption('settings', IconCog),
+    { type: 'divider', key: 'external-links' },
+    toOption('trakt', IconExternalLink),
+    { type: 'divider', key: 'session-divider' },
+    toOption('login', IconAccountAdd),
+    toOption('logout', IconLogOut),
+  ];
+
   if (users.value.length) {
     return [
       ...users.value.map(([key, value]) =>
