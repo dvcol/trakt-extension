@@ -82,7 +82,9 @@ export class TraktService {
   }
 
   static async approve(params: TraktAuthenticationApprove = {}) {
-    const url = this.traktClient.redirectToAuthenticationUrl(params);
+    const url = this.traktClient
+      .redirectToAuthenticationUrl(params)
+      .replace(`${traktClientSettings.corsProxy}/${traktClientSettings.corsPrefix}`, traktClientSettings.endpoint);
     return createTab({ url });
   }
 

@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: about-me
-      url: https://dvcol.github.io/about-me/
+      name: trakt-extension
+      url: https://dvcol.github.io/trakt-extension/
 
     steps:
       - name: Checkout branch ${{ github.ref }}

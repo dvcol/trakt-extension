@@ -1,5 +1,6 @@
 import type { TraktClientSettings } from '~/models/trakt/trakt-client.model';
 
+import { WebConfig } from '~/settings/web.config';
 import { chromeRuntimeId } from '~/utils/browser/browser.utils';
 
 export const Config = {
@@ -24,13 +25,19 @@ const isProd = import.meta.env.PROD;
 
 const client = isProd ? Production : Staging;
 
-const browserRedirect = window.location.href.split('#').at(0) ?? client.RedirectionUrl;
-
-export const traktClientSettings: TraktClientSettings = {
+const traktClientSettings: TraktClientSettings = {
   client_id: client.ID,
   client_secret: client.Secret,
-  redirect_uri: chromeRuntimeId ? client.RedirectionUrl : browserRedirect,
+  redirect_uri: client.RedirectionUrl,
   endpoint: client.TraktEndpoint,
 
   useragent: Config.UserAgent,
 };
+
+if (!chromeRuntimeId) {
+  traktClientSettings.redirect_uri = window.location.origin + (import.meta.env.VITE_BASE ? `/${import.meta.env.VITE_BASE}` : '');
+  traktClientSettings.corsProxy = WebConfig.CorsProxy;
+  traktClientSettings.corsPrefix = WebConfig.CorsPrefix.trakt;
+}
+
+export { traktClientSettings };

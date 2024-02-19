@@ -1,1 +1,1 @@
-global.chrome = {} as typeof chrome;
+global.chrome = { runtime: { id: 'extension-id' } } as typeof chrome;

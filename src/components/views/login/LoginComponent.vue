@@ -17,12 +17,8 @@ const router = useRouter();
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 
 onMounted(() => {
-  console.info('authResponse:', route.query);
   const { redirect } = route.query;
-  if (redirect) {
-    console.info('redirect:', redirect, isAuthenticated.value);
-    router.push(route.query.redirect as string);
-  }
+  if (redirect) router.push(route.query.redirect as string);
 });
 
 const redirect = async () => {
