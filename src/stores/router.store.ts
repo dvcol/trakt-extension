@@ -2,7 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
 const parseQuery = (location: Location) => {
-  const params = new URLSearchParams(location.href.split('?').at(1));
+  const params = new URLSearchParams(location.href.split('?').at(1)?.replace(/#.*$/, ''));
   return Object.fromEntries(params.entries());
 };
 
