@@ -44,6 +44,11 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
       }
     }
 
+    if (!to.path.startsWith(baseName)) {
+      console.info('router.beforeResolve', { baseName, baseUrl }, JSON.parse(JSON.stringify(to)));
+      return;
+    }
+
     await waitAppReady.value;
 
     if (!isAuthenticated.value && to.name !== Route.Login) {
