@@ -3,17 +3,17 @@ import type { RecursiveRecord } from '~/utils/typescript.utils';
 /**
  * @see [chrome.storage.sync](https://developer.chrome.com/docs/extensions/reference/storage/#type-SyncStorageArea)
  */
-export const syncStorage: chrome.storage.SyncStorageArea = chrome?.storage?.sync;
+export const syncStorage: chrome.storage.SyncStorageArea = window?.chrome?.storage?.sync;
 
 /**
  * @see [chrome.storage.local](https://developer.chrome.com/docs/extensions/reference/storage/#type-LocalStorageArea)
  */
-export const localStorage: chrome.storage.LocalStorageArea = chrome?.storage?.local;
+export const localStorage: chrome.storage.LocalStorageArea = window?.chrome?.storage?.local;
 
 /**
  * @see [chrome.storage.session](https://developer.chrome.com/docs/extensions/reference/storage/#type-StorageArea)
  */
-export const sessionStorage: chrome.storage.StorageArea = chrome?.storage?.session;
+export const sessionStorage: chrome.storage.StorageArea = window?.chrome?.storage?.session;
 
 const filterObject = (object: Record<string, unknown>, regex: string) =>
   Object.fromEntries(Object.entries(object).filter(([key]) => new RegExp(regex).test(key)));
@@ -24,7 +24,7 @@ const filterObject = (object: Record<string, unknown>, regex: string) =>
  * @param name The name of the storage area.
  */
 export const storageWrapper = (area: chrome.storage.StorageArea, name: string) => {
-  if (!chrome?.storage) {
+  if (!window?.chrome?.storage) {
     console.warn('Storage API is not available, using local storage instead.');
 
     const storage = {

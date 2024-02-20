@@ -18,7 +18,7 @@ export const i18nTranslate = (value: string | BrowserI18nInput, ...modules: stri
     key = path ? `${path}__${value.key}` : value.key;
     substitution = value?.substitutions;
   }
-  return chrome?.i18n.getMessage?.(key, substitution) || key;
+  return window?.chrome?.i18n.getMessage?.(key, substitution) || key;
 };
 
 /**
