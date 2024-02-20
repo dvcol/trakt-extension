@@ -17,3 +17,9 @@ export const createTab = (options: chrome.tabs.CreateProperties) => (chrome?.tab
  * @see [chrome.runtime.id](https://developer.chrome.com/docs/extensions/reference/runtime/#property-id)
  */
 export const chromeRuntimeId = chrome?.runtime?.id;
+
+/**
+ * The i18n API for the current browser.
+ * @see [chrome.i18n](https://developer.chrome.com/docs/extensions/reference/i18n/)
+ */
+export const chromeI18n = chrome?.i18n;

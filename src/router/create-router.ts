@@ -53,5 +53,15 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     }
   });
 
+  const { restoreLastRoute, setLastRoute } = useRouterStore();
+
+  router.afterEach(async to => {
+    await setLastRoute(to);
+  });
+
+  restoreLastRoute().then(async _route => {
+    await router.push(_route?.name ? _route : { name: Route.Progress });
+  });
+
   return router;
 };
