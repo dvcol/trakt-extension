@@ -10,16 +10,16 @@ const openTab = (options: chrome.tabs.CreateProperties) => window.open(options.u
 /**
  * @see [chrome.tabs.create](https://developer.chrome.com/docs/extensions/reference/tabs/#method-create)
  */
-export const createTab = (options: chrome.tabs.CreateProperties) => (chrome?.tabs?.create ?? openTab)(options);
+export const createTab = (options: chrome.tabs.CreateProperties) => (window?.chrome?.tabs?.create ?? openTab)(options);
 
 /**
  * The ID of the current extension.
  * @see [chrome.runtime.id](https://developer.chrome.com/docs/extensions/reference/runtime/#property-id)
  */
-export const chromeRuntimeId = chrome?.runtime?.id;
+export const chromeRuntimeId = window?.chrome?.runtime?.id;
 
 /**
  * The i18n API for the current browser.
  * @see [chrome.i18n](https://developer.chrome.com/docs/extensions/reference/i18n/)
  */
-export const chromeI18n = chrome?.i18n;
+export const chromeI18n = window?.chrome?.i18n;
