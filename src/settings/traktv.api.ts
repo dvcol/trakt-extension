@@ -33,7 +33,7 @@ const traktClientSettings: TraktClientSettings = {
 };
 
 if (!chromeRuntimeId) {
-  traktClientSettings.redirect_uri = window.location.href.split('#').at(0)!;
+  traktClientSettings.redirect_uri = window.location.href.split('#').at(0)?.replace(/\/$/, '') ?? traktClientSettings.redirect_uri;
   traktClientSettings.corsProxy = WebConfig.CorsProxy;
   traktClientSettings.corsPrefix = WebConfig.CorsPrefix.trakt;
 }
