@@ -89,6 +89,10 @@ nav {
     ) !important;
     --n-color-segment: inherit !important;
 
+    .tab {
+      min-height: 1.25rem;
+    }
+
     /* stylelint-disable-next-line selector-class-pattern -- overriding theme class  */
     .n-tabs-tab--active {
       --n-tab-text-color-hover: color-mix(
