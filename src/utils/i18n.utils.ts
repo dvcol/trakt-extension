@@ -3,6 +3,7 @@ import type { Locale } from '~/models/i18n.model';
 import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
 import { useI18nTranslate } from '~/utils/browser/browser-i18n.utils';
+import { chromeI18n } from '~/utils/browser/browser.utils';
 
 /**
  * Setup i18n function to either use chrome i18n resolver or a local store (for web use).
@@ -10,7 +11,7 @@ import { useI18nTranslate } from '~/utils/browser/browser-i18n.utils';
  * @see chrome.i18n.getMessage
  */
 export const useI18n = (...roots: string[]): ReturnType<typeof useI18nTranslate> => {
-  if (!window?.chrome?.i18n) {
+  if (!chromeI18n) {
     const store = useI18nStore();
     const router = useRouterStore();
 

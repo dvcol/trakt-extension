@@ -1,6 +1,10 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
+import type { RouteLocationNormalized } from 'vue-router';
+
+import { storage } from '~/utils/browser/browser-storage.utils';
+
 const parseQuery = (location: Location) => {
   const params = new URLSearchParams(location.href.split('?').at(1)?.replace(/#.*$/, ''));
   if (params.has('code')) {
@@ -14,8 +18,22 @@ const parseQuery = (location: Location) => {
 export const useRouterStore = defineStore('router', () => {
   const initialLocation = ref({ ...window.location });
   const routeParam = ref<Record<string, string> | undefined>(parseQuery(initialLocation.value));
+  const lastRoute = ref<RouteLocationNormalized>();
+
   const setRouteParam = (params?: Record<string, string>) => {
     routeParam.value = params;
+  };
+
+  const setLastRoute = (_route: RouteLocationNormalized) => {
+    lastRoute.value = _route;
+    return storage.local.set('app.state.last-route', _route);
+  };
+
+  const restoreLastRoute = async () => {
+    const _route = await storage.local.get<RouteLocationNormalized>('app.state.last-route');
+    if (_route) lastRoute.value = _route;
+    console.info('router-store', 'restored last route', JSON.parse(JSON.stringify(lastRoute.value)));
+    return _route;
   };
 
   const baseName = ref('');
@@ -28,7 +46,7 @@ export const useRouterStore = defineStore('router', () => {
     baseUrl.value = url;
   };
 
-  return { baseName, setBaseName, baseUrl, setBaseUrl, initialLocation, routeParam, setRouteParam };
+  return { baseName, setBaseName, baseUrl, setBaseUrl, initialLocation, routeParam, setRouteParam, lastRoute, setLastRoute, restoreLastRoute };
 });
 
 export const useRouterStoreRefs = () => storeToRefs(useRouterStore());

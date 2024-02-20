@@ -15,7 +15,7 @@ export const initServices = async () => {
 
   TraktService.listen();
 
-  await syncRestoreAllUsers();
-
   setAppReady(true);
+
+  await syncRestoreAllUsers();
 };
