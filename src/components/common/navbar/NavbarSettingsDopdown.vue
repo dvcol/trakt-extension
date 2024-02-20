@@ -68,8 +68,9 @@ const toOption = (
     label: label ?? i18n(key),
     key,
     icon: () => {
-      if (typeof icon === 'string')
+      if (typeof icon === 'string') {
         return h(NAvatar, { src: icon, size: 16, round: true });
+      }
       return h(NIcon, null, { default: () => h(icon) });
     },
   };
@@ -88,7 +89,11 @@ const options = computed<DropdownProps['options']>(() => {
   if (users.value.length) {
     return [
       ...users.value.map(([key, value]) =>
-        toOption(`user-${key}`, value?.user?.images?.avatar?.full || IconAccount, key),
+        toOption(
+          `user-${key}`,
+          (chromeRuntimeId && value?.user?.images?.avatar?.full) || IconAccount,
+          key,
+        ),
       ),
       { type: 'divider', key: 'users-divider' },
       ...baseOptions,
