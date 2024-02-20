@@ -13,7 +13,7 @@ export enum Route {
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: Route.Progress,
+    redirect: { name: Route.Progress },
   },
   {
     path: `/${Route.Login}`,

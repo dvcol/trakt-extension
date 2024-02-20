@@ -23,7 +23,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     routes: [
       {
         path: `${baseName}/:pathMatch(.*)`,
-        redirect: `${baseName}/`,
+        redirect: { name: Route.Progress },
       },
       ..._routes,
     ],
