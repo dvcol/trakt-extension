@@ -33,7 +33,7 @@ const traktClientSettings: TraktClientSettings = {
 };
 
 if (!chromeRuntimeId) {
-  traktClientSettings.redirect_uri = window.location.origin + (import.meta.env.VITE_BASE ?? '').replace(/\/$/, '');
+  traktClientSettings.redirect_uri = window.location.href.split('#').at(0)!;
   traktClientSettings.corsProxy = WebConfig.CorsProxy;
   traktClientSettings.corsPrefix = WebConfig.CorsPrefix.trakt;
 }
