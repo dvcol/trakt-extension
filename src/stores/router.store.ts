@@ -3,6 +3,11 @@ import { ref } from 'vue';
 
 const parseQuery = (location: Location) => {
   const params = new URLSearchParams(location.href.split('?').at(1)?.replace(/#.*$/, ''));
+  if (params.has('code')) {
+    const url = new URL(location.href);
+    url.searchParams.delete('code');
+    window.history.replaceState({}, document.title, url);
+  }
   return Object.fromEntries(params.entries());
 };
 
