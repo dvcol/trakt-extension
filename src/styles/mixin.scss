@@ -1,0 +1,10 @@
+@mixin hover-background($from: var(--bg-blur-black), $to: var(--bg-blur-black-hover), $blur: var(--bg-blur)) {
+  background: $from;
+  backdrop-filter: blur($blur);
+  transition: background 0.5s;
+  will-change: background;
+
+  &:hover {
+    background: $to
+  }
+}

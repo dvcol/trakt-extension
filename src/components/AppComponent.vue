@@ -23,6 +23,7 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 </template>
 
 <style lang="scss" scoped>
+@use 'src/styles/mixin' as mixin;
 @use '~/styles/z-index' as layers;
 
 $header-height: 2.75rem;
@@ -35,13 +36,9 @@ header {
   flex-direction: column;
   justify-content: center;
   height: $header-height;
-  background: var(--bg-blur-black);
-  backdrop-filter: blur(var(--bg-blur));
-  transition: background 0.5s;
-  will-change: background;
 
-  &:hover {
-    background: var(--bg-blur-black-hover);
+  > :first-child {
+    @include mixin.hover-background;
   }
 }
 

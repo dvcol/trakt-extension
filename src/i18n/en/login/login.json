@@ -1,0 +1,34 @@
+{
+  "login__title": {
+    "message": "Trakt",
+    "description": "Login title"
+  },
+  "login__sub_title": {
+    "message": "Please sign in to access your data.",
+    "description": "Login sub title"
+  },
+  "login__sign_in": {
+    "message": "Click to Sign In",
+    "description": "Login button"
+  },
+  "login__checkbox__sign_up_for": {
+    "message": "Sign up for a",
+    "description": "Checkbox sign up message (uncolored)"
+  },
+  "login__checkbox__new_account": {
+    "message": "new account",
+    "description": "Checkbox sign up message (colored)"
+  },
+  "login__checkbox__use": {
+    "message": "Use",
+    "description": "Checkbox message (uncolored)"
+  },
+  "login__checkbox__active_user": {
+    "message": "active user",
+    "description": "Checkbox message (colored)"
+  },
+  "login__checkbox__session": {
+    "message": "session to login.",
+    "description": "Checkbox message (uncolored)"
+  }
+}
