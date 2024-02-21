@@ -1,6 +1,0 @@
-{
-  "extends": ["@dvcol/stylelint-plugin-presets/config/vue"],
-  "rules": {
-    "@dvcol/progress": null
-  }
-}
