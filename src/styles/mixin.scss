@@ -1,10 +1,21 @@
-@mixin hover-background($from: var(--bg-blur-black), $to: var(--bg-blur-black-hover), $blur: var(--bg-blur)) {
-  background: $from;
+@mixin hover-background(
+  $from: var(--bg-blur-black),
+  $to: var(--bg-blur-black-hover),
+  $blur: var(--bg-blur),
+  $transition: var(--n-bezier)
+) {
+  background-color: $from;
   backdrop-filter: blur($blur);
-  transition: background 0.5s;
-  will-change: background;
+  transition:
+    color 0.3s $transition,
+    background 0.3s $transition,
+    backdrop-filter 0.3s $transition,
+    box-shadow 0.3s $transition,
+    border-color 0.3s $transition;
+  will-change: color, background, backdrop-filter, box-shadow,
+    border-color;
 
   &:hover {
-    background: $to
+    background-color: $to;
   }
 }
