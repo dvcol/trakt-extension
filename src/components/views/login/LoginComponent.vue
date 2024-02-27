@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { NButton, NCard, NCheckbox, NFlex, NH4, NText } from 'naive-ui';
 
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, Transition, watch } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
+import GridBackground from '~/components/common/background/GridBackground.vue';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils';
@@ -21,11 +22,13 @@ const onRedirect = (authenticated = isAuthenticated.value) => {
   return router.push((route.query.redirect as string) ?? '/');
 };
 
+const show = ref(false);
 onMounted(() => {
   onRedirect();
   watch(isAuthenticated, authenticated => {
     onRedirect(authenticated);
   });
+  show.value = !isAuthenticated.value;
 });
 
 const signUp = ref(false);
@@ -45,42 +48,50 @@ const onSignIn = async () => {
 
 <template>
   <NFlex vertical justify="space-around" align="center">
-    <NCard class="card" :title="i18n('title')" hoverable>
-      <template #cover>
-        <div class="spacer" />
-        <img
-          alt="Vue logo"
-          class="logo"
-          src="/assets/logo.svg"
-          width="125"
-          height="125"
-        />
-      </template>
+    <GridBackground :size="20" />
 
-      <NFlex vertical>
-        <NH4 class="title" prefix="bar">{{ i18n('sub_title') }}</NH4>
+    <Transition name="scale" mode="in-out">
+      <div v-if="show">
+        <NCard class="card" :title="i18n('title')" hoverable>
+          <template #cover>
+            <div class="spacer" />
+            <img
+              alt="Vue logo"
+              class="logo"
+              src="/assets/logo.svg"
+              width="125"
+              height="125"
+            />
+          </template>
 
-        <NButton class="button" @click="onSignIn">{{ i18n('sign_in') }}</NButton>
+          <NFlex vertical>
+            <NH4 class="title" prefix="bar">{{ i18n('sub_title') }}</NH4>
 
-        <NFlex class="checkboxes" vertical>
-          <NCheckbox v-model:checked="signUp">
-            {{ i18n('checkbox__sign_up_for') }}
-            <NText type="info">{{ i18n('checkbox__new_account') }}</NText>
-            !
-          </NCheckbox>
-          <NCheckbox v-model:checked="useSession">
-            {{ i18n('checkbox__use') }}
-            <NText type="info">{{ i18n('checkbox__active_user') }}</NText>
-            {{ i18n('checkbox__session') }}
-          </NCheckbox>
-        </NFlex>
-      </NFlex>
-    </NCard>
+            <NButton class="button" @click="onSignIn">{{ i18n('sign_in') }}</NButton>
+
+            <NFlex class="checkboxes" vertical>
+              <NCheckbox v-model:checked="signUp">
+                {{ i18n('checkbox__sign_up_for') }}
+                <NText type="info">{{ i18n('checkbox__new_account') }}</NText>
+                !
+              </NCheckbox>
+              <NCheckbox v-model:checked="useSession">
+                {{ i18n('checkbox__use') }}
+                <NText type="info">{{ i18n('checkbox__active_user') }}</NText>
+                {{ i18n('checkbox__session') }}
+              </NCheckbox>
+            </NFlex>
+          </NFlex>
+        </NCard>
+      </div>
+    </Transition>
   </NFlex>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/styles/mixin' as mixin;
+@use '~/styles/mixin' as mixin;
+@use '~/styles/transition' as transition;
+@include transition.scale(0.9);
 
 .card {
   @include mixin.hover-background;
