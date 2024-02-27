@@ -2,20 +2,21 @@
   $from: var(--bg-blur-black),
   $to: var(--bg-blur-black-hover),
   $blur: var(--bg-blur),
-  $transition: var(--n-bezier)
+  $transition: 0.5s var(--n-bezier)
 ) {
-  background-color: $from;
+  background: $from;
   backdrop-filter: blur($blur);
   transition:
-    color 0.3s $transition,
-    background 0.3s $transition,
-    backdrop-filter 0.3s $transition,
-    box-shadow 0.3s $transition,
-    border-color 0.3s $transition;
-  will-change: color, background, backdrop-filter, box-shadow,
+    color $transition,
+    background $transition,
+    background-color $transition,
+    backdrop-filter $transition,
+    box-shadow $transition,
+    border-color $transition;
+  will-change: color, background, background-color, backdrop-filter, box-shadow,
     border-color;
 
   &:hover {
-    background-color: $to;
+    background: $to;
   }
 }

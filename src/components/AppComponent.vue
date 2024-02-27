@@ -3,6 +3,7 @@ import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
+import GridBackground from '~/components/common/background/GridBackground.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
@@ -15,6 +16,7 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
   </header>
   <main>
     <RouterView v-slot="{ Component, route }">
+      <GridBackground v-if="!Component" :size="20" />
       <Transition name="scale" mode="out-in">
         <component :is="Component ?? PageLoading" :key="route.path" />
       </Transition>
@@ -23,8 +25,10 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 </template>
 
 <style lang="scss" scoped>
-@use 'src/styles/mixin' as mixin;
+@use '~/styles/mixin' as mixin;
 @use '~/styles/z-index' as layers;
+@use '~/styles/transition' as transition;
+@include transition.scale;
 
 $header-height: 2.75rem;
 
@@ -48,16 +52,5 @@ main {
   justify-content: center;
   min-height: calc(100% - #{$header-height});
   padding: 0 2rem;
-}
-
-.scale-enter-active,
-.scale-leave-active {
-  transition: all 0.25s ease;
-}
-
-.scale-enter-from,
-.scale-leave-to {
-  transform: scale(0.95);
-  opacity: 0;
 }
 </style>

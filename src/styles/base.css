@@ -25,6 +25,9 @@
   --trakt-red: #ed1c24;
   --trakt-red-dark: #ba080f;
 
+  /* Transforms */
+  --n-bezier: cubic-bezier(.4, 0, .2, 1);
+
   /* semantic color variables for this project */
   --section-gap: 160px;
   --color-background: var(--vt-c-black);
