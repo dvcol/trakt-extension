@@ -28,11 +28,10 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 
 <style lang="scss" scoped>
 @use '~/styles/mixin' as mixin;
+@use '~/styles/layout' as layout;
 @use '~/styles/z-index' as layers;
 @use '~/styles/transition' as transition;
 @include transition.scale;
-
-$header-height: 2.75rem;
 
 header {
   position: fixed;
@@ -42,7 +41,7 @@ header {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: $header-height;
+  min-height: layout.$header-navbar-height;
 
   > :first-child {
     @include mixin.hover-background;
@@ -53,7 +52,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100% - #{$header-height});
-  margin-top: $header-height;
+  min-height: calc(100% - #{layout.$header-navbar-height});
+  margin-top: layout.$header-navbar-height;
 }
 </style>

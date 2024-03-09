@@ -18,11 +18,12 @@ const navigate = (to: Route) => {
 
 const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search];
 
+const isHover = ref(false);
 const navElement = ref<HTMLElement>();
 </script>
 
 <template>
-  <nav ref="navElement">
+  <nav ref="navElement" @mouseenter="isHover = true" @mouseleave="isHover = false">
     <NTabs
       :value="route.name?.toString()"
       class="tabs"
@@ -50,14 +51,35 @@ const navElement = ref<HTMLElement>();
         <NavbarSettingsDropdown v-if="navElement" :parent-element="navElement" />
       </NTab>
     </NTabs>
+    <div class="drawer" :class="{ visible: isHover }">
+      <div>This is an optional drawer</div>
+    </div>
   </nav>
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/layout' as layout;
+
 nav {
   padding: 0 0.25rem;
   font-size: 12px;
   text-align: center;
+
+  .drawer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s var(--n-bezier);
+    transition-delay: 0.2s;
+
+    &.visible {
+      height: layout.$header-drawer-height;
+      transition: height 0.25s var(--n-bezier);
+      transition-delay: 0s;
+    }
+  }
 
   a {
     color: inherit; /* blue colors for links too */
