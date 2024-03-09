@@ -103,7 +103,9 @@ export class TraktClientEndpoint<
   Parameter extends TraktApiParams = Record<string, never>,
   Response = unknown,
   Cache extends boolean = true,
-> extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions<keyof Parameter>> {}
+> extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions<keyof Parameter>> {
+  declare cached: Cache extends true ? Omit<this, 'cached'> & TraktClientEndpoint<Parameter, Response> : never;
+}
 
 export type TraktApiRequest = BaseRequest;
 

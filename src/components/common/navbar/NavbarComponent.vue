@@ -55,7 +55,7 @@ const navElement = ref<HTMLElement>();
 
 <style lang="scss" scoped>
 nav {
-  margin: 0 0.25rem;
+  padding: 0 0.25rem;
   font-size: 12px;
   text-align: center;
 
