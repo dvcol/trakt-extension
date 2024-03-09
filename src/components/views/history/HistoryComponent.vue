@@ -59,7 +59,7 @@ const getTitle = (media: TraktHistory) => {
 <template>
   <NVirtualList
     ref="virtualList"
-    style="max-height: calc(100dvh - 8px); margin-top: -44px; margin-bottom: 8px"
+    class="history-list"
     :item-size="80"
     :data-length="history.length"
     :items="history"
@@ -87,5 +87,11 @@ const getTitle = (media: TraktHistory) => {
 </template>
 
 <style lang="scss" scoped>
-// TODO
+@use '~/styles/layout' as layout;
+
+.history-list {
+  max-height: calc(100dvh - 8px);
+  margin-top: -#{layout.$header-navbar-height};
+  margin-bottom: 8px;
+}
 </style>
