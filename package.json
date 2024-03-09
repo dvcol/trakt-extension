@@ -53,7 +53,7 @@
   "dependencies": {
     "@dvcol/web-extension-utils": "^2.3.4",
     "@vue/devtools": "^7.0.15",
-    "naive-ui": "^2.37.3",
+    "naive-ui": "^2.38.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.14",
     "vue-router": "^4.2.5"

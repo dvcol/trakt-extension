@@ -18,7 +18,9 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
     <RouterView v-slot="{ Component, route }">
       <GridBackground v-if="!Component" :size="20" />
       <Transition name="scale" mode="out-in">
-        <component :is="Component ?? PageLoading" :key="route.path" />
+        <KeepAlive>
+          <component :is="Component ?? PageLoading" :key="route.path" />
+        </KeepAlive>
       </Transition>
     </RouterView>
   </main>
@@ -33,12 +35,13 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 $header-height: 2.75rem;
 
 header {
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: layers.$layer-ui;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
   height: $header-height;
 
   > :first-child {
@@ -51,6 +54,6 @@ main {
   align-items: center;
   justify-content: center;
   min-height: calc(100% - #{$header-height});
-  padding: 0 2rem;
+  margin-top: $header-height;
 }
 </style>

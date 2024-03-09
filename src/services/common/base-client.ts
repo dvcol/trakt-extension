@@ -96,8 +96,8 @@ type ClientEndpointCall<Parameter extends Record<string, never> = Record<string,
   init?: BaseInit,
 ) => Promise<ResponseOrTypedResponse<Response>>;
 
-export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>> {
-  (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse>;
+export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> {
+  (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse<Response>>;
 }
 type BaseCacheOption = { force?: boolean; retention?: number };
 
