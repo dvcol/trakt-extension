@@ -25,6 +25,7 @@ export const useRouterStore = defineStore('router', () => {
   };
 
   const setLastRoute = (_route: RouteLocationNormalized) => {
+    if (lastRoute.value?.name === _route.name) return;
     lastRoute.value = _route;
     return storage.local.set('app.state.last-route', _route);
   };

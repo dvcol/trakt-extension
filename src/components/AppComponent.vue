@@ -12,7 +12,15 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 
 <template>
   <header>
-    <NavbarComponent v-if="isAuthenticated" />
+    <RouterView v-slot="{ Component, route }" name="navbar">
+      <NavbarComponent v-if="isAuthenticated">
+        <template v-if="Component" #drawer>
+          <KeepAlive>
+            <component :is="Component" :key="route.path" />
+          </KeepAlive>
+        </template>
+      </NavbarComponent>
+    </RouterView>
   </header>
   <main>
     <RouterView v-slot="{ Component, route }">
