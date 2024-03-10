@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NTab, NTabs } from 'naive-ui';
-import { ref } from 'vue';
+import { computed, ref, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
@@ -11,6 +11,7 @@ import { useI18n } from '~/utils';
 const i18n = useI18n('route');
 const route = useRoute();
 const router = useRouter();
+const slots = useSlots();
 
 const navigate = (to: Route) => {
   router.push(to);
@@ -19,6 +20,8 @@ const navigate = (to: Route) => {
 const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search];
 
 const isHover = ref(false);
+const showDrawer = computed(() => route.name && !!slots.drawer && isHover.value);
+
 const navElement = ref<HTMLElement>();
 </script>
 
@@ -51,8 +54,8 @@ const navElement = ref<HTMLElement>();
         <NavbarSettingsDropdown v-if="navElement" :parent-element="navElement" />
       </NTab>
     </NTabs>
-    <div class="drawer" :class="{ visible: isHover }">
-      <div>This is an optional drawer</div>
+    <div class="drawer" :class="{ visible: showDrawer }">
+      <slot name="drawer"></slot>
     </div>
   </nav>
 </template>

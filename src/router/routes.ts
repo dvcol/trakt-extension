@@ -23,12 +23,18 @@ export const routes: RouteRecordRaw[] = [
   {
     path: `/${Route.Calendar}`,
     name: Route.Calendar,
-    component: () => import('../components/views/calendar/CalendarComponent.vue'),
+    components: {
+      default: () => import('../components/views/calendar/CalendarComponent.vue'),
+      navbar: () => import('../components/views/calendar/CalendarNavbar.vue'),
+    },
   },
   {
     path: `/${Route.History}`,
     name: Route.History,
-    component: () => import('../components/views/history/HistoryComponent.vue'),
+    components: {
+      default: () => import('../components/views/history/HistoryComponent.vue'),
+      navbar: () => import('../components/views/history/HistoryNavbar.vue'),
+    },
   },
   {
     path: `/${Route.List}`,
