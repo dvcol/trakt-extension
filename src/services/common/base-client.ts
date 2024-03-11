@@ -1,4 +1,4 @@
-import type { CacheStore } from '~/utils/cache.utils';
+import type { CacheStore, CacheStoreEntity } from '~/utils/cache.utils';
 
 import type { RecursiveRecord } from '~/utils/typescript.utils';
 
@@ -56,7 +56,7 @@ export type BaseTemplateOptions<
    * Enables caching of requests (defaults to true).
    * If a number is provided, it will be used as the retention time in milliseconds.
    */
-  cache?: boolean | number;
+  cache?: boolean | number | { retention?: number; evictOnError?: boolean };
   /** Boolean record or required (truthy) or optional parameters (falsy) */
   parameters?: {
     /** Boolean record or required (truthy) or optional path parameters (falsy) */
@@ -87,7 +87,14 @@ export type BaseTemplate<P extends RecursiveRecord = RecursiveRecord, O extends 
   transform?: (param: P) => P;
 };
 
-export type TypedResponse<T> = Omit<Response, 'json'> & { json(): Promise<T> };
+export type TypedResponse<T> = Omit<Response, 'json'> & {
+  json(): Promise<T>;
+  cache?: {
+    previous?: CacheStoreEntity<TypedResponse<T>>;
+    current?: CacheStoreEntity<TypedResponse<T>>;
+    isCache?: boolean;
+  };
+};
 
 export type ResponseOrTypedResponse<T = unknown> = T extends never ? Response : TypedResponse<T>;
 
@@ -99,7 +106,7 @@ type ClientEndpointCall<Parameter extends Record<string, never> = Record<string,
 export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse<Response>>;
 }
-type BaseCacheOption = { force?: boolean; retention?: number };
+type BaseCacheOption = { force?: boolean; retention?: number; evictOnError?: boolean };
 
 type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
   param?: Parameter,
@@ -124,6 +131,16 @@ export class ClientEndpoint<
   validate?: (param: Parameter) => boolean;
   cached: Cache extends true ? Omit<this, 'cached'> & ClientEndpointCache<Parameter, Response> : never;
   resolve: (param?: Parameter) => URL;
+
+  get config() {
+    return {
+      method: this.method,
+      url: this.url,
+      opts: this.opts,
+      init: this.init,
+      body: this.body,
+    };
+  }
 
   constructor(template: BaseTemplate<Parameter, Option>) {
     this.method = template.method;
@@ -155,12 +172,14 @@ const isApiTemplate = <T extends RecursiveRecord = RecursiveRecord>(template: Cl
 /**
  * Clones a response object
  * @param response - The response to clone
+ * @param cache - Optional cache data to attach to the clone
  */
-const cloneResponse = <T>(response: TypedResponse<T>): TypedResponse<T> => {
-  const clone: Record<keyof TypedResponse<T>, unknown> = response.clone();
+const cloneResponse = <T>(response: TypedResponse<T>, cache?: TypedResponse<T>['cache']): TypedResponse<T> => {
+  const clone: { -readonly [K in keyof TypedResponse<T>]: unknown } = response.clone();
   Object.entries(response).forEach(([key, value]) => {
     if (typeof value !== 'function') clone[key as keyof TypedResponse<T>] = value;
   });
+  clone.cache = cache;
   return clone as TypedResponse<T>;
 };
 
@@ -262,30 +281,39 @@ export abstract class BaseClient<
   protected bindToEndpoint(api: IApi) {
     const client = { ...api };
     Object.entries(client).forEach(([endpoint, template]) => {
-      if (isApiTemplate(template) && isApiTemplate(client[endpoint])) {
+      if (isApiTemplate(template)) {
         const fn: ClientEndpointCall = (param, init) => this._call(template, param, init);
 
         const cachedFn: ClientEndpointCache = async (param, init, cacheOptions) => {
-          const key = JSON.stringify({ endpoint, param, init });
-          if (!cacheOptions?.force) {
-            const cached = await this._cache.get(key);
-            if (cached) {
-              const templateRetention = typeof template.opts?.cache === 'number' ? template.opts.cache : undefined;
-              const retention = cacheOptions?.retention ?? templateRetention ?? this._cache.retention;
-              if (!retention) return cloneResponse(cached.value);
-              const expires = cached.cachedAt + retention;
-              if (expires > Date.now()) return cloneResponse(cached.value);
-            }
+          const key = JSON.stringify({ template: template.config, param, init });
+
+          const cached = await this._cache.get(key);
+          if (cached && !cacheOptions?.force) {
+            let templateRetention = typeof template.opts?.cache === 'number' ? template.opts.cache : undefined;
+            if (typeof template.opts?.cache === 'object') templateRetention = template.opts.cache.retention;
+            const retention = cacheOptions?.retention ?? templateRetention ?? this._cache.retention;
+            if (!retention) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
+            const expires = cached.cachedAt + retention;
+            if (expires > Date.now()) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
           }
+
           try {
             const result = await fn(param, init);
-            await this._cache.set(key, {
+            const cacheEntry = {
               cachedAt: Date.now(),
               value: cloneResponse(result) as ResponseType,
-            });
+            };
+            await this._cache.set(key, cacheEntry);
+            result.cache = { previous: cached, current: cacheEntry, isCache: false };
             return result;
           } catch (error) {
-            this._cache.delete(key);
+            if (
+              cacheOptions?.evictOnError ??
+              (typeof template.opts?.cache === 'object' ? template.opts?.cache?.evictOnError : undefined) ??
+              this._cache.evictOnError
+            ) {
+              this._cache.delete(key);
+            }
             throw error;
           }
         };
@@ -296,7 +324,7 @@ export abstract class BaseClient<
           return this._parseUrl(template, _params);
         };
 
-        Object.entries(client[endpoint]).forEach(([key, value]) => {
+        Object.entries(template).forEach(([key, value]) => {
           if (key === 'cached') {
             if (template.opts?.cache) Object.defineProperty(fn, 'cached', { value: cachedFn });
           } else if (key === 'resolve') {
@@ -310,7 +338,7 @@ export abstract class BaseClient<
 
         client[endpoint] = fn as (typeof client)[typeof endpoint];
       } else {
-        client[endpoint] = this.bindToEndpoint(client[endpoint] as IApi);
+        client[endpoint] = this.bindToEndpoint(template as IApi);
       }
     });
     return client;

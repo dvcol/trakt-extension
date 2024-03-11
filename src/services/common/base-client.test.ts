@@ -85,11 +85,30 @@ const api = {
       cache: true,
     },
   }),
+  endpointWitEvictOnError: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-cache-object',
+    opts: {
+      cache: {
+        evictOnError: true,
+      },
+    },
+  }),
   endpointWitCacheRetention: new ClientEndpoint({
     method: HttpMethod.GET,
     url: '/endpoint-with-cache-retention',
     opts: {
       cache: 20,
+    },
+  }),
+  endpointWitCacheObject: new ClientEndpoint({
+    method: HttpMethod.GET,
+    url: '/endpoint-with-cache-object',
+    opts: {
+      cache: {
+        retention: 20,
+        evictOnError: true,
+      },
     },
   }),
   endpointWithoutCache: new ClientEndpoint({
@@ -225,61 +244,108 @@ describe('base-client.ts', () => {
       });
 
       it('should not cache calls', async () => {
-        expect.assertions(2);
+        expect.assertions(3);
 
         await client.endpointWithCache();
         await client.endpointWithCache();
-        await client.endpointWithCache();
+        const result = await client.endpointWithCache();
 
+        expect(result.cache).toBeUndefined();
         expect(fetch).toHaveBeenCalledTimes(3);
         expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
       });
 
       it('should cache subsequent calls', async () => {
-        expect.assertions(2);
+        expect.assertions(6);
 
         await client.endpointWithCache.cached();
         await client.endpointWithCache.cached();
-        await client.endpointWithCache.cached();
+        const result = await client.endpointWithCache.cached();
 
+        expect(result.cache).toBeDefined();
+        expect(result.cache?.isCache).toBeTruthy();
+        expect(result.cache?.previous).toBeDefined();
+        expect(result.cache?.current).toBeDefined();
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
       });
 
       it('should ignore cache if cache cleared', async () => {
-        expect.assertions(2);
+        expect.assertions(4);
 
         await client.endpointWithCache.cached();
         await client.endpointWithCache.cached();
         await client.clearCache();
-        await client.endpointWithCache.cached();
+        const result = await client.endpointWithCache.cached();
 
+        expect(result.cache?.previous).toBeUndefined();
+        expect(result.cache?.current).toBeDefined();
         expect(fetch).toHaveBeenCalledTimes(2);
         expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
       });
 
-      it('should clear cache after error', async () => {
-        expect.assertions(3);
+      it('should not clear cache after error', async () => {
+        expect.assertions(4);
+        await client.endpointWithCache.cached();
 
         const error = new Error('Error');
         fetch.mockRejectedValueOnce(error);
 
         let err: unknown;
         try {
-          await client.endpointWithCache.cached();
+          await client.endpointWithCache.cached(undefined, undefined, { force: true });
         } catch (e) {
           err = e;
         } finally {
           expect(err).toBe(error);
         }
         await client.endpointWithCache.cached();
-        await client.endpointWithCache.cached();
 
+        expect(spyCacheStore.delete).not.toHaveBeenCalled();
         expect(fetch).toHaveBeenCalledTimes(2);
         expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache', mockEndpoint).toString(), payload);
       });
 
+      it('should clear cache after error', async () => {
+        expect.assertions(4);
+        await client.endpointWitEvictOnError.cached();
+
+        const error = new Error('Error');
+        fetch.mockRejectedValueOnce(error);
+
+        let err: unknown;
+        try {
+          await client.endpointWitEvictOnError.cached(undefined, undefined, { force: true });
+        } catch (e) {
+          err = e;
+        } finally {
+          expect(err).toBe(error);
+        }
+        await client.endpointWitEvictOnError.cached();
+
+        expect(spyCacheStore.delete).toHaveBeenCalledTimes(1);
+        expect(fetch).toHaveBeenCalledTimes(3);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-object', mockEndpoint).toString(), payload);
+      });
+
       it('should ignore cache if cache expired using endpoint retention', async () => {
+        expect.assertions(2);
+
+        await client.endpointWitCacheRetention.cached();
+        await client.endpointWitCacheRetention.cached();
+
+        // Wait for cache to expire
+        await new Promise(resolve => {
+          setTimeout(resolve, 20);
+        });
+
+        await client.endpointWitCacheRetention.cached();
+
+        expect(fetch).toHaveBeenCalledTimes(2);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-retention', mockEndpoint).toString(), payload);
+      });
+
+      it('should ignore cache if cache expired using endpoint retention with object', async () => {
         expect.assertions(2);
 
         await client.endpointWitCacheRetention.cached();
