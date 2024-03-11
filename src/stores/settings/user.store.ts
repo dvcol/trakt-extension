@@ -1,9 +1,10 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { UserSetting } from '~/models/trakt-service.model';
 
+import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 type UserSettings = Record<string, UserSetting>;
@@ -16,6 +17,11 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
 
   const userSetting = computed(() => userSettings[user.value]);
 
+  /**
+   * Save the current user settings to chrome storage
+   * @param _settings
+   * @param account
+   */
   const syncSetUser = (_settings: UserSetting = userSetting.value, account: string = _settings?.user?.username ?? user.value) => {
     const _lastUser = storage.sync.set(`settings.last-user`, account);
     const _setting = storage.sync.set(`settings.user.${encodeURIComponent(account)}`, _settings);
@@ -23,13 +29,24 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     return Promise.all([_lastUser, _setting]);
   };
 
+  /**
+   * Clear the last user from chrome storage
+   */
   const syncClearLastUser = () => storage.sync.remove(`settings.last-user`);
 
+  /**
+   * Clear a specific user from chrome storage
+   * @param account
+   */
   const syncClearUser = (account?: string) => {
     console.info('user-store', 'Clearing user', account);
     return storage.sync.remove(`settings.user${account ? `.${encodeURIComponent(account)}` : ''}`);
   };
 
+  /**
+   * Restore a specific user from chrome storage
+   * @param account
+   */
   const syncRestoreUser = async (account: string = user.value) => {
     if (account === defaultUser) account = await storage.sync.get<string>(`settings.last-user`);
     if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser) ?? defaultUser;
@@ -41,6 +58,11 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     return _setting;
   };
 
+  /**
+   * Change the current user settings for a specific account
+   * @param _settings
+   * @param account
+   */
   const setUserSetting = async (_settings: UserSetting = {}, account: string = _settings?.user?.username ?? user.value) => {
     if (Object.keys(_settings).length < 1) {
       delete userSettings[account];
@@ -55,6 +77,9 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     return syncSetUser(userSettings[account], account);
   };
 
+  /**
+   * Restore all users from chrome storage
+   */
   const syncRestoreAllUsers = async () => {
     const restored = await storage.sync.getAll<UserSettings>('settings.user.');
 
@@ -68,6 +93,10 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     });
   };
 
+  /**
+   * Change the current user
+   * @param account
+   */
   const setCurrentUser = (account?: string) => {
     console.info('user-store', 'Setting current user', JSON.parse(JSON.stringify(userSettings)));
 
@@ -77,6 +106,12 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     if (!userSettings[account]) throw new Error(`User ${account} does not exist`);
     return setUserSetting(userSettings[account], account);
   };
+
+  // Propagate user change to http service
+  watch(user, _user => {
+    console.info('user changed', _user);
+    TraktService.changeUser(_user);
+  });
 
   return { user, userSettings, userSetting, setUserSetting, syncSetUser, syncRestoreUser, syncRestoreAllUsers, setCurrentUser };
 });

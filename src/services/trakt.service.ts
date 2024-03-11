@@ -49,8 +49,13 @@ export class TraktService {
     };
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktApi);
-    this.tvdbClient = new TvdbClient({ ...tvdbClientSettings, cacheStore: this.caches.tvdb });
-    this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb });
+    this.tvdbClient = new TvdbClient({ ...tvdbClientSettings, cacheStore: this.caches.tvdb }, {}, tvdbApi);
+    this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbApi);
+  }
+
+  static changeUser(user: string) {
+    this.caches.trakt.prefix = `trakt-cache-${user}`;
+    this.caches.tvdb.prefix = `tvdb-cache-${user}`;
   }
 
   private static async saveAuth(
