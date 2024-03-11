@@ -1,12 +1,43 @@
 <script setup lang="ts">
 import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
-import { defineProps } from 'vue';
+import { computed, defineProps, ref, watch } from 'vue';
 
 import IconLoop from '~/components/icons/IconLoop.vue';
+import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { debounce } from '~/utils/debounce.utils';
+
+const { searchHistory, historyEnd, historyStart } = useHistoryStoreRefs();
+const { setHistoryRange } = useHistoryStore();
+
+const debouncedSearch = ref(searchHistory.value);
 
 defineProps({
   parentElement: HTMLElement,
 });
+
+watch(searchHistory, () => {
+  if (searchHistory.value !== debouncedSearch.value) {
+    debouncedSearch.value = searchHistory.value;
+  }
+});
+
+watch(
+  debouncedSearch,
+  debounce(() => {
+    searchHistory.value = debouncedSearch.value;
+  }, 350),
+);
+
+const pickerValues = computed<[number, number] | null>(() => {
+  if (!historyStart.value || !historyEnd.value) return null;
+  return [historyStart.value.getTime(), historyEnd.value.getTime()];
+});
+
+const onDateChange = debounce((values?: [number, number]) => {
+  if (!values?.length) return setHistoryRange();
+  const [start, end] = values;
+  setHistoryRange({ start: new Date(start), end: new Date(end) });
+}, 350);
 </script>
 
 <template>
@@ -20,10 +51,17 @@ defineProps({
       update-value-on-close
       close-on-select
       clearable
-      :on-clear="() => console.log('clear')"
-      :on-confirm="value => console.log('confirm', value)"
+      :value="pickerValues"
+      :on-clear="onDateChange"
+      :on-confirm="onDateChange"
     />
-    <NInput class="input" placeholder="Search" autosize clearable>
+    <NInput
+      v-model:value="debouncedSearch"
+      class="input"
+      placeholder="Search"
+      autosize
+      clearable
+    >
       <template #prefix>
         <NIcon :component="IconLoop" />
       </template>

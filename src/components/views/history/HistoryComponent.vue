@@ -1,32 +1,21 @@
 <script lang="ts" setup>
 import { NTimeline, NTimelineItem, NVirtualList } from 'naive-ui';
-import { onActivated, onMounted, ref } from 'vue';
+
+import { onActivated, onMounted, ref, watch } from 'vue';
 
 import type { VirtualListInst } from 'naive-ui';
 
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
-import { TraktService } from '~/services/trakt.service';
+import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 
-const history = ref<TraktHistory[]>([]);
-const pagination = ref<TraktClientPagination>();
+const { filteredHistory: history, pagination } = useHistoryStoreRefs();
+const { fetchHistory } = useHistoryStore();
+
+const { user } = useUserSettingsStoreRefs();
+
 const virtualList = ref<VirtualListInst>();
-
-const fetchData = async (
-  page = pagination.value?.page ? pagination.value.page + 1 : 0,
-) => {
-  const response = await TraktService.traktClient.sync.history.get.cached({
-    pagination: {
-      page,
-      limit: 30,
-    },
-  });
-
-  const data = await response.json();
-  pagination.value = response.pagination;
-  history.value = [...history.value, ...data];
-};
 
 const onScroll = async (e: Event) => {
   if (!e?.target) return;
@@ -35,13 +24,18 @@ const onScroll = async (e: Event) => {
   if (pagination.value?.page === pagination.value?.pageCount) return;
 
   const key = history.value[history.value.length - 1].id;
-  await fetchData();
+  await fetchHistory({ page: pagination.value?.page ? pagination.value.page + 1 : 0 });
   virtualList.value?.scrollTo({ key, debounce: true });
 };
 
 onMounted(() => {
   console.info('History mounted');
-  fetchData();
+  fetchHistory();
+
+  watch(user, () => {
+    console.info('User Change - re fetching');
+    fetchHistory();
+  });
 });
 
 onActivated(() => {
