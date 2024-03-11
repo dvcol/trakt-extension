@@ -25,7 +25,6 @@ import {
   useUserSettingsStore,
   useUserSettingsStoreRefs,
 } from '~/stores/settings/user.store';
-import { Blurs, Colors } from '~/styles/colors.style';
 import { useI18n } from '~/utils';
 
 import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
@@ -146,8 +145,6 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       'text-align': 'left',
       'min-width': 'max(calc(100vw / 6), 8rem)',
       'max-width': '20rem',
-      'background-color': Colors.bgBlurBlackHover,
-      'backdrop-filter': Blurs.blur,
     }"
     @select="onSelect"
   >
@@ -182,3 +179,19 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     </NFlex>
   </NDropdown>
 </template>
+
+<style lang="scss">
+@use '~/styles/mixin' as mixin;
+
+.n-dropdown-menu {
+  @include mixin.hover-background;
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
+  }
+}
+</style>

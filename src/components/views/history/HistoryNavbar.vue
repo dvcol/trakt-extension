@@ -89,7 +89,15 @@ const onDateChange = debounce((values?: [number, number]) => {
 @use '~/styles/mixin' as mixin;
 
 .n-date-panel {
-  @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
+  @include mixin.hover-background;
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
+  }
 
   margin-top: 12px;
   margin-left: -16px;

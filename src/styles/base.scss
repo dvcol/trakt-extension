@@ -18,8 +18,8 @@
   
   /* ui color variables */
   --bg-blur: 2px;
-  --bg-blur-black: rgb(0 0 0 / 30%);
-  --bg-blur-black-hover: rgb(0 0 0 / 60%);
+  --bg-blur-bg: rgb(0 0 0 / 30%);
+  --bg-blur-bg-hover: rgb(0 0 0 / 60%);
 
   /* trakt.tv brand color */
   --trakt-red: #ed1c24;
@@ -45,9 +45,13 @@
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
     --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2)
+    --color-text: var(--vt-c-text-dark-2);
+
+    /* ui color variables */
+    --bg-blur-bg: rgb(0 0 0 / 30%);
+    --bg-blur-bg-hover: rgb(0 0 0 / 60%);
   }
-  
+
   @media (prefers-color-scheme: light) {
     --color-background: var(--vt-c-white);
     --color-background-soft: var(--vt-c-white-soft);
@@ -56,6 +60,10 @@
     --color-border-hover: var(--vt-c-divider-light-1);
     --color-heading: var(--vt-c-text-light-1);
     --color-text: var(--vt-c-text-light-1);
+
+    /* ui color variables */
+    --bg-blur-bg: rgba(255 222 223 / 80%);
+    --bg-blur-bg-hover: rgba(255 222 223 / 90%);
   }
 }
 

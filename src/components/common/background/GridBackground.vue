@@ -63,13 +63,13 @@ onBeforeUnmount(() => window.removeEventListener('resize', handleResize));
   .grid-item {
     width: var(--grid-size);
     height: var(--grid-size);
-    border-top: 0.1px solid var(--bg-blur-black);
-    border-left: 0.1px solid var(--bg-blur-black);
+    border-top: 0.1px solid var(--bg-blur-bg);
+    border-left: 0.1px solid var(--bg-blur-bg);
     transition: background-color 0.25s var(--n-bezier);
     will-change: background-color;
 
     &:hover {
-      background-color: var(--bg-blur-black-hover);
+      background-color: var(--bg-blur-bg-hover);
       transition: none;
     }
   }
