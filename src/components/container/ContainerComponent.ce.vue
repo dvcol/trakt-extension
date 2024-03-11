@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   darkTheme,
+  type GlobalThemeOverrides,
   lightTheme,
   NConfigProvider,
   NLoadingBarProvider,
@@ -21,12 +22,16 @@ const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue')
 const isDark = watchPreferDark();
 const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
 
+const override: GlobalThemeOverrides = {
+  // TODO red palette
+};
+
 const root = ref<HTMLElement>();
 </script>
 
 <template>
   <div id="trakt-extension-root" ref="root">
-    <NConfigProvider :theme="theme" abstract>
+    <NConfigProvider :theme="theme" :theme-overrides="override" abstract>
       <AppComponent />
 
       <NLoadingBarProvider
@@ -48,7 +53,7 @@ const root = ref<HTMLElement>();
 </template>
 
 <style lang="scss">
-@import '~/styles/base.css';
+@use '~/styles/base.scss';
 
 :host {
   display: flex;
