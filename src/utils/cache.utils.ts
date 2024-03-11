@@ -16,6 +16,8 @@ export type CacheStore<T = unknown> = {
   clear(): void;
   /** the duration in milliseconds after which the cache will be cleared */
   retention?: number;
+  /** if true, the cache will be deleted if an error occurs */
+  evictOnError?: boolean;
 };
 
 type FlatResponse<T extends Response = ResponseOrTypedResponse> = Record<keyof T, unknown>;
