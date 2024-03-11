@@ -14,12 +14,18 @@ export const useHistoryStore = defineStore('data.history', () => {
   const filteredHistory = computed(() => {
     if (!searchHistory.value) return history.value;
     return history.value.filter((item: TraktHistory) => {
-      if ('movie' in item) return item.movie?.title?.toLowerCase().includes(searchHistory.value.toLowerCase());
-      if ('show' in item) {
-        if (item.show?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
+      if ('movie' in item && item.movie?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
+      if ('show' in item && item.show.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
+      if ('episode' in item) {
         if (item.episode?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
+
+        const shorthands = [
+          `s${item.episode?.season?.toString().padStart(2, '0')}e${item.episode?.number?.toString().padStart(2, '0')}`,
+          `${item.episode?.season}x${item.episode?.number}`,
+        ];
+        if (shorthands.some(shorthand => searchHistory.value.toLowerCase().includes(shorthand))) return true;
       }
-      return false;
+      return !!(item?.watched_at && new Date(item.watched_at).toLocaleString().toLowerCase().includes(searchHistory.value.toLowerCase()));
     });
   });
 
