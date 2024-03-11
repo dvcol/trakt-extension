@@ -55,7 +55,7 @@ const navElement = ref<HTMLElement>();
       </NTab>
     </NTabs>
     <div class="drawer" :class="{ visible: showDrawer }">
-      <slot name="drawer"></slot>
+      <slot name="drawer" :parent-element="navElement"></slot>
     </div>
   </nav>
 </template>
