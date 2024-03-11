@@ -108,7 +108,7 @@
     "sass": "^1.66.1",
     "standard-version": "^9.5.0",
     "stylelint": "^16.2.0",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "unplugin-vue-ce": "^1.0.0-beta.19",
     "vite": "^5.0.10",
     "vite-bundle-visualizer": "^1.0.0",
