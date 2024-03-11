@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NAvatar, NDropdown, NEllipsis, NIcon, NSpace } from 'naive-ui';
+import { NAvatar, NDropdown, NEllipsis, NFlex, NIcon } from 'naive-ui';
 
 import { computed, defineProps, h, ref } from 'vue';
 
@@ -143,16 +143,15 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     class="dropdown"
     :style="{
       'margin-top': '0.75rem',
-      'margin-right': '-0.25rem',
       'text-align': 'left',
-      'min-width': 'max(calc(100vw / 6), 9rem)',
+      'min-width': 'max(calc(100vw / 6), 8rem)',
       'max-width': '20rem',
       'background-color': Colors.bgBlurBlackHover,
       'backdrop-filter': Blurs.blur,
     }"
     @select="onSelect"
   >
-    <NSpace justify="space-around" align="center" :wrap="false">
+    <NFlex justify="space-around" align="center" :wrap="false">
       <NEllipsis
         style="
           max-width: calc(100vw / 6 - 0.25rem - 3px - 1.75rem);
@@ -180,6 +179,6 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       <NIcon v-else style="position: absolute; top: 0.4rem; right: 0.75rem" size="1.5em">
         <IconAccount />
       </NIcon>
-    </NSpace>
+    </NFlex>
   </NDropdown>
 </template>
