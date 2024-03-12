@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
+import { NDatePicker, NFlex, NIcon, NInput, NSelect, NTooltip } from 'naive-ui';
 import { computed, defineProps, ref, watch } from 'vue';
+
+import type { SelectOption } from 'naive-ui';
 
 import IconLoop from '~/components/icons/IconLoop.vue';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { debounce } from '~/utils/debounce.utils';
 
-const { searchHistory, historyEnd, historyStart } = useHistoryStoreRefs();
+const { searchHistory, historyEnd, historyStart, pageSize } = useHistoryStoreRefs();
 const { setHistoryRange } = useHistoryStore();
 
 const debouncedSearch = ref(searchHistory.value);
+
+const pageSizeOptions: SelectOption[] = [
+  { label: '50', value: 50 },
+  { label: '100', value: 100 },
+  { label: '200', value: 200 },
+  { label: '500', value: 500 },
+  { label: '1000', value: 1000 },
+];
 
 defineProps({
   parentElement: HTMLElement,
@@ -66,6 +76,23 @@ const onDateChange = debounce((values?: [number, number]) => {
         <NIcon :component="IconLoop" />
       </template>
     </NInput>
+    <NTooltip
+      :arrow="false"
+      placement="bottom"
+      :delay="500"
+      trigger="hover"
+      :to="parentElement"
+    >
+      <span> Page size </span>
+      <template #trigger>
+        <NSelect
+          v-model:value="pageSize"
+          class="empty select"
+          :options="pageSizeOptions"
+          :to="parentElement"
+        />
+      </template>
+    </NTooltip>
   </NFlex>
 </template>
 
@@ -76,29 +103,21 @@ const onDateChange = debounce((values?: [number, number]) => {
   width: 100%;
 
   .picker {
-    flex: 0 1 48%;
+    flex: 0 1 47%;
   }
 
   .input {
-    flex: 0 1 48%;
+    flex: 0 1 calc(47% - 5rem);
+  }
+
+  .select {
+    flex: 0 1 5rem;
   }
 }
 </style>
 
 <style lang="scss">
-@use '~/styles/mixin' as mixin;
-
 .n-date-panel {
-  @include mixin.hover-background;
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
-  }
-
   margin-top: 12px;
   margin-left: -16px;
 }
