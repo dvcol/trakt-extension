@@ -140,12 +140,6 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     placement="bottom"
     size="small"
     class="dropdown"
-    :style="{
-      'margin-top': '0.75rem',
-      'text-align': 'left',
-      'min-width': 'max(calc(100vw / 6), 8rem)',
-      'max-width': '20rem',
-    }"
     @select="onSelect"
   >
     <NFlex justify="space-around" align="center" :wrap="false">
@@ -181,17 +175,11 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
 </template>
 
 <style lang="scss">
-@use '~/styles/mixin' as mixin;
-
-.n-dropdown-menu {
-  @include mixin.hover-background;
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
-  }
+.dropdown {
+  min-width: max(calc(100vw / 6), 8rem);
+  max-width: 20rem;
+  margin-top: 0.75rem;
+  margin-right: -0.25rem;
+  text-align: left;
 }
 </style>

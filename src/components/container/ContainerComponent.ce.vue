@@ -54,6 +54,7 @@ const root = ref<HTMLElement>();
 
 <style lang="scss">
 @use '~/styles/base.scss';
+@use '~/styles/mixin' as mixin;
 
 :host {
   display: flex;
@@ -86,5 +87,32 @@ const root = ref<HTMLElement>();
 
 #trakt-extension-root {
   height: 100%;
+}
+
+.n-dropdown-menu,
+.n-date-panel,
+.n-virtual-list {
+  @include mixin.hover-background;
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
+  }
+}
+
+.n-tooltip.n-tooltip {
+  background: var(--bg-blur-bg);
+  backdrop-filter: blur(var(--bg-blur));
+
+  &:hover {
+    background: var(--bg-blur-bg-hover);
+  }
+
+  @media (prefers-color-scheme: light) {
+    color: var(--vt-c-black);
+  }
 }
 </style>

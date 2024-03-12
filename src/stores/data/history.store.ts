@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
@@ -7,11 +7,23 @@ import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 import { TraktService } from '~/services/trakt.service';
 
 export const useHistoryStore = defineStore('data.history', () => {
+  const loading = ref(true);
+  const pageSize = ref(100);
   const history = ref<TraktHistory[]>([]);
   const pagination = ref<TraktClientPagination>();
+  const threshold = ref(10);
+
+  const belowThreshold = computed(
+    () =>
+      pagination.value?.page &&
+      pagination.value?.pageCount &&
+      pagination.value.page !== pagination.value.pageCount &&
+      pagination.value.page < threshold.value,
+  );
+  const loadingPlaceholder = computed(() => Array(pageSize.value).fill({ id: -1 }));
 
   const searchHistory = ref('');
-  const filteredHistory = computed(() => {
+  const filteredHistory = computed<TraktHistory[]>(() => {
     if (!searchHistory.value) return history.value;
     return history.value.filter((item: TraktHistory) => {
       if ('movie' in item && item.movie?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
@@ -32,19 +44,39 @@ export const useHistoryStore = defineStore('data.history', () => {
   const historyStart = ref<Date | undefined>(undefined);
   const historyEnd = ref<Date | undefined>(undefined);
 
-  const fetchHistory = async ({ page, start = historyStart.value, end = historyEnd.value }: { page?: number; start?: Date; end?: Date } = {}) => {
-    const response = await TraktService.traktClient.sync.history.get.cached({
-      pagination: {
-        page,
-        limit: 30,
-      },
-      start_at: start?.toISOString(),
-      end_at: end?.toISOString(),
-    });
+  const fetchHistory = async ({
+    page,
+    limit = pageSize.value,
+    start = historyStart.value,
+    end = historyEnd.value,
+  }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
+    console.info('Fetching History', { page, limit, start, end });
+    loading.value = true;
+    const timeout = setTimeout(() => {
+      if (page) history.value.push(...loadingPlaceholder.value);
+      else history.value = loadingPlaceholder.value;
+    }, 100);
+    try {
+      const response = await TraktService.traktClient.sync.history.get.cached({
+        pagination: {
+          page,
+          limit,
+        },
+        start_at: start?.toISOString(),
+        end_at: end?.toISOString(),
+      });
 
-    const data = await response.json();
-    pagination.value = response.pagination;
-    history.value = page ? [...history.value, ...data] : data;
+      const data = await response.json();
+      pagination.value = response.pagination;
+      history.value = page ? [...history.value.filter(h => h.id >= 0), ...data] : data;
+    } catch (e) {
+      console.error('Failed to fetch history');
+      history.value = history.value.filter(h => h.id >= 0);
+      throw e;
+    } finally {
+      clearTimeout(timeout);
+      loading.value = false;
+    }
   };
 
   const setHistoryRange = ({ start, end }: { start?: Date; end?: Date } = {}) => {
@@ -53,7 +85,26 @@ export const useHistoryStore = defineStore('data.history', () => {
     return fetchHistory({ start, end });
   };
 
-  return { history, pagination, fetchHistory, searchHistory, filteredHistory, historyStart, historyEnd, setHistoryRange };
+  watch(pageSize, async () => {
+    await fetchHistory();
+    searchHistory.value = '';
+  });
+
+  return {
+    history,
+    loading,
+    loadingPlaceholder,
+    threshold,
+    belowThreshold,
+    pagination,
+    pageSize,
+    fetchHistory,
+    searchHistory,
+    filteredHistory,
+    historyStart,
+    historyEnd,
+    setHistoryRange,
+  };
 });
 
 export const useHistoryStoreRefs = () => storeToRefs(useHistoryStore());

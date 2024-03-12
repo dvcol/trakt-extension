@@ -106,7 +106,7 @@ nav {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 nav {
   .tabs {
     --n-bar-color: var(--trakt-red-dark) !important;
