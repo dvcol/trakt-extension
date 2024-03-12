@@ -20,13 +20,22 @@ const navigate = (to: Route) => {
 const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search];
 
 const isHover = ref(false);
-const showDrawer = computed(() => route.name && !!slots.drawer && isHover.value);
+const isFocus = ref(false);
+const showDrawer = computed(
+  () => route.name && !!slots.drawer && (isHover.value || isFocus.value),
+);
 
 const navElement = ref<HTMLElement>();
 </script>
 
 <template>
-  <nav ref="navElement" @mouseenter="isHover = true" @mouseleave="isHover = false">
+  <nav
+    ref="navElement"
+    @mouseenter="isHover = true"
+    @mouseleave="isHover = false"
+    @focusin="isFocus = true"
+    @focusout="isFocus = false"
+  >
     <NTabs
       :value="route.name?.toString()"
       class="tabs"
