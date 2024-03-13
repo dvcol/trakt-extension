@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { NEmpty } from 'naive-ui';
 
+import { useI18n } from '~/utils';
+
+const i18n = useI18n('history', 'empty');
+
 defineProps({
   page: {
     type: Number,
@@ -23,16 +27,16 @@ defineProps({
 <template>
   <NEmpty size="large" :show-description="false">
     <template #extra>
-      <span class="empty">No data found.</span>
+      <span class="empty">{{ i18n('no_data') }}</span>
       <div v-if="page && pageCount">
         <div class="empty">
-          Pages searched <span class="page"> {{ page }} </span> out of
-          <span class="page"> {{ pageCount }} </span>.
+          {{ i18n('pages_line_1') }} <span class="page"> {{ page }} </span>
+          {{ i18n('pages_line_2') }} <span class="page"> {{ pageCount }} </span>.
         </div>
         <template v-if="page < pageCount">
-          <div class="empty">Increase the page size to search more.</div>
+          <div class="empty">{{ i18n('page_size') }}</div>
           <div class="empty">
-            Current page size is <span class="page"> {{ pageSize }} </span>.
+            {{ i18n('current_page_size') }} <span class="page"> {{ pageSize }} </span>.
           </div>
         </template>
       </div>
