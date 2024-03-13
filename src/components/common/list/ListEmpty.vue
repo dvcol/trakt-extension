@@ -3,7 +3,7 @@ import { NEmpty } from 'naive-ui';
 
 import { useI18n } from '~/utils';
 
-const i18n = useI18n('history', 'empty');
+const i18n = useI18n('list', 'empty');
 
 defineProps({
   page: {
