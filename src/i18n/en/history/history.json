@@ -1,0 +1,22 @@
+{
+  "history__empty__no_data": {
+    "message": "No data found.",
+    "description": "Empty message when there is no data to display in the history view."
+  },
+  "history__empty__pages_line_1": {
+    "message": "Pages searched",
+    "description": "First line of the history empty pagination message."
+  },
+  "history__empty__pages_line_2": {
+    "message": "out of",
+    "description": "Second line of the history empty pagination message."
+  },
+  "history__empty__page_size": {
+    "message": "Increase the page size to widen the search.",
+    "description": "Prompt user to increase the page size to widen the search."
+  },
+  "history__empty__current_page_size": {
+    "message": "Current page size is",
+    "description": "Current page size label."
+  }
+}

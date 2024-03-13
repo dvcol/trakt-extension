@@ -77,7 +77,7 @@ const onDateChange = debounce((values?: [number, number]) => {
       </template>
     </NInput>
     <NTooltip
-      :arrow="false"
+      :show-arrow="false"
       placement="bottom"
       :delay="500"
       trigger="hover"
