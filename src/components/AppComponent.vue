@@ -48,7 +48,7 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 @include transition.scale;
 
 header {
-  position: fixed;
+  position: absolute;
   top: 0;
   z-index: layers.$layer-ui;
   display: flex;

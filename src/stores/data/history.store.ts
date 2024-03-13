@@ -20,7 +20,11 @@ export const useHistoryStore = defineStore('data.history', () => {
       pagination.value.page !== pagination.value.pageCount &&
       pagination.value.page < threshold.value,
   );
-  const loadingPlaceholder = computed(() => Array(pageSize.value).fill({ id: -1 }));
+  const loadingPlaceholder = computed<TraktHistory[]>(() =>
+    Array(pageSize.value)
+      .fill({ id: -1 })
+      .map((_, i) => ({ id: -1 * (i + 1) }) as TraktHistory),
+  );
 
   const searchHistory = ref('');
   const filteredHistory = computed<TraktHistory[]>(() => {
@@ -53,8 +57,8 @@ export const useHistoryStore = defineStore('data.history', () => {
     console.info('Fetching History', { page, limit, start, end });
     loading.value = true;
     const timeout = setTimeout(() => {
-      if (page) history.value.push(...loadingPlaceholder.value);
-      else history.value = loadingPlaceholder.value;
+      if (page) history.value = [...history.value, ...loadingPlaceholder.value];
+      else history.value = [...loadingPlaceholder.value];
     }, 100);
     try {
       const response = await TraktService.traktClient.sync.history.get.cached({

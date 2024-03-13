@@ -1,18 +1,13 @@
 <script lang="ts" setup>
-import {
-  NEmpty,
-  NFlex,
-  NSkeleton,
-  NTimeline,
-  NTimelineItem,
-  NVirtualList,
-} from 'naive-ui';
+import { NTimeline, NVirtualList } from 'naive-ui';
 
 import { onActivated, onMounted, ref, Transition, watch } from 'vue';
 
 import type { VirtualListInst } from 'naive-ui';
-
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
+
+import HistoryEmpty from '~/components/views/history/HistoryEmpty.vue';
+import HistoryItem from '~/components/views/history/HistoryItem.vue';
 
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
@@ -95,54 +90,15 @@ const getTitle = (media: TraktHistory) => {
       @vue:updated="onUpdated"
     >
       <template #default="{ item, index }">
-        <template v-if="item.id >= 0">
-          <NTimelineItem
-            :key="item.id"
-            class="timeline-item"
-            :data-key="item.id"
-            :data-index="index"
-            type="success"
-            :title="getTitle(item)"
-            :content="item.show?.title"
-            :time="new Date(item.watched_at).toLocaleString()"
-          />
-        </template>
-        <template v-else>
-          <NTimelineItem
-            :key="item.id"
-            class="timeline-item"
-            :data-key="item.id"
-            :data-index="index"
-            line-type="dashed"
-          >
-            <template #default>
-              <NFlex vertical>
-                <NSkeleton text style="width: 70%" />
-                <NSkeleton text style="width: 60%" />
-                <NSkeleton text style="width: 20%" />
-              </NFlex>
-            </template>
-          </NTimelineItem>
-        </template>
+        <HistoryItem :item="item" :index="index" />
       </template>
     </NVirtualList>
-    <NEmpty v-else size="large" :show-description="false">
-      <template #extra>
-        <span class="empty">No data found.</span>
-        <div v-if="pagination?.page && pagination?.pageCount">
-          <div class="empty">
-            Pages searched <span class="page"> {{ pagination?.page }} </span> out of
-            <span class="page"> {{ pagination?.pageCount }} </span>.
-          </div>
-          <template v-if="pagination.page < pagination.pageCount">
-            <div class="empty">Increase the page size to search more.</div>
-            <div class="empty">
-              Current page size is <span class="page"> {{ pageSize }} </span>.
-            </div>
-          </template>
-        </div>
-      </template>
-    </NEmpty>
+    <HistoryEmpty
+      v-else
+      :page="pagination?.page"
+      :page-count="pagination?.pageCount"
+      :page-size="pageSize"
+    />
   </Transition>
 </template>
 
@@ -155,21 +111,5 @@ const getTitle = (media: TraktHistory) => {
   height: calc(100dvh - 8px);
   margin-top: -#{layout.$header-navbar-height};
   margin-bottom: 8px;
-
-  .timeline-item {
-    font-variant-numeric: tabular-nums;
-    margin: 0 1rem;
-  }
-}
-
-.empty {
-  margin-top: 0.5rem;
-  color: var(--n-text-color);
-  transition: color 0.3s var(--n-bezier);
-
-  .page {
-    color: var(--primary-color-disabled);
-    font-weight: bold;
-  }
 }
 </style>

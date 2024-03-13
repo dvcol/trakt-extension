@@ -33,7 +33,6 @@ export const useRouterStore = defineStore('router', () => {
   const restoreLastRoute = async () => {
     const _route = await storage.local.get<RouteLocationNormalized>('app.state.last-route');
     if (_route) lastRoute.value = _route;
-    console.info('router-store', 'restored last route', JSON.parse(JSON.stringify(lastRoute.value)));
     return _route;
   };
 
