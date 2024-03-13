@@ -6,6 +6,9 @@ import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
 import { TraktService } from '~/services/trakt.service';
 
+const codesRegex = /[sS]?\d+([eExX])\d+/g;
+const getCodeRegex = (season: number, episode: number) => new RegExp(`^[sS]?0*${season}([eExX])0*${episode}$`);
+
 export const useHistoryStore = defineStore('data.history', () => {
   const loading = ref(true);
   const pageSize = ref(100);
@@ -29,19 +32,21 @@ export const useHistoryStore = defineStore('data.history', () => {
   const searchHistory = ref('');
   const filteredHistory = computed<TraktHistory[]>(() => {
     if (!searchHistory.value) return history.value;
+    const _searchRaw = searchHistory.value.toLowerCase().trim();
+    const _searchCode = _searchRaw.match(codesRegex);
+    const _search = _searchRaw.replace(codesRegex, '').trim();
     return history.value.filter((item: TraktHistory) => {
-      if ('movie' in item && item.movie?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
-      if ('show' in item && item.show.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
       if ('episode' in item) {
-        if (item.episode?.title?.toLowerCase().includes(searchHistory.value.toLowerCase())) return true;
-
-        const shorthands = [
-          `s${item.episode?.season?.toString().padStart(2, '0')}e${item.episode?.number?.toString().padStart(2, '0')}`,
-          `${item.episode?.season}x${item.episode?.number}`,
-        ];
-        if (shorthands.some(shorthand => searchHistory.value.toLowerCase().includes(shorthand))) return true;
+        const codeRegex = getCodeRegex(item.episode.season, item.episode.number);
+        const matchCode = _searchCode?.some(_code => codeRegex.test(_code));
+        if (_search && item.episode?.title?.toLowerCase().includes(_search)) return _searchCode ? matchCode : true;
+        if (_search && 'show' in item && item.show.title?.toLowerCase().includes(_search)) return _searchCode ? matchCode : true;
+        if (codeRegex.test(_searchRaw)) return true;
       }
-      return !!(item?.watched_at && new Date(item.watched_at).toLocaleString().toLowerCase().includes(searchHistory.value.toLowerCase()));
+      if (!_search) return false;
+      if ('show' in item && item.show.title?.toLowerCase().includes(_search)) return true;
+      if ('movie' in item && item.movie?.title?.toLowerCase().includes(_search)) return true;
+      return !!(item?.watched_at && new Date(item.watched_at).toLocaleString().toLowerCase().includes(_search));
     });
   });
 
