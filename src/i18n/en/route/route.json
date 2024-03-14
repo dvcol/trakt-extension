@@ -7,7 +7,7 @@
     "message": "History",
     "description": "Watch history route name"
   },
-  "route__list": {
+  "route__watchlist": {
     "message": "List",
     "description": "List and collection route name"
   },

@@ -17,7 +17,13 @@ const navigate = (to: Route) => {
   router.push(to);
 };
 
-const routes = [Route.Progress, Route.Calendar, Route.History, Route.List, Route.Search];
+const routes = [
+  Route.Progress,
+  Route.Calendar,
+  Route.History,
+  Route.Watchlist,
+  Route.Search,
+];
 
 const isHover = ref(false);
 const isFocus = ref(false);

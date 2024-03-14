@@ -17,6 +17,7 @@ defineProps({
 
 const getTitle = (media: TraktHistory) => {
   if ('movie' in media) return media.movie.title;
+  if (!media.episode) return media.show?.title;
   const number = media.episode?.number?.toString().padStart(2, '0');
   return `${media.episode?.season}x${number} - ${media?.episode?.title}`;
 };

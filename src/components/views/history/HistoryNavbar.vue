@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import { NDatePicker, NFlex, NIcon, NInput, NSelect, NTooltip } from 'naive-ui';
+import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
+
 import { computed, defineProps, ref, watch } from 'vue';
 
-import type { SelectOption } from 'naive-ui';
-
+import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
+
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
+
+const i18n = useI18n('navbar');
 
 const { searchHistory, historyEnd, historyStart, pageSize } = useHistoryStoreRefs();
 const { setHistoryRange } = useHistoryStore();
 
 const debouncedSearch = ref(searchHistory.value);
 
-const pageSizeOptions: SelectOption[] = [
-  { label: '50', value: 50 },
-  { label: '100', value: 100 },
-  { label: '200', value: 200 },
-  { label: '500', value: 500 },
-  { label: '1000', value: 1000 },
-];
-
 defineProps({
-  parentElement: HTMLElement,
+  parentElement: {
+    type: HTMLElement,
+    required: false,
+  },
 });
 
 watch(searchHistory, () => {
@@ -51,9 +50,9 @@ const onDateChange = debounce((values?: [number, number]) => {
 </script>
 
 <template>
-  <NFlex class="row" align="center" justify="center" :vertical="false">
+  <NFlex class="row" align="center" justify="space-evenly" :vertical="false">
     <NDatePicker
-      class="picker"
+      class="date-picker"
       type="daterange"
       :to="parentElement"
       :default-value="[Date.now(), Date.now()]"
@@ -67,7 +66,7 @@ const onDateChange = debounce((values?: [number, number]) => {
     />
     <NInput
       v-model:value="debouncedSearch"
-      class="input"
+      class="search-input"
       placeholder="Search"
       autosize
       clearable
@@ -76,42 +75,21 @@ const onDateChange = debounce((values?: [number, number]) => {
         <NIcon :component="IconLoop" />
       </template>
     </NInput>
-    <NTooltip
-      :show-arrow="false"
-      placement="bottom"
-      :delay="500"
-      trigger="hover"
-      :to="parentElement"
-    >
-      <span> Page size </span>
-      <template #trigger>
-        <NSelect
-          v-model:value="pageSize"
-          class="empty select"
-          :options="pageSizeOptions"
-          :to="parentElement"
-        />
-      </template>
-    </NTooltip>
+    <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
   </NFlex>
 </template>
 
 <style lang="scss" scoped>
-@use '~/styles/mixin' as mixin;
-
 .row {
   width: 100%;
+  padding: 0 0.5rem;
 
-  .picker {
-    flex: 0 1 47%;
+  .date-picker {
+    flex: 0 1 50%;
   }
 
-  .input {
-    flex: 0 1 calc(47% - 5rem);
-  }
-
-  .select {
-    flex: 0 1 5rem;
+  .search-input {
+    flex: 1 1 calc(46% - 5rem);
   }
 }
 </style>

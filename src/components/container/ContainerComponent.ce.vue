@@ -99,7 +99,19 @@ const root = ref<HTMLElement>();
   }
 
   @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(rgb(0 0 0 / 80%), rgb(0 0 0 / 90%));
+    @include mixin.hover-background(var(--bg-black-80), var(--bg-black-90));
+  }
+}
+
+.n-select-menu {
+  @include mixin.hover-background(var(--bg-red-20), var(--bg-red-80));
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background(var(--bg-red-20), var(--bg-red-80));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include mixin.hover-background(var(--bg-black-20), var(--bg-black-80));
   }
 }
 
