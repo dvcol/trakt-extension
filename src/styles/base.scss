@@ -18,8 +18,20 @@
   
   /* ui color variables */
   --bg-blur: 2px;
-  --bg-blur-bg: rgb(0 0 0 / 30%);
-  --bg-blur-bg-hover: rgb(0 0 0 / 60%);
+  --bg-black: rgba(0 0 0);
+  --bg-black-20: rgba(0 0 0 / 20%);
+  --bg-black-30: rgba(0 0 0 / 30%);
+  --bg-black-60: rgba(0 0 0 / 60%);
+  --bg-black-70: rgba(0 0 0 / 70%);
+  --bg-black-80: rgba(0 0 0 / 80%);
+  --bg-black-90: rgba(0 0 0 / 90%);
+  --bg-red: rgba(255 222 223);
+  --bg-red-20: rgba(255 222 223 / 20%);
+  --bg-red-30: rgba(255 222 223 / 30%);
+  --bg-red-60: rgba(255 222 223 / 60%);
+  --bg-red-70: rgba(255 222 223 / 70%);
+  --bg-red-80: rgba(255 222 223 / 80%);
+  --bg-red-90: rgba(255 222 223 / 90%);
   --primary-color: #63e2b7;
   --primary-color-lighter:  #7fe7c4;
   --primary-color-disabled: #548272;
@@ -58,8 +70,8 @@
     --color-text: var(--vt-c-text-dark-2);
 
     /* ui color variables */
-    --bg-blur-bg: rgb(0 0 0 / 30%);
-    --bg-blur-bg-hover: rgb(0 0 0 / 60%);
+    --bg-blur-bg: var(--bg-black-30);
+    --bg-blur-bg-hover: var(--bg-black-60);
   }
 
   @media (prefers-color-scheme: light) {
@@ -72,8 +84,8 @@
     --color-text: var(--vt-c-text-light-1);
 
     /* ui color variables */
-    --bg-blur-bg: rgba(255 222 223 / 80%);
-    --bg-blur-bg-hover: rgba(255 222 223 / 90%);
+    --bg-blur-bg: var(--bg-red-80);
+    --bg-blur-bg-hover: var(--bg-red-90);
   }
 }
 

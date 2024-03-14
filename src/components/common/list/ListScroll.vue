@@ -5,7 +5,10 @@ import { ref, toRefs } from 'vue';
 
 import type { PropType, Ref, Transition } from 'vue';
 
-import type { VirtualListRef } from '~/components/common/list/ListScroll.model';
+import type {
+  VirtualListProps,
+  VirtualListRef,
+} from '~/components/common/list/ListScroll.model';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
@@ -27,6 +30,10 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
+    required: false,
+  },
+  listOptions: {
+    type: Object as PropType<VirtualListProps>,
     required: false,
   },
 });
@@ -59,14 +66,14 @@ const onUpdatedHandler = () => {
       v-if="items.length || loading"
       ref="virtualList"
       class="list-scroll"
-      :item-size="80"
       :data-length="items.length"
       :data-page-size="pageSize"
+      :item-size="listOptions?.itemSize ?? 80"
       :items="items"
-      :visible-items-tag="NTimeline"
-      :visible-items-tag-props="{ size: 'large' }"
-      :padding-top="56"
-      :padding-bottom="16"
+      :visible-items-tag="listOptions?.visibleItemsTag ?? NTimeline"
+      :visible-items-props="{ size: 'large', ...listOptions?.visibleItemsProps }"
+      :padding-top="listOptions?.paddingTop ?? 56"
+      :padding-bottom="listOptions?.paddingBottom ?? 16"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >

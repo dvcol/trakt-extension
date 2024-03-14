@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 export enum Route {
   Calendar = 'calendar',
   History = 'history',
-  List = 'list',
+  Watchlist = 'watchlist',
   Progress = 'progress',
   Search = 'search',
   Settings = 'settings',
@@ -37,9 +37,12 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: `/${Route.List}`,
-    name: Route.List,
-    component: () => import('../components/views/list/ListComponent.vue'),
+    path: `/${Route.Watchlist}`,
+    name: Route.Watchlist,
+    components: {
+      default: () => import('../components/views/watchlist/WatchlistComponent.vue'),
+      navbar: () => import('../components/views/watchlist/WatchlistNavbar.vue'),
+    },
   },
   {
     path: `/${Route.Progress}`,

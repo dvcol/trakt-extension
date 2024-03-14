@@ -471,168 +471,168 @@ export const sync = {
         episodes: false,
       },
     }),
-    watchlist: {
-      /**
-       * Returns all items in a user's watchlist filtered by type.
-       *
-       * * <b>Note</b>
-       *
-       * Each watchlist item contains a notes field with text entered by the user.
-       *
-       * * <b>Sorting Headers</b>
-       *
-       * By default, all list items are sorted by rank asc. We send X-Applied-Sort-By and X-Applied-Sort-How headers to indicate how the results are actually being sorted.
-       *
-       * We also send X-Sort-By and X-Sort-How headers which indicate the user's sort preference. Use these to to custom sort the watchlist <b>in your app</b> for more advanced sort abilities we can't do in the API.
-       * Values for X-Sort-By include rank, added, title, released, runtime, popularity, percentage, and votes.
-       * Values for X-Sort-How include asc and desc.
-       *
-       * * <b>Auto Removal</b>
-       *
-       * When an item is watched, it will be automatically removed from the watchlist.
-       * For shows and seasons, watching 1 episode will remove the entire show or season.
-       *
-       * <b>The watchlist should not be used as a list of what the user is actively watching.</b>
-       *
-       * Use a combination of the [/sync/watched]{@link https://trakt.docs.apiary.io/reference/sync/get-watched} and [/shows/:id/progress]{@link https://trakt.docs.apiary.io/reference/shows/watched-progress} methods to get what the user is actively watching.
-       *
-       * @pagination optional - {@link TraktApiPagination}
-       * @extended true - {@link TraktApiExtended.Full}
-       * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
-       * @auth required
-       *
-       * @see [get-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist}
-       */
-      get: new TraktClientEndpoint<
-        {
-          /** Filter for a specific item type */
-          type?: 'movies' | 'shows' | 'seasons' | 'episodes';
-          /** How to sort (only if type is also sent) */
-          sort?: 'rank' | 'added' | 'released' | 'title';
-        } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-          TraktApiParamsPagination,
-        TraktWatchlist[]
-      >({
-        method: HttpMethod.GET,
-        url: '/sync/watchlist/:type/:sort',
-        opts: {
-          auth: true,
-          emoji: true,
-          pagination: 'optional',
-          extended: [TraktApiExtended.Full],
-          parameters: {
-            path: {
-              type: false,
-              sort: false,
-            },
+  },
+  watchlist: {
+    /**
+     * Returns all items in a user's watchlist filtered by type.
+     *
+     * * <b>Note</b>
+     *
+     * Each watchlist item contains a notes field with text entered by the user.
+     *
+     * * <b>Sorting Headers</b>
+     *
+     * By default, all list items are sorted by rank asc. We send X-Applied-Sort-By and X-Applied-Sort-How headers to indicate how the results are actually being sorted.
+     *
+     * We also send X-Sort-By and X-Sort-How headers which indicate the user's sort preference. Use these to to custom sort the watchlist <b>in your app</b> for more advanced sort abilities we can't do in the API.
+     * Values for X-Sort-By include rank, added, title, released, runtime, popularity, percentage, and votes.
+     * Values for X-Sort-How include asc and desc.
+     *
+     * * <b>Auto Removal</b>
+     *
+     * When an item is watched, it will be automatically removed from the watchlist.
+     * For shows and seasons, watching 1 episode will remove the entire show or season.
+     *
+     * <b>The watchlist should not be used as a list of what the user is actively watching.</b>
+     *
+     * Use a combination of the [/sync/watched]{@link https://trakt.docs.apiary.io/reference/sync/get-watched} and [/shows/:id/progress]{@link https://trakt.docs.apiary.io/reference/shows/watched-progress} methods to get what the user is actively watching.
+     *
+     * @pagination optional - {@link TraktApiPagination}
+     * @extended true - {@link TraktApiExtended.Full}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @auth required
+     *
+     * @see [get-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist}
+     */
+    get: new TraktClientEndpoint<
+      {
+        /** Filter for a specific item type */
+        type?: 'movies' | 'shows' | 'seasons' | 'episodes';
+        /** How to sort (only if type is also sent) */
+        sort?: 'rank' | 'added' | 'released' | 'title';
+      } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+        TraktApiParamsPagination,
+      TraktWatchlist[]
+    >({
+      method: HttpMethod.GET,
+      url: '/sync/watchlist/:type/:sort',
+      opts: {
+        auth: true,
+        emoji: true,
+        pagination: 'optional',
+        extended: [TraktApiExtended.Full],
+        parameters: {
+          path: {
+            type: false,
+            sort: false,
           },
         },
-      }),
-      /**
-       * Update the watchlist by sending 1 or more parameters.
-       *
-       * @auth required
-       *
-       * @see [update-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/update-watchlist}
-       */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlistList, false>({
-        method: HttpMethod.PUT,
-        url: '/sync/watchlist',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          description: false,
-          sort_by: false,
-          sort_how: false,
-        },
-      }),
-      /**
-       * Add one of more items to a user's watchlist.
-       * Accepts shows, seasons, episodes and movies.
-       * If only a show is passed, only the show itself will be added.
-       * If seasons are specified, all of those seasons will be added.
-       *
-       * * <b>Note</b>
-       *
-       * Each watchlist item can optionally accept a notes (500 maximum characters) field with custom text.
-       * The user must be a [Trakt VIP]{@link https://trakt.tv/vip} to send notes.
-       *
-       * * <b>Limits</b>
-       *
-       * If the user's watchlist limit is exceeded, a 420 HTTP error code is returned. Use the [/users/settings]{@link https://trakt.docs.apiary.io/reference/users/settings} method to get all limits for a user account.
-       * In most cases, upgrading to [Trakt VIP]{@link https://trakt.tv/vip} will increase the limits.
-       *
-       * @vip enhanced - [Enhanced by a paid VIP subscription]{@link https://trakt.docs.apiary.io/#introduction/vip-methods}
-       * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
-       * @auth required
-       *
-       * @see [add-items-to-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/add-items-to-watchlist}
-       */
-      add: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistAdded, false>({
-        method: HttpMethod.POST,
-        url: '/sync/watchlist',
-        opts: {
-          auth: true,
-          emoji: true,
-          cache: false,
-          vip: 'enhanced',
-        },
-        body: {
-          movies: false,
-          shows: false,
-          seasons: false,
-          episodes: false,
-        },
-      }),
-      /**
-       * Remove one or more items from a user's watchlist.
-       *
-       * @auth required
-       *
-       * @see [remove-items-from-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-watchlist/remove-items-from-watchlist}
-       */
-      remove: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistRemoved, false>({
-        method: HttpMethod.POST,
-        url: '/sync/watchlist/remove',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          movies: false,
-          shows: false,
-          episodes: false,
-        },
-      }),
-      /**
-       * Reorder all items on a user's watchlist by sending the updated rank of list item ids.
-       * Use the [/sync/watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/get-watchlist} method to get all list item ids.
-       *
-       * @auth required
-       *
-       * @see [reorder-watchlist-items]{@link https://trakt.docs.apiary.io/#reference/sync/reorder-watchlist/reorder-watchlist-items}
-       */
-      reorder: new TraktClientEndpoint<
-        {
-          /** Array of list ids in the new order. */
-          rank: number[];
-        },
-        TraktListReordered,
-        false
-      >({
-        method: HttpMethod.POST,
-        url: '/sync/watchlist/reorder',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          rank: true,
-        },
-      }),
-    },
+      },
+    }),
+    /**
+     * Update the watchlist by sending 1 or more parameters.
+     *
+     * @auth required
+     *
+     * @see [update-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/update-watchlist}
+     */
+    update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktWatchlistList, false>({
+      method: HttpMethod.PUT,
+      url: '/sync/watchlist',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        description: false,
+        sort_by: false,
+        sort_how: false,
+      },
+    }),
+    /**
+     * Add one of more items to a user's watchlist.
+     * Accepts shows, seasons, episodes and movies.
+     * If only a show is passed, only the show itself will be added.
+     * If seasons are specified, all of those seasons will be added.
+     *
+     * * <b>Note</b>
+     *
+     * Each watchlist item can optionally accept a notes (500 maximum characters) field with custom text.
+     * The user must be a [Trakt VIP]{@link https://trakt.tv/vip} to send notes.
+     *
+     * * <b>Limits</b>
+     *
+     * If the user's watchlist limit is exceeded, a 420 HTTP error code is returned. Use the [/users/settings]{@link https://trakt.docs.apiary.io/reference/users/settings} method to get all limits for a user account.
+     * In most cases, upgrading to [Trakt VIP]{@link https://trakt.tv/vip} will increase the limits.
+     *
+     * @vip enhanced - [Enhanced by a paid VIP subscription]{@link https://trakt.docs.apiary.io/#introduction/vip-methods}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @auth required
+     *
+     * @see [add-items-to-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/update-watchlist/add-items-to-watchlist}
+     */
+    add: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistAdded, false>({
+      method: HttpMethod.POST,
+      url: '/sync/watchlist',
+      opts: {
+        auth: true,
+        emoji: true,
+        cache: false,
+        vip: 'enhanced',
+      },
+      body: {
+        movies: false,
+        shows: false,
+        seasons: false,
+        episodes: false,
+      },
+    }),
+    /**
+     * Remove one or more items from a user's watchlist.
+     *
+     * @auth required
+     *
+     * @see [remove-items-from-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-watchlist/remove-items-from-watchlist}
+     */
+    remove: new TraktClientEndpoint<TraktSyncRequest, TraktWatchlistRemoved, false>({
+      method: HttpMethod.POST,
+      url: '/sync/watchlist/remove',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        movies: false,
+        shows: false,
+        episodes: false,
+      },
+    }),
+    /**
+     * Reorder all items on a user's watchlist by sending the updated rank of list item ids.
+     * Use the [/sync/watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/get-watchlist} method to get all list item ids.
+     *
+     * @auth required
+     *
+     * @see [reorder-watchlist-items]{@link https://trakt.docs.apiary.io/#reference/sync/reorder-watchlist/reorder-watchlist-items}
+     */
+    reorder: new TraktClientEndpoint<
+      {
+        /** Array of list ids in the new order. */
+        rank: number[];
+      },
+      TraktListReordered,
+      false
+    >({
+      method: HttpMethod.POST,
+      url: '/sync/watchlist/reorder',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        rank: true,
+      },
+    }),
     /**
      * Update the notes on a single watchlist item.
      *
@@ -668,178 +668,178 @@ export const sync = {
         notes: true,
       },
     }),
-    favorites: {
-      /**
-       * If the user only had 50 TV shows and movies to bring with them on a deserted island, what would they be?
-       * These favorites are used to enchance Trakt's social recommendation algorithm.
-       * Apps should encourage user's to add favorites so the algorithm keeps getting better.
-       *
-       * * <b>Notes</b>
-       *
-       * Each favorite contains a notes field explaining why the user favorited the item.
-       *
-       * @pagination optional - {@link TraktApiPagination}
-       * @extended true - {@link TraktApiExtended.Full}
-       * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
-       * @auth required
-       *
-       * @see [get-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/get-favorites/get-favorites}
-       */
-      get: new TraktClientEndpoint<
-        {
-          /* Filter for a specific item type */
-          type?: 'movies' | 'shows';
-          /** How to sort (only if type is also sent) */
-          sort?: 'rank' | 'added' | 'released' | 'title';
-        } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-          TraktApiParamsPagination,
-        TraktFavoriteItem[]
-      >({
-        method: HttpMethod.GET,
-        url: '/sync/favorites/:type/:sort',
-        opts: {
-          auth: true,
-          emoji: true,
-          pagination: 'optional',
-          extended: [TraktApiExtended.Full],
-          parameters: {
-            path: {
-              type: false,
-              sort: false,
-            },
+  },
+  favorites: {
+    /**
+     * If the user only had 50 TV shows and movies to bring with them on a deserted island, what would they be?
+     * These favorites are used to enchance Trakt's social recommendation algorithm.
+     * Apps should encourage user's to add favorites so the algorithm keeps getting better.
+     *
+     * * <b>Notes</b>
+     *
+     * Each favorite contains a notes field explaining why the user favorited the item.
+     *
+     * @pagination optional - {@link TraktApiPagination}
+     * @extended true - {@link TraktApiExtended.Full}
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @auth required
+     *
+     * @see [get-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/get-favorites/get-favorites}
+     */
+    get: new TraktClientEndpoint<
+      {
+        /* Filter for a specific item type */
+        type?: 'movies' | 'shows';
+        /** How to sort (only if type is also sent) */
+        sort?: 'rank' | 'added' | 'released' | 'title';
+      } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+        TraktApiParamsPagination,
+      TraktFavoriteItem[]
+    >({
+      method: HttpMethod.GET,
+      url: '/sync/favorites/:type/:sort',
+      opts: {
+        auth: true,
+        emoji: true,
+        pagination: 'optional',
+        extended: [TraktApiExtended.Full],
+        parameters: {
+          path: {
+            type: false,
+            sort: false,
           },
         },
-      }),
-      /**
-       * Update the favorites list by sending 1 or more parameters.
-       *
-       * @auth required
-       *
-       * @see [update-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/update-favorites}
-       */
-      update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavoriteList, false>({
-        method: HttpMethod.PUT,
-        url: '/sync/favorites',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          description: false,
-          sort_by: false,
-          sort_how: false,
-        },
-      }),
-      /**
-       * If the user only had 50 TV shows and movies to bring with them on a deserted island, what would they be?
-       * These favorites are used to enchance Trakt's social recommendation algorithm.
-       * Apps should encourage user's to add favorites so the algorithm keeps getting better.
-       *
-       * * <b>Note</b>
-       *
-       * Each favorite can optionally accept a notes (500 maximum characters) field explaining why the user favorited the item.
-       *
-       * * <b>Limits</b>
-       *
-       * If the user has favorited 50 items already, a 420 HTTP error code is returned. This limit applies to all users.
-       *
-       * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
-       * @auth required
-       *
-       * @see [add-items-to-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/add-items-to-favorites}
-       */
-      add: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteAdded, false>({
-        method: HttpMethod.POST,
-        url: '/sync/favorites',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          movies: false,
-          shows: false,
-        },
-      }),
-      /**
-       * Remove items from a user's favorites.
-       * These favorites are used to enchance Trakt's social recommendation algorithm.
-       * Apps should encourage user's to add favorites so the algorithm keeps getting better.
-       *
-       * @auth required
-       *
-       * @see [remove-items-from-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-favorites/remove-items-from-favorites}
-       */
-      remove: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteRemoved, false>({
-        method: HttpMethod.POST,
-        url: '/sync/favorites/remove',
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        body: {
-          movies: false,
-          shows: false,
-        },
-      }),
-      /**
-       * Reorder all items on a user's favorites by sending the updated rank of list item ids.
-       * Use the [/sync/favorites]{@link https://trakt.docs.apiary.io/#reference/sync/get-favorites} method to get all list item ids.
-       *
-       * @auth required
-       *
-       * @see [reorder-favorites-items]{@link https://trakt.docs.apiary.io/#reference/sync/reorder-favorites/reorder-favorited-items}
-       */
-      reorder: new TraktClientEndpoint<
-        {
-          /** Array of list ids in the new order. */
-          rank: number[];
-        },
-        TraktListReordered,
-        false
-      >({
-        opts: {
-          auth: true,
-          cache: false,
-        },
-        method: HttpMethod.POST,
-        url: '/sync/favorites/reorder',
-        body: {
-          rank: true,
-        },
-      }),
-      /**
-       * Update the notes on a single favorite item.
-       *
-       * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
-       * @auth required
-       *
-       * @see [update-a-favorite-item]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorite-item/update-a-favorite-item}
-       */
-      updateItem: new TraktClientEndpoint<
-        {
-          /** List Item ID */
-          list_item_id: number;
-          notes: string;
-        },
-        unknown,
-        false
-      >({
-        method: HttpMethod.PUT,
-        url: '/sync/favorites/:list_item_id',
-        opts: {
-          auth: true,
-          emoji: true,
-          cache: false,
-          parameters: {
-            path: {
-              list_item_id: true,
-            },
+      },
+    }),
+    /**
+     * Update the favorites list by sending 1 or more parameters.
+     *
+     * @auth required
+     *
+     * @see [update-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/update-favorites}
+     */
+    update: new TraktClientEndpoint<TraktSyncUpdateRequest, TraktFavoriteList, false>({
+      method: HttpMethod.PUT,
+      url: '/sync/favorites',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        description: false,
+        sort_by: false,
+        sort_how: false,
+      },
+    }),
+    /**
+     * If the user only had 50 TV shows and movies to bring with them on a deserted island, what would they be?
+     * These favorites are used to enchance Trakt's social recommendation algorithm.
+     * Apps should encourage user's to add favorites so the algorithm keeps getting better.
+     *
+     * * <b>Note</b>
+     *
+     * Each favorite can optionally accept a notes (500 maximum characters) field explaining why the user favorited the item.
+     *
+     * * <b>Limits</b>
+     *
+     * If the user has favorited 50 items already, a 420 HTTP error code is returned. This limit applies to all users.
+     *
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @auth required
+     *
+     * @see [add-items-to-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorites/add-items-to-favorites}
+     */
+    add: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteAdded, false>({
+      method: HttpMethod.POST,
+      url: '/sync/favorites',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        movies: false,
+        shows: false,
+      },
+    }),
+    /**
+     * Remove items from a user's favorites.
+     * These favorites are used to enchance Trakt's social recommendation algorithm.
+     * Apps should encourage user's to add favorites so the algorithm keeps getting better.
+     *
+     * @auth required
+     *
+     * @see [remove-items-from-favorites]{@link https://trakt.docs.apiary.io/#reference/sync/remove-from-favorites/remove-items-from-favorites}
+     */
+    remove: new TraktClientEndpoint<TraktFavoriteRequest, TraktFavoriteRemoved, false>({
+      method: HttpMethod.POST,
+      url: '/sync/favorites/remove',
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      body: {
+        movies: false,
+        shows: false,
+      },
+    }),
+    /**
+     * Reorder all items on a user's favorites by sending the updated rank of list item ids.
+     * Use the [/sync/favorites]{@link https://trakt.docs.apiary.io/#reference/sync/get-favorites} method to get all list item ids.
+     *
+     * @auth required
+     *
+     * @see [reorder-favorites-items]{@link https://trakt.docs.apiary.io/#reference/sync/reorder-favorites/reorder-favorited-items}
+     */
+    reorder: new TraktClientEndpoint<
+      {
+        /** Array of list ids in the new order. */
+        rank: number[];
+      },
+      TraktListReordered,
+      false
+    >({
+      opts: {
+        auth: true,
+        cache: false,
+      },
+      method: HttpMethod.POST,
+      url: '/sync/favorites/reorder',
+      body: {
+        rank: true,
+      },
+    }),
+    /**
+     * Update the notes on a single favorite item.
+     *
+     * @emoji true - [documentation]{@link https://trakt.docs.apiary.io/#introduction/emojis}
+     * @auth required
+     *
+     * @see [update-a-favorite-item]{@link https://trakt.docs.apiary.io/#reference/sync/update-favorite-item/update-a-favorite-item}
+     */
+    updateItem: new TraktClientEndpoint<
+      {
+        /** List Item ID */
+        list_item_id: number;
+        notes: string;
+      },
+      unknown,
+      false
+    >({
+      method: HttpMethod.PUT,
+      url: '/sync/favorites/:list_item_id',
+      opts: {
+        auth: true,
+        emoji: true,
+        cache: false,
+        parameters: {
+          path: {
+            list_item_id: true,
           },
         },
-        body: {
-          notes: true,
-        },
-      }),
-    },
+      },
+      body: {
+        notes: true,
+      },
+    }),
   },
 };
