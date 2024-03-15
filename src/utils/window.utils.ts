@@ -16,3 +16,4 @@ export const watchMedia = (query: string) => {
 };
 
 export const watchPreferDark = () => watchMedia('(prefers-color-scheme: dark');
+export const watchPreferLight = () => watchMedia('(prefers-color-scheme: light');

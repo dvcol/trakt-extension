@@ -63,7 +63,8 @@ const onUpdated: OnUpdated = listRef => {
     :loading="loading"
     :pagination="pagination"
     :page-size="pageSize"
-    @on-scroll="onScroll"
+    @on-scroll-bottom="onScroll"
+    @on-scroll-top="() => console.info('Scrolled to top')"
     @on-updated="onUpdated"
   >
     <template #default="{ item, loading: itemLoading }">

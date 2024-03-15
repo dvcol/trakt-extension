@@ -14,13 +14,12 @@ import { computed, ref } from 'vue';
 import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
-import { watchPreferDark } from '~/utils';
 import { lazyComponent } from '~/utils/lazy.utils';
 
 const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
 
-const isDark = watchPreferDark();
-const theme = computed(() => (isDark.value ? darkTheme : lightTheme));
+const isLight = ref(false); // watchPreferLight(); TODO implement light theme
+const theme = computed(() => (isLight.value ? lightTheme : darkTheme));
 
 const override: GlobalThemeOverrides = {
   // TODO red palette
@@ -92,35 +91,35 @@ const root = ref<HTMLElement>();
 .n-dropdown-menu,
 .n-date-panel,
 .n-virtual-list {
-  @include mixin.hover-background;
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background;
-  }
+  @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
 
   @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(var(--bg-black-80), var(--bg-black-90));
+    @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
+  }
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
   }
 }
 
 .n-select-menu {
-  @include mixin.hover-background(var(--bg-red-20), var(--bg-red-80));
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background(var(--bg-red-20), var(--bg-red-80));
-  }
+  @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
 
   @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(var(--bg-black-20), var(--bg-black-80));
+    @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
+  }
+
+  @media (prefers-color-scheme: light) {
+    @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
   }
 }
 
 .n-tooltip.n-tooltip {
-  background: var(--bg-blur-bg);
+  background: var(--bg-color);
   backdrop-filter: blur(var(--bg-blur));
 
   &:hover {
-    background: var(--bg-blur-bg-hover);
+    background: var(--bg-color-hover);
   }
 
   @media (prefers-color-scheme: light) {
