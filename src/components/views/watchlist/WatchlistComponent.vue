@@ -37,10 +37,9 @@ onMounted(() => {
     :loading="loading"
     :pagination="pagination"
     :page-size="pageSize"
-    :list-options="{ itemSize: 51 }"
   >
-    <template #default="{ item, index }">
-      <HistoryItem :item="item" :index="index" />
+    <template #default="{ item, loading: itemLoading }">
+      <HistoryItem :item="item" :loading="itemLoading" />
     </template>
   </ListScroll>
 </template>
