@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { NFlex, NSkeleton, NTimelineItem } from 'naive-ui';
+import { NFlex, NSkeleton } from 'naive-ui';
 
-import type { PropType } from 'vue';
+import { type PropType } from 'vue';
+
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
+
+import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 
 defineProps({
   item: {
     type: Object as PropType<TraktHistory>,
     required: true,
   },
-  index: {
-    type: Number,
+  loading: {
+    type: Boolean,
     required: true,
+  },
+  poster: {
+    type: String,
+    required: false,
+    default: PosterPlaceholder,
   },
 });
 
@@ -32,41 +40,46 @@ const getDate = (media: TraktHistory) =>
 </script>
 
 <template>
-  <template v-if="item.id >= 0">
-    <NTimelineItem
-      v-if="item.id >= 0"
-      :key="item.id"
-      class="timeline-item"
-      :data-key="item.id"
-      :data-index="index"
-      type="success"
-      :title="getTitle(item)"
-      :content="getContent(item)"
-      :time="getDate(item)"
-    />
-  </template>
-  <template v-else>
-    <NTimelineItem
-      :key="item.id"
-      class="timeline-item"
-      :data-key="item.id"
-      :data-index="index"
-      line-type="dashed"
-    >
-      <template #default>
-        <NFlex vertical>
-          <NSkeleton text style="width: 70%" />
-          <NSkeleton text style="width: 60%" />
-          <NSkeleton text style="width: 20%" />
-        </NFlex>
-      </template>
-    </NTimelineItem>
-  </template>
+  <NFlex class="panel" vertical size="small" :theme-overrides="{ gapSmall: '0' }">
+    <div class="title">
+      <NSkeleton v-if="loading" text style="width: 70%" />
+      <template v-else>{{ getTitle(item) }}</template>
+    </div>
+    <div class="content">
+      <NSkeleton v-if="loading" text style="width: 60%" />
+      <template v-else>{{ getContent(item) }}</template>
+    </div>
+    <div class="time">
+      <NSkeleton v-if="loading" text style="width: 20%" />
+      <template v-else>{{ getDate(item) }}</template>
+    </div>
+  </NFlex>
 </template>
 
 <style lang="scss" scoped>
-.timeline-item {
-  font-variant-numeric: tabular-nums;
-  margin: 0 1rem;
+.panel {
+  flex: 1 1 auto;
+  margin: 0.25rem 0;
+
+  .title {
+    margin: var(--n-title-margin);
+    color: var(--n-title-text-color);
+    font-weight: var(--n-title-font-weight);
+    font-size: var(--n-title-font-size);
+    transition: color 0.3s var(--n-bezier);
+  }
+
+  .content {
+    color: var(--n-content-text-color);
+    font-size: var(--n-content-font-size);
+    transition: color 0.3s var(--n-bezier);
+  }
+
+  .time {
+    margin-top: 6px;
+    color: var(--n-meta-text-color);
+    font-size: 12px;
+    transition: color 0.3s var(--n-bezier);
+  }
 }
 </style>

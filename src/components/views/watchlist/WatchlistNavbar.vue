@@ -9,7 +9,7 @@ import { useI18n } from '~/utils';
 
 const i18n = useI18n('navbar');
 
-const activeList = ref('watchlist');
+const activeList = ref('list-watchlist');
 const listOptions = [
   { label: 'Movie collection', value: 'collection-movie' },
   { label: 'TV collection', value: 'collection-tv' },
@@ -41,7 +41,7 @@ defineProps({
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"
-      placeholder="Search"
+      :placeholder="i18n('search')"
       autosize
       clearable
     >

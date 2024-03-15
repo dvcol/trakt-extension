@@ -12,6 +12,7 @@ import type {
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
+import ListItem from '~/components/common/list/ListItem.vue';
 
 const virtualList = ref<VirtualListRef>();
 
@@ -68,7 +69,7 @@ const onUpdatedHandler = () => {
       class="list-scroll"
       :data-length="items.length"
       :data-page-size="pageSize"
-      :item-size="listOptions?.itemSize ?? 80"
+      :item-size="listOptions?.itemSize ?? 148"
       :items="items"
       :visible-items-tag="listOptions?.visibleItemsTag ?? NTimeline"
       :visible-items-props="{ size: 'large', ...listOptions?.visibleItemsProps }"
@@ -78,7 +79,9 @@ const onUpdatedHandler = () => {
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item, index }">
-        <slot :item="item" :index="index" />
+        <ListItem :id="item.id" :index="index">
+          <slot :id="item.id" :item="item" :index="index" :loading="item.id < 0" />
+        </ListItem>
       </template>
     </NVirtualList>
     <ListEmpty

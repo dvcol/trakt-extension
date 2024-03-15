@@ -67,7 +67,7 @@ const onDateChange = debounce((values?: [number, number]) => {
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"
-      placeholder="Search"
+      :placeholder="i18n('search')"
       autosize
       clearable
     >

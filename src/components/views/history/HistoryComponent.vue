@@ -66,8 +66,8 @@ const onUpdated: OnUpdated = listRef => {
     @on-scroll="onScroll"
     @on-updated="onUpdated"
   >
-    <template #default="{ item, index }">
-      <HistoryItem :item="item" :index="index" />
+    <template #default="{ item, loading: itemLoading }">
+      <HistoryItem :item="item" :loading="itemLoading" />
     </template>
   </ListScroll>
 </template>
