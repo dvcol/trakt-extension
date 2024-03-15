@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { onActivated, onDeactivated, onMounted, ref, watch } from 'vue';
 
-import type { WatchStopHandle } from 'vue';
-
 import type { OnScroll, OnUpdated } from '~/components/common/list/ListScroll.model';
 
 import ListScroll from '~/components/common/list/ListScroll.vue';
@@ -18,22 +16,29 @@ const {
   pageSize,
   belowThreshold,
 } = useHistoryStoreRefs();
-const { fetchHistory } = useHistoryStore();
+const { fetchHistory, clearState } = useHistoryStore();
 
 const { user } = useUserSettingsStoreRefs();
 
-onMounted(() => {
+const active = ref(false);
+
+onActivated(() => {
+  active.value = true;
   fetchHistory();
 });
 
-const watcher = ref<WatchStopHandle>();
-
-onActivated(() => {
-  watcher.value = watch(user, () => fetchHistory());
+onDeactivated(() => {
+  active.value = false;
 });
 
-onDeactivated(() => {
-  watcher.value?.();
+onMounted(() => {
+  watch(user, () => {
+    if (active.value) {
+      fetchHistory();
+    } else {
+      clearState();
+    }
+  });
 });
 
 const onScroll: OnScroll = async listRef => {

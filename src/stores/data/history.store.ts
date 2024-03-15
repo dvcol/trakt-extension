@@ -14,7 +14,21 @@ export const useHistoryStore = defineStore('data.history', () => {
   const pageSize = ref(100);
   const history = ref<TraktHistory[]>([]);
   const pagination = ref<TraktClientPagination>();
+
+  const searchHistory = ref('');
+
+  const historyStart = ref<Date | undefined>(undefined);
+  const historyEnd = ref<Date | undefined>(undefined);
+
   const threshold = ref(10);
+
+  const clearState = () => {
+    history.value = [];
+    pagination.value = undefined;
+    searchHistory.value = '';
+    historyStart.value = undefined;
+    historyEnd.value = undefined;
+  };
 
   const belowThreshold = computed(
     () =>
@@ -29,7 +43,6 @@ export const useHistoryStore = defineStore('data.history', () => {
       .map((_, i) => ({ id: -1 * (i + 1) }) as TraktHistory),
   );
 
-  const searchHistory = ref('');
   const filteredHistory = computed<TraktHistory[]>(() => {
     if (!searchHistory.value) return history.value;
     const _searchRaw = searchHistory.value.toLowerCase().trim();
@@ -49,9 +62,6 @@ export const useHistoryStore = defineStore('data.history', () => {
       return !!(item?.watched_at && new Date(item.watched_at).toLocaleString().toLowerCase().includes(_search));
     });
   });
-
-  const historyStart = ref<Date | undefined>(undefined);
-  const historyEnd = ref<Date | undefined>(undefined);
 
   const fetchHistory = async ({
     page,
@@ -113,6 +123,7 @@ export const useHistoryStore = defineStore('data.history', () => {
     historyStart,
     historyEnd,
     setHistoryRange,
+    clearState,
   };
 });
 
