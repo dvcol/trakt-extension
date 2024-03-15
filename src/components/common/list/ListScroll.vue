@@ -6,6 +6,7 @@ import { ref, toRefs } from 'vue';
 import type { PropType, Ref, Transition } from 'vue';
 
 import type {
+  ListScrollItem,
   VirtualListProps,
   VirtualListRef,
 } from '~/components/common/list/ListScroll.model';
@@ -19,7 +20,7 @@ const virtualList = ref<VirtualListRef>();
 
 const props = defineProps({
   items: {
-    type: Array as PropType<Record<string, unknown>[]>,
+    type: Array as PropType<ListScrollItem[]>,
     required: true,
   },
   loading: {
@@ -87,8 +88,8 @@ const debounceLog = debounce(e => console.info('top', e), 100);
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item, index }">
-        <ListItem :id="item.id" :index="index">
-          <slot :id="item.id" :item="item" :index="index" :loading="item.id < 0" />
+        <ListItem :item="item" :index="index">
+          <slot :item="item" :index="index" :loading="item.loading" />
         </ListItem>
       </template>
     </NVirtualList>

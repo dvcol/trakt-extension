@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { NFlex, NImage, NTimelineItem } from 'naive-ui';
 
-import { computed, type PropType, toRefs } from 'vue';
+import { type PropType } from 'vue';
+
+import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
 import { Colors } from '~/styles/colors.style';
 
 const props = defineProps({
-  id: {
-    type: Number,
+  item: {
+    type: Object as PropType<ListScrollItem>,
     required: true,
   },
   index: {
@@ -30,27 +33,23 @@ const props = defineProps({
     required: false,
     default: 'default',
   },
-  tag: {
+  noTag: {
     type: Boolean,
     required: false,
-    default: true,
   },
 });
-
-const { id, index } = toRefs(props);
-
-const isLoading = computed(() => id?.value < 0);
 </script>
 
 <template>
   <NTimelineItem
-    :key="id"
+    :key="item.id"
     class="timeline-item"
-    :class="{ 'no-tag': !tag }"
-    :data-key="id"
+    :data-tag="JSON.stringify(item.date)"
+    :class="{ 'no-tag': noTag || item.date?.sameDay }"
+    :data-key="item.id"
     :data-index="index"
-    :line-type="isLoading ? 'dashed' : lineType"
-    :color="isLoading ? 'grey' : color"
+    :line-type="item.loading ? 'dashed' : lineType"
+    :color="item.loading ? 'grey' : color"
   >
     <template #icon>
       <slot name="tag" />
@@ -59,7 +58,7 @@ const isLoading = computed(() => id?.value < 0);
       <slot name="before" />
     </template>
     <template #default>
-      <NFlex class="content">
+      <NFlex class="content" :class="{ 'no-border': noTag || item.date?.sameDay }">
         <NImage
           alt="poster-image"
           class="poster"
@@ -69,7 +68,9 @@ const isLoading = computed(() => id?.value < 0);
           :preview-src="poster"
           :fallback-src="PosterPlaceholder"
         />
-        <slot :id="id" :index="index" :loading="isLoading" />
+        <ListItemPanel :item="item" :loading="item.loading">
+          <slot :item="item" :index="index" :loading="item.loading" />
+        </ListItemPanel>
       </NFlex>
     </template>
     <template #footer>
@@ -92,7 +93,10 @@ const isLoading = computed(() => id?.value < 0);
     );
 
     padding: 0.5rem;
-    border-top: 1px solid rgba(255 255 255 / 10%);
+
+    &:not(.no-border) {
+      border-top: 1px solid rgba(255 255 255 / 10%);
+    }
   }
 
   .poster {

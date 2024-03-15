@@ -3,18 +3,18 @@ import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktHistory } from '~/models/trakt/trakt-history.model';
+import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 
 const props = defineProps({
   item: {
-    type: Object as PropType<TraktHistory>,
+    type: Object as PropType<ListScrollItem>,
     required: true,
   },
   loading: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   poster: {
     type: String,
@@ -27,24 +27,22 @@ const { item } = toRefs(props);
 
 const title = computed(() => {
   const media = item.value;
-  if ('movie' in media) return media.movie.title;
+  if (media.movie) return media.movie.title;
   if (!media.episode) return media.show?.title;
-  const number = media.episode?.number?.toString().padStart(2, '0');
-  return `${media.episode?.season}x${number} - ${media?.episode?.title}`;
+  const number = media.episode.number?.toString().padStart(2, '0');
+  return `${media.episode.season}x${number} - ${media.episode.title}`;
 });
 
 const content = computed(() => {
   const media = item.value;
-  if ('movie' in media) return media.movie.year;
+  if (media.movie) return media.movie.year;
   if (!media.episode) return media.show?.year;
   return media.show?.title;
 });
 
 const date = computed(() => {
   const media = item.value;
-  return media.watched_at
-    ? new Date(media.watched_at).toLocaleString()
-    : media.watched_at;
+  return media.date?.current?.toLocaleString();
 });
 
 const type = computed(() => {
