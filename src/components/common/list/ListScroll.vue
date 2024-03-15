@@ -13,6 +13,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
+import { debounce } from '~/utils/debounce.utils';
 
 const virtualList = ref<VirtualListRef>();
 
@@ -40,7 +41,8 @@ const props = defineProps({
 });
 
 const emits = defineEmits<{
-  (e: 'onScroll', listRef: Ref<VirtualListRef | undefined>): void;
+  (e: 'onScrollBottom', listRef: Ref<VirtualListRef | undefined>): void;
+  (e: 'onScrollTop', listRef: Ref<VirtualListRef | undefined>): void;
   (e: 'onUpdated', listRef: Ref<VirtualListRef | undefined>): void;
 }>();
 
@@ -49,16 +51,19 @@ const { items, loading, pagination } = toRefs(props);
 const onScrollHandler = async (e: Event) => {
   if (loading.value) return;
   if (!e?.target) return;
-  const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLDivElement;
-  if (!scrollTop || scrollHeight !== scrollTop + clientHeight) return;
+  const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
+  if (scrollHeight === clientHeight) return;
+  if (!scrollTop) return emits('onScrollTop', virtualList);
+  if (scrollHeight !== scrollTop + clientHeight) return;
   if (pagination?.value?.page === pagination?.value?.pageCount) return;
-
-  return emits('onScroll', virtualList);
+  return emits('onScrollBottom', virtualList);
 };
 
 const onUpdatedHandler = () => {
   return emits('onUpdated', virtualList);
 };
+
+const debounceLog = debounce(e => console.info('top', e), 100);
 </script>
 
 <template>
@@ -69,11 +74,14 @@ const onUpdatedHandler = () => {
       class="list-scroll"
       :data-length="items.length"
       :data-page-size="pageSize"
-      :item-size="listOptions?.itemSize ?? 148"
+      :item-size="listOptions?.itemSize ?? 145"
       :items="items"
       :visible-items-tag="listOptions?.visibleItemsTag ?? NTimeline"
-      :visible-items-props="{ size: 'large', ...listOptions?.visibleItemsProps }"
-      :padding-top="listOptions?.paddingTop ?? 56"
+      :visible-items-props="{
+        size: 'large',
+        ...listOptions?.visibleItemsProps,
+      }"
+      :padding-top="listOptions?.paddingTop ?? 60"
       :padding-bottom="listOptions?.paddingBottom ?? 16"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
