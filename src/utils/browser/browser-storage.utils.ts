@@ -15,8 +15,11 @@ export const localStorage: chrome.storage.LocalStorageArea = window?.chrome?.sto
  */
 export const sessionStorage: chrome.storage.StorageArea = window?.chrome?.storage?.session;
 
-const filterObject = (object: Record<string, unknown>, regex: string) =>
-  Object.fromEntries(Object.entries(object).filter(([key]) => new RegExp(regex).test(key)));
+const filterObject = (object: Record<string, unknown>, regex: string | RegExp) =>
+  Object.fromEntries(Object.entries(object).filter(([key]) => (typeof regex === 'string' ? new RegExp(regex) : regex).test(key)));
+
+const reverseFilterObject = (object: Record<string, unknown>, regex: string | RegExp) =>
+  Object.fromEntries(Object.entries(object).filter(([key]) => !(typeof regex === 'string' ? new RegExp(regex) : regex).test(key)));
 
 /**
  * This function is used to wrap the storage areas to provide type inference and a more convenient interface.
@@ -50,18 +53,31 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string) =
 
     window.trakt = { ...window.trakt, [name]: storage };
     return {
-      getAll: async <T>(regex?: string): Promise<T> => (regex ? filterObject(storage.values, regex) : storage.values) as T,
+      getAll: async <T>(regex?: string | RegExp): Promise<T> => (regex ? filterObject(storage.values, regex) : storage.values) as T,
       get: async <T>(key: string): Promise<T> => storage.values[key] as T,
       set: async <T>(key: string, value: T): Promise<void> => storage.setItem(key, value),
       remove: async (key: string): Promise<void> => storage.removeItem(key),
+      removeAll: async (regex: string | RegExp): Promise<void> => {
+        storage.values = reverseFilterObject(storage.values, regex);
+      },
       clear: async (): Promise<void> => storage.clear(),
     };
   }
   return {
-    getAll: <T>(regex?: string): Promise<T> => area.get().then(data => (regex ? filterObject(data, regex) : data) as T),
+    getAll: <T>(regex?: string | RegExp): Promise<T> => area.get().then(data => (regex ? filterObject(data, regex) : data) as T),
     get: <T>(key: string): Promise<T> => area.get(key).then(({ [key]: value }) => value),
     set: <T>(key: string, value: T): Promise<void> => area.set({ [key]: value }),
     remove: (key: string): Promise<void> => area.remove(key),
+    removeAll: async (regex: string | RegExp): Promise<void> => {
+      const data = await area.get();
+      const _regex = typeof regex === 'string' ? new RegExp(regex) : regex;
+      await Promise.all(
+        Object.keys(data).map(key => {
+          if (_regex.test(key)) return area.remove(key);
+          return Promise.resolve();
+        }),
+      );
+    },
     clear: (): Promise<void> => area.clear(),
   };
 };

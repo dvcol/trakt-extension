@@ -263,10 +263,11 @@ export abstract class BaseClient<
    * If no key is provided, clears the entire cache.
    *
    * @param key - The cache key.
+   * @param exact - If the key to be evicted needs to be an exact match or a regex pattern (defaults to true).
    */
-  clearCache(key?: string) {
-    if (key) return this._cache?.delete(key);
-    return this._cache?.clear();
+  clearCache(key?: string, exact = true) {
+    if (key && exact) return this._cache?.delete(key);
+    return this._cache?.clear(key);
   }
 
   /**

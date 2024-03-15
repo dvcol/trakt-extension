@@ -228,12 +228,20 @@ describe('base-client.ts', () => {
       expect(spyCacheStore.delete).toHaveBeenCalledWith('key');
     });
 
-    it('should delete a cached entry', async () => {
+    it('should delete all cached entry matching regex', async () => {
+      expect.assertions(1);
+
+      await client.clearCache('key', false);
+
+      expect(spyCacheStore.clear).toHaveBeenCalledWith('key');
+    });
+
+    it('should delete all cached entry', async () => {
       expect.assertions(1);
 
       await client.clearCache();
 
-      expect(spyCacheStore.clear).toHaveBeenCalledWith();
+      expect(spyCacheStore.clear).toHaveBeenCalledWith(undefined);
     });
 
     describe('cache', () => {
