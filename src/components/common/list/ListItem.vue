@@ -73,11 +73,15 @@ const loading = computed(() => props.item.loading);
   <NTimelineItem
     :key="item.id"
     class="timeline-item"
-    :class="{ 'no-header': noHeader, 'next-has-header': nextHasHead }"
+    :class="{
+      'no-header': noHeader,
+      'next-has-header': nextHasHead,
+      'show-date': !hideDate,
+    }"
     :data-key="item.id"
     :data-index="index"
-    :line-type="item.loading ? 'dashed' : lineType"
-    :color="item.loading ? 'grey' : color"
+    :line-type="loading ? 'dashed' : lineType"
+    :color="loading ? 'grey' : color"
     @mouseenter="onHover(true)"
     @mouseleave="onHover(false)"
   >
@@ -88,7 +92,13 @@ const loading = computed(() => props.item.loading);
       <slot name="before" />
     </template>
     <template #default>
-      <NFlex class="content" :class="{ 'no-border': noHeader }" :wrap="false">
+      <NFlex
+        class="content"
+        :class="{ 'no-border': noHeader }"
+        size="small"
+        :theme-overrides="{ gapSmall: '0' }"
+        :wrap="false"
+      >
         <NFlex
           v-if="!hideDate"
           class="header"
@@ -99,16 +109,16 @@ const loading = computed(() => props.item.loading);
           size="small"
           :theme-overrides="{ gapSmall: '0.25rem' }"
         >
-          <template v-if="date && !noHeader">
+          <template v-if="date && !noHeader && !loading">
             <NTime class="month" :time="date" format="MMM" />
             <NTime class="day" :time="date" format="dd" />
-            <NTime :time="date" format="eee" />
+            <NTime class="week" :time="date" format="eee" />
             <NTime v-if="!sameYear" class="year" :time="date" format="yyyy" />
           </template>
           <template v-else-if="loading">
-            <NSkeleton text style="width: 1rem" />
-            <NSkeleton text style="width: 2rem" />
-            <NSkeleton text style="width: 1rem" />
+            <NSkeleton class="loading month" text round />
+            <NSkeleton class="loading day" text round />
+            <NSkeleton class="loading week" text round />
           </template>
         </NFlex>
         <NFlex class="tile" :wrap="false">
@@ -121,8 +131,8 @@ const loading = computed(() => props.item.loading);
             :preview-src="poster"
             :fallback-src="PosterPlaceholder"
           />
-          <ListItemPanel :item="item" :loading="item.loading">
-            <slot :item="item" :index="index" :loading="item.loading" />
+          <ListItemPanel :item="item" :loading="loading">
+            <slot :item="item" :index="index" :loading="loading" />
           </ListItemPanel>
         </NFlex>
       </NFlex>
@@ -140,9 +150,11 @@ const loading = computed(() => props.item.loading);
 .timeline-item {
   margin: 0 1rem;
 
-  .content {
-    padding: 0.5rem;
+  &.show-date {
+    margin-left: 4rem;
+  }
 
+  .content {
     .tile {
       @include mixin.hover-background(
         $from: transparent,
@@ -151,14 +163,18 @@ const loading = computed(() => props.item.loading);
       );
 
       flex: 1 1 auto;
+      padding: 0.5rem;
     }
   }
 
   .header {
-    width: 2.5rem;
-    margin: 0.25rem 0.5rem 0 -0.25rem;
+    position: absolute;
+    top: 0;
+    left: -3.75rem;
+    width: 3.5rem;
     color: var(--n-text-color);
     font-size: 14px;
+    border-top: 1px solid var(--border-grey);
 
     &.hover {
       color: var(--trakt-red);
@@ -167,6 +183,7 @@ const loading = computed(() => props.item.loading);
     }
 
     .month {
+      margin-top: 0.75rem;
       font-weight: bold;
     }
 
@@ -177,6 +194,31 @@ const loading = computed(() => props.item.loading);
 
     .year {
       color: var(--n-meta-text-color);
+    }
+
+    .loading {
+      margin-bottom: 0.25rem;
+
+      &.month {
+        width: 1.5rem;
+        height: 0.8rem;
+      }
+
+      &.day {
+        width: 2rem;
+        height: 1rem;
+      }
+
+      &.week {
+        width: 1.6rem;
+        height: 0.75rem;
+      }
+    }
+  }
+
+  &.no-header {
+    .header {
+      border-top: 1px solid transparent;
     }
   }
 
@@ -198,6 +240,8 @@ const loading = computed(() => props.item.loading);
 
 .n-timeline.n-timeline--left-placement {
   .timeline-item.n-timeline-item .n-timeline-item-timeline {
+    --n-icon-size: 12px;
+
     top: calc(0% - var(--n-icon-size) / 2);
   }
 
@@ -212,6 +256,7 @@ const loading = computed(() => props.item.loading);
   }
 
   .timeline-item.n-timeline-item .n-timeline-item-content {
+    margin-left: calc(var(--n-icon-size) + 0.125rem);
     border-top: 1px solid transparent;
 
     .n-timeline-item-content__title {
@@ -220,7 +265,7 @@ const loading = computed(() => props.item.loading);
   }
 
   .timeline-item.n-timeline-item:not(.no-header) .n-timeline-item-content {
-    border-top: 1px solid rgba(255 255 255 / 10%);
+    border-top: 1px solid var(--border-grey);
   }
 }
 </style>
