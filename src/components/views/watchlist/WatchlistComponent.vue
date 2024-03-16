@@ -46,6 +46,7 @@ const list = computed<ListScrollItem[]>(() => {
     :loading="loading"
     :pagination="pagination"
     :page-size="pageSize"
+    hide-date
   >
     <template #default>
       <!-- TODO buttons here-->

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NFlex, NSkeleton } from 'naive-ui';
+import { NEllipsis, NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
@@ -40,10 +40,8 @@ const content = computed(() => {
   return media.show?.title;
 });
 
-const date = computed(() => {
-  const media = item.value;
-  return media.date?.current?.toLocaleString();
-});
+const currentDate = computed(() => item.value.date?.current);
+const date = computed(() => currentDate.value?.toLocaleTimeString());
 
 const type = computed(() => {
   const media = item.value;
@@ -57,25 +55,25 @@ const type = computed(() => {
   <NFlex
     class="panel"
     vertical
-    size="small"
     justify="center"
+    size="small"
     :theme-overrides="{ gapSmall: '0' }"
   >
+    <div class="meta type">
+      <NSkeleton v-if="loading" text style="width: 10%" />
+      <NEllipsis v-else :line-clamp="1">{{ type }}</NEllipsis>
+    </div>
     <div class="title">
       <NSkeleton v-if="loading" text style="width: 70%" />
-      <template v-else>{{ title }}</template>
+      <NEllipsis v-else :line-clamp="2">{{ title }}</NEllipsis>
     </div>
     <div class="content">
       <NSkeleton v-if="loading" text style="width: 60%" />
-      <template v-else>{{ content }}</template>
-    </div>
-    <div class="meta type">
-      <NSkeleton v-if="loading" text style="width: 10%" />
-      <template v-else>{{ type }}</template>
+      <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
     <div class="meta time">
       <NSkeleton v-if="loading" text style="width: 20%" />
-      <template v-else>{{ date }}</template>
+      <NEllipsis v-else :line-clamp="1">{{ date }}</NEllipsis>
     </div>
   </NFlex>
 </template>
@@ -87,8 +85,7 @@ const type = computed(() => {
 
   .title {
     font-variant-numeric: tabular-nums;
-    margin: var(--n-title-margin);
-    color: var(--n-title-text-color);
+    color: var(--trakt-red);
     font-weight: var(--n-title-font-weight);
     font-size: var(--n-title-font-size);
     transition: color 0.3s var(--n-bezier);
@@ -107,11 +104,7 @@ const type = computed(() => {
   }
 
   .time {
-    margin-top: 0.5rem;
-  }
-
-  .type {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
   }
 }
 </style>
