@@ -60,19 +60,19 @@ const type = computed(() => {
     :theme-overrides="{ gapSmall: '0' }"
   >
     <div class="meta type">
-      <NSkeleton v-if="loading" text style="width: 10%" />
+      <NSkeleton v-if="loading" text style="width: 10%" round />
       <NEllipsis v-else :line-clamp="1">{{ type }}</NEllipsis>
     </div>
     <div class="title">
-      <NSkeleton v-if="loading" text style="width: 70%" />
+      <NSkeleton v-if="loading" text style="width: 70%" round />
       <NEllipsis v-else :line-clamp="2">{{ title }}</NEllipsis>
     </div>
     <div class="content">
-      <NSkeleton v-if="loading" text style="width: 60%" />
+      <NSkeleton v-if="loading" text style="width: 60%" round />
       <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
     <div class="meta time">
-      <NSkeleton v-if="loading" text style="width: 20%" />
+      <NSkeleton v-if="loading" text style="width: 20%" round />
       <NEllipsis v-else :line-clamp="1">{{ date }}</NEllipsis>
     </div>
   </NFlex>
