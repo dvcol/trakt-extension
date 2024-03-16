@@ -1,7 +1,7 @@
 import type { NVirtualList, VirtualListInst } from 'naive-ui';
 import type { Ref } from 'vue';
 
-export type VirtualListRef = VirtualListInst & typeof NVirtualList;
+export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type VirtualListProps = {
   itemSize?: number;
   visibleItemsTag?: string | ObjectConstructor;

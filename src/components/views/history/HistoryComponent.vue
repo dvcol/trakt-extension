@@ -5,18 +5,22 @@ import type {
   ListScrollItem,
   OnScroll,
   OnUpdated,
+  VirtualListRef,
 } from '~/components/common/list/ListScroll.model';
 
+import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
-
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useI18n } from '~/utils';
 
 const { filteredHistory, pagination, loading, pageSize, belowThreshold } =
   useHistoryStoreRefs();
 const { fetchHistory, clearState } = useHistoryStore();
 
 const { user } = useUserSettingsStoreRefs();
+
+const i18n = useI18n('history');
 
 const active = ref(false);
 
@@ -80,20 +84,44 @@ const onUpdated: OnUpdated = listRef => {
     page: pagination.value?.page ? pagination.value.page + 1 : 0,
   });
 };
+
+const listRef = ref<{ list: VirtualListRef }>();
+
+const scrolled = ref(false);
+
+const onClick = () => {
+  listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  scrolled.value = false;
+};
 </script>
 
 <template>
-  <ListScroll
-    :items="history"
-    :loading="loading"
-    :pagination="pagination"
-    :page-size="pageSize"
-    @on-scroll-bottom="onScroll"
-    @on-scroll-top="() => console.info('Scrolled to top')"
-    @on-updated="onUpdated"
-  >
-    <template #default>
-      <!-- TODO buttons here-->
-    </template>
-  </ListScroll>
+  <div class="container">
+    <ListScroll
+      ref="listRef"
+      :items="history"
+      :loading="loading"
+      :pagination="pagination"
+      :page-size="pageSize"
+      :scroll-threshold="300"
+      @on-scroll="scrolled = true"
+      @on-scroll-top="scrolled = false"
+      @on-scroll-bottom="onScroll"
+      @on-updated="onUpdated"
+    >
+      <template #default>
+        <!-- TODO buttons here-->
+      </template>
+    </ListScroll>
+    <FloatingButton :show="scrolled" @on-click="onClick">
+      {{ i18n('button_top') }}
+    </FloatingButton>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.container {
+  width: 100%;
+  height: 100%;
+}
+</style>

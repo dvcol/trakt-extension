@@ -15,7 +15,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
 
-const virtualList = ref<VirtualListRef>();
+const listRef = ref<VirtualListRef>();
 
 const props = defineProps({
   items: {
@@ -42,29 +42,48 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  scrollThreshold: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 });
 
 const emits = defineEmits<{
   (e: 'onScrollBottom', listRef: Ref<VirtualListRef | undefined>): void;
   (e: 'onScrollTop', listRef: Ref<VirtualListRef | undefined>): void;
+  (e: 'onScroll', listRef: Ref<VirtualListRef | undefined>): void;
   (e: 'onUpdated', listRef: Ref<VirtualListRef | undefined>): void;
 }>();
 
-const { items, loading, pagination } = toRefs(props);
+defineExpose({
+  list: listRef,
+});
+
+const { items, loading, pagination, scrollThreshold } = toRefs(props);
+
+const scrolled = ref(false);
 
 const onScrollHandler = async (e: Event) => {
   if (loading.value) return;
   if (!e?.target) return;
   const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
   if (scrollHeight === clientHeight) return;
-  if (!scrollTop) return emits('onScrollTop', virtualList);
+  if (!scrollTop) {
+    scrolled.value = false;
+    return emits('onScrollTop', listRef);
+  }
+  if (!scrolled.value && scrollTop > scrollThreshold.value) {
+    emits('onScroll', listRef);
+    scrolled.value = true;
+  }
   if (scrollHeight !== scrollTop + clientHeight) return;
   if (pagination?.value?.page === pagination?.value?.pageCount) return;
-  return emits('onScrollBottom', virtualList);
+  return emits('onScrollBottom', listRef);
 };
 
 const onUpdatedHandler = () => {
-  return emits('onUpdated', virtualList);
+  return emits('onUpdated', listRef);
 };
 
 const hoverDate = ref<string>();
@@ -77,7 +96,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
   <Transition name="fade" mode="out-in">
     <NVirtualList
       v-if="items.length || loading"
-      ref="virtualList"
+      ref="listRef"
       class="list-scroll"
       :data-length="items.length"
       :data-page-size="pageSize"
@@ -89,7 +108,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
         ...listOptions?.visibleItemsProps,
       }"
       :padding-top="listOptions?.paddingTop ?? 60"
-      :padding-bottom="listOptions?.paddingBottom ?? 16"
+      :padding-bottom="listOptions?.paddingBottom ?? 32"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >
