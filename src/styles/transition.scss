@@ -5,6 +5,7 @@
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity $transition;
+    will-change: opacity;
   }
 
   .fade-enter-from,
@@ -21,6 +22,7 @@
   .scale-enter-active,
   .scale-leave-active {
     transition: all $transition;
+    will-change: transform, opacity;
   }
 
   .scale-enter-from,
