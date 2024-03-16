@@ -26,6 +26,7 @@ export type ListScrollItem = {
     previous?: Date;
     current: Date;
     next?: Date;
-    sameDay?: boolean;
+    sameDayAsPrevious?: boolean;
+    sameDayAsNext?: boolean;
   };
 };

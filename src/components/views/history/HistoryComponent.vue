@@ -53,8 +53,10 @@ const history = computed<ListScrollItem[]>(() => {
     if (array[index + 1]?.watched_at) {
       date.next = new Date(array[index + 1]?.watched_at);
     }
-    date.sameDay =
+    date.sameDayAsPrevious =
       date.previous?.toLocaleDateString() === date.current?.toLocaleDateString();
+    date.sameDayAsNext =
+      date.next?.toLocaleDateString() === date.current?.toLocaleDateString();
     return { ..._item, date };
   });
 });

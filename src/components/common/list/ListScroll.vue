@@ -14,7 +14,6 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
-import { debounce } from '~/utils/debounce.utils';
 
 const virtualList = ref<VirtualListRef>();
 
@@ -37,6 +36,10 @@ const props = defineProps({
   },
   listOptions: {
     type: Object as PropType<VirtualListProps>,
+    required: false,
+  },
+  hideDate: {
+    type: Boolean,
     required: false,
   },
 });
@@ -64,7 +67,10 @@ const onUpdatedHandler = () => {
   return emits('onUpdated', virtualList);
 };
 
-const debounceLog = debounce(e => console.info('top', e), 100);
+const hoverDate = ref<string>();
+const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
+  if (hover) hoverDate.value = item.date?.current?.toDateString();
+};
 </script>
 
 <template>
@@ -87,9 +93,15 @@ const debounceLog = debounce(e => console.info('top', e), 100);
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >
-      <template #default="{ item, index }">
-        <ListItem :item="item" :index="index">
-          <slot :item="item" :index="index" :loading="item.loading" />
+      <template #default="{ item }">
+        <ListItem
+          :item="item"
+          :index="item.index"
+          :hide-date="hideDate"
+          :hover="hoverDate === item.date?.current?.toDateString()"
+          @on-hover="onHover"
+        >
+          <slot :item="item" :index="item.index" :loading="item.loading" />
         </ListItem>
       </template>
     </NVirtualList>
