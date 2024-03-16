@@ -18,6 +18,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  size: {
+    type: Number,
+    required: true,
+  },
   poster: {
     type: String,
     required: false,
@@ -193,7 +197,8 @@ const loading = computed(() => props.item.loading);
     }
 
     .year {
-      color: var(--n-meta-text-color);
+      margin-top: 0.25rem;
+      opacity: 0.5;
     }
 
     .loading {
@@ -234,37 +239,43 @@ const loading = computed(() => props.item.loading);
 <style lang="scss">
 /* stylelint-disable selector-class-pattern -- library class name */
 
-.timeline-item.n-timeline-item .n-timeline-item-content .n-timeline-item-content__meta {
-  margin: 0;
-}
-
-.n-timeline.n-timeline--left-placement {
-  .timeline-item.n-timeline-item .n-timeline-item-timeline {
+.n-timeline.n-timeline--left-placement .timeline-item.n-timeline-item {
+  .n-timeline-item-timeline {
     --n-icon-size: 12px;
 
     top: calc(0% - var(--n-icon-size) / 2);
   }
 
-  .timeline-item.no-header.n-timeline-item .n-timeline-item-timeline {
-    .n-timeline-item-timeline__line {
+  &.no-header .n-timeline-item-timeline {
+    &__line {
       top: 0;
     }
 
-    .n-timeline-item-timeline__circle {
+    &__circle {
       display: none;
     }
   }
 
-  .timeline-item.n-timeline-item .n-timeline-item-content {
+  &:last-child .n-timeline-item-timeline {
+    &__line {
+      display: block;
+    }
+  }
+
+  .n-timeline-item-content {
     margin-left: calc(var(--n-icon-size) + 0.125rem);
     border-top: 1px solid transparent;
 
-    .n-timeline-item-content__title {
+    &__meta {
+      margin: 0;
+    }
+
+    &__title {
       margin: 0;
     }
   }
 
-  .timeline-item.n-timeline-item:not(.no-header) .n-timeline-item-content {
+  &:not(.no-header) .n-timeline-item-content {
     border-top: 1px solid var(--border-grey);
   }
 }

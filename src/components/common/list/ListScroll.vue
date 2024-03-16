@@ -97,6 +97,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
         <ListItem
           :item="item"
           :index="item.index"
+          :size="items.length"
           :hide-date="hideDate"
           :hover="hoverDate === item.date?.current?.toDateString()"
           @on-hover="onHover"
