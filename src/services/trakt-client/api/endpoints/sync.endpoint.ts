@@ -9,6 +9,7 @@ import type {
 import type {
   TraktHistory,
   TraktHistoryAdded,
+  TraktHistoryGetQuery,
   TraktHistoryRemoved,
   TraktHistoryRemovedRequest,
   TraktHistoryRequest,
@@ -299,19 +300,7 @@ export const sync = {
    * @see [get-watched-history]{@link https://trakt.docs.apiary.io/#reference/sync/get-history/get-watched-history}
    */
   history: {
-    get: new TraktClientEndpoint<
-      {
-        /** Trakt ID for a specific item. */
-        id?: string;
-        type?: 'movies' | 'shows' | 'seasons' | 'episodes';
-        /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
-        start_at?: string;
-        /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
-        end_at?: string;
-      } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-        TraktApiParamsPagination,
-      TraktHistory[]
-    >({
+    get: new TraktClientEndpoint<TraktHistoryGetQuery, TraktHistory[]>({
       method: HttpMethod.GET,
       url: '/sync/history/:type/:id?start_at=&end_at=',
       opts: {

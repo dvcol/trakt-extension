@@ -76,7 +76,7 @@ export const useHistoryStore = defineStore('data.history', () => {
       else history.value = [...loadingPlaceholder.value];
     }, 100);
     try {
-      const response = await TraktService.traktClient.sync.history.get.cached({
+      const response = await TraktService.history({
         pagination: {
           page,
           limit,
@@ -84,10 +84,8 @@ export const useHistoryStore = defineStore('data.history', () => {
         start_at: start?.toISOString(),
         end_at: end?.toISOString(),
       });
-
-      const data = await response.json();
       pagination.value = response.pagination;
-      history.value = page ? [...history.value.filter(h => h.id >= 0), ...data] : data;
+      history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
     } catch (e) {
       console.error('Failed to fetch history');
       history.value = history.value.filter(h => h.id >= 0);

@@ -1,5 +1,6 @@
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
+import { useImageStore } from '~/stores/data/image.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { initLocalI18n } from '~/utils';
@@ -16,9 +17,7 @@ export const initServices = async () => {
 
   TraktService.listen();
 
-  await initLocalI18n().promise;
+  await Promise.all([syncRestoreAllUsers(), useImageStore().initImageStore(), initLocalI18n().promise]);
 
   setAppReady(true);
-
-  await syncRestoreAllUsers();
 };

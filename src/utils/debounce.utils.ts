@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic type
-type AnyFunction<T> = (...args: any[]) => T;
+type AnyFunction<T> = (...args: any[]) => Promise<T> | T;
 
-export function debounce<T>(func: AnyFunction<T>, delay: number = 250): AnyFunction<Promise<T>> {
+export function debounce<T>(func: AnyFunction<T>, delay: number = 250): (...args: Parameters<typeof func>) => Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   return async (...args: Parameters<typeof func>[]): Promise<T> => {

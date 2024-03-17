@@ -98,7 +98,7 @@ export type TypedResponse<T> = Omit<Response, 'json'> & {
 
 export type ResponseOrTypedResponse<T = unknown> = T extends never ? Response : TypedResponse<T>;
 
-type ClientEndpointCall<Parameter extends Record<string, never> = Record<string, never>, Response = unknown> = (
+type ClientEndpointCall<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
   param?: Parameter,
   init?: BaseInit,
 ) => Promise<ResponseOrTypedResponse<Response>>;
@@ -106,7 +106,7 @@ type ClientEndpointCall<Parameter extends Record<string, never> = Record<string,
 export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse<Response>>;
 }
-type BaseCacheOption = { force?: boolean; retention?: number; evictOnError?: boolean };
+export type BaseCacheOption = { force?: boolean; retention?: number; evictOnError?: boolean };
 
 type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
   param?: Parameter,

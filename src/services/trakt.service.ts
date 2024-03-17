@@ -2,6 +2,7 @@ import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
+import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
@@ -18,7 +19,7 @@ import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
-import { ChromeCacheStore } from '~/utils/cache.utils';
+import { CacheRetention, ChromeCacheStore } from '~/utils/cache.utils';
 
 export class TraktService {
   static traktClient: TraktClient;
@@ -46,8 +47,14 @@ export class TraktService {
   static {
     this.caches = {
       trakt: new ChromeCacheStore<TraktApiResponse>({ prefix: 'trakt-cache' }),
-      tvdb: new ChromeCacheStore<TvdbApiResponse>({ prefix: 'tvdb-cache' }),
-      tmdb: new ChromeCacheStore<TmdbApiResponse>({ prefix: 'tmdb-cache' }),
+      tvdb: new ChromeCacheStore<TvdbApiResponse>({
+        prefix: 'tvdb-cache',
+        retention: CacheRetention.Year,
+      }),
+      tmdb: new ChromeCacheStore<TmdbApiResponse>({
+        prefix: 'tmdb-cache',
+        retention: CacheRetention.Year,
+      }),
     };
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktApi);
@@ -79,7 +86,10 @@ export class TraktService {
     return { settings: useUserSettingsStore().userSetting, auth };
   }
 
-  static async importAuthentication({ trakt, tvdb, tmdb }: SettingsAuth = {}): Promise<{ auth: SettingsAuth; settings: UserSetting }> {
+  static async importAuthentication({ trakt, tvdb, tmdb }: SettingsAuth = {}): Promise<{
+    auth: SettingsAuth;
+    settings: UserSetting;
+  }> {
     const promises = [];
     if (trakt) promises.push(this.traktClient.importAuthentication(trakt).then(_auth => console.info('Trakt import', _auth)));
     if (tvdb) promises.push(this.tvdbClient.importAuthentication(tvdb).then(_auth => console.info('Tvdb import', _auth)));
@@ -143,4 +153,47 @@ export class TraktService {
       console.info('TmdbClient.onCall', call);
     });
   }
+
+  static async history(query: TraktHistoryGetQuery) {
+    const response = await this.traktClient.sync.history.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async tmdbConfiguration() {
+    const response = await this.tmdbClient.v3.configuration.details.cached();
+    return response.json();
+  }
+
+  static posters = {
+    async movie(movie_id: string | number) {
+      const response = await TraktService.tmdbClient.v3.movies.images.cached({
+        movie_id,
+      });
+      return response.json();
+    },
+
+    async show(series_id: string | number) {
+      const response = await TraktService.tmdbClient.v3.shows.images.cached({
+        series_id,
+      });
+      return response.json();
+    },
+
+    async season(series_id: string | number, season_number: number) {
+      const response = await TraktService.tmdbClient.v3.seasons.images.cached({
+        series_id,
+        season_number,
+      });
+      return response.json();
+    },
+
+    async episode(series_id: string | number, season_number: number, episode_number: number) {
+      const response = await TraktService.tmdbClient.v3.episodes.images.cached({
+        series_id,
+        season_number,
+        episode_number,
+      });
+      return response.json();
+    },
+  };
 }

@@ -1,5 +1,9 @@
 import type { NVirtualList, VirtualListInst } from 'naive-ui';
 import type { Ref } from 'vue';
+import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
+import type { TraktSeason } from '~/models/trakt/trakt-season.model';
+import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type VirtualListProps = {
@@ -17,9 +21,14 @@ export type ListScrollItem = {
   id: string | number;
   index: number;
 
-  movie?: { title: string; year: number };
-  show?: { title: string; year: number };
-  episode?: { title: string; season: number; number: number };
+  type?: 'movie' | 'show' | 'season' | 'episode';
+
+  movie?: TraktMovie<'short'>;
+  show?: TraktShow<'short'>;
+  season?: TraktSeason<'short'>;
+  episode?: TraktEpisode<'short'>;
+
+  poster?: Ref<string | undefined>;
 
   loading?: boolean;
   date?: {

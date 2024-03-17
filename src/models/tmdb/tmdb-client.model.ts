@@ -1,15 +1,16 @@
+import type {
+  BaseOptions,
+  BaseQuery,
+  BaseRequest,
+  BaseSettings,
+  BaseTemplate,
+  BaseTemplateOptions,
+  ResponseOrTypedResponse,
+} from '~/services/common/base-client';
+
 import type { RecursiveRecord } from '~/utils/typescript.utils';
 
-import {
-  type BaseOptions,
-  type BaseQuery,
-  type BaseRequest,
-  type BaseSettings,
-  type BaseTemplate,
-  type BaseTemplateOptions,
-  ClientEndpoint,
-  type ResponseOrTypedResponse,
-} from '~/services/common/base-client';
+import { ClientEndpoint } from '~/services/common/base-client';
 
 export type TmdbClientSettings = BaseSettings<{
   /** The consumer client identifier */

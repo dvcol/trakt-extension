@@ -1,4 +1,5 @@
 import type {
+  BaseCacheOption,
   BaseInit,
   BaseOptions,
   BaseQuery,
@@ -98,13 +99,19 @@ export interface TraktClientEndpoint<Parameter extends TraktApiParams = Record<s
   (param?: Parameter, init?: TraktApiInit): Promise<TraktApiResponse<Response>>;
 }
 
+export type TraktClientCachedEndpoint<Parameter extends TraktApiParams = Record<string, never>, Response = unknown> = (
+  param?: Parameter,
+  init?: BaseInit,
+  cacheOptions?: BaseCacheOption,
+) => Promise<TraktApiResponse<Response>>;
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
 export class TraktClientEndpoint<
   Parameter extends TraktApiParams = Record<string, never>,
   Response = unknown,
   Cache extends boolean = true,
 > extends ClientEndpoint<Parameter, Response, Cache, TraktApiTemplateOptions<keyof Parameter>> {
-  declare cached: Cache extends true ? Omit<this, 'cached'> & TraktClientEndpoint<Parameter, Response> : never;
+  declare cached: Cache extends true ? Omit<this, 'cached'> & TraktClientCachedEndpoint<Parameter, Response> : never;
 }
 
 export type TraktApiRequest = BaseRequest;

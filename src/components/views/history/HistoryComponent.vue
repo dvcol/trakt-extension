@@ -11,6 +11,7 @@ import type {
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { useImageStore } from '~/stores/data/image.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 
@@ -43,11 +44,33 @@ onMounted(() => {
   });
 });
 
+const { getImageUrl } = useImageStore();
+
 const history = computed<ListScrollItem[]>(() => {
   const array = filteredHistory.value;
   if (!array.length) return [];
   return array.map((item, index) => {
     const _item: ListScrollItem = { ...item, index, loading: item.id < 0 };
+
+    if ('movie' in _item) _item.type = 'movie';
+    else if ('episode' in _item) _item.type = 'episode';
+    else if ('season' in _item) _item.type = 'season';
+    else if ('show' in _item) _item.type = 'show';
+
+    if (!_item?.poster && _item.type) {
+      if (_item?.movie?.ids?.tmdb) {
+        _item.poster = getImageUrl({
+          id: _item.movie.ids.tmdb,
+          type: _item.type,
+        });
+      } else if (_item?.show?.ids?.tmdb) {
+        _item.poster = getImageUrl({
+          id: _item.show.ids.tmdb,
+          type: 'show',
+        });
+      }
+    }
+
     if (!item.watched_at) return _item;
 
     const date: ListScrollItem['date'] = { current: new Date(item.watched_at) };
@@ -61,6 +84,7 @@ const history = computed<ListScrollItem[]>(() => {
       date.previous?.toLocaleDateString() === date.current?.toLocaleDateString();
     date.sameDayAsNext =
       date.next?.toLocaleDateString() === date.current?.toLocaleDateString();
+
     return { ..._item, date };
   });
 });

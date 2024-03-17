@@ -1,0 +1,18 @@
+{
+  "common__media__type__movie": {
+    "message": "Movie",
+    "description": "Media type for movies"
+  },
+  "common__media__type__show": {
+    "message": "Show",
+    "description": "Media type for shows"
+  },
+  "common__media__type__episode": {
+    "message": "Episode",
+    "description": "Media type for episodes"
+  },
+  "common__media__type__season": {
+    "message": "Season",
+    "description": "Media type for seasons"
+  }
+}
