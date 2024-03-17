@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
-import { computed, type PropType } from 'vue';
+import { computed, type PropType, toRefs } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
@@ -59,18 +59,23 @@ const emit = defineEmits<{
   (e: 'onHover', event: { index: number; item: ListScrollItem; hover: boolean }): void;
 }>();
 
-const onHover = (hover: boolean) => {
-  emit('onHover', { index: props.index, item: props.item, hover });
+const { item, size, index, noHeader, nextHasHeader, poster } = toRefs(props);
+
+const onHover = (_hover: boolean) => {
+  emit('onHover', { index: index?.value, item: item?.value, hover: _hover });
 };
 
-const noHeader = computed(() => props.noHeader || props.item.date?.sameDayAsPrevious);
+const noHead = computed(() => noHeader.value || item?.value?.date?.sameDayAsPrevious);
 const nextHasHead = computed(
-  () => props.nextHasHeader || !props.item.date?.sameDayAsNext,
+  () => nextHasHeader.value || !item?.value?.date?.sameDayAsNext,
 );
-const date = computed(() => props.item.date?.current);
+const date = computed(() => item?.value?.date?.current);
+
 const year = new Date().getFullYear();
 const sameYear = computed(() => date.value?.getFullYear() === year);
-const loading = computed(() => props.item.loading);
+const loading = computed(() => item?.value?.loading);
+
+const resolvedPoster = computed(() => item?.value?.poster?.value || poster.value);
 </script>
 
 <template>
@@ -78,7 +83,7 @@ const loading = computed(() => props.item.loading);
     :key="item.id"
     class="timeline-item"
     :class="{
-      'no-header': noHeader,
+      'no-header': noHead,
       'next-has-header': nextHasHead,
       'show-date': !hideDate,
     }"
@@ -98,7 +103,7 @@ const loading = computed(() => props.item.loading);
     <template #default>
       <NFlex
         class="content"
-        :class="{ 'no-border': noHeader }"
+        :class="{ 'no-border': noHead }"
         size="small"
         :theme-overrides="{ gapSmall: '0' }"
         :wrap="false"
@@ -113,7 +118,7 @@ const loading = computed(() => props.item.loading);
           size="small"
           :theme-overrides="{ gapSmall: '0.25rem' }"
         >
-          <template v-if="date && !noHeader && !loading">
+          <template v-if="date && !noHead && !loading">
             <NTime class="month" :time="date" format="MMM" />
             <NTime class="day" :time="date" format="dd" />
             <NTime class="week" :time="date" format="eee" />
@@ -131,8 +136,8 @@ const loading = computed(() => props.item.loading);
             class="poster"
             lazy
             preview-disabled
-            :src="poster"
-            :preview-src="poster"
+            :src="resolvedPoster"
+            :preview-src="resolvedPoster"
             :fallback-src="PosterPlaceholder"
           />
           <ListItemPanel :item="item" :loading="loading">
@@ -229,7 +234,7 @@ const loading = computed(() => props.item.loading);
 
   .poster {
     justify-content: center;
-    width: 5.5rem;
+    min-width: 5.5rem;
     height: 8rem;
     background-color: #111;
   }

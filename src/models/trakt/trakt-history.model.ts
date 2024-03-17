@@ -1,3 +1,4 @@
+import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -66,3 +67,14 @@ export type TraktHistoryRemoved = {
     ids: number[];
   };
 };
+
+export type TraktHistoryGetQuery = {
+  /** Trakt ID for a specific item. */
+  id?: string;
+  type?: 'movies' | 'shows' | 'seasons' | 'episodes';
+  /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
+  start_at?: string;
+  /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
+  end_at?: string;
+} & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+  TraktApiParamsPagination;

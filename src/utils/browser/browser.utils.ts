@@ -23,3 +23,9 @@ export const chromeRuntimeId = window?.chrome?.runtime?.id;
  * @see [chrome.i18n](https://developer.chrome.com/docs/extensions/reference/i18n/)
  */
 export const chromeI18n = window?.chrome?.i18n;
+
+/**
+ * Returns the short locale (ISO 639-1) of the current browser.
+ * I.e. 'en' for 'en-US'.
+ */
+export const getShortLocale = () => navigator?.language?.split('-').at(0) ?? 'en';

@@ -6,6 +6,9 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import { useI18n } from '~/utils';
+
+const i18n = useI18n('list-item-panel');
 
 const props = defineProps({
   item: {
@@ -25,6 +28,10 @@ const props = defineProps({
 
 const { item } = toRefs(props);
 
+const type = computed(() =>
+  item.value.type ? i18n(item.value.type, 'common', 'media', 'type') : item.value.type,
+);
+
 const title = computed(() => {
   const media = item.value;
   if (media.movie) return media.movie.title;
@@ -42,13 +49,6 @@ const content = computed(() => {
 
 const currentDate = computed(() => item.value.date?.current);
 const date = computed(() => currentDate.value?.toLocaleTimeString());
-
-const type = computed(() => {
-  const media = item.value;
-  if ('movie' in media) return 'Movie';
-  if (!media.episode) return 'Show';
-  return 'Episode';
-});
 </script>
 
 <template>
