@@ -102,6 +102,8 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
       :data-page-size="pageSize"
       :item-size="listOptions?.itemSize ?? 145"
       :items="items"
+      :item-resizable="false"
+      :ignore-item-resize="true"
       :visible-items-tag="listOptions?.visibleItemsTag ?? NTimeline"
       :visible-items-props="{
         size: 'large',
@@ -114,6 +116,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
     >
       <template #default="{ item }">
         <ListItem
+          :key="item.id"
           :item="item"
           :index="item.index"
           :size="items.length"
