@@ -91,23 +91,16 @@ const imageSize = computed(() =>
 watch(
   item,
   _item => {
-    if (!_item?.poster && _item?.type && _item?.movie?.ids?.tmdb) {
-      _item.poster = getImageUrl(
-        {
-          id: _item.movie.ids.tmdb,
-          type: _item.type,
-        },
-        imageSize.value,
-      );
-    } else if (!_item?.poster && _item?.type && _item?.show?.ids?.tmdb) {
-      _item.poster = getImageUrl(
-        {
-          id: _item.show.ids.tmdb,
-          type: 'show',
-        },
-        imageSize.value,
-      );
+    if (_item?.poster) return;
+    if (!_item?.type) return;
+
+    const type = _item.type === 'movie' ? 'movie' : 'show';
+    if (!_item?.[type]?.ids?.tmdb) {
+      console.warn('No tmdb id found', JSON.parse(JSON.stringify(_item?.[_item?.type])));
+      return;
     }
+
+    _item.poster = getImageUrl({ id: _item[type]!.ids.tmdb, type }, imageSize.value);
   },
   { immediate: true },
 );

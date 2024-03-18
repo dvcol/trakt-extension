@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NTimeline, NVirtualList } from 'naive-ui';
+import { NFlex, NTimeline, NVirtualList } from 'naive-ui';
 
 import { ref, toRefs } from 'vue';
 
@@ -14,6 +14,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
+import ListLoadMore from '~/components/common/list/ListLoadMore.vue';
 
 const listRef = ref<VirtualListRef>();
 
@@ -54,6 +55,15 @@ const emits = defineEmits<{
   (e: 'onScrollTop', listRef: Ref<VirtualListRef | undefined>): void;
   (e: 'onScroll', listRef: Ref<VirtualListRef | undefined>): void;
   (e: 'onUpdated', listRef: Ref<VirtualListRef | undefined>): void;
+  (
+    e: 'onloadMore',
+    payload: {
+      listRef: Ref<VirtualListRef | undefined>;
+      page: number;
+      pageCount: number;
+      pageSize: number;
+    },
+  ): void;
 }>();
 
 defineExpose({
@@ -90,6 +100,10 @@ const hoverDate = ref<string>();
 const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
   if (hover) hoverDate.value = item.date?.current?.toDateString();
 };
+
+const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number }) => {
+  emits('onloadMore', { listRef, ...payload });
+};
 </script>
 
 <template>
@@ -115,7 +129,25 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item }">
+        <NFlex
+          v-if="item.id === 'load-more'"
+          class="load-more"
+          justify="center"
+          align="center"
+          vertical
+          size="small"
+          :theme-overrides="{ gapSmall: '0' }"
+          :style="`height: ${listOptions?.itemSize ?? 145}px;`"
+        >
+          <ListLoadMore
+            :page="pagination?.page"
+            :page-count="pagination?.pageCount"
+            :page-size="pageSize"
+            @on-load-more="onLoadMore"
+          />
+        </NFlex>
         <ListItem
+          v-else
           :key="item.id"
           :item="item"
           :index="item.index"
@@ -133,6 +165,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
       :page="pagination?.page"
       :page-count="pagination?.pageCount"
       :page-size="pageSize"
+      @on-load-more="onLoadMore"
     />
   </Transition>
 </template>
@@ -140,11 +173,20 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
 <style lang="scss" scoped>
 @use '~/styles/layout' as layout;
 @use '~/styles/transition' as transition;
+@use '~/styles/animation' as animation;
 @include transition.fade;
+@include animation.fade-in;
 
 .list-scroll {
   height: calc(100dvh - 8px);
   margin-top: -#{layout.$header-navbar-height};
   margin-bottom: 8px;
+
+  .load-more {
+    margin-top: 1rem;
+    opacity: 0;
+    animation: fade-in 0.5s forwards;
+    animation-delay: 0.25s;
+  }
 }
 </style>

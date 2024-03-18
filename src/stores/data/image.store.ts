@@ -74,7 +74,10 @@ export const useImageStore = defineStore('data.image', () => {
     } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
 
     const fetchedImages = payload.posters ?? payload.stills;
-    if (!fetchedImages?.length) return;
+    if (!fetchedImages?.length) {
+      console.warn('No images found for', { id, season, episode, type });
+      return;
+    }
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
@@ -84,7 +87,7 @@ export const useImageStore = defineStore('data.image', () => {
   const getImageUrl = ({ id, season, episode, type }: ImageQuery, size: string = 'original') => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     const key = [id, season, episode].filter(Boolean).join('-');
-    const imageRef = ref<string>(images[type][key]);
+    const imageRef = computed(() => images[type][key]);
     if (!imageRef.value) fetchImageUrl(key, { id, season, episode, type }).catch(console.error);
 
     return computed(() => {

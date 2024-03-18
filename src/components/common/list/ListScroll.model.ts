@@ -18,7 +18,7 @@ export type OnScroll = (listRef: Ref<VirtualListRef | undefined>) => void;
 export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
 
 export type ListScrollItem = {
-  id: string | number;
+  id: string | number | 'load-more';
   index: number;
 
   type?: 'movie' | 'show' | 'season' | 'episode';
