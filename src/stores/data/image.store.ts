@@ -36,6 +36,11 @@ export const useImageStore = defineStore('data.image', () => {
     episode: {},
   });
 
+  const imageSizes = computed(() => ({
+    poster: tmdbConfig.value?.images?.poster_sizes,
+    still: tmdbConfig.value?.images?.still_sizes,
+  }));
+
   const syncSaveImageStore = debounce((_images = images) => storage.sync.set(`data.image-store`, _images), 1000);
 
   const syncRestoreImageStore = async (seed?: Partial<ImageStore>) => {
@@ -76,19 +81,20 @@ export const useImageStore = defineStore('data.image', () => {
     await syncSaveImageStore();
   };
 
-  const getImageUrl = ({ id, season, episode, type }: ImageQuery) => {
+  const getImageUrl = ({ id, season, episode, type }: ImageQuery, size: string = 'original') => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     const key = [id, season, episode].filter(Boolean).join('-');
     const imageRef = ref<string>(images[type][key]);
     if (!imageRef.value) fetchImageUrl(key, { id, season, episode, type }).catch(console.error);
+
     return computed(() => {
       if (!imageRef.value) return;
       if (!tmdbConfig.value?.images?.secure_base_url) return;
-      return `${tmdbConfig.value.images.secure_base_url}original${imageRef.value}`;
+      return `${tmdbConfig.value.images.secure_base_url}${size}${imageRef.value}`;
     });
   };
 
-  return { initImageStore, getImageUrl };
+  return { initImageStore, getImageUrl, imageSizes };
 });
 
 export const useImageStoreRefs = () => storeToRefs(useImageStore());

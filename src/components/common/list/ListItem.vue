@@ -137,7 +137,14 @@ const resolvedPoster = computed(() => item?.value?.poster?.value || poster.value
             lazy
             preview-disabled
             :src="resolvedPoster"
-            :preview-src="resolvedPoster"
+            :fallback-src="PosterPlaceholder"
+          />
+          <NImage
+            alt="poster-image-fallback"
+            class="poster fallback"
+            lazy
+            preview-disabled
+            :src="PosterPlaceholder"
             :fallback-src="PosterPlaceholder"
           />
           <ListItemPanel :item="item" :loading="loading">
@@ -234,9 +241,17 @@ const resolvedPoster = computed(() => item?.value?.poster?.value || poster.value
 
   .poster {
     justify-content: center;
-    min-width: 5.5rem;
+    min-width: 5.75rem;
     height: 8rem;
-    background-color: #111;
+
+    &.fallback {
+      position: absolute;
+      background-color: #111;
+    }
+
+    &:not(.fallback) {
+      z-index: layers.$in-front;
+    }
   }
 }
 </style>
