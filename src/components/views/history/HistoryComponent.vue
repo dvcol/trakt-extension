@@ -11,9 +11,10 @@ import type {
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
-import { useImageStore } from '~/stores/data/image.store';
+import { useImageStore, useImageStoreRefs } from '~/stores/data/image.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
+import { findClosestMatch } from '~/utils/math.utils';
 
 const { filteredHistory, pagination, loading, pageSize, belowThreshold } =
   useHistoryStoreRefs();
@@ -36,15 +37,19 @@ onDeactivated(() => {
 
 onMounted(() => {
   watch(user, () => {
-    if (active.value) {
-      fetchHistory();
-    } else {
-      clearState();
-    }
+    if (active.value) fetchHistory();
+    else clearState();
   });
 });
 
 const { getImageUrl } = useImageStore();
+const { imageSizes } = useImageStoreRefs();
+
+const size = computed(() =>
+  imageSizes.value?.poster?.length
+    ? findClosestMatch(200, imageSizes.value.poster)
+    : 'original',
+);
 
 const history = computed<ListScrollItem[]>(() => {
   const array = filteredHistory.value;
@@ -57,18 +62,22 @@ const history = computed<ListScrollItem[]>(() => {
     else if ('season' in _item) _item.type = 'season';
     else if ('show' in _item) _item.type = 'show';
 
-    if (!_item?.poster && _item.type) {
-      if (_item?.movie?.ids?.tmdb) {
-        _item.poster = getImageUrl({
+    if (!_item?.poster && _item.type && _item?.movie?.ids?.tmdb) {
+      _item.poster = getImageUrl(
+        {
           id: _item.movie.ids.tmdb,
           type: _item.type,
-        });
-      } else if (_item?.show?.ids?.tmdb) {
-        _item.poster = getImageUrl({
+        },
+        size.value,
+      );
+    } else if (!_item?.poster && _item.type && _item?.show?.ids?.tmdb) {
+      _item.poster = getImageUrl(
+        {
           id: _item.show.ids.tmdb,
           type: 'show',
-        });
-      }
+        },
+        size.value,
+      );
     }
 
     if (!item.watched_at) return _item;

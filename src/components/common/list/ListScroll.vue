@@ -103,7 +103,7 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
       :item-size="listOptions?.itemSize ?? 145"
       :items="items"
       :item-resizable="false"
-      :ignore-item-resize="true"
+      ignore-item-resize
       :visible-items-tag="listOptions?.visibleItemsTag ?? NTimeline"
       :visible-items-props="{
         size: 'large',

@@ -12,3 +12,20 @@ export const arrayMax = <T>(array: Array<T>, prop: keyof T, filter?: (item: T) =
     }
     return prev;
   });
+
+export const findClosestMatch = (value: number, array: string[]) => {
+  let closestMatch = array[0];
+  let minDifference = Math.abs(value - parseInt(array[0].substring(1), 10));
+
+  for (let i = 1; i < array.length; i += 1) {
+    const currentValue = parseInt(array[i].substring(1), 10);
+    const difference = Math.abs(value - currentValue);
+
+    if (difference < minDifference) {
+      minDifference = difference;
+      closestMatch = array[i];
+    }
+  }
+
+  return closestMatch;
+};
