@@ -11,10 +11,8 @@ import type {
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
-import { useImageStore, useImageStoreRefs } from '~/stores/data/image.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
-import { findClosestMatch } from '~/utils/math.utils';
 
 const { filteredHistory, pagination, loading, pageSize, belowThreshold } =
   useHistoryStoreRefs();
@@ -42,15 +40,6 @@ onMounted(() => {
   });
 });
 
-const { getImageUrl } = useImageStore();
-const { imageSizes } = useImageStoreRefs();
-
-const size = computed(() =>
-  imageSizes.value?.poster?.length
-    ? findClosestMatch(200, imageSizes.value.poster)
-    : 'original',
-);
-
 const history = computed<ListScrollItem[]>(() => {
   const array = filteredHistory.value;
   if (!array.length) return [];
@@ -61,24 +50,6 @@ const history = computed<ListScrollItem[]>(() => {
     else if ('episode' in _item) _item.type = 'episode';
     else if ('season' in _item) _item.type = 'season';
     else if ('show' in _item) _item.type = 'show';
-
-    if (!_item?.poster && _item.type && _item?.movie?.ids?.tmdb) {
-      _item.poster = getImageUrl(
-        {
-          id: _item.movie.ids.tmdb,
-          type: _item.type,
-        },
-        size.value,
-      );
-    } else if (!_item?.poster && _item.type && _item?.show?.ids?.tmdb) {
-      _item.poster = getImageUrl(
-        {
-          id: _item.show.ids.tmdb,
-          type: 'show',
-        },
-        size.value,
-      );
-    }
 
     if (!item.watched_at) return _item;
 

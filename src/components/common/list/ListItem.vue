@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, type PropType, toRefs, watch } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
+import { useImageStore, useImageStoreRefs } from '~/stores/data/image.store';
 import { Colors } from '~/styles/colors.style';
+import { findClosestMatch } from '~/utils/math.utils';
 
 const props = defineProps({
   item: {
@@ -76,6 +78,39 @@ const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
 
 const resolvedPoster = computed(() => item?.value?.poster?.value || poster.value);
+
+const { getImageUrl } = useImageStore();
+const { imageSizes } = useImageStoreRefs();
+
+const imageSize = computed(() =>
+  imageSizes.value?.poster?.length
+    ? findClosestMatch(200, imageSizes.value.poster)
+    : 'original',
+);
+
+watch(
+  item,
+  _item => {
+    if (!_item?.poster && _item?.type && _item?.movie?.ids?.tmdb) {
+      _item.poster = getImageUrl(
+        {
+          id: _item.movie.ids.tmdb,
+          type: _item.type,
+        },
+        imageSize.value,
+      );
+    } else if (!_item?.poster && _item?.type && _item?.show?.ids?.tmdb) {
+      _item.poster = getImageUrl(
+        {
+          id: _item.show.ids.tmdb,
+          type: 'show',
+        },
+        imageSize.value,
+      );
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
