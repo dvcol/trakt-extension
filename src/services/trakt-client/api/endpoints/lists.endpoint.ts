@@ -170,7 +170,7 @@ export const lists = {
       /** Trakt ID (i.e. 15) */
       id: number;
       /** Filter for a specific item type */
-      type?: 'movie' | 'show' | 'season' | 'episode' | 'perso';
+      type?: ('movie' | 'show' | 'season' | 'episode' | 'person') | ('movie' | 'show' | 'season' | 'episode' | 'person')[];
     } & TraktApiParamsPagination &
       TraktApiParamsExtended<typeof TraktApiExtended.Full>,
     TraktListItem[]
@@ -187,6 +187,7 @@ export const lists = {
         },
       },
     },
+    transform: params => (Array.isArray(params.type) ? { ...params, type: params.type.join(',') as never } : params),
   }),
   /**
    * Returns all top level comments for a list.

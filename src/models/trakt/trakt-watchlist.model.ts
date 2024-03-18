@@ -1,3 +1,4 @@
+import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
@@ -83,3 +84,11 @@ export type TraktWatchlistRemoved = {
     item_count: number;
   };
 };
+
+export type TraktWatchlistGetQuery = {
+  /** Filter for a specific item type */
+  type?: 'movies' | 'shows' | 'seasons' | 'episodes';
+  /** How to sort (only if type is also sent) */
+  sort?: 'rank' | 'added' | 'released' | 'title';
+} & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+  TraktApiParamsPagination;

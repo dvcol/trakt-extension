@@ -2,28 +2,17 @@ import { computed } from 'vue';
 
 import type { Ref } from 'vue';
 
-import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
+import type { ListScrollItem, ListScrollSourceItem } from '~/components/common/list/ListScroll.model';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
-import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
-import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
-import type { TraktSeason } from '~/models/trakt/trakt-season.model';
-import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
-export type ListScrollSourceItems<T extends string> = {
-  id: number;
+export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Record<T, string | number | Date>;
 
-  movie?: TraktMovie<'short'>;
-  show?: TraktShow<'short'>;
-  season?: TraktSeason<'short'>;
-  episode?: TraktEpisode<'short'>;
-} & Record<T, string | number | Date>;
-
-export const useListScroll = <T extends string>(items: Ref<ListScrollSourceItems<T>[]>, dateProp?: T) =>
+export const useListScroll = <T extends string>(items: Ref<ListScrollSourceItemWithDate<T>[]>, dateProp?: T) =>
   computed<ListScrollItem[]>(() => {
     const array = items.value;
     if (!array.length) return [];
     return array.map((item, index) => {
-      const _item: ListScrollItem = { ...item, index, loading: item.id < 0 };
+      const _item: ListScrollItem = { ...item, index, loading: typeof item.id === 'number' && item.id < 0 };
 
       if ('movie' in _item) _item.type = 'movie';
       else if ('episode' in _item) _item.type = 'episode';

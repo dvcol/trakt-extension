@@ -1,0 +1,14 @@
+{
+  "navbar_list__list_type__watchlist": {
+    "message": "Watchlist",
+    "description": "Label for the watchlist list type"
+  },
+  "navbar_list__list_type__collection_movie": {
+    "message": "Movie collection",
+    "description": "Label for the movie collection list type"
+  },
+  "navbar_list__list_type__collection_show": {
+    "message": "Show collection",
+    "description": "Label for the show collection list type"
+  }
+}

@@ -1,13 +1,11 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
 import { TraktService } from '~/services/trakt.service';
-
-const codesRegex = /[sS]?\d+([eExX])\d+/g;
-const getCodeRegex = (season: number, episode: number) => new RegExp(`^[sS]?0*${season}([eExX])0*${episode}$`);
+import { useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
 export const useHistoryStore = defineStore('data.history', () => {
   const loading = ref(true);
@@ -30,38 +28,9 @@ export const useHistoryStore = defineStore('data.history', () => {
     historyEnd.value = undefined;
   };
 
-  const belowThreshold = computed(
-    () =>
-      pagination.value?.page &&
-      pagination.value?.pageCount &&
-      pagination.value.page !== pagination.value.pageCount &&
-      pagination.value.page < threshold.value,
-  );
-  const loadingPlaceholder = computed<TraktHistory[]>(() =>
-    Array(pageSize.value)
-      .fill({ id: -1 })
-      .map((_, i) => ({ id: -1 * (i + 1) }) as TraktHistory),
-  );
-
-  const filteredHistory = computed<TraktHistory[]>(() => {
-    if (!searchHistory.value) return history.value;
-    const _searchRaw = searchHistory.value.toLowerCase().trim();
-    const _searchCode = _searchRaw.match(codesRegex);
-    const _search = _searchRaw.replace(codesRegex, '').trim();
-    return history.value.filter((item: TraktHistory) => {
-      if ('episode' in item) {
-        const codeRegex = getCodeRegex(item.episode.season, item.episode.number);
-        const matchCode = _searchCode?.some(_code => codeRegex.test(_code));
-        if (_search && item.episode?.title?.toLowerCase().includes(_search)) return _searchCode ? matchCode : true;
-        if (_search && 'show' in item && item.show.title?.toLowerCase().includes(_search)) return _searchCode ? matchCode : true;
-        if (codeRegex.test(_searchRaw)) return true;
-      }
-      if (!_search) return false;
-      if ('show' in item && item.show.title?.toLowerCase().includes(_search)) return true;
-      if ('movie' in item && item.movie?.title?.toLowerCase().includes(_search)) return true;
-      return !!(item?.watched_at && new Date(item.watched_at).toLocaleString().toLowerCase().includes(_search));
-    });
-  });
+  const belowThreshold = useBelowThreshold(threshold, pagination);
+  const loadingPlaceholder = useLoadingPlaceholder<TraktHistory>(pageSize);
+  const filteredHistory = useSearchFilter(history, searchHistory, 'watched_at');
 
   const fetchHistory = async ({
     page,

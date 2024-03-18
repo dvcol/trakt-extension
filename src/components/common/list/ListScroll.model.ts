@@ -17,16 +17,20 @@ export type VirtualListProps = {
 export type OnScroll = (listRef: Ref<VirtualListRef | undefined>) => void;
 export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
 
-export type ListScrollItem = {
-  id: string | number | 'load-more';
-  index: number;
-
-  type?: 'movie' | 'show' | 'season' | 'episode';
+export type ListScrollSourceItem = {
+  id: string | number;
 
   movie?: TraktMovie<'short'>;
   show?: TraktShow<'short'>;
   season?: TraktSeason<'short'>;
   episode?: TraktEpisode<'short'>;
+};
+
+export type ListScrollItem = ListScrollSourceItem & {
+  id: string | number | 'load-more';
+  index: number;
+
+  type?: 'movie' | 'show' | 'season' | 'episode';
 
   poster?: Ref<string | undefined>;
 

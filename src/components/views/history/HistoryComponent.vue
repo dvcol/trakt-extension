@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onActivated, onDeactivated, onMounted, ref, watch } from 'vue';
+import { ref } from 'vue';
 
 import type {
   OnScroll,
@@ -11,34 +11,16 @@ import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { addLoadMore, useListScroll } from '~/components/common/list/useListScroll';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
+import { watchUserChange } from '~/utils/store.utils';
 
 const { filteredHistory, pagination, loading, pageSize, belowThreshold, searchHistory } =
   useHistoryStoreRefs();
 const { fetchHistory, clearState } = useHistoryStore();
 
-const { user } = useUserSettingsStoreRefs();
-
 const i18n = useI18n('history');
 
-const active = ref(false);
-
-onActivated(() => {
-  active.value = true;
-  fetchHistory();
-});
-
-onDeactivated(() => {
-  active.value = false;
-});
-
-onMounted(() => {
-  watch(user, () => {
-    if (active.value) fetchHistory();
-    else clearState();
-  });
-});
+watchUserChange(fetchHistory, clearState);
 
 const list = useListScroll(filteredHistory, 'watched_at');
 

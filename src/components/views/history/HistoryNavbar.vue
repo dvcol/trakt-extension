@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
 
-import { computed, defineProps, ref, watch } from 'vue';
+import { computed, defineProps } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
@@ -9,13 +9,14 @@ import IconLoop from '~/components/icons/IconLoop.vue';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
+import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar');
 
 const { searchHistory, historyEnd, historyStart, pageSize } = useHistoryStoreRefs();
 const { setHistoryRange } = useHistoryStore();
 
-const debouncedSearch = ref(searchHistory.value);
+const debouncedSearch = useDebouncedSearch(searchHistory);
 
 defineProps({
   parentElement: {
@@ -23,19 +24,6 @@ defineProps({
     required: false,
   },
 });
-
-watch(searchHistory, () => {
-  if (searchHistory.value !== debouncedSearch.value) {
-    debouncedSearch.value = searchHistory.value;
-  }
-});
-
-watch(
-  debouncedSearch,
-  debounce(() => {
-    searchHistory.value = debouncedSearch.value;
-  }, 350),
-);
 
 const pickerValues = computed<[number, number] | null>(() => {
   if (!historyStart.value || !historyEnd.value) return null;
