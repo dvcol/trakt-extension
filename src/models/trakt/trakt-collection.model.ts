@@ -1,3 +1,4 @@
+import type { TraktApiExtended, TraktApiParamsExtended } from '~/models/trakt/trakt-client.model';
 import type { Any, EntityTypes, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -132,3 +133,7 @@ export type TraktCollectionRemoved = {
     episodes: Pick<TraktEpisode, 'ids'>[];
   };
 };
+
+export type TraktCollectionGetQuery = {
+  type: 'movies' | 'shows';
+} & TraktApiParamsExtended<typeof TraktApiExtended.Full | typeof TraktApiExtended.Metadata>;

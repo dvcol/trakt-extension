@@ -1,26 +1,40 @@
 <script setup lang="ts">
 import { NFlex, NIcon, NInput, NSelect } from 'naive-ui';
 
-import { defineProps, ref } from 'vue';
+import { computed, defineProps } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
+import {
+  useListsStore,
+  useListsStoreRefs,
+  useListStoreRefs,
+} from '~/stores/data/list.store';
 import { useI18n } from '~/utils';
+import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
-const i18n = useI18n('navbar');
+const i18n = useI18n('navbar_list');
 
-const activeList = ref('list-watchlist');
-const listOptions = [
-  { label: 'Movie collection', value: 'collection-movie' },
-  { label: 'TV collection', value: 'collection-tv' },
-  { label: 'Watchlist', value: 'list-watchlist' },
-  { label: 'Personal', value: 'list-personal' },
-  { label: 'Collaboration', value: 'list-collaboration' },
-];
+const { pageSize, searchList } = useListStoreRefs();
 
-const pageSize = ref(100);
+const { loading, lists, activeList } = useListsStoreRefs();
+const { fetchLists, clearState } = useListsStore();
 
-const debouncedSearch = ref('');
+const listOptions = computed(() =>
+  lists.value.map((list, i) => ({
+    label: ['collection', 'watchlist'].includes(list.type) ? i18n(list.name) : list.name,
+    value: JSON.stringify(list),
+  })),
+);
+
+const selectValue = computed({
+  get: () => JSON.stringify(activeList.value),
+  set: selected => {
+    activeList.value = JSON.parse(selected);
+  },
+});
+
+const debouncedSearch = useDebouncedSearch(searchList);
 
 defineProps({
   parentElement: {
@@ -28,20 +42,24 @@ defineProps({
     required: false,
   },
 });
+
+watchUserChange(fetchLists, clearState);
 </script>
 
 <template>
   <NFlex class="row" align="center" justify="center" :vertical="false">
     <NSelect
-      v-model:value="activeList"
+      v-model:value="selectValue"
       class="list-select"
       :options="listOptions"
       :to="parentElement"
+      :loading="loading"
+      filterable
     />
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"
-      :placeholder="i18n('search')"
+      :placeholder="i18n('search', 'navbar')"
       autosize
       clearable
     >

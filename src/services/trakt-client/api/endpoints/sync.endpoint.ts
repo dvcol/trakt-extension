@@ -1,4 +1,10 @@
-import type { TraktCollection, TraktCollectionAdded, TraktCollectionRemoved, TraktCollectionRequest } from '~/models/trakt/trakt-collection.model';
+import type {
+  TraktCollection,
+  TraktCollectionAdded,
+  TraktCollectionGetQuery,
+  TraktCollectionRemoved,
+  TraktCollectionRequest,
+} from '~/models/trakt/trakt-collection.model';
 import type {
   TraktFavoriteAdded,
   TraktFavoriteItem,
@@ -18,7 +24,13 @@ import type { TraktListReordered } from '~/models/trakt/trakt-list.model';
 import type { TraktRating, TraktRatingAdded, TraktRatingRemoved, TraktRatingRequest } from '~/models/trakt/trakt-rating.model';
 import type { TraktSyncActivities, TraktSyncProgress, TraktSyncRequest, TraktSyncUpdateRequest } from '~/models/trakt/trakt-sync.model';
 import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
-import type { TraktWatchlist, TraktWatchlistAdded, TraktWatchlistList, TraktWatchlistRemoved } from '~/models/trakt/trakt-watchlist.model';
+import type {
+  TraktWatchlist,
+  TraktWatchlistAdded,
+  TraktWatchlistGetQuery,
+  TraktWatchlistList,
+  TraktWatchlistRemoved,
+} from '~/models/trakt/trakt-watchlist.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
@@ -181,13 +193,10 @@ export const sync = {
      *
      * @extended true - {@link TraktApiExtended.Full}, {@link TraktApiExtended.Metadata}
      * @auth required
+     *
+     * @see [get-collection]{@link https://trakt.docs.apiary.io/#reference/sync/get-collection/get-collection}
      */
-    get: new TraktClientEndpoint<
-      {
-        type: 'movies' | 'shows';
-      } & TraktApiParamsExtended<typeof TraktApiExtended.Full | typeof TraktApiExtended.Metadata>,
-      TraktCollection[]
-    >({
+    get: new TraktClientEndpoint<TraktCollectionGetQuery, TraktCollection[]>({
       method: HttpMethod.GET,
       url: '/sync/collection/:type',
       opts: {
@@ -493,16 +502,7 @@ export const sync = {
      *
      * @see [get-watchlist]{@link https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist}
      */
-    get: new TraktClientEndpoint<
-      {
-        /** Filter for a specific item type */
-        type?: 'movies' | 'shows' | 'seasons' | 'episodes';
-        /** How to sort (only if type is also sent) */
-        sort?: 'rank' | 'added' | 'released' | 'title';
-      } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-        TraktApiParamsPagination,
-      TraktWatchlist[]
-    >({
+    get: new TraktClientEndpoint<TraktWatchlistGetQuery, TraktWatchlist[]>({
       method: HttpMethod.GET,
       url: '/sync/watchlist/:type/:sort',
       opts: {

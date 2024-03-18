@@ -894,7 +894,7 @@ export const users = {
           /** List Trakt ID or Trakt slug */
           list_id: string;
           /** Type of list items */
-          type?: 'movies' | 'shows' | 'seasons' | 'episodes' | 'person';
+          type?: ('movies' | 'shows' | 'seasons' | 'episodes' | 'person') | ('movies' | 'shows' | 'seasons' | 'episodes' | 'person')[];
         } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
           TraktApiParamsPagination,
         TraktListItem[]
@@ -916,6 +916,7 @@ export const users = {
             },
           },
         },
+        transform: params => (Array.isArray(params.type) ? { ...params, type: params.type.join(',') as never } : params),
       }),
       /**
        * Add one or more items to a personal list. Items can be movies, shows, seasons, episodes, or people.
