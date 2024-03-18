@@ -6,6 +6,7 @@ import type { TraktLike } from '~/models/trakt/trakt-like.model';
 import type {
   TraktList,
   TraktListItem,
+  TraktListItemsGetQuery,
   TraktListReordered,
   TraktUserListItemAdded,
   TraktUserListItemRemoved,
@@ -887,18 +888,7 @@ export const users = {
      * @see [get-items-on-a-personal-list]{@link https://trakt.docs.apiary.io/#reference/users/list-items/get-items-on-a-personal-list}
      */
     items: {
-      get: new TraktClientEndpoint<
-        {
-          /** User slug */
-          id: string;
-          /** List Trakt ID or Trakt slug */
-          list_id: string;
-          /** Type of list items */
-          type?: ('movies' | 'shows' | 'seasons' | 'episodes' | 'person') | ('movies' | 'shows' | 'seasons' | 'episodes' | 'person')[];
-        } & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
-          TraktApiParamsPagination,
-        TraktListItem[]
-      >({
+      get: new TraktClientEndpoint<TraktListItemsGetQuery, TraktListItem[]>({
         method: HttpMethod.GET,
         url: '/users/:id/lists/:list_id/items?type=',
         opts: {

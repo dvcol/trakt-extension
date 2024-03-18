@@ -1,3 +1,4 @@
+import type { TraktApiExtended, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 import type { Any } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
@@ -178,3 +179,13 @@ export type TraktListReordered = {
     item_count: number;
   };
 };
+
+export type TraktListItemsGetQuery = {
+  /** User slug */
+  id: string;
+  /** List Trakt ID or Trakt slug */
+  list_id: string;
+  /** Type of list items */
+  type?: ('movies' | 'shows' | 'seasons' | 'episodes' | 'person') | ('movies' | 'shows' | 'seasons' | 'episodes' | 'person')[];
+} & TraktApiParamsExtended<typeof TraktApiExtended.Full> &
+  TraktApiParamsPagination;

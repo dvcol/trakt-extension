@@ -1,8 +1,10 @@
 import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
-
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
+import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
+import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
+import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
@@ -22,7 +24,7 @@ import { createTab } from '~/utils/browser/browser.utils';
 import { CacheRetention, ChromeCacheStore } from '~/utils/cache.utils';
 
 export class TraktService {
-  static traktClient: TraktClient;
+  private static traktClient: TraktClient;
   private static tmdbClient: TmdbClient;
   private static tvdbClient: TvdbClient;
 
@@ -154,11 +156,6 @@ export class TraktService {
     });
   }
 
-  static async history(query: TraktHistoryGetQuery) {
-    const response = await this.traktClient.sync.history.get.cached(query);
-    return { data: await response.json(), pagination: response.pagination };
-  }
-
   static async tmdbConfiguration() {
     const response = await this.tmdbClient.v3.configuration.details.cached();
     return response.json();
@@ -196,4 +193,34 @@ export class TraktService {
       return response.json();
     },
   };
+
+  static async history(query: TraktHistoryGetQuery) {
+    const response = await this.traktClient.sync.history.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async watchlist(query: TraktWatchlistGetQuery) {
+    const response = await this.traktClient.sync.watchlist.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async collection(query: TraktCollectionGetQuery) {
+    const response = await this.traktClient.sync.collection.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async lists(userId: string, collaboration?: boolean) {
+    let response: TraktApiResponse<TraktList[]>;
+    if (collaboration) {
+      response = await this.traktClient.users.lists.collaborations.cached({ id: userId });
+    } else {
+      response = await this.traktClient.users.lists.get.cached({ id: userId });
+    }
+    return response.json();
+  }
+
+  static async list(query: TraktListItemsGetQuery) {
+    const response = await this.traktClient.users.list.items.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
 }

@@ -1,55 +1,77 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
-
-import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
-import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
-
+import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
+import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
+import {
+  addLoadMore,
+  useListScroll,
+  useListScrollEvents,
+} from '~/components/common/list/use-list-scroll';
+import {
+  type AnyList,
+  anyListDateGetter,
+  type AnyListDateTypes,
+  useListStore,
+  useListStoreRefs,
+} from '~/stores/data/list.store';
+import { useI18n } from '~/utils';
+import { watchUserChange } from '~/utils/store.utils';
 
-import { TraktService } from '~/services/trakt.service';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+const i18n = useI18n('list');
 
-const { user } = useUserSettingsStoreRefs();
+const { filteredListItems, pagination, loading, pageSize, belowThreshold, searchList } =
+  useListStoreRefs();
+const { fetchListItems, clearState } = useListStore();
 
-const filteredList = ref<TraktWatchlist[]>([]);
-const pagination = ref<TraktClientPagination>();
-const loading = ref(true);
-const pageSize = 100;
+watchUserChange(fetchListItems, clearState);
 
-onMounted(() => {
-  console.info('This is a list component');
-  TraktService.traktClient.sync.collection.get.cached({ type: 'movies' });
-  TraktService.traktClient.sync.collection.get.cached({ type: 'shows' });
-  TraktService.traktClient.sync.watchlist.get.cached().then(async res => {
-    filteredList.value = await res.json();
-    pagination.value = res.pagination;
-    loading.value = false;
-  });
-  TraktService.traktClient.users.lists.get.cached({ id: user.value });
-  TraktService.traktClient.users.lists.collaborations.cached({ id: user.value });
+const list = useListScroll<AnyListDateTypes, AnyList>(
+  filteredListItems,
+  anyListDateGetter,
+);
+
+const listItems = addLoadMore(list, pagination, searchList);
+
+const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, {
+  data: listItems,
+  pagination,
+  loading,
+  belowThreshold,
 });
 
-const list = computed<ListScrollItem[]>(() => {
-  const array = filteredList.value;
-  if (!array.length) return [];
-  return array.map((item, index) => {
-    const _item: ListScrollItem = { ...item, index, loading: item.id < 0 };
-    return _item;
-  });
-});
+const { scrolled, listRef, onClick } = useBackToTop();
 </script>
 
 <template>
-  <ListScroll
-    :items="list"
-    :loading="loading"
-    :pagination="pagination"
-    :page-size="pageSize"
-    hide-date
-  >
-    <template #default>
-      <!-- TODO buttons here-->
-    </template>
-  </ListScroll>
+  <div class="container">
+    <ListScroll
+      ref="listRef"
+      hide-date
+      :items="list"
+      :loading="loading"
+      :pagination="pagination"
+      :page-size="pageSize"
+      :scroll-threshold="300"
+      @on-scroll="scrolled = true"
+      @on-scroll-top="scrolled = false"
+      @on-scroll-bottom="onScroll"
+      @on-updated="onUpdated"
+      @onload-more="onLoadMore"
+    >
+      <template #default>
+        <!-- TODO buttons here-->
+      </template>
+    </ListScroll>
+
+    <FloatingButton :show="scrolled" @on-click="onClick">
+      {{ i18n('back_to_top', 'common', 'button') }}
+    </FloatingButton>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.container {
+  width: 100%;
+  height: 100%;
+}
+</style>
