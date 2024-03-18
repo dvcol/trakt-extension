@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { computed, onActivated, onDeactivated, onMounted, ref, watch } from 'vue';
+import { onActivated, onDeactivated, onMounted, ref, watch } from 'vue';
 
 import type {
-  ListScrollItem,
   OnScroll,
   OnUpdated,
   VirtualListRef,
@@ -10,6 +9,7 @@ import type {
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
+import { useListScroll } from '~/components/common/list/useListScroll';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
@@ -40,34 +40,7 @@ onMounted(() => {
   });
 });
 
-const history = computed<ListScrollItem[]>(() => {
-  const array = filteredHistory.value;
-  if (!array.length) return [];
-  return array.map((item, index) => {
-    const _item: ListScrollItem = { ...item, index, loading: item.id < 0 };
-
-    if ('movie' in _item) _item.type = 'movie';
-    else if ('episode' in _item) _item.type = 'episode';
-    else if ('season' in _item) _item.type = 'season';
-    else if ('show' in _item) _item.type = 'show';
-
-    if (!item.watched_at) return _item;
-
-    const date: ListScrollItem['date'] = { current: new Date(item.watched_at) };
-    if (index > 1 && array[index - 1]?.watched_at) {
-      date.previous = new Date(array[index - 1]?.watched_at);
-    }
-    if (array[index + 1]?.watched_at) {
-      date.next = new Date(array[index + 1]?.watched_at);
-    }
-    date.sameDayAsPrevious =
-      date.previous?.toLocaleDateString() === date.current?.toLocaleDateString();
-    date.sameDayAsNext =
-      date.next?.toLocaleDateString() === date.current?.toLocaleDateString();
-
-    return { ..._item, date };
-  });
-});
+const history = useListScroll(filteredHistory, 'watched_at');
 
 const onScroll: OnScroll = async listRef => {
   const key = history.value[history.value.length - 1].id;
