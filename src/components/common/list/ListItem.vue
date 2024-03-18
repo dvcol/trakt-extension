@@ -169,7 +169,7 @@ watch(
           />
           <NImage
             alt="poster-image-fallback"
-            class="poster fallback"
+            class="poster placeholder"
             lazy
             preview-disabled
             :src="PosterPlaceholder"
@@ -268,16 +268,17 @@ watch(
   }
 
   .poster {
+    flex: 0 1 var(--poster-width, 5.3125rem);
     justify-content: center;
-    min-width: 5.75rem;
-    height: 8rem;
+    width: var(--poster-width, 5.3125rem);
+    height: var(--poster-height, 8rem);
 
-    &.fallback {
+    &.placeholder {
       position: absolute;
       background-color: #111;
     }
 
-    &:not(.fallback) {
+    &:not(.placeholder) {
       z-index: layers.$in-front;
     }
   }
