@@ -9,12 +9,12 @@ import type {
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
-import { useListScroll } from '~/components/common/list/useListScroll';
+import { addLoadMore, useListScroll } from '~/components/common/list/useListScroll';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 
-const { filteredHistory, pagination, loading, pageSize, belowThreshold } =
+const { filteredHistory, pagination, loading, pageSize, belowThreshold, searchHistory } =
   useHistoryStoreRefs();
 const { fetchHistory, clearState } = useHistoryStore();
 
@@ -40,7 +40,9 @@ onMounted(() => {
   });
 });
 
-const history = useListScroll(filteredHistory, 'watched_at');
+const list = useListScroll(filteredHistory, 'watched_at');
+
+const history = addLoadMore(list, pagination, searchHistory);
 
 const onScroll: OnScroll = async listRef => {
   const key = history.value[history.value.length - 1].id;
@@ -50,6 +52,11 @@ const onScroll: OnScroll = async listRef => {
   listRef.value?.scrollTo({ key, debounce: true });
 };
 
+const onLoadMore = async () =>
+  fetchHistory({
+    page: pagination.value?.page ? pagination.value.page + 1 : 0,
+  });
+
 /**
  * This is a workaround for the onUpdated lifecycle hook not triggering when wrapped in transition.
  */
@@ -57,9 +64,7 @@ const onUpdated: OnUpdated = listRef => {
   const { scrollHeight, clientHeight } = listRef.value?.$el?.firstElementChild ?? {};
   if (scrollHeight !== clientHeight || !belowThreshold.value || loading.value) return;
 
-  return fetchHistory({
-    page: pagination.value?.page ? pagination.value.page + 1 : 0,
-  });
+  return onLoadMore();
 };
 
 const listRef = ref<{ list: VirtualListRef }>();
@@ -85,6 +90,7 @@ const onClick = () => {
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
       @on-updated="onUpdated"
+      @onload-more="onLoadMore"
     >
       <template #default>
         <!-- TODO buttons here-->

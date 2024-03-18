@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NEmpty } from 'naive-ui';
 
+import ListLoadMore from '~/components/common/list/ListLoadMore.vue';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('list', 'empty');
@@ -22,24 +23,25 @@ defineProps({
     default: 0,
   },
 });
+
+const emit = defineEmits<{
+  (
+    e: 'onLoadMore',
+    pagination: { page: number; pageCount: number; pageSize: number },
+  ): void;
+}>();
 </script>
 
 <template>
   <NEmpty size="large" :show-description="false">
     <template #extra>
       <span class="empty">{{ i18n('no_data') }}</span>
-      <div v-if="page && pageCount">
-        <div class="empty">
-          {{ i18n('pages_line_1') }} <span class="page"> {{ page }} </span>
-          {{ i18n('pages_line_2') }} <span class="page"> {{ pageCount }} </span>.
-        </div>
-        <template v-if="page < pageCount">
-          <div class="empty">{{ i18n('page_size') }}</div>
-          <div class="empty">
-            {{ i18n('current_page_size') }} <span class="page"> {{ pageSize }} </span>.
-          </div>
-        </template>
-      </div>
+      <ListLoadMore
+        :page="page"
+        :page-count="pageCount"
+        :page-size="pageSize"
+        @on-load-more="e => emit('onLoadMore', e)"
+      />
     </template>
   </NEmpty>
 </template>

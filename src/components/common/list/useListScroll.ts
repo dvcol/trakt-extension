@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import type { Ref } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
+import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
@@ -44,3 +45,21 @@ export const useListScroll = <T extends string>(items: Ref<ListScrollSourceItems
       return { ..._item, date };
     });
   });
+
+export const addLoadMore = (
+  items: Ref<ListScrollItem[]>,
+  pagination: Ref<TraktClientPagination | undefined>,
+  search: Ref<string>,
+): Ref<ListScrollItem[]> => {
+  return computed(() => {
+    const array = items.value;
+    if (!array.length) return array;
+    if (!search.value) return array;
+    if (!pagination.value?.page) return array;
+    if (!pagination.value?.pageCount) return array;
+    if (pagination.value.page === pagination.value.pageCount) return array;
+    if (array.length && array[array.length - 1].id === 'load-more') return array;
+    const loadMore: ListScrollItem = { id: 'load-more', index: items.value.length };
+    return [...array, loadMore];
+  });
+};
