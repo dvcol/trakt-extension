@@ -1,6 +1,6 @@
 import { computed, onActivated, onDeactivated, onMounted, ref, type Ref, watch } from 'vue';
 
-import type { ListScrollSourceItemWithDate } from '~/components/common/list/useListScroll';
+import type { ListScrollSourceItemWithDate } from '~/components/common/list/use-list-scroll';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
@@ -9,7 +9,11 @@ import { debounce } from '~/utils/debounce.utils';
 const codesRegex = /[sS]?\d+([eExX])\d+/g;
 const getCodeRegex = (season: number, episode: number) => new RegExp(`^[sS]?0*${season}([eExX])0*${episode}$`);
 
-export const useSearchFilter = <D extends string, T extends ListScrollSourceItemWithDate<D>>(data: Ref<T[]>, search: Ref<string>, date: D) =>
+export const useSearchFilter = <D extends string, T extends ListScrollSourceItemWithDate<D>>(
+  data: Ref<T[]>,
+  search: Ref<string>,
+  date?: D | ((item: T) => ListScrollSourceItemWithDate<D>[D]),
+) =>
   computed(() => {
     if (!search.value) return data.value;
     const _searchRaw = search.value.toLowerCase().trim();
@@ -26,17 +30,22 @@ export const useSearchFilter = <D extends string, T extends ListScrollSourceItem
       if (!_search) return false;
       if (item.show?.title?.toLowerCase().includes(_search)) return true;
       if (item.movie?.title?.toLowerCase().includes(_search)) return true;
-      return !!(item?.[date] && new Date(item[date]).toLocaleString().toLowerCase().includes(_search));
+      if (!date) return false;
+      const _date = typeof date === 'function' ? date(item) : item[date];
+      if (!_date) return false;
+      return new Date(_date).toLocaleString().toLowerCase().includes(_search);
     });
   });
 
 export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktClientPagination | undefined>) =>
   computed(
     () =>
-      pagination.value?.page &&
-      pagination.value?.pageCount &&
-      pagination.value.page !== pagination.value.pageCount &&
-      pagination.value.page < threshold.value,
+      !!(
+        pagination.value?.page &&
+        pagination.value?.pageCount &&
+        pagination.value.page !== pagination.value.pageCount &&
+        pagination.value.page < threshold.value
+      ),
   );
 
 export const useLoadingPlaceholder = <T>(pageSize: Ref<number>) =>
@@ -88,3 +97,8 @@ export const useDebouncedSearch = (search: Ref<string>) => {
 
   return debouncedSearch;
 };
+
+export const debounceLoading = <T>(data: Ref<T[]>, placeholder: Ref<T[]>, clear?: boolean) =>
+  setTimeout(() => {
+    data.value = clear ? placeholder.value : [...data.value, ...placeholder.value];
+  }, 100);

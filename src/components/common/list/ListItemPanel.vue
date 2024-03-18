@@ -24,6 +24,10 @@ const props = defineProps({
     required: false,
     default: PosterPlaceholder,
   },
+  hideDate: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const { item } = toRefs(props);
@@ -71,7 +75,7 @@ const date = computed(() => currentDate.value?.toLocaleTimeString());
       <NSkeleton v-if="loading" text style="width: 60%" round />
       <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
-    <div class="meta time">
+    <div v-if="!hideDate" class="meta time">
       <NSkeleton v-if="loading" text style="width: 20%" round />
       <NEllipsis v-else :line-clamp="1">{{ date }}</NEllipsis>
     </div>

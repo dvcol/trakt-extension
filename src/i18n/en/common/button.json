@@ -1,5 +1,5 @@
 {
-  "history__button_top": {
+  "common__button__back_to_top": {
     "message": "Back to top",
     "description": "Button to scroll to the top of the history."
   }

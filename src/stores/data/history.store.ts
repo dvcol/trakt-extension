@@ -5,7 +5,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
 import { TraktService } from '~/services/trakt.service';
-import { useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
+import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
 export const useHistoryStore = defineStore('data.history', () => {
   const loading = ref(true);
@@ -40,10 +40,7 @@ export const useHistoryStore = defineStore('data.history', () => {
   }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
     console.info('Fetching History', { page, limit, start, end });
     loading.value = true;
-    const timeout = setTimeout(() => {
-      if (page) history.value = [...history.value, ...loadingPlaceholder.value];
-      else history.value = [...loadingPlaceholder.value];
-    }, 100);
+    const timeout = debounceLoading(history, loadingPlaceholder, !page);
     try {
       const response = await TraktService.history({
         pagination: {

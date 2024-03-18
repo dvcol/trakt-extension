@@ -61,15 +61,17 @@ const emit = defineEmits<{
   (e: 'onHover', event: { index: number; item: ListScrollItem; hover: boolean }): void;
 }>();
 
-const { item, size, index, noHeader, nextHasHeader, poster } = toRefs(props);
+const { item, size, index, noHeader, nextHasHeader, poster, hideDate } = toRefs(props);
 
 const onHover = (_hover: boolean) => {
   emit('onHover', { index: index?.value, item: item?.value, hover: _hover });
 };
 
-const noHead = computed(() => noHeader.value || item?.value?.date?.sameDayAsPrevious);
+const noHead = computed(
+  () => !hideDate.value && (noHeader.value || item?.value?.date?.sameDayAsPrevious),
+);
 const nextHasHead = computed(
-  () => nextHasHeader.value || !item?.value?.date?.sameDayAsNext,
+  () => hideDate.value || nextHasHeader.value || !item?.value?.date?.sameDayAsNext,
 );
 const date = computed(() => item?.value?.date?.current);
 
@@ -175,7 +177,7 @@ watch(
             :src="PosterPlaceholder"
             :fallback-src="PosterPlaceholder"
           />
-          <ListItemPanel :item="item" :loading="loading">
+          <ListItemPanel :item="item" :loading="loading" :hide-date="hideDate">
             <slot :item="item" :index="index" :loading="loading" />
           </ListItemPanel>
         </NFlex>

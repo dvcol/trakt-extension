@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-
-import type {
-  OnScroll,
-  OnUpdated,
-  VirtualListRef,
-} from '~/components/common/list/ListScroll.model';
-
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
+import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
-import { addLoadMore, useListScroll } from '~/components/common/list/useListScroll';
+import {
+  addLoadMore,
+  useListScroll,
+  useListScrollEvents,
+} from '~/components/common/list/use-list-scroll';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useI18n } from '~/utils';
 import { watchUserChange } from '~/utils/store.utils';
@@ -26,37 +23,14 @@ const list = useListScroll(filteredHistory, 'watched_at');
 
 const history = addLoadMore(list, pagination, searchHistory);
 
-const onScroll: OnScroll = async listRef => {
-  const key = history.value[history.value.length - 1].id;
-  await fetchHistory({
-    page: pagination.value?.page ? pagination.value.page + 1 : 0,
-  });
-  listRef.value?.scrollTo({ key, debounce: true });
-};
+const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchHistory, {
+  data: history,
+  pagination,
+  loading,
+  belowThreshold,
+});
 
-const onLoadMore = async () =>
-  fetchHistory({
-    page: pagination.value?.page ? pagination.value.page + 1 : 0,
-  });
-
-/**
- * This is a workaround for the onUpdated lifecycle hook not triggering when wrapped in transition.
- */
-const onUpdated: OnUpdated = listRef => {
-  const { scrollHeight, clientHeight } = listRef.value?.$el?.firstElementChild ?? {};
-  if (scrollHeight !== clientHeight || !belowThreshold.value || loading.value) return;
-
-  return onLoadMore();
-};
-
-const listRef = ref<{ list: VirtualListRef }>();
-
-const scrolled = ref(false);
-
-const onClick = () => {
-  listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  scrolled.value = false;
-};
+const { scrolled, listRef, onClick } = useBackToTop();
 </script>
 
 <template>
@@ -79,7 +53,7 @@ const onClick = () => {
       </template>
     </ListScroll>
     <FloatingButton :show="scrolled" @on-click="onClick">
-      {{ i18n('button_top') }}
+      {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
   </div>
 </template>
