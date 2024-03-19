@@ -3,6 +3,10 @@
     "message": "Watchlist",
     "description": "Label for the watchlist list type"
   },
+  "navbar_list__list_type__favorites": {
+    "message": "Favorites",
+    "description": "Label for the favorites list type"
+  },
   "navbar_list__list_type__collection_movie": {
     "message": "Movie collection",
     "description": "Label for the movie collection list type"

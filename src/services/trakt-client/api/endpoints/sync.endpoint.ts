@@ -1,3 +1,4 @@
+import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 import type {
   TraktCollection,
   TraktCollectionAdded,
@@ -32,7 +33,7 @@ import type {
   TraktWatchlistRemoved,
 } from '~/models/trakt/trakt-watchlist.model';
 
-import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
+import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { HttpMethod } from '~/utils/http.utils';
 
 /**

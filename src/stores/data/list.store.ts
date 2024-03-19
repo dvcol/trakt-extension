@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import type { TraktCollection } from '~/models/trakt/trakt-collection.model';
+import type { TraktFavoriteItem } from '~/models/trakt/trakt-favorite.model';
 import type { TraktListItem } from '~/models/trakt/trakt-list.model';
 
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
@@ -13,9 +14,9 @@ import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
-export type AnyList = TraktListItem | TraktWatchlist | (TraktCollection & { id: number });
+export type AnyList = TraktListItem | TraktWatchlist | TraktFavoriteItem | (TraktCollection & { id: number });
 export type ListType = {
-  type: 'list' | 'collaboration' | 'collection' | 'watchlist';
+  type: 'list' | 'collaboration' | 'collection' | 'watchlist' | 'favorites';
   name: string;
   id: number | string;
   scope?: 'movies' | 'shows';
@@ -31,11 +32,12 @@ export const anyListDateGetter = (item: AnyList) => {
 
 export const DefaultLists: Record<string, ListType> = {
   Watchlist: { type: 'watchlist', id: 'watchlist', name: 'list_type__watchlist' },
+  Favorites: { type: 'favorites', id: 'favorites', name: 'list_type__favorites' },
   MovieCollection: { type: 'collection', id: 'collection-movies', scope: 'movies', name: 'list_type__collection_movie' },
   ShowCollection: { type: 'collection', id: 'collection-shows', scope: 'shows', name: 'list_type__collection_show' },
 } as const;
 
-const DefaultList: ListType[] = [DefaultLists.Watchlist, DefaultLists.MovieCollection, DefaultLists.ShowCollection];
+const DefaultList: ListType[] = Object.values(DefaultLists);
 
 export const useListsStore = defineStore('data.lists', () => {
   const loading = ref(true);
@@ -166,6 +168,8 @@ export const useListStore = defineStore('data.list', () => {
 
       if (list.type === 'watchlist') {
         response = await TraktService.watchlist(query);
+      } else if (list.type === 'favorites') {
+        response = await TraktService.favorites(query);
       } else if (list.type === 'collection' && list.scope) {
         response = await TraktService.collection({
           ...query,

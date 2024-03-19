@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { NFlex, NIcon, NInput, NSelect } from 'naive-ui';
+import { NFlex, NIcon, NInput, NSelect, type SelectOption } from 'naive-ui';
 
-import { computed, defineProps, ref } from 'vue';
+import { type Component, computed, defineProps, h, ref } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
+import IconCheckedList from '~/components/icons/IconCheckedList.vue';
+import IconGrid from '~/components/icons/IconGrid.vue';
+import IconHeart from '~/components/icons/IconHeart.vue';
 import IconList from '~/components/icons/IconList.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
 import {
+  type ListType,
   useListsStore,
   useListsStoreRefs,
   useListStoreRefs,
@@ -22,11 +26,35 @@ const { pageSize, searchList } = useListStoreRefs();
 const { loading, lists, activeList } = useListsStoreRefs();
 const { fetchLists, clearState } = useListsStore();
 
-const listOptions = computed(() =>
+const getIcon = (list: ListType) => {
+  switch (list.type) {
+    case 'collection':
+      return IconGrid;
+    case 'watchlist':
+      return IconCheckedList;
+    case 'favorites':
+      return IconHeart;
+    case 'collaboration':
+      return IconList;
+    default:
+      return IconList;
+  }
+};
+
+type ListOption = SelectOption & { source: ListType; icon: Component };
+const listOptions = computed<ListOption[]>(() =>
   lists.value.map((list, i) => ({
-    label: ['collection', 'watchlist'].includes(list.type) ? i18n(list.name) : list.name,
+    label: ['collection', 'watchlist', 'favorites'].includes(list.type)
+      ? i18n(list.name)
+      : list.name,
     value: list.id,
+    source: list,
+    icon: getIcon(list),
   })),
+);
+
+const selectedIcon = computed(
+  () => listOptions.value.find(o => o.value === activeList.value.id)?.icon,
 );
 
 const selectValue = computed({
@@ -54,6 +82,18 @@ watchUserChange({
 });
 
 const open = ref(false);
+
+const renderLabel = (option: ListOption) => [
+  h(NIcon, {
+    style: {
+      verticalAlign: '-0.2em',
+      marginRight: '0.7em',
+    },
+    component: option.icon,
+  }),
+  option.label?.toString(),
+];
+const renderTag = ({ option }: { option: SelectOption }) => option.label?.toString();
 </script>
 
 <template>
@@ -65,10 +105,12 @@ const open = ref(false);
       :options="listOptions"
       :to="parentElement"
       :loading="loading"
+      :render-label="renderLabel"
+      :render-tag="renderTag"
       filterable
     >
       <template #arrow>
-        <NIcon :component="open ? IconLoop : IconList" />
+        <NIcon :component="open ? IconLoop : selectedIcon" />
       </template>
     </NSelect>
     <NInput
