@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
 
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
+import IconCalendar from '~/components/icons/IconCalendar.vue';
+import IconChevron from '~/components/icons/IconChevron.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
@@ -35,11 +37,14 @@ const onDateChange = debounce((values?: [number, number]) => {
   const [start, end] = values;
   setHistoryRange({ start: new Date(start), end: new Date(end) });
 }, 350);
+
+const open = ref(false);
 </script>
 
 <template>
   <NFlex class="row" align="center" justify="space-evenly" :vertical="false">
     <NDatePicker
+      v-model:show="open"
       class="date-picker"
       type="daterange"
       :to="parentElement"
@@ -51,7 +56,11 @@ const onDateChange = debounce((values?: [number, number]) => {
       :value="pickerValues"
       :on-clear="onDateChange"
       :on-confirm="onDateChange"
-    />
+    >
+      <template #date-icon>
+        <NIcon :component="open ? IconChevron : IconCalendar" />
+      </template>
+    </NDatePicker>
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"
