@@ -5,6 +5,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
 import { TraktService } from '~/services/trakt.service';
+import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
 export const useHistoryStore = defineStore('data.history', () => {
@@ -19,6 +20,25 @@ export const useHistoryStore = defineStore('data.history', () => {
   const historyEnd = ref<Date | undefined>(undefined);
 
   const threshold = ref(10);
+
+  const saveState = async () =>
+    storage.local.set('data.history', {
+      pageSize: pageSize.value,
+      historyStart: historyStart.value?.getTime(),
+      historyEnd: historyEnd.value?.getTime(),
+    });
+
+  const restoreState = async () => {
+    const restored = await storage.local.get<{
+      pageSize: number;
+      historyStart: Date | undefined;
+      historyEnd: Date | undefined;
+    }>('data.history');
+
+    if (restored?.pageSize) pageSize.value = restored.pageSize;
+    if (restored?.historyStart) historyStart.value = new Date(restored.historyStart);
+    if (restored?.historyEnd) historyEnd.value = new Date(restored.historyEnd);
+  };
 
   const clearState = () => {
     history.value = [];
@@ -62,16 +82,23 @@ export const useHistoryStore = defineStore('data.history', () => {
     }
   };
 
-  const setHistoryRange = ({ start, end }: { start?: Date; end?: Date } = {}) => {
+  const setHistoryRange = async ({ start, end }: { start?: Date; end?: Date } = {}) => {
     historyStart.value = start;
     historyEnd.value = end;
-    return fetchHistory({ start, end });
+    const result = fetchHistory({ start, end });
+    await saveState();
+    return result;
   };
 
-  watch(pageSize, async () => {
-    await fetchHistory();
-    searchHistory.value = '';
-  });
+  const initHistoryStore = async () => {
+    await restoreState();
+
+    watch(pageSize, async () => {
+      await fetchHistory();
+      searchHistory.value = '';
+      await saveState();
+    });
+  };
 
   return {
     history,
@@ -88,6 +115,7 @@ export const useHistoryStore = defineStore('data.history', () => {
     historyEnd,
     setHistoryRange,
     clearState,
+    initHistoryStore,
   };
 });
 

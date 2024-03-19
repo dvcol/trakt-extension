@@ -23,7 +23,10 @@ const { filteredListItems, pagination, loading, pageSize, belowThreshold, search
   useListStoreRefs();
 const { fetchListItems, clearState } = useListStore();
 
-watchUserChange(fetchListItems, clearState);
+watchUserChange({
+  fetch: fetchListItems,
+  clear: clearState,
+});
 
 const list = useListScroll<AnyListDateTypes, AnyList>(
   filteredListItems,

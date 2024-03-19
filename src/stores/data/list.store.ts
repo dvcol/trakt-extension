@@ -10,13 +10,14 @@ import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
 import { TraktService } from '~/services/trakt.service';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
 export type AnyList = TraktListItem | TraktWatchlist | (TraktCollection & { id: number });
 export type ListType = {
   type: 'list' | 'collaboration' | 'collection' | 'watchlist';
   name: string;
-  id?: number | string;
+  id: number | string;
   scope?: 'movies' | 'shows';
 };
 
@@ -29,9 +30,9 @@ export const anyListDateGetter = (item: AnyList) => {
 };
 
 export const DefaultLists: Record<string, ListType> = {
-  Watchlist: { type: 'watchlist', name: 'list_type__watchlist' },
-  MovieCollection: { type: 'collection', scope: 'movies', name: 'list_type__collection_movie' },
-  ShowCollection: { type: 'collection', scope: 'shows', name: 'list_type__collection_show' },
+  Watchlist: { type: 'watchlist', id: 'watchlist', name: 'list_type__watchlist' },
+  MovieCollection: { type: 'collection', id: 'collection-movies', scope: 'movies', name: 'list_type__collection_movie' },
+  ShowCollection: { type: 'collection', id: 'collection-shows', scope: 'shows', name: 'list_type__collection_show' },
 } as const;
 
 const DefaultList: ListType[] = [DefaultLists.Watchlist, DefaultLists.MovieCollection, DefaultLists.ShowCollection];
@@ -41,6 +42,22 @@ export const useListsStore = defineStore('data.lists', () => {
 
   const lists = ref<ListType[]>(DefaultList);
   const activeList = ref<ListType>(DefaultLists.Watchlist);
+
+  const saveState = async () =>
+    storage.local.set('data.lists', {
+      lists: [...lists.value],
+      activeList: activeList.value,
+    });
+
+  const restoreState = async () => {
+    const restored = await storage.local.get<{
+      lists: ListType[];
+      activeList: ListType;
+    }>('data.lists');
+    if (restored?.lists) lists.value = restored.lists;
+    if (restored?.activeList === activeList.value) return;
+    if (restored?.activeList) activeList.value = restored.activeList;
+  };
 
   const clearState = () => {
     lists.value = DefaultList;
@@ -73,15 +90,28 @@ export const useListsStore = defineStore('data.lists', () => {
             }) satisfies ListType,
         ),
       ];
+      if (activeList.value?.id && !lists.value.some(l => activeList.value.id === l?.id)) {
+        console.warn('Active List not found, falling back to default', activeList.value);
+        activeList.value = DefaultLists.Watchlist;
+      }
     } catch (e) {
       console.error('Failed to fetch lists');
       throw e;
     } finally {
       loading.value = false;
+      console.info('Fetched Lists', loading.value);
     }
   };
 
-  return { loading, lists, activeList, fetchLists, clearState };
+  const initListsStore = async () => {
+    await restoreState();
+
+    watch(activeList, async _value => {
+      await saveState();
+    });
+  };
+
+  return { loading, lists, activeList, fetchLists, clearState, initListsStore };
 });
 
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
@@ -94,6 +124,13 @@ export const useListStore = defineStore('data.list', () => {
   const listItems = ref<AnyList[]>([]);
   const searchList = ref('');
   const threshold = ref(10);
+
+  const saveState = async () => storage.local.set('data.list.page-size', pageSize.value);
+  const restoreState = async () => {
+    const restored = await storage.local.get<number>('data.list.page-size');
+    if (restored === pageSize.value) return;
+    if (restored) pageSize.value = restored;
+  };
 
   const clearState = () => {
     listItems.value = [];
@@ -139,7 +176,6 @@ export const useListStore = defineStore('data.list', () => {
       } else {
         throw new Error('Invalid list type');
       }
-      console.info('Fetched List', list, response);
       const newData = response.data.map((item, index) => {
         if ('id' in item) return item;
         return { ...item, id: index };
@@ -156,17 +192,34 @@ export const useListStore = defineStore('data.list', () => {
     }
   };
 
-  watch(pageSize, async () => {
-    await fetchListItems();
-    searchList.value = '';
-  });
+  const initListStore = async () => {
+    await restoreState();
 
-  watch(activeList, async () => {
-    await fetchListItems();
-    searchList.value = '';
-  });
+    watch(pageSize, async () => {
+      await fetchListItems();
+      searchList.value = '';
+      await saveState();
+    });
 
-  return { loading, listItems, pagination, pageSize, searchList, clearState, belowThreshold, loadingPlaceholder, fetchListItems, filteredListItems };
+    watch(activeList, async () => {
+      await fetchListItems();
+      searchList.value = '';
+    });
+  };
+
+  return {
+    loading,
+    listItems,
+    pagination,
+    pageSize,
+    searchList,
+    clearState,
+    belowThreshold,
+    loadingPlaceholder,
+    fetchListItems,
+    filteredListItems,
+    initListStore,
+  };
 });
 
 export const useListStoreRefs = () => storeToRefs(useListStore());
