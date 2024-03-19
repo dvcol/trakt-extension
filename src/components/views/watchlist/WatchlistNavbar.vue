@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { NFlex, NIcon, NInput, NSelect } from 'naive-ui';
 
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
+import IconList from '~/components/icons/IconList.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
+
 import {
   useListsStore,
   useListsStoreRefs,
@@ -44,18 +46,25 @@ defineProps({
 });
 
 watchUserChange(fetchLists, clearState);
+
+const open = ref(false);
 </script>
 
 <template>
   <NFlex class="row" align="center" justify="center" :vertical="false">
     <NSelect
       v-model:value="selectValue"
+      v-model:show="open"
       class="list-select"
       :options="listOptions"
       :to="parentElement"
       :loading="loading"
       filterable
-    />
+    >
+      <template #arrow>
+        <NIcon :component="open ? IconLoop : IconList" />
+      </template>
+    </NSelect>
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"

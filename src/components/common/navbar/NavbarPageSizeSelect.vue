@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { NSelect, NTooltip, type SelectOption } from 'naive-ui';
+import { NIcon, NSelect, NTooltip, type SelectOption } from 'naive-ui';
 
-import { onMounted, ref, toRefs, watch } from 'vue';
+import { computed, onMounted, ref, toRefs, watch } from 'vue';
+
+import IconChevron from '~/components/icons/IconChevron.vue';
+import IconPage from '~/components/icons/IconPage.vue';
+import IconPageDouble from '~/components/icons/IconPageDouble.vue';
 
 import { useI18n } from '~/utils';
 
@@ -36,6 +40,10 @@ const innerValue = ref(pageSize.value);
 onMounted(() => {
   watch(innerValue, () => emit('update:pageSize', innerValue.value));
 });
+
+const open = ref(false);
+
+const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPage));
 </script>
 
 <template>
@@ -50,10 +58,15 @@ onMounted(() => {
     <template #trigger>
       <NSelect
         v-model:value="innerValue"
+        v-model:show="open"
         class="page-select"
         :options="pageSizeOptions"
         :to="parentElement"
-      />
+      >
+        <template #arrow>
+          <NIcon :component="open ? IconChevron : pageIcon" />
+        </template>
+      </NSelect>
     </template>
   </NTooltip>
 </template>
