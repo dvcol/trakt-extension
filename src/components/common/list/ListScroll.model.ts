@@ -32,7 +32,7 @@ export type ListScrollItem = ListScrollSourceItem & {
   id: string | number | 'load-more';
   index: number;
 
-  type?: 'movie' | 'show' | 'season' | 'episode';
+  type?: 'movie' | 'show' | 'season' | 'episode' | 'person';
 
   poster?: Ref<string | undefined>;
 

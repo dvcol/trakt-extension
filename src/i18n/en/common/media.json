@@ -14,5 +14,9 @@
   "common__media__type__season": {
     "message": "Season",
     "description": "Media type for seasons"
+  },
+  "common__media__type__person": {
+    "message": "Person",
+    "description": "Media type for people"
   }
 }

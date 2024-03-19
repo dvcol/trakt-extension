@@ -21,6 +21,7 @@ export const useListScroll = <D extends string, T extends ListScrollSourceItemWi
       else if ('episode' in _item) _item.type = 'episode';
       else if ('season' in _item) _item.type = 'season';
       else if ('show' in _item) _item.type = 'show';
+      else if ('person' in _item) _item.type = 'person';
 
       if (!_item || !dateFn) return _item;
       const _date = typeof dateFn === 'function' ? dateFn(item) : item[dateFn];

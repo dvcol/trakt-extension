@@ -16,36 +16,58 @@ type ImageStore = {
   show: Record<string, string>;
   season: Record<string, string>;
   episode: Record<string, string>;
+  person: Record<string, string>;
 };
 
 type ImageQuery = {
   id: number;
   season?: number;
   episode?: number;
-  type: 'movie' | 'show' | 'season' | 'episode';
+  type: keyof ImageStore;
 };
 
-type ImagePayload = { posters?: TmdbImage[]; stills?: TmdbImage[] };
+type ImagePayload = { posters?: TmdbImage[]; stills?: TmdbImage[]; profiles?: TmdbImage[] };
+
+const EmptyImageStore: ImageStore = {
+  movie: {},
+  show: {},
+  season: {},
+  episode: {},
+  person: {},
+};
 
 export const useImageStore = defineStore('data.image', () => {
   const tmdbConfig = ref<TmdbConfiguration>();
-  const images = reactive<ImageStore>({
-    movie: {},
-    show: {},
-    season: {},
-    episode: {},
-  });
+  const images = reactive<ImageStore>(EmptyImageStore);
 
-  const imageSizes = computed(() => ({
-    poster: tmdbConfig.value?.images?.poster_sizes,
-    still: tmdbConfig.value?.images?.still_sizes,
-  }));
-
-  const syncSaveImageStore = debounce((_images = images) => storage.sync.set(`data.image-store`, _images), 1000);
+  const syncSaveImageStore = debounce(
+    (_images = images) =>
+      Promise.all([
+        storage.sync.set(`data.image-store.movie`, _images.movie),
+        storage.sync.set(`data.image-store.show`, _images.show),
+        storage.sync.set(`data.image-store.season`, _images.season),
+        storage.sync.set(`data.image-store.episode`, _images.episode),
+        storage.sync.set(`data.image-store.person`, _images.person),
+      ]),
+    1000,
+  );
 
   const syncRestoreImageStore = async (seed?: Partial<ImageStore>) => {
-    const restored = await storage.sync.get<ImageStore>(`data.image-store`);
-    if (restored) Object.assign(images, { ...seed, ...restored });
+    const [movie, show, season, episode, person] = await Promise.all([
+      storage.sync.get<Record<string, string>>(`data.image-store.movie`),
+      storage.sync.get<Record<string, string>>(`data.image-store.show`),
+      storage.sync.get<Record<string, string>>(`data.image-store.season`),
+      storage.sync.get<Record<string, string>>(`data.image-store.episode`),
+      storage.sync.get<Record<string, string>>(`data.image-store.person`),
+    ]);
+    if (seed) Object.assign(images, seed);
+    if (movie) Object.assign(images.movie, movie);
+    if (show) Object.assign(images.show, show);
+    if (season) Object.assign(images.season, season);
+    if (episode) Object.assign(images.episode, episode);
+    if (person) Object.assign(images.person, person);
+
+    console.info('Restored Image Store', images);
   };
 
   const initImageStore = async (config?: TmdbConfiguration) => {
@@ -53,6 +75,11 @@ export const useImageStore = defineStore('data.image', () => {
     tmdbConfig.value = config;
     return syncRestoreImageStore();
   };
+
+  const imageSizes = computed(() => ({
+    poster: tmdbConfig.value?.images?.poster_sizes,
+    still: tmdbConfig.value?.images?.still_sizes,
+  }));
 
   const queue: Record<string, Promise<ImagePayload>> = {};
 
@@ -65,6 +92,8 @@ export const useImageStore = defineStore('data.image', () => {
     let payload: ImagePayload;
     if (type === 'movie') {
       payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.movie(id));
+    } else if (type === 'person') {
+      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.person(id));
     } else if (type === 'show') {
       payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.show(id));
     } else if (type === 'season' && season) {
@@ -73,7 +102,7 @@ export const useImageStore = defineStore('data.image', () => {
       payload = await queueRequest(`${type}-${id}-${season}-${episode}`, () => TraktService.posters.episode(id, season, episode));
     } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
 
-    const fetchedImages = payload.posters ?? payload.stills;
+    const fetchedImages = payload.posters ?? payload.stills ?? payload.profiles;
     if (!fetchedImages?.length) {
       console.warn('No images found for', { id, season, episode, type });
       return;
