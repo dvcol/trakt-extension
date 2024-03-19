@@ -48,9 +48,10 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
 
 <template>
   <NTooltip
+    :disabled="open"
     :show-arrow="false"
     placement="bottom"
-    :delay="1000"
+    :delay="300"
     trigger="hover"
     :to="parentElement"
   >
