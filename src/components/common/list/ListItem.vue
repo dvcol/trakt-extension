@@ -96,7 +96,7 @@ watch(
     if (_item?.poster) return;
     if (!_item?.type) return;
 
-    const type = _item.type === 'movie' ? 'movie' : 'show';
+    const type = ['show', 'episode', 'season'].includes(_item.type) ? 'show' : _item.type;
     if (!_item?.[type]?.ids?.tmdb) {
       console.warn('No tmdb id found', JSON.parse(JSON.stringify(_item?.[_item?.type])));
       return;

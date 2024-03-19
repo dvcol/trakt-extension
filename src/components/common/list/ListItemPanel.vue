@@ -38,6 +38,7 @@ const type = computed(() =>
 
 const title = computed(() => {
   const media = item.value;
+  if (media.person) return media.person.name;
   if (media.movie) return media.movie.title;
   if (!media.episode) return media.show?.title;
   const number = media.episode.number?.toString().padStart(2, '0');

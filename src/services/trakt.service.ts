@@ -192,6 +192,13 @@ export class TraktService {
       });
       return response.json();
     },
+
+    async person(person_id: string | number) {
+      const response = await TraktService.tmdbClient.v3.people.images.cached({
+        person_id,
+      });
+      return response.json();
+    },
   };
 
   static async history(query: TraktHistoryGetQuery) {
