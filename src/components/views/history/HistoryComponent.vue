@@ -17,7 +17,10 @@ const { fetchHistory, clearState } = useHistoryStore();
 
 const i18n = useI18n('history');
 
-watchUserChange(fetchHistory, clearState);
+watchUserChange({
+  fetch: fetchHistory,
+  clear: clearState,
+});
 
 const list = useListScroll(filteredHistory, 'watched_at');
 

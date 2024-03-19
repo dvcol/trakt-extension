@@ -30,6 +30,7 @@ export const useSearchFilter = <D extends string, T extends ListScrollSourceItem
       if (!_search) return false;
       if (item.show?.title?.toLowerCase().includes(_search)) return true;
       if (item.movie?.title?.toLowerCase().includes(_search)) return true;
+      if (item.person?.name?.toLowerCase().includes(_search)) return true;
       if (!date) return false;
       const _date = typeof date === 'function' ? date(item) : item[date];
       if (!_date) return false;
@@ -55,25 +56,44 @@ export const useLoadingPlaceholder = <T>(pageSize: Ref<number>) =>
       .map((_, i) => ({ id: -1 * (i + 1) }) as T),
   );
 
-export const watchUserChange = (fetch: () => Promise<void>, clear: () => void) => {
+export const watchUserChange = ({
+  fetch,
+  clear,
+  activated,
+  deactivated,
+  userChange,
+}: {
+  fetch?: () => Promise<void>;
+  clear?: () => void | Promise<void>;
+  activated?: () => void | Promise<void>;
+  deactivated?: () => void | Promise<void>;
+  userChange?: (active: boolean) => void | Promise<void>;
+}) => {
   const { user } = useUserSettingsStoreRefs();
 
   const active = ref(false);
 
   onActivated(async () => {
     active.value = true;
-    await fetch();
+    if (activated) return activated();
+    await fetch?.();
   });
 
   onDeactivated(() => {
     active.value = false;
+    deactivated?.();
   });
 
   onMounted(() => {
-    watch(user, async () => {
-      if (active.value) await fetch();
-      else clear();
-    });
+    watch(
+      user,
+
+      async () => {
+        if (userChange) return userChange(active.value);
+        if (active.value) await fetch?.();
+        else clear?.();
+      },
+    );
   });
 
   return { active, user };

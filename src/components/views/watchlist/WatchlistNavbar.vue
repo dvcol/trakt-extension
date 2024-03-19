@@ -25,14 +25,14 @@ const { fetchLists, clearState } = useListsStore();
 const listOptions = computed(() =>
   lists.value.map((list, i) => ({
     label: ['collection', 'watchlist'].includes(list.type) ? i18n(list.name) : list.name,
-    value: JSON.stringify(list),
+    value: list.id,
   })),
 );
 
 const selectValue = computed({
-  get: () => JSON.stringify(activeList.value),
+  get: () => activeList.value.id,
   set: selected => {
-    activeList.value = JSON.parse(selected);
+    activeList.value = lists.value.find(l => l.id === selected)!;
   },
 });
 
@@ -45,7 +45,13 @@ defineProps({
   },
 });
 
-watchUserChange(fetchLists, clearState);
+watchUserChange({
+  fetch: fetchLists,
+  userChange: active => {
+    clearState();
+    if (active) fetchLists();
+  },
+});
 
 const open = ref(false);
 </script>

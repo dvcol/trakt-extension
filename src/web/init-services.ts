@@ -1,6 +1,8 @@
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
+import { useHistoryStore } from '~/stores/data/history.store';
 import { useImageStore } from '~/stores/data/image.store';
+import { useListsStore, useListStore } from '~/stores/data/list.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { initLocalI18n } from '~/utils';
@@ -17,7 +19,14 @@ export const initServices = async () => {
 
   TraktService.listen();
 
-  await Promise.all([syncRestoreAllUsers(), useImageStore().initImageStore(), initLocalI18n().promise]);
+  await Promise.all([
+    initLocalI18n().promise,
+    syncRestoreAllUsers(),
+    useImageStore().initImageStore(),
+    useListsStore().initListsStore(),
+    useListStore().initListStore(),
+    useHistoryStore().initHistoryStore(),
+  ]);
 
   setAppReady(true);
 };
