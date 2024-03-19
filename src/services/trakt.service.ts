@@ -2,6 +2,7 @@ import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
+import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
@@ -208,6 +209,11 @@ export class TraktService {
 
   static async watchlist(query: TraktWatchlistGetQuery) {
     const response = await this.traktClient.sync.watchlist.get.cached(query);
+    return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async favorites(query: TraktFavoriteGetQuery) {
+    const response = await this.traktClient.sync.favorites.get.cached(query);
     return { data: await response.json(), pagination: response.pagination };
   }
 
