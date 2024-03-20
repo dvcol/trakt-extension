@@ -39,6 +39,10 @@ const props = defineProps({
     type: Object as PropType<VirtualListProps>,
     required: false,
   },
+  episode: {
+    type: Boolean,
+    required: false,
+  },
   hideDate: {
     type: Boolean,
     required: false,
@@ -125,6 +129,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
       }"
       :padding-top="listOptions?.paddingTop ?? 60"
       :padding-bottom="listOptions?.paddingBottom ?? 32"
+      :key-field="'id'"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >
@@ -153,6 +158,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :index="item.index"
           :size="items.length"
           :hide-date="hideDate"
+          :episode="episode"
           :hover="hoverDate === item.date?.current?.toDateString()"
           @on-hover="onHover"
         >

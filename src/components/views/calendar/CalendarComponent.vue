@@ -56,6 +56,7 @@ watchUserChange({
       :items="list"
       :loading="loading"
       :scroll-threshold="300"
+      episode
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
     >

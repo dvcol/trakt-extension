@@ -13,7 +13,8 @@ export const arrayMax = <T>(array: Array<T>, prop: keyof T, filter?: (item: T) =
     return prev;
   });
 
-export const findClosestMatch = (value: number, array: string[]) => {
+export const findClosestMatch = (value: number, array?: string[]) => {
+  if (!array?.length) return 'original';
   let closestMatch = array[0];
   let minDifference = Math.abs(value - parseInt(array[0].substring(1), 10));
 
@@ -27,5 +28,5 @@ export const findClosestMatch = (value: number, array: string[]) => {
     }
   }
 
-  return closestMatch;
+  return closestMatch ?? 'original';
 };

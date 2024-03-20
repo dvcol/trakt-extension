@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NEllipsis, NFlex, NSkeleton, NTag } from 'naive-ui';
 
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, defineProps, type PropType, toRefs } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 

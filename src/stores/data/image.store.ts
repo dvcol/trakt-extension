@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, type Ref, ref } from 'vue';
 
 import type { TmdbConfiguration } from '~/models/tmdb/tmdb-configuration.model';
 
@@ -9,7 +9,7 @@ import type { TmdbImage } from '~/models/tmdb/tmdb-image.model';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
-import { arrayMax } from '~/utils/math.utils';
+import { arrayMax, findClosestMatch } from '~/utils/math.utils';
 
 type ImageStore = {
   movie: Record<string, string>;
@@ -26,7 +26,11 @@ export type ImageQuery = {
   type: keyof ImageStore;
 };
 
-type ImagePayload = { posters?: TmdbImage[]; stills?: TmdbImage[]; profiles?: TmdbImage[] };
+type ImagePayload = {
+  posters?: TmdbImage[];
+  stills?: TmdbImage[];
+  profiles?: TmdbImage[];
+};
 
 const EmptyImageStore: ImageStore = {
   movie: {},
@@ -88,42 +92,77 @@ export const useImageStore = defineStore('data.image', () => {
     return queue[key];
   };
 
-  const fetchImageUrl = async (key: string, { id, season, episode, type }: ImageQuery) => {
+  const getKeyAndType = ({ id, season, episode, type }: ImageQuery): { key: string; type: ImageQuery['type'] } => {
+    if (type === 'episode' && season && episode) return { key: `${type}-${id}-${season}-${episode}`, type };
+    if (['episode', 'season'].includes(type) && season) return { key: `${type}-${id}-${season}`, type: 'season' };
+    if (['episode', 'season', 'show'].includes(type)) return { key: `${type}-${id}`, type: 'show' };
+    return { key: `${type}-${id}`, type };
+  };
+
+  const fetchImageUrl = async (
+    key: string,
+    { id, season, episode, type }: ImageQuery,
+  ): Promise<{ image: string; key: string; type: ImageQuery['type'] } | undefined> => {
     let payload: ImagePayload;
     if (type === 'movie') {
-      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.movie(id));
+      payload = await queueRequest(key, () => TraktService.posters.movie(id));
     } else if (type === 'person') {
-      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.person(id));
+      payload = await queueRequest(key, () => TraktService.posters.person(id));
     } else if (type === 'episode' && season && episode) {
-      payload = await queueRequest(`${type}-${id}-${season}-${episode}`, () => TraktService.posters.episode(id, season, episode));
+      payload = await queueRequest(key, () => TraktService.posters.episode(id, season, episode));
     } else if (type === 'season' && season) {
-      payload = await queueRequest(`${type}-${id}-${season}`, () => TraktService.posters.season(id, season));
-    } else if (['show', 'episode', 'season'].includes(type)) {
-      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.show(id));
+      payload = await queueRequest(key, () => TraktService.posters.season(id, season));
+    } else if (type === 'show') {
+      payload = await queueRequest(key, () => TraktService.posters.show(id));
     } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
 
     const fetchedImages = payload.posters ?? payload.stills ?? payload.profiles;
     if (!fetchedImages?.length) {
-      console.warn('No images found for', { id, season, episode, type });
+      if (type === 'episode') {
+        const eType = 'season';
+        const eKey = `${eType}-${id}-${season}`;
+        if (images[eType][eKey]) return { image: images[eType][eKey], key: eKey, type: eType };
+        return fetchImageUrl(eKey, { id, season, type: eType });
+      }
+      if (type === 'season') {
+        const sType = 'show';
+        const sKey = `${sType}-${id}`;
+        if (images[sType][sKey]) return { image: images[sType][sKey], key: sKey, type: sType };
+        return fetchImageUrl(sKey, { id, type: sType });
+      }
       return;
     }
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
-    await syncSaveImageStore();
+    syncSaveImageStore().catch(err => console.error('Failed to save image store', err));
+    return { image, key, type };
   };
 
-  const getImageUrl = ({ id, season, episode, type }: ImageQuery, size: string = 'original') => {
-    if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
-    const key = [id, season, episode].filter(Boolean).join('-');
-    const imageRef = computed(() => images[type][key]);
-    if (!imageRef.value) fetchImageUrl(key, { id, season, episode, type }).catch(console.error);
+  const getImageSize = (type: ImageQuery['type'], size: number) => {
+    if (type === 'person') return findClosestMatch(size, imageSizes.value.poster);
+    if (type === 'episode') return findClosestMatch(size, imageSizes.value.still);
+    return findClosestMatch(size, imageSizes.value.poster);
+  };
 
-    return computed(() => {
-      if (!imageRef.value) return;
-      if (!tmdbConfig.value?.images?.secure_base_url) return;
-      return `${tmdbConfig.value.images.secure_base_url}${size}${imageRef.value}`;
-    });
+  const getImageUrl = async (query: ImageQuery, size: number, response: Ref<string | undefined> = ref()) => {
+    if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
+    if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
+
+    const { key, type } = getKeyAndType(query);
+
+    const baseUrl = tmdbConfig.value.images.secure_base_url;
+
+    if (images[type][key]) {
+      response.value = `${baseUrl}${getImageSize(type, size)}${images[type][key]}`;
+      return response;
+    }
+
+    const image = await fetchImageUrl(key, query);
+    if (!image) return response;
+    response.value = `${baseUrl}${getImageSize(image.type, size)}${image.image}`;
+
+    return response;
   };
 
   return { initImageStore, getImageUrl, imageSizes };
