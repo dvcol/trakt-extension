@@ -1,8 +1,8 @@
-import { DateISO8601 } from '~/utils/regex.utils';
+import { DateISO8601Short } from '~/utils/regex.utils';
 
 export const TraktApiValidators = {
-  date: (date: string) => {
-    if (!DateISO8601.test(date)) {
+  date: (date: string, regex = DateISO8601Short) => {
+    if (!regex.test(date)) {
       throw new Error(`Invalide 'start_date' format : ${date}`);
     }
     return true;

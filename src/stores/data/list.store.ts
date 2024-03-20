@@ -185,10 +185,10 @@ export const useListStore = defineStore('data.list', () => {
         return { ...item, id: index };
       });
       pagination.value = response.pagination;
-      listItems.value = page ? [...listItems.value.filter(h => h.id >= 0), ...newData] : newData;
+      listItems.value = page ? [...listItems.value.filter(l => l.id >= 0), ...newData] : newData;
     } catch (e) {
       console.error('Failed to fetch list');
-      listItems.value = listItems.value.filter(h => h.id >= 0);
+      listItems.value = listItems.value.filter(l => l.id >= 0);
       throw e;
     } finally {
       clearTimeout(timeout);

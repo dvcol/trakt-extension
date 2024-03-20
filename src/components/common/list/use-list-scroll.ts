@@ -2,42 +2,108 @@ import { computed } from 'vue';
 
 import type { Ref } from 'vue';
 
-import type { ListScrollItem, ListScrollSourceItem, OnScroll, OnUpdated } from '~/components/common/list/ListScroll.model';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
+import type { ImageQuery } from '~/stores/data/image.store';
+
+import {
+  type ListScrollItem,
+  ListScrollItemType,
+  type ListScrollSourceItem,
+  type OnScroll,
+  type OnUpdated,
+} from '~/components/common/list/ListScroll.model';
+
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
+
+export const getTitle = (media: ListScrollSourceItem): ListScrollItem['title'] => {
+  if (!media) return;
+  if (media.person) return media.person.name;
+  if (media.movie) return media.movie.title;
+  if (!media.episode) return media.show?.title;
+  const number = media.episode.number?.toString().padStart(2, '0');
+  return `${media.episode.season}x${number} - ${media.episode.title}`;
+};
+
+export const getContent = (media: ListScrollSourceItem): ListScrollItem['content'] => {
+  if (!media) return;
+  if (media.movie) return media.movie.year?.toString();
+  if (!media.episode) return media.show?.year?.toString();
+  return media.show?.title;
+};
+
+export const getType = (media: ListScrollSourceItem): ListScrollItem['type'] => {
+  if (!media) return;
+  if ('movie' in media) return ListScrollItemType.movie;
+  if ('episode' in media) return ListScrollItemType.episode;
+  if ('season' in media) return ListScrollItemType.season;
+  if ('show' in media) return ListScrollItemType.show;
+  if ('person' in media) return ListScrollItemType.person;
+};
+
+export const getDate = <D extends string, T extends ListScrollSourceItemWithDate<D>>(
+  media: T,
+  array: T[],
+  index: number,
+  dateFn?: D | ((item: T) => ListScrollSourceItemWithDate<D>[D]),
+): ListScrollItem['date'] => {
+  if (!media || !dateFn) return;
+  const _date = typeof dateFn === 'function' ? dateFn(media) : media[dateFn];
+  if (!_date) return;
+  const date: ListScrollItem['date'] = { current: new Date(_date) };
+  const previous = typeof dateFn === 'function' ? dateFn(array[index - 1]) : array[index - 1]?.[dateFn];
+  if (index > 0 && previous) date.previous = new Date(previous);
+  const next = typeof dateFn === 'function' ? dateFn(array[index + 1]) : array[index + 1]?.[dateFn];
+  if (next) date.next = new Date(next);
+  date.sameDayAsPrevious = date.previous?.toLocaleDateString() === date.current?.toLocaleDateString();
+  date.sameDayAsNext = date.next?.toLocaleDateString() === date.current?.toLocaleDateString();
+  return date;
+};
+
+const isMediaType = (type: ListScrollItem['type']): type is 'movie' | 'show' | 'season' | 'episode' | 'person' =>
+  type === ListScrollItemType.movie ||
+  type === ListScrollItemType.show ||
+  type === ListScrollItemType.season ||
+  type === ListScrollItemType.episode ||
+  type === ListScrollItemType.person;
+
+export const getPosterQuery =
+  (item: ListScrollSourceItem, type: ListScrollItem['type']): ListScrollItem['getPosterQuery'] =>
+  () => {
+    if (!item || !type) return;
+    if (type === ListScrollItemType.placeholder) return;
+    if (!isMediaType(type)) return;
+    const _type = ['show', 'episode', 'season'].includes(type) ? 'show' : type;
+    const media = item[_type];
+    if (!media?.ids.tmdb) return;
+    return {
+      type,
+      id: media.ids.tmdb,
+      season: item?.episode?.season ?? item.season?.number,
+      episode: item?.episode?.number,
+    } satisfies ImageQuery;
+  };
 
 export const useListScroll = <D extends string, T extends ListScrollSourceItemWithDate<D>>(
   items: Ref<T[]>,
   dateFn?: D | ((item: T) => ListScrollSourceItemWithDate<D>[D]),
-) =>
-  computed<ListScrollItem[]>(() => {
+) => {
+  return computed<ListScrollItem[]>(() => {
     const array = items.value;
     if (!array.length) return [];
     return array.map((item, index) => {
       const _item: ListScrollItem = { ...item, index, loading: typeof item.id === 'number' && item.id < 0 };
 
-      if ('movie' in _item) _item.type = 'movie';
-      else if ('episode' in _item) _item.type = 'episode';
-      else if ('season' in _item) _item.type = 'season';
-      else if ('show' in _item) _item.type = 'show';
-      else if ('person' in _item) _item.type = 'person';
+      if (!_item.type) _item.type = getType(item);
+      if (!_item.title) _item.title = getTitle(item);
+      if (!_item.content) _item.content = getContent(item);
+      if (!_item.poster && !_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
+      _item.date = getDate(item, array, index, dateFn);
 
-      if (!_item || !dateFn) return _item;
-      const _date = typeof dateFn === 'function' ? dateFn(item) : item[dateFn];
-      if (!_date) return _item;
-
-      const date: ListScrollItem['date'] = { current: new Date(_date!) };
-      const previous = typeof dateFn === 'function' ? dateFn(array[index - 1]) : array[index - 1]?.[dateFn];
-      if (index > 0 && previous) date.previous = new Date(previous);
-      const next = typeof dateFn === 'function' ? dateFn(array[index + 1]) : array[index + 1]?.[dateFn];
-      if (next) date.next = new Date(next);
-      date.sameDayAsPrevious = date.previous?.toLocaleDateString() === date.current?.toLocaleDateString();
-      date.sameDayAsNext = date.next?.toLocaleDateString() === date.current?.toLocaleDateString();
-
-      return { ..._item, date };
+      return _item;
     });
   });
+};
 
 export const useListScrollEvents = (
   callback: (query: { page: number }) => Promise<unknown>,

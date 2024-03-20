@@ -1,0 +1,22 @@
+{
+  "calendar__tag__label__premiere__series": {
+    "message": "Series Premiere",
+    "description": "Label for a series premiere"
+  },
+  "calendar__tag__label__premiere__season": {
+    "message": "Season Premiere",
+    "description": "Label for a season premiere"
+  },
+  "calendar__tag__label__premiere__mid_season": {
+    "message": "Mid Season Premiere",
+    "description": "Label for a mid season premiere"
+  },
+  "calendar__tag__label__finale__series": {
+    "message": "Series Finale",
+    "description": "Label for a series finale"
+  },
+  "calendar__tag__label__finale__season": {
+    "message": "Season Finale",
+    "description": "Label for a season finale"
+  }
+}
