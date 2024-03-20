@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
-import { computed, type PropType, toRefs, watch } from 'vue';
+import { computed, type PropType, toRefs } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
@@ -20,14 +20,14 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  size: {
-    type: Number,
-    required: true,
-  },
   poster: {
     type: String,
     required: false,
     default: PosterPlaceholder,
+  },
+  episode: {
+    type: Boolean,
+    required: false,
   },
   color: {
     type: String,
@@ -61,7 +61,7 @@ const emit = defineEmits<{
   (e: 'onHover', event: { index: number; item: ListScrollItem; hover: boolean }): void;
 }>();
 
-const { item, size, index, noHeader, nextHasHeader, poster, hideDate } = toRefs(props);
+const { item, index, noHeader, nextHasHeader, poster, episode, hideDate } = toRefs(props);
 
 const onHover = (_hover: boolean) => {
   emit('onHover', { index: index?.value, item: item?.value, hover: _hover });
@@ -79,8 +79,6 @@ const year = new Date().getFullYear();
 const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
 
-const resolvedPoster = computed(() => item?.value?.poster?.value || poster.value);
-
 const { getImageUrl } = useImageStore();
 const { imageSizes } = useImageStoreRefs();
 
@@ -90,22 +88,19 @@ const imageSize = computed(() =>
     : 'original',
 );
 
-watch(
-  item,
-  _item => {
-    if (_item?.poster) return;
-    if (!_item?.type) return;
+const itemPoster = computed(() => {
+  const media = item.value;
+  if (media.poster) return media.poster;
+  const query = media.getPosterQuery?.();
+  if (query)
+    return getImageUrl(
+      episode.value ? query : { ...query, episode: undefined },
+      imageSize.value,
+    ).value;
+  return null;
+});
 
-    const type = ['show', 'episode', 'season'].includes(_item.type) ? 'show' : _item.type;
-    if (!_item?.[type]?.ids?.tmdb) {
-      console.warn('No tmdb id found', JSON.parse(JSON.stringify(_item?.[_item?.type])));
-      return;
-    }
-
-    _item.poster = getImageUrl({ id: _item[type]!.ids.tmdb, type }, imageSize.value);
-  },
-  { immediate: true },
-);
+const resolvedPoster = computed(() => itemPoster.value || poster.value);
 </script>
 
 <template>

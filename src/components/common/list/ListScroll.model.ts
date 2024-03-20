@@ -1,10 +1,12 @@
-import type { NVirtualList, VirtualListInst } from 'naive-ui';
+import type { NVirtualList, TagProps, VirtualListInst } from 'naive-ui';
+
 import type { Ref } from 'vue';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { ImageQuery } from '~/stores/data/image.store';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type VirtualListProps = {
@@ -28,13 +30,34 @@ export type ListScrollSourceItem = {
   person?: TraktPerson<'short'>;
 };
 
-export type ListScrollItem = ListScrollSourceItem & {
-  id: string | number | 'load-more';
+export type ListScrollItemTag = {
+  label: string;
+  i18n?: boolean | string[];
+  type?: TagProps['type'];
+  bordered?: boolean;
+  meta?: string;
+};
+
+export const ListScrollItemType = {
+  movie: 'movie',
+  show: 'show',
+  season: 'season',
+  episode: 'episode',
+  person: 'person',
+  placeholder: 'placeholder',
+} as const;
+
+export type ListScrollItem = {
+  id: string | number | 'load-more' | 'empty';
   index: number;
 
-  type?: 'movie' | 'show' | 'season' | 'episode' | 'person';
+  type?: keyof typeof ListScrollItemType;
+  title?: string;
+  content?: string;
+  tags?: ListScrollItemTag[];
 
-  poster?: Ref<string | undefined>;
+  poster?: string;
+  getPosterQuery?: () => ImageQuery | undefined;
 
   loading?: boolean;
   date?: {

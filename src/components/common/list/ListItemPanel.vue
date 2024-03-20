@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NEllipsis, NFlex, NSkeleton } from 'naive-ui';
+import { NEllipsis, NFlex, NSkeleton, NTag } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
@@ -30,30 +30,32 @@ const props = defineProps({
   },
 });
 
-const { item } = toRefs(props);
+const { item, hideDate } = toRefs(props);
 
 const type = computed(() =>
   item.value.type ? i18n(item.value.type, 'common', 'media', 'type') : item.value.type,
 );
 
-const title = computed(() => {
-  const media = item.value;
-  if (media.person) return media.person.name;
-  if (media.movie) return media.movie.title;
-  if (!media.episode) return media.show?.title;
-  const number = media.episode.number?.toString().padStart(2, '0');
-  return `${media.episode.season}x${number} - ${media.episode.title}`;
+const title = computed(() => item.value.title);
+
+const content = computed(() => item.value.content);
+
+const date = computed(() => {
+  if (hideDate.value) return;
+  return item.value.date?.current?.toLocaleTimeString(navigator.language, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 });
 
-const content = computed(() => {
-  const media = item.value;
-  if (media.movie) return media.movie.year;
-  if (!media.episode) return media.show?.year;
-  return media.show?.title;
-});
-
-const currentDate = computed(() => item.value.date?.current);
-const date = computed(() => currentDate.value?.toLocaleTimeString());
+const tags = computed(
+  () =>
+    item.value.tags?.map(tag => {
+      if (!tag.i18n) return tag;
+      if (typeof tag.i18n === 'boolean') return { ...tag, label: i18n(tag.label) };
+      return { ...tag, label: i18n(tag.label, ...tag.i18n) };
+    }),
+);
 </script>
 
 <template>
@@ -76,10 +78,25 @@ const date = computed(() => currentDate.value?.toLocaleTimeString());
       <NSkeleton v-if="loading" text style="width: 60%" round />
       <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
-    <div v-if="!hideDate" class="meta time">
-      <NSkeleton v-if="loading" text style="width: 20%" round />
-      <NEllipsis v-else :line-clamp="1">{{ date }}</NEllipsis>
-    </div>
+    <NFlex v-if="date || tags?.length" size="medium" class="tags">
+      <NTag v-if="date" class="tag meta" size="small">
+        <NSkeleton v-if="loading" text style="width: 20%" round />
+        <span>{{ date }} </span>
+      </NTag>
+      <NTag
+        v-for="tag of tags"
+        :key="tag.label"
+        class="tag"
+        :class="{
+          meta: tag.meta,
+        }"
+        size="small"
+        :type="tag.type"
+        :bordered="tag.bordered ?? true"
+      >
+        {{ tag.label }}
+      </NTag>
+    </NFlex>
   </NFlex>
 </template>
 
@@ -89,11 +106,12 @@ const date = computed(() => currentDate.value?.toLocaleTimeString());
   margin: 0.25rem 0;
 
   .title {
-    font-variant-numeric: tabular-nums;
+    margin-top: 0.1rem;
     color: var(--trakt-red);
     font-weight: var(--n-title-font-weight);
     font-size: var(--n-title-font-size);
     transition: color 0.3s var(--n-bezier);
+    font-variant-numeric: tabular-nums;
   }
 
   .content {
@@ -108,8 +126,13 @@ const date = computed(() => currentDate.value?.toLocaleTimeString());
     transition: color 0.3s var(--n-bezier);
   }
 
-  .time {
-    margin-top: 0.25rem;
+  .tags {
+    gap: 0.5rem !important;
+    margin-top: 0.3rem;
+
+    .tag {
+      width: fit-content;
+    }
   }
 }
 </style>

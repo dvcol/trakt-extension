@@ -59,12 +59,14 @@ export const useLoadingPlaceholder = <T>(pageSize: Ref<number>) =>
 export const watchUserChange = ({
   fetch,
   clear,
+  mounted,
   activated,
   deactivated,
   userChange,
 }: {
   fetch?: () => Promise<void>;
   clear?: () => void | Promise<void>;
+  mounted?: () => void | Promise<void>;
   activated?: () => void | Promise<void>;
   deactivated?: () => void | Promise<void>;
   userChange?: (active: boolean) => void | Promise<void>;
@@ -85,6 +87,7 @@ export const watchUserChange = ({
   });
 
   onMounted(() => {
+    mounted?.();
     watch(
       user,
 

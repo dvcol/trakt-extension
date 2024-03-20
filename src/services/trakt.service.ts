@@ -1,5 +1,6 @@
 import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
+import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
@@ -235,5 +236,26 @@ export class TraktService {
   static async list(query: TraktListItemsGetQuery) {
     const response = await this.traktClient.users.list.items.get.cached(query);
     return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async calendar(query: TraktCalendarQuery, type: 'movies' | 'shows' = 'shows', variant?: 'new' | 'premieres' | 'finales') {
+    if (type === 'movies') {
+      const response = await this.traktClient.calendars.my.movies.cached(query);
+      return response.json();
+    }
+    if (variant === 'new') {
+      const response = await this.traktClient.calendars.my.shows.new.cached(query);
+      return response.json();
+    }
+    if (variant === 'premieres') {
+      const response = await this.traktClient.calendars.my.shows.premieres.cached(query);
+      return response.json();
+    }
+    if (variant === 'finales') {
+      const response = await this.traktClient.calendars.my.shows.finales.cached(query);
+      return response.json();
+    }
+    const response = await this.traktClient.calendars.my.shows.get.cached(query);
+    return response.json();
   }
 }

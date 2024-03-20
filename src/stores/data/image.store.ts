@@ -19,7 +19,7 @@ type ImageStore = {
   person: Record<string, string>;
 };
 
-type ImageQuery = {
+export type ImageQuery = {
   id: number;
   season?: number;
   episode?: number;
@@ -94,12 +94,12 @@ export const useImageStore = defineStore('data.image', () => {
       payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.movie(id));
     } else if (type === 'person') {
       payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.person(id));
-    } else if (type === 'show') {
-      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.show(id));
-    } else if (type === 'season' && season) {
-      payload = await queueRequest(`${type}-${id}-${season}`, () => TraktService.posters.season(id, season));
     } else if (type === 'episode' && season && episode) {
       payload = await queueRequest(`${type}-${id}-${season}-${episode}`, () => TraktService.posters.episode(id, season, episode));
+    } else if (type === 'season' && season) {
+      payload = await queueRequest(`${type}-${id}-${season}`, () => TraktService.posters.season(id, season));
+    } else if (['show', 'episode', 'season'].includes(type)) {
+      payload = await queueRequest(`${type}-${id}`, () => TraktService.posters.show(id));
     } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
 
     const fetchedImages = payload.posters ?? payload.stills ?? payload.profiles;
