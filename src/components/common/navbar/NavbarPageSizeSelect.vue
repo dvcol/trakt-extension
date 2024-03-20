@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NIcon, NSelect, NTooltip, type SelectOption } from 'naive-ui';
 
-import { computed, onMounted, ref, toRefs, watch } from 'vue';
+import { computed, defineProps, onMounted, ref, toRefs, watch } from 'vue';
 
 import IconChevron from '~/components/icons/IconChevron.vue';
 import IconPage from '~/components/icons/IconPage.vue';

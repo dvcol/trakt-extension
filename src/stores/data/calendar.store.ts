@@ -11,7 +11,7 @@ import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
-  type: ListScrollItem['type'];
+  type?: ListScrollItem['type'];
   premiere?: 'season' | 'series' | 'mid_season';
   finale?: 'season' | 'series' | 'mid_season';
   day: 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -94,7 +94,6 @@ export const useCalendarStore = defineStore('data.calendar', () => {
           return {
             ...show,
             id: show.show.ids.trakt,
-            type: 'show' as const,
             date,
             day: date.getDay(),
             premiere,
@@ -114,7 +113,6 @@ export const useCalendarStore = defineStore('data.calendar', () => {
           return {
             ...movie,
             id: movie.movie.ids.trakt,
-            type: 'movie' as const,
             date,
             day: date.getDay() as CalendarItem['day'],
           };

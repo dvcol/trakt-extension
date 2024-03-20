@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import type { Ref } from 'vue';
 
@@ -97,7 +97,8 @@ export const useListScroll = <D extends string, T extends ListScrollSourceItemWi
       if (!_item.type) _item.type = getType(item);
       if (!_item.title) _item.title = getTitle(item);
       if (!_item.content) _item.content = getContent(item);
-      if (!_item.poster && !_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
+      if (!_item.poster) _item.poster = ref<string | undefined>(undefined);
+      if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
       _item.date = getDate(item, array, index, dateFn);
 
       return _item;

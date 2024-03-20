@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, defineProps, type PropType, ref, toRefs, watch } from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
-import { useImageStore, useImageStoreRefs } from '~/stores/data/image.store';
+
+import { useImageStore } from '~/stores/data/image.store';
 import { Colors } from '~/styles/colors.style';
-import { findClosestMatch } from '~/utils/math.utils';
 
 const props = defineProps({
   item: {
@@ -23,7 +23,6 @@ const props = defineProps({
   poster: {
     type: String,
     required: false,
-    default: PosterPlaceholder,
   },
   episode: {
     type: Boolean,
@@ -80,27 +79,32 @@ const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
 
 const { getImageUrl } = useImageStore();
-const { imageSizes } = useImageStoreRefs();
 
-const imageSize = computed(() =>
-  imageSizes.value?.poster?.length
-    ? findClosestMatch(200, imageSizes.value.poster)
-    : 'original',
+const resolvedPoster = computed(() => item.value.poster?.value || poster?.value);
+const objectFit = computed(() =>
+  resolvedPoster.value === PosterPlaceholder ? 'contain' : 'cover',
 );
 
-const itemPoster = computed(() => {
-  const media = item.value;
-  if (media.poster) return media.poster;
-  const query = media.getPosterQuery?.();
-  if (query)
-    return getImageUrl(
-      episode.value ? query : { ...query, episode: undefined },
-      imageSize.value,
-    ).value;
-  return null;
-});
+const imgLoaded = ref(true);
 
-const resolvedPoster = computed(() => itemPoster.value || poster.value);
+const onLoad = () => {
+  imgLoaded.value = true;
+};
+
+const getPosters = (_item: ListScrollItem) => {
+  imgLoaded.value = false;
+  if (_item.poster?.value) return;
+  if (!_item.poster) return;
+  const query = _item.getPosterQuery?.();
+  if (!query) return;
+  if (!episode.value && _item.type === 'episode') {
+    query.type = 'show';
+    delete query.episode;
+  }
+  getImageUrl(query, 300, _item.poster);
+};
+
+watch(item, getPosters, { immediate: true, flush: 'post' });
 </script>
 
 <template>
@@ -159,14 +163,20 @@ const resolvedPoster = computed(() => itemPoster.value || poster.value);
           <NImage
             alt="poster-image"
             class="poster"
+            :class="{ episode, loading: !imgLoaded }"
+            :object-fit="objectFit"
+            width="100%"
             lazy
             preview-disabled
             :src="resolvedPoster"
-            :fallback-src="PosterPlaceholder"
+            :on-load="onLoad"
           />
           <NImage
             alt="poster-image-fallback"
             class="poster placeholder"
+            :class="{ episode }"
+            object-fit="contain"
+            width="100%"
             lazy
             preview-disabled
             :src="PosterPlaceholder"
@@ -265,10 +275,23 @@ const resolvedPoster = computed(() => itemPoster.value || poster.value);
   }
 
   .poster {
-    flex: 0 1 var(--poster-width, 5.3125rem);
+    flex: 0 0 var(--poster-width, 5.3125rem);
     justify-content: center;
     width: var(--poster-width, 5.3125rem);
     height: var(--poster-height, 8rem);
+    opacity: 1;
+    transition: opacity 0.5s var(--n-bezier);
+    will-change: opacity;
+
+    &.loading {
+      opacity: 0;
+      transition: opacity 0s;
+    }
+
+    &.episode {
+      flex: 0 0 var(--poster-width, 14.23rem);
+      width: var(--poster-width, 14.23rem);
+    }
 
     &.placeholder {
       position: absolute;

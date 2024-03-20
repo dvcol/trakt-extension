@@ -56,7 +56,7 @@ export type ListScrollItem = {
   content?: string;
   tags?: ListScrollItemTag[];
 
-  poster?: string;
+  poster?: Ref<string | undefined>;
   getPosterQuery?: () => ImageQuery | undefined;
 
   loading?: boolean;

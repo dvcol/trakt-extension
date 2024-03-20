@@ -240,22 +240,22 @@ export class TraktService {
 
   static async calendar(query: TraktCalendarQuery, type: 'movies' | 'shows' = 'shows', variant?: 'new' | 'premieres' | 'finales') {
     if (type === 'movies') {
-      const response = await this.traktClient.calendars.my.movies.cached(query);
+      const response = await this.traktClient.calendars.my.movies.cached(query, { cache: 'reload' });
       return response.json();
     }
     if (variant === 'new') {
-      const response = await this.traktClient.calendars.my.shows.new.cached(query);
+      const response = await this.traktClient.calendars.my.shows.new.cached(query, { cache: 'reload' });
       return response.json();
     }
     if (variant === 'premieres') {
-      const response = await this.traktClient.calendars.my.shows.premieres.cached(query);
+      const response = await this.traktClient.calendars.my.shows.premieres.cached(query, { cache: 'reload' });
       return response.json();
     }
     if (variant === 'finales') {
-      const response = await this.traktClient.calendars.my.shows.finales.cached(query);
+      const response = await this.traktClient.calendars.my.shows.finales.cached(query, { cache: 'reload' });
       return response.json();
     }
-    const response = await this.traktClient.calendars.my.shows.get.cached(query);
+    const response = await this.traktClient.calendars.my.shows.get.cached(query, { cache: 'reload' });
     return response.json();
   }
 }
