@@ -47,6 +47,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  scrollIntoView: {
+    type: Array as PropType<ListScrollItem['id'][]>,
+    required: false,
+  },
   scrollThreshold: {
     type: Number,
     required: false,
@@ -67,6 +71,14 @@ const emits = defineEmits<{
       pageCount: number;
       pageSize: number;
     },
+  ): void;
+  (
+    e: 'onScrollIntoView',
+    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
+  ): void;
+  (
+    e: 'onScrollOutOfView',
+    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
   ): void;
 }>();
 
@@ -160,7 +172,10 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :hide-date="hideDate"
           :episode="episode"
           :hover="hoverDate === item.date?.current?.toDateString()"
+          :scroll-into-view="scrollIntoView?.includes(item.id)"
           @on-hover="onHover"
+          @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"
+          @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
         >
           <slot :item="item" :index="item.index" :loading="item.loading" />
         </ListItem>

@@ -168,7 +168,6 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       } else {
         calendar.value = [...calendar.value.filter(c => c.type !== 'placeholder'), ...spacedData];
       }
-      console.info('Fetched Calendar', calendar.value);
     } catch (e) {
       console.error('Failed to fetch history');
       calendar.value = calendar.value.filter(c => c.type !== 'placeholder');

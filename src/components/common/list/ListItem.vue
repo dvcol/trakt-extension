@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
-import { computed, defineProps, type PropType, ref, toRefs, watch } from 'vue';
+import {
+  computed,
+  defineProps,
+  onBeforeUnmount,
+  onMounted,
+  type PropType,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 
 import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
 
@@ -54,13 +63,34 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  scrollIntoView: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
   (e: 'onHover', event: { index: number; item: ListScrollItem; hover: boolean }): void;
+  (
+    e: 'onScrollIntoView',
+    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
+  ): void;
+  (
+    e: 'onScrollOutOfView',
+    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
+  ): void;
 }>();
 
-const { item, index, noHeader, nextHasHeader, poster, episode, hideDate } = toRefs(props);
+const {
+  item,
+  index,
+  noHeader,
+  nextHasHeader,
+  poster,
+  episode,
+  hideDate,
+  scrollIntoView,
+} = toRefs(props);
 
 const onHover = (_hover: boolean) => {
   emit('onHover', { index: index?.value, item: item?.value, hover: _hover });
@@ -105,10 +135,31 @@ const getPosters = (_item: ListScrollItem) => {
 };
 
 watch(item, getPosters, { immediate: true, flush: 'post' });
+
+const itemRef = ref<HTMLElement & InstanceType<typeof NTimelineItem>>();
+
+onMounted(() => {
+  if (!scrollIntoView.value) return;
+  emit('onScrollIntoView', {
+    item: item?.value,
+    index: index.value,
+    ref: itemRef.value?.$el,
+  });
+});
+
+onBeforeUnmount(() => {
+  if (!scrollIntoView.value) return;
+  emit('onScrollOutOfView', {
+    item: item?.value,
+    index: index.value,
+    ref: itemRef.value?.$el,
+  });
+});
 </script>
 
 <template>
   <NTimelineItem
+    ref="itemRef"
     :key="item.id"
     class="timeline-item"
     :class="{

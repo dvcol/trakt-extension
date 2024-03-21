@@ -3,7 +3,7 @@ import { NIcon, NSelect, NTooltip, type SelectOption } from 'naive-ui';
 
 import { computed, defineProps, onMounted, ref, toRefs, watch } from 'vue';
 
-import IconChevron from '~/components/icons/IconChevron.vue';
+import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import IconPage from '~/components/icons/IconPage.vue';
 import IconPageDouble from '~/components/icons/IconPageDouble.vue';
 
