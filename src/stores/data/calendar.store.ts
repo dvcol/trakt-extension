@@ -7,7 +7,7 @@ import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
-import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
+import { debounceLoading } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -24,16 +24,14 @@ export const CalendarPlaceholder: Partial<CalendarItem> = {
   type: 'placeholder',
 } as const;
 
+const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date, day: date.getDay() }) as CalendarItem;
+
 export const getEmptyWeeks = (fromDate = DateUtils.weeks.previous(1)) => {
   return Array(14)
     .fill(CalendarPlaceholder)
     .map((placeholder, index) => {
       const date = DateUtils.next(index, fromDate);
-      return {
-        ...placeholder,
-        day: date.getDay(),
-        date,
-      };
+      return getPlaceholder(date);
     });
 };
 
@@ -72,15 +70,16 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     if (restored?.endCalendar) endCalendar.value = new Date(restored.endCalendar);
   };
 
-  const loadingPlaceholder = useLoadingPlaceholder<CalendarItem>(weeks);
+  const loadingPlaceholder = (date: Date) => ref(getEmptyWeeks(date).map((placeholder, i) => ({ ...placeholder, id: -1 * (i + 1) }) as CalendarItem));
 
   const fetchCalendar = async (range: 'start' | 'end' = 'start') => {
     console.info('fetchCalendar', range);
     loading.value = true;
-    const timeout = debounceLoading(calendar, loadingPlaceholder);
+
+    const startDate = range === 'start' ? startCalendar.value : endCalendar.value;
+    const start_date = startDate.toISOString().split('T')[0];
+    const timeout = debounceLoading(calendar, loadingPlaceholder(startDate));
     try {
-      const startDate = range === 'start' ? startCalendar.value : endCalendar.value;
-      const start_date = startDate.toISOString().split('T')[0];
       const [shows, movies] = await Promise.all([
         TraktService.calendar({ start_date, days: days.value }, 'shows'),
         TraktService.calendar({ start_date, days: days.value }, 'movies'),
@@ -93,7 +92,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
           else if (show.episode.number === 1) premiere = 'season';
           return {
             ...show,
-            id: show.show.ids.trakt,
+            id: show.episode.ids.trakt ?? show.show.ids.trakt,
             date,
             day: date.getDay(),
             premiere,
@@ -127,7 +126,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
             let previousDate: Date = item.date;
             while (previousDate.toLocaleDateString() !== DateUtils.previous(7).toLocaleDateString()) {
               previousDate = DateUtils.previous(1, previousDate);
-              spacedData.push({ ...CalendarPlaceholder, date: previousDate, day: previousDate.getDay() } as CalendarItem);
+              spacedData.push(getPlaceholder(previousDate));
             }
           }
           return spacedData.push(item);
@@ -141,7 +140,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
             let nextDate: Date = item.date;
             while (nextDate.toLocaleDateString() !== DateUtils.next(7).toLocaleDateString()) {
               nextDate = DateUtils.next(1, nextDate);
-              spacedData.push({ ...CalendarPlaceholder, date: nextDate, day: nextDate.getDay() } as CalendarItem);
+              spacedData.push(getPlaceholder(nextDate));
             }
             return;
           }
@@ -156,7 +155,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         let previousDate: Date = previous.date;
         while (item.date.toLocaleDateString() !== DateUtils.next(1, previousDate).toLocaleDateString()) {
           previousDate = DateUtils.next(1, previousDate);
-          spacedData.push({ ...CalendarPlaceholder, date: previousDate, day: previousDate.getDay() } as CalendarItem);
+          spacedData.push(getPlaceholder(previousDate));
         }
         spacedData.push(item);
       });
@@ -169,6 +168,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       } else {
         calendar.value = [...calendar.value.filter(c => c.type !== 'placeholder'), ...spacedData];
       }
+      console.info('Fetched Calendar', calendar.value);
     } catch (e) {
       console.error('Failed to fetch history');
       calendar.value = calendar.value.filter(c => c.type !== 'placeholder');
