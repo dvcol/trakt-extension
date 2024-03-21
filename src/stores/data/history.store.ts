@@ -83,6 +83,7 @@ export const useHistoryStore = defineStore('data.history', () => {
   };
 
   const setHistoryRange = async ({ start, end }: { start?: Date; end?: Date } = {}) => {
+    if (start === historyStart.value && end === historyEnd.value) return;
     historyStart.value = start;
     historyEnd.value = end;
     const result = fetchHistory({ start, end });

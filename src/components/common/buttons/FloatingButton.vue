@@ -3,7 +3,7 @@ import { NFlex, NFloatButton, NIcon } from 'naive-ui';
 
 import type { Component, PropType, Transition } from 'vue';
 
-import IconTopArrow from '~/components/icons/IconTopArrow.vue';
+import IconChevronUp from '~/components/icons/IconChevronUp.vue';
 
 defineProps({
   show: {
@@ -13,7 +13,11 @@ defineProps({
   icon: {
     type: Object as PropType<Component>,
     required: false,
-    default: IconTopArrow,
+    default: IconChevronUp,
+  },
+  width: {
+    type: String,
+    required: false,
   },
 });
 
@@ -27,7 +31,12 @@ const emit = defineEmits<{
     <NFloatButton v-if="show" class="button" width="fit-content" @click="emit('onClick')">
       <NFlex size="small" align="center" justify="space-evenly">
         <NIcon :component="icon" />
-        <span class="text">
+        <span
+          class="text"
+          :style="{
+            '--floating-button-width': width,
+          }"
+        >
           <slot />
         </span>
       </NFlex>
@@ -60,7 +69,7 @@ const emit = defineEmits<{
   }
 
   &:hover .text {
-    width: 4.5rem;
+    width: var(--floating-button-width, 4.5rem);
     margin-left: 0.5rem;
   }
 

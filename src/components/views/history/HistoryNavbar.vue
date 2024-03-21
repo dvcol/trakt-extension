@@ -5,7 +5,7 @@ import { computed, defineProps, ref } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconCalendar from '~/components/icons/IconCalendar.vue';
-import IconChevron from '~/components/icons/IconChevron.vue';
+import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';

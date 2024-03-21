@@ -16,6 +16,7 @@ export type VirtualListProps = {
   paddingTop?: string | number;
   paddingBottom?: string | number;
 };
+export type VirtualListScrollToOptions = Parameters<VirtualListInst['scrollTo']>[0];
 
 export type OnScroll = (listRef: Ref<VirtualListRef | undefined>) => void;
 export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
