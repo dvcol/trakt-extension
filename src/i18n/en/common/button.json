@@ -4,6 +4,10 @@
     "description": "Button to scroll to the top of the history."
   },
   "common__button__recenter": {
+    "message": "Recenter",
+    "description": "Button to recenter the timeline on the initial center."
+  },
+  "common__button__today": {
     "message": "Today",
     "description": "Button to recenter the timeline on today."
   }

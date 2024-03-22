@@ -28,7 +28,7 @@ const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${d
 const getLoadingPlaceholder = (date: Date) =>
   ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.loading }) as CalendarItem;
 
-export const getEmptyWeeks = (fromDate = DateUtils.weeks.previous(1), loading?: boolean) => {
+export const getEmptyWeeks = (fromDate: Date, loading?: boolean) => {
   return Array(14)
     .fill(CalendarPlaceholder)
     .map((_, index) => {
@@ -42,16 +42,20 @@ export const useCalendarStore = defineStore('data.calendar', () => {
   const loading = ref(true);
   const calendar = ref<CalendarItem[]>([]);
 
-  const startCalendar = ref<Date>(DateUtils.weeks.previous(1));
-  const endCalendar = ref<Date>(DateUtils.weeks.next(1));
+  const center = ref(new Date());
+  const startCalendar = ref<Date>(DateUtils.weeks.previous(1, center.value));
+  const endCalendar = ref<Date>(DateUtils.weeks.next(1, center.value));
 
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
 
-  const clearState = () => {
+  const filter = ref('');
+
+  const clearState = (date: Date = new Date()) => {
     calendar.value = [];
-    startCalendar.value = DateUtils.weeks.previous(1);
-    endCalendar.value = DateUtils.weeks.next(1);
+    center.value = date;
+    startCalendar.value = DateUtils.weeks.previous(1, center.value);
+    endCalendar.value = DateUtils.weeks.next(1, center.value);
   };
 
   const saveState = async () =>
@@ -85,7 +89,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     if (mode === 'start') startCalendar.value = DateUtils.previous(days.value, startCalendar.value);
 
     const startDate = ['start', 'reload'].includes(mode) ? startCalendar.value : endCalendar.value;
-    const endDate = DateUtils.next(days.value, startDate);
+    const endDate = DateUtils.next(days.value - 1, startDate);
     const start_date = startDate.toISOString().split('T')[0];
 
     if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
@@ -140,7 +144,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       newData.forEach((item, index) => {
         if (index === 0) {
           // if the first item isn't the start date, add placeholders
-          if (item.date.toLocaleDateString() !== startDate.toLocaleDateString()) {
+          if (item.date.getTime() > startDate.getTime() && item.date.toLocaleDateString() !== startDate.toLocaleDateString()) {
             let previousDate: Date = item.date;
             while (previousDate.toLocaleDateString() !== startDate.toLocaleDateString()) {
               previousDate = DateUtils.previous(1, previousDate);
@@ -155,12 +159,11 @@ export const useCalendarStore = defineStore('data.calendar', () => {
 
           // if the last item isn't one day before the end date, add placeholders
           const dayBeforeEnd = DateUtils.previous(1, endDate);
-          if (item.date.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
+          if (item.date.getTime() < dayBeforeEnd.getTime() && item.date.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
             let nextDate: Date = item.date;
             while (nextDate.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
               nextDate = DateUtils.next(1, nextDate);
               spacedData.push(getPlaceholder(nextDate));
-              console.info('Adding placeholder', { nextDate: nextDate.toLocaleDateString() });
             }
           }
           return;
@@ -200,7 +203,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     }
   };
 
-  return { clearState, saveState, restoreState, loading, pageSize: weeks, calendar, startCalendar, endCalendar, fetchCalendar };
+  return { clearState, saveState, restoreState, loading, pageSize: weeks, calendar, startCalendar, endCalendar, fetchCalendar, filter, center };
 });
 
 export const useCalendarStoreRefs = () => storeToRefs(useCalendarStore());

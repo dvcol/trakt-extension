@@ -67,22 +67,24 @@ export const watchUserChange = ({
   fetch?: () => Promise<void>;
   clear?: () => void | Promise<void>;
   mounted?: () => void | Promise<void>;
-  activated?: () => void | Promise<void>;
+  activated?: (changed?: boolean) => void | Promise<void>;
   deactivated?: () => void | Promise<void>;
   userChange?: (active: boolean) => void | Promise<void>;
 }) => {
   const { user } = useUserSettingsStoreRefs();
 
   const active = ref(false);
+  const changed = ref(false);
 
   onActivated(async () => {
     active.value = true;
-    if (activated) return activated();
+    if (activated) return activated(changed.value);
     await fetch?.();
   });
 
   onDeactivated(() => {
     active.value = false;
+    changed.value = false;
     deactivated?.();
   });
 
@@ -92,6 +94,8 @@ export const watchUserChange = ({
       user,
 
       async () => {
+        if (!active.value) changed.value = true;
+
         if (userChange) return userChange(active.value);
         if (active.value) await fetch?.();
         else clear?.();
