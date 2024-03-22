@@ -1,0 +1,6 @@
+{
+  "navbar__calendar__fetch_disable": {
+    "message": "Data fetching is disable while filtering the calendar.",
+    "description": "Message displayed when the user tries to fetch data while filtering the calendar."
+  }
+}

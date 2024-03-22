@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
+import { NDatePicker, NFlex, NIcon, NInput, NTooltip } from 'naive-ui';
 
 import { computed, defineProps, ref } from 'vue';
 
@@ -19,10 +19,10 @@ defineProps({
   },
 });
 
-const i18n = useI18n('navbar');
+const i18n = useI18n('navbar', 'calendar');
 
 const { filter, center } = useCalendarStoreRefs();
-const { clearState, fetchCalendar } = useCalendarStore();
+const { clearState } = useCalendarStore();
 
 const debouncedSearch = useDebouncedSearch(filter);
 
@@ -37,12 +37,6 @@ const pickerValue = computed({
 });
 
 const open = ref(false);
-
-const onDateChange = (value?: number) => {
-  console.info('onDateChange', value);
-  if (!value) return;
-  console.info('onDateChange', value);
-};
 </script>
 
 <template>
@@ -62,17 +56,28 @@ const onDateChange = (value?: number) => {
         <NIcon :component="open ? IconChevron : IconCalendar" />
       </template>
     </NDatePicker>
-    <NInput
-      v-model:value="debouncedSearch"
-      class="search-input"
-      :placeholder="i18n('search')"
-      autosize
-      clearable
+    <NTooltip
+      :show-arrow="false"
+      placement="bottom"
+      :delay="100"
+      trigger="focus"
+      :to="parentElement"
     >
-      <template #prefix>
-        <NIcon :component="IconLoop" />
+      <span> {{ i18n('fetch_disable') }} </span>
+      <template #trigger>
+        <NInput
+          v-model:value="debouncedSearch"
+          class="search-input"
+          :placeholder="i18n('search', 'navbar')"
+          autosize
+          clearable
+        >
+          <template #prefix>
+            <NIcon :component="IconLoop" />
+          </template>
+        </NInput>
       </template>
-    </NInput>
+    </NTooltip>
   </NFlex>
 </template>
 

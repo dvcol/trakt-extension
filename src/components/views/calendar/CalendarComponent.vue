@@ -18,10 +18,10 @@ import { watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('calendar');
 
-const { calendar, loading, center } = useCalendarStoreRefs();
+const { calendar, loading, center, filteredCalendar } = useCalendarStoreRefs();
 const { fetchCalendar, clearState } = useCalendarStore();
 
-const list = useListScroll(calendar, 'date');
+const list = useListScroll(filteredCalendar, 'date');
 
 const centerItem = computed(() => {
   return list.value.find(
@@ -66,7 +66,6 @@ watch(center, () => reload());
 watchUserChange({
   mounted: reload,
   activated: async changed => {
-    console.info('activated', changed);
     if (changed) await reload();
   },
   userChange: async active => {
@@ -120,7 +119,7 @@ const onScrollBottom = async () => {
     </ListScroll>
     <FloatingButton
       :show="scrolledOut"
-      width="2.5rem"
+      :width="centerIsToday ? '2.5rem' : '3.5rem'"
       :icon="recenterIcon"
       @on-click="onClick"
     >
