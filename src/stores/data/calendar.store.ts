@@ -8,6 +8,7 @@ import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from 
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
+import { useSearchFilter } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -77,11 +78,65 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     if (restored?.endCalendar) endCalendar.value = new Date(restored.endCalendar);
   };
 
+  const spaceDate = (data: CalendarItem[], startDate: Date, endDate: Date): CalendarItem[] => {
+    const spacedData: CalendarItem[] = [];
+    data?.forEach((item, index) => {
+      if (index === 0) {
+        // if the first item isn't the start date, add placeholders
+        if (item.date.getTime() > startDate.getTime() && item.date.toLocaleDateString() !== startDate.toLocaleDateString()) {
+          let previousDate: Date = item.date;
+          while (previousDate.toLocaleDateString() !== startDate.toLocaleDateString()) {
+            previousDate = DateUtils.previous(1, previousDate);
+            spacedData.push(getPlaceholder(previousDate));
+          }
+        }
+        return spacedData.push(item);
+      }
+
+      if (index === data.length - 1) {
+        spacedData.push(item);
+
+        // if the last item isn't one day before the end date, add placeholders
+        const dayBeforeEnd = DateUtils.previous(1, endDate);
+        if (item.date.getTime() < dayBeforeEnd.getTime() && item.date.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
+          let nextDate: Date = item.date;
+          while (nextDate.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
+            nextDate = DateUtils.next(1, nextDate);
+            spacedData.push(getPlaceholder(nextDate));
+          }
+        }
+        return;
+      }
+
+      const previous = data[index - 1];
+
+      if (item.date.toLocaleDateString() === previous.date.toLocaleDateString()) return spacedData.push(item);
+      if (item.date.toLocaleDateString() === DateUtils.next(1, previous.date).toLocaleDateString()) return spacedData.push(item);
+
+      // if the item isn't at least 1 day after the previous date, add placeholders
+      let previousDate: Date = previous.date;
+      while (item.date.toLocaleDateString() !== DateUtils.next(1, previousDate).toLocaleDateString()) {
+        previousDate = DateUtils.next(1, previousDate);
+        spacedData.push(getPlaceholder(previousDate));
+      }
+      spacedData.push(item);
+    });
+    if (!spacedData.length) spacedData.push(...getEmptyWeeks(startDate));
+
+    // if no data in response fill with placeholders
+    return spacedData;
+  };
+
   const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
     if (!firstLoad.value && loading.value) {
       console.warn('Already fetching calendar');
       return;
     }
+    if (filter.value) {
+      console.warn('Filtering calendar, fetch is disabled');
+      return;
+    }
+
     if (firstLoad.value) firstLoad.value = false;
 
     loading.value = true;
@@ -140,51 +195,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         }),
       ].sort((a, b) => a.date.getTime() - b.date.getTime());
 
-      const spacedData: CalendarItem[] = [];
-      newData.forEach((item, index) => {
-        if (index === 0) {
-          // if the first item isn't the start date, add placeholders
-          if (item.date.getTime() > startDate.getTime() && item.date.toLocaleDateString() !== startDate.toLocaleDateString()) {
-            let previousDate: Date = item.date;
-            while (previousDate.toLocaleDateString() !== startDate.toLocaleDateString()) {
-              previousDate = DateUtils.previous(1, previousDate);
-              spacedData.push(getPlaceholder(previousDate));
-            }
-          }
-          return spacedData.push(item);
-        }
-
-        if (index === newData.length - 1) {
-          spacedData.push(item);
-
-          // if the last item isn't one day before the end date, add placeholders
-          const dayBeforeEnd = DateUtils.previous(1, endDate);
-          if (item.date.getTime() < dayBeforeEnd.getTime() && item.date.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
-            let nextDate: Date = item.date;
-            while (nextDate.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
-              nextDate = DateUtils.next(1, nextDate);
-              spacedData.push(getPlaceholder(nextDate));
-            }
-          }
-          return;
-        }
-
-        const previous = newData[index - 1];
-
-        if (item.date.toLocaleDateString() === previous.date.toLocaleDateString()) return spacedData.push(item);
-        if (item.date.toLocaleDateString() === DateUtils.next(1, previous.date).toLocaleDateString()) return spacedData.push(item);
-
-        // if the item isn't at least 1 day after the previous date, add placeholders
-        let previousDate: Date = previous.date;
-        while (item.date.toLocaleDateString() !== DateUtils.next(1, previousDate).toLocaleDateString()) {
-          previousDate = DateUtils.next(1, previousDate);
-          spacedData.push(getPlaceholder(previousDate));
-        }
-        spacedData.push(item);
-      });
-
-      // if no data in response fill with placeholders
-      if (!spacedData.length) spacedData.push(...getEmptyWeeks(startDate));
+      const spacedData = spaceDate(newData, startDate, endDate);
 
       if (mode === 'reload') {
         calendar.value = [...spacedData];
@@ -203,7 +214,22 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     }
   };
 
-  return { clearState, saveState, restoreState, loading, pageSize: weeks, calendar, startCalendar, endCalendar, fetchCalendar, filter, center };
+  const filteredCalendar = useSearchFilter(calendar, filter, 'date');
+
+  return {
+    clearState,
+    saveState,
+    restoreState,
+    loading,
+    pageSize: weeks,
+    calendar,
+    startCalendar,
+    endCalendar,
+    fetchCalendar,
+    filter,
+    center,
+    filteredCalendar,
+  };
 });
 
 export const useCalendarStoreRefs = () => storeToRefs(useCalendarStore());

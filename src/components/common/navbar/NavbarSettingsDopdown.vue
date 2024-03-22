@@ -29,7 +29,7 @@ import { useI18n } from '~/utils';
 
 import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
 
-const i18n = useI18n('navbar_settings');
+const i18n = useI18n('navbar', 'settings');
 const router = useRouter();
 
 const { user, userSetting, userSettings } = useUserSettingsStoreRefs();

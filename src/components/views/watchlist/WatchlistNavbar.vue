@@ -19,7 +19,7 @@ import {
 import { useI18n } from '~/utils';
 import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
-const i18n = useI18n('navbar_list');
+const i18n = useI18n('navbar', 'list');
 
 const { pageSize, searchList } = useListStoreRefs();
 
