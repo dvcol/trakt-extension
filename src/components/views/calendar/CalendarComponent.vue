@@ -18,20 +18,30 @@ import { watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('calendar');
 
-const { calendar, loading } = useCalendarStoreRefs();
+const { calendar, loading, center } = useCalendarStoreRefs();
 const { fetchCalendar, clearState } = useCalendarStore();
 
 const list = useListScroll(calendar, 'date');
 
-const today = computed(() => {
+const centerItem = computed(() => {
   return list.value.find(
-    item => item.date?.current.toLocaleDateString() === new Date().toLocaleDateString(),
+    item => item.date?.current.toLocaleDateString() === center.value.toLocaleDateString(),
+  );
+});
+
+const centerIsToday = computed(() => {
+  return (
+    centerItem.value?.date?.current.toLocaleDateString() ===
+    new Date().toLocaleDateString()
   );
 });
 
 const listRef = ref<{ list: VirtualListRef }>();
 
-const scrollTo = (options?: VirtualListScrollToOptions, index = today.value?.index) => {
+const scrollTo = (
+  options?: VirtualListScrollToOptions,
+  index = centerItem.value?.index,
+) => {
   if (index === undefined) return;
   if (!listRef.value?.list) return;
 
@@ -42,6 +52,7 @@ const scrollTo = (options?: VirtualListScrollToOptions, index = today.value?.ind
 };
 
 const reload = async () => {
+  console.info('reload', center.value);
   const promise = fetchCalendar();
   // watch for loading changes and recenter
   const unsub = watch(list, async () => scrollTo());
@@ -50,8 +61,14 @@ const reload = async () => {
   unsub();
 };
 
+watch(center, () => reload());
+
 watchUserChange({
-  fetch: reload,
+  mounted: reload,
+  activated: async changed => {
+    console.info('activated', changed);
+    if (changed) await reload();
+  },
   userChange: async active => {
     clearState();
     if (active) await reload();
@@ -91,7 +108,7 @@ const onScrollBottom = async () => {
       :loading="loading"
       :scroll-threshold="300"
       episode
-      :scroll-into-view="today?.id ? [today?.id] : []"
+      :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
       @on-scroll-top="onScrollTop"
@@ -107,7 +124,7 @@ const onScrollBottom = async () => {
       :icon="recenterIcon"
       @on-click="onClick"
     >
-      {{ i18n('recenter', 'common', 'button') }}
+      {{ i18n(centerIsToday ? 'today' : 'recenter', 'common', 'button') }}
     </FloatingButton>
   </div>
 </template>
