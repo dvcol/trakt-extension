@@ -40,6 +40,7 @@ export const DefaultLists: Record<string, ListType> = {
 const DefaultList: ListType[] = Object.values(DefaultLists);
 
 export const useListsStore = defineStore('data.lists', () => {
+  const firstLoad = ref(true);
   const loading = ref(true);
 
   const lists = ref<ListType[]>(DefaultList);
@@ -69,6 +70,12 @@ export const useListsStore = defineStore('data.lists', () => {
   const { user } = useUserSettingsStoreRefs();
 
   const fetchLists = async () => {
+    if (!firstLoad.value && loading.value) {
+      console.warn('Already fetching lists');
+      return;
+    }
+    if (firstLoad.value) firstLoad.value = false;
+
     console.info('Fetching Lists');
     loading.value = true;
     try {
@@ -119,6 +126,7 @@ export const useListsStore = defineStore('data.lists', () => {
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
 
 export const useListStore = defineStore('data.list', () => {
+  const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
   const pagination = ref<TraktClientPagination>();
@@ -153,6 +161,12 @@ export const useListStore = defineStore('data.list', () => {
     limit = pageSize.value,
     list = activeList.value,
   }: { page?: number; limit?: number; list?: ListType } = {}) => {
+    if (!firstLoad.value && loading.value) {
+      console.warn('Already fetching list');
+      return;
+    }
+    if (firstLoad.value) firstLoad.value = false;
+
     console.info('Fetching List', list);
     loading.value = true;
     const timeout = debounceLoading(listItems, loadingPlaceholder, !page);

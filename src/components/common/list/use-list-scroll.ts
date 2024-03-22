@@ -92,7 +92,7 @@ export const useListScroll = <D extends string, T extends ListScrollSourceItemWi
     const array = items.value;
     if (!array.length) return [];
     return array.map((item, index) => {
-      const _item: ListScrollItem = { ...item, index, loading: typeof item.id === 'number' && item.id < 0 };
+      const _item: ListScrollItem = { ...item, index, loading: (typeof item.id === 'number' && item.id < 0) || item.type === 'loading' };
 
       if (!_item.type) _item.type = getType(item);
       if (!_item.title) _item.title = getTitle(item);
@@ -153,8 +153,8 @@ export const addLoadMore = (
     if (!pagination.value?.page) return array;
     if (!pagination.value?.pageCount) return array;
     if (pagination.value.page === pagination.value.pageCount) return array;
-    if (array.length && array[array.length - 1].id === 'load-more') return array;
-    const loadMore: ListScrollItem = { id: 'load-more', index: items.value.length };
+    if (array.length && array[array.length - 1].type === ListScrollItemType.loadMore) return array;
+    const loadMore: ListScrollItem = { id: 'load-more', type: ListScrollItemType.loadMore, index: items.value.length };
     return [...array, loadMore];
   });
 };

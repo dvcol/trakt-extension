@@ -12,10 +12,12 @@ import {
   watch,
 } from 'vue';
 
-import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
-
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
+import {
+  type ListScrollItem,
+  ListScrollItemType,
+} from '~/components/common/list/ListScroll.model';
 
 import { useImageStore } from '~/stores/data/image.store';
 import { Colors } from '~/styles/colors.style';
@@ -25,9 +27,9 @@ const props = defineProps({
     type: Object as PropType<ListScrollItem>,
     required: true,
   },
-  index: {
+  height: {
     type: Number,
-    required: true,
+    required: false,
   },
   poster: {
     type: String,
@@ -70,30 +72,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'onHover', event: { index: number; item: ListScrollItem; hover: boolean }): void;
-  (
-    e: 'onScrollIntoView',
-    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
-  ): void;
-  (
-    e: 'onScrollOutOfView',
-    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
-  ): void;
+  (e: 'onHover', event: { item: ListScrollItem; hover: boolean }): void;
+  (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
+  (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
 
-const {
-  item,
-  index,
-  noHeader,
-  nextHasHeader,
-  poster,
-  episode,
-  hideDate,
-  scrollIntoView,
-} = toRefs(props);
+const { item, noHeader, nextHasHeader, poster, episode, hideDate, scrollIntoView } =
+  toRefs(props);
 
 const onHover = (_hover: boolean) => {
-  emit('onHover', { index: index?.value, item: item?.value, hover: _hover });
+  emit('onHover', { item: item?.value, hover: _hover });
 };
 
 const noHead = computed(
@@ -142,7 +130,6 @@ onMounted(() => {
   if (!scrollIntoView.value) return;
   emit('onScrollIntoView', {
     item: item?.value,
-    index: index.value,
     ref: itemRef.value?.$el,
   });
 });
@@ -151,10 +138,11 @@ onBeforeUnmount(() => {
   if (!scrollIntoView.value) return;
   emit('onScrollOutOfView', {
     item: item?.value,
-    index: index.value,
     ref: itemRef.value?.$el,
   });
 });
+
+const ListScrollItemTypeLocal = ListScrollItemType;
 </script>
 
 <template>
@@ -167,8 +155,10 @@ onBeforeUnmount(() => {
       'next-has-header': nextHasHead,
       'show-date': !hideDate,
     }"
+    :style="{
+      '--list-item-height': height ? `${height}px` : undefined,
+    }"
     :data-key="item.id"
-    :data-index="index"
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : color"
     @mouseenter="onHover(true)"
@@ -210,7 +200,11 @@ onBeforeUnmount(() => {
             <NSkeleton class="loading week" text round />
           </template>
         </NFlex>
-        <NFlex class="tile" :wrap="false">
+
+        <slot v-if="item.type === ListScrollItemTypeLocal.placeholder">
+          // TODO default placeholder
+        </slot>
+        <NFlex v-else class="tile" :wrap="false">
           <NImage
             alt="poster-image"
             class="poster"
@@ -234,7 +228,7 @@ onBeforeUnmount(() => {
             :fallback-src="PosterPlaceholder"
           />
           <ListItemPanel :item="item" :loading="loading" :hide-date="hideDate">
-            <slot :item="item" :index="index" :loading="loading" />
+            <slot :item="item" :loading="loading" />
           </ListItemPanel>
         </NFlex>
       </NFlex>
@@ -250,6 +244,7 @@ onBeforeUnmount(() => {
 @use '~/styles/z-index' as layers;
 
 .timeline-item {
+  height: var(--list-item-height, 145px);
   margin: 0 1rem;
 
   &.show-date {
@@ -336,7 +331,7 @@ onBeforeUnmount(() => {
 
     &.loading {
       opacity: 0;
-      transition: opacity 0s;
+      transition: opacity 0.1s;
     }
 
     &.episode {
