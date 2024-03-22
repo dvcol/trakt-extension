@@ -18,5 +18,9 @@
   "list__more__current_page_size": {
     "message": "Current page size is",
     "description": "Current page size label."
+  },
+  "list__item__placeholder_empty": {
+    "message": "Nothing on this day.",
+    "description": "Empty placeholder for list item."
   }
 }
