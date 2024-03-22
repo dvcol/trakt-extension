@@ -6,7 +6,7 @@ import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
-import type { ImageQuery } from '~/stores/data/image.store';
+import type { ImageQuery, ImageStoreMedias } from '~/stores/data/image.store';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type VirtualListProps = {
@@ -23,7 +23,7 @@ export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
 
 export type ListScrollSourceItem = {
   id: string | number;
-  type?: keyof typeof ListScrollItemType;
+  type?: ListScrollItem['type'];
 
   movie?: TraktMovie<'short'>;
   show?: TraktShow<'short'>;
@@ -60,8 +60,10 @@ export type ListScrollItem = {
   content?: string;
   tags?: ListScrollItemTag[];
 
-  poster?: Ref<string | undefined>;
+  poster?: Ref<ImageStoreMedias | undefined>;
   getPosterQuery?: () => ImageQuery | undefined;
+
+  meta?: Record<string, unknown>;
 
   loading?: boolean;
   date?: {

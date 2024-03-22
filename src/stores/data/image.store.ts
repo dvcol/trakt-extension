@@ -11,25 +11,35 @@ import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { arrayMax, findClosestMatch } from '~/utils/math.utils';
 
+type ImageStoreMedia = {
+  poster?: string;
+  backdrop?: string;
+};
+
 type ImageStore = {
-  movie: Record<string, string>;
-  show: Record<string, string>;
+  movie: Record<string, ImageStoreMedia>;
+  show: Record<string, ImageStoreMedia>;
   season: Record<string, string>;
   episode: Record<string, string>;
   person: Record<string, string>;
 };
 
+type ImageStoreTypes = keyof ImageStore;
+
+export type ImageStoreMedias = ImageStoreMedia | string;
+
 export type ImageQuery = {
   id: number;
   season?: number;
   episode?: number;
-  type: keyof ImageStore;
+  type: ImageStoreTypes;
 };
 
 type ImagePayload = {
-  posters?: TmdbImage[];
-  stills?: TmdbImage[];
-  profiles?: TmdbImage[];
+  posters?: TmdbImage[]; // movie, show, season
+  backdrops?: TmdbImage[]; // movie or shows
+  stills?: TmdbImage[]; // episodes
+  profiles?: TmdbImage[]; // profiles
 };
 
 const EmptyImageStore: ImageStore = {
@@ -47,22 +57,22 @@ export const useImageStore = defineStore('data.image', () => {
   const syncSaveImageStore = debounce(
     (_images = images) =>
       Promise.all([
-        storage.sync.set(`data.image-store.movie`, _images.movie),
-        storage.sync.set(`data.image-store.show`, _images.show),
-        storage.sync.set(`data.image-store.season`, _images.season),
-        storage.sync.set(`data.image-store.episode`, _images.episode),
-        storage.sync.set(`data.image-store.person`, _images.person),
+        storage.local.set(`data.image-store.movie`, _images.movie),
+        storage.local.set(`data.image-store.show`, _images.show),
+        storage.local.set(`data.image-store.season`, _images.season),
+        storage.local.set(`data.image-store.episode`, _images.episode),
+        storage.local.set(`data.image-store.person`, _images.person),
       ]),
     1000,
   );
 
   const syncRestoreImageStore = async (seed?: Partial<ImageStore>) => {
     const [movie, show, season, episode, person] = await Promise.all([
-      storage.sync.get<Record<string, string>>(`data.image-store.movie`),
-      storage.sync.get<Record<string, string>>(`data.image-store.show`),
-      storage.sync.get<Record<string, string>>(`data.image-store.season`),
-      storage.sync.get<Record<string, string>>(`data.image-store.episode`),
-      storage.sync.get<Record<string, string>>(`data.image-store.person`),
+      storage.local.get<Record<string, string>>(`data.image-store.movie`),
+      storage.local.get<Record<string, string>>(`data.image-store.show`),
+      storage.local.get<Record<string, string>>(`data.image-store.season`),
+      storage.local.get<Record<string, string>>(`data.image-store.episode`),
+      storage.local.get<Record<string, string>>(`data.image-store.person`),
     ]);
     if (seed) Object.assign(images, seed);
     if (movie) Object.assign(images.movie, movie);
@@ -102,7 +112,7 @@ export const useImageStore = defineStore('data.image', () => {
   const fetchImageUrl = async (
     key: string,
     { id, season, episode, type }: ImageQuery,
-  ): Promise<{ image: string; key: string; type: ImageQuery['type'] } | undefined> => {
+  ): Promise<{ image: ImageStoreMedias; key: string; type: ImageQuery['type'] } | undefined> => {
     let payload: ImagePayload;
     if (type === 'movie') {
       payload = await queueRequest(key, () => TraktService.posters.movie(id));
@@ -116,22 +126,34 @@ export const useImageStore = defineStore('data.image', () => {
       payload = await queueRequest(key, () => TraktService.posters.show(id));
     } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
 
-    const fetchedImages = payload.posters ?? payload.stills ?? payload.profiles;
-    if (!fetchedImages?.length) {
-      if (type === 'episode') {
-        const eType = 'season';
-        const eKey = `${eType}-${id}-${season}`;
-        if (images[eType][eKey]) return { image: images[eType][eKey], key: eKey, type: eType };
-        return fetchImageUrl(eKey, { id, season, type: eType });
-      }
-      if (type === 'season') {
-        const sType = 'show';
-        const sKey = `${sType}-${id}`;
-        if (images[sType][sKey]) return { image: images[sType][sKey], key: sKey, type: sType };
-        return fetchImageUrl(sKey, { id, type: sType });
-      }
-      return;
+    if ((type === 'episode' && !payload.stills?.length) || (type === 'season' && !payload.posters?.length)) {
+      const sType = 'show';
+      const sKey = `${sType}-${id}`;
+      if (images[sType][sKey]) return { image: images[sType][sKey], key: sKey, type: sType };
+      return fetchImageUrl(sKey, { id, type: sType });
     }
+
+    if (['movie', 'show'].includes(type)) {
+      if (!payload.backdrops?.length && !payload.posters?.length) return;
+      const image = {
+        poster: arrayMax(payload.posters ?? [], 'vote_average', i => !!i.file_path)?.file_path,
+        backdrop: arrayMax(payload.backdrops ?? [], 'vote_average', i => !!i.file_path)?.file_path,
+      };
+      if (!image.poster && !image.backdrop) return;
+      images[type][key] = image;
+
+      syncSaveImageStore().catch(err => console.error('Failed to save image store', err));
+      return { image, key, type };
+    }
+
+    if (type === 'person' && !payload.profiles?.length) return;
+    if (type === 'season' && !payload.posters?.length) return;
+    if (type === 'episode' && !payload.stills?.length) return;
+
+    const fetchedImages = payload.profiles ?? payload.posters ?? payload.stills;
+
+    if (!fetchedImages?.length) return;
+
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
@@ -145,7 +167,21 @@ export const useImageStore = defineStore('data.image', () => {
     return findClosestMatch(size, imageSizes.value.poster);
   };
 
-  const getImageUrl = async (query: ImageQuery, size: number, response: Ref<string | undefined> = ref()) => {
+  const setResponseValue = (
+    { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number },
+    response: Ref<ImageStoreMedias | undefined> = ref(),
+  ) => {
+    if (typeof image === 'string') response.value = `${baseUrl}${getImageSize(type, size)}${image}`;
+    else {
+      response.value = {
+        poster: image.poster ? `${baseUrl}${getImageSize(type, size)}${image.poster}` : undefined,
+        backdrop: image.backdrop ? `${baseUrl}${getImageSize(type, size)}${image.backdrop}` : undefined,
+      };
+    }
+    return response;
+  };
+
+  const getImageUrl = async (query: ImageQuery, size: number, response: Ref<ImageStoreMedias | undefined> = ref()) => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
 
@@ -153,16 +189,12 @@ export const useImageStore = defineStore('data.image', () => {
 
     const baseUrl = tmdbConfig.value.images.secure_base_url;
 
-    if (images[type][key]) {
-      response.value = `${baseUrl}${getImageSize(type, size)}${images[type][key]}`;
-      return response;
-    }
+    const image = images[type][key];
+    if (image) return setResponseValue({ image, baseUrl, type, size }, response);
 
-    const image = await fetchImageUrl(key, query);
-    if (!image) return response;
-    response.value = `${baseUrl}${getImageSize(image.type, size)}${image.image}`;
-
-    return response;
+    const result = await fetchImageUrl(key, query);
+    if (!result?.image) return response;
+    return setResponseValue({ image: result.image, baseUrl, type, size }, response);
   };
 
   return { initImageStore, getImageUrl, imageSizes };
