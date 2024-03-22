@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
+import { NEmpty, NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
 import {
   computed,
@@ -21,6 +21,7 @@ import {
 
 import { useImageStore } from '~/stores/data/image.store';
 import { Colors } from '~/styles/colors.style';
+import { useI18n } from '~/utils';
 
 const props = defineProps({
   item: {
@@ -76,6 +77,8 @@ const emit = defineEmits<{
   (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
   (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
+
+const i18n = useI18n('list', 'item');
 
 const { item, noHeader, nextHasHeader, poster, episode, hideDate, scrollIntoView } =
   toRefs(props);
@@ -211,7 +214,9 @@ const ListScrollItemTypeLocal = ListScrollItemType;
         </NFlex>
 
         <slot v-if="item.type === ListScrollItemTypeLocal.placeholder">
-          // TODO default placeholder
+          <NFlex class="placeholder" align="center" justify="center" :wrap="false">
+            <NEmpty size="large" :description="i18n('placeholder_empty')" />
+          </NFlex>
         </slot>
         <NFlex v-else class="tile" :wrap="false">
           <NImage
@@ -261,6 +266,8 @@ const ListScrollItemTypeLocal = ListScrollItemType;
   }
 
   .content {
+    height: 100%;
+
     .tile {
       @include mixin.hover-background(
         $from: transparent,
@@ -270,6 +277,10 @@ const ListScrollItemTypeLocal = ListScrollItemType;
 
       flex: 1 1 auto;
       padding: 0.5rem;
+    }
+
+    .placeholder {
+      flex: 1 1 auto;
     }
   }
 
@@ -387,8 +398,13 @@ const ListScrollItemTypeLocal = ListScrollItemType;
   }
 
   .n-timeline-item-content {
+    height: 100%;
     margin-left: calc(var(--n-icon-size) + 0.125rem);
     border-top: 1px solid transparent;
+
+    &__content {
+      height: 100%;
+    }
 
     &__meta {
       margin: 0;
