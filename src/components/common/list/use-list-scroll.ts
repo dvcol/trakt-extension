@@ -100,6 +100,15 @@ export const useListScroll = <D extends string, T extends ListScrollSourceItemWi
       if (!_item.poster) _item.poster = ref<string | undefined>(undefined);
       if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
       _item.date = getDate(item, array, index, dateFn);
+      _item.meta = {
+        ids: {
+          movie: item.movie?.ids,
+          show: item.show?.ids,
+          season: item.season?.ids,
+          episode: item.episode?.ids,
+          person: item.person?.ids,
+        },
+      };
 
       return _item;
     });

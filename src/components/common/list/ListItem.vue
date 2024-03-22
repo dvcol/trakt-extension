@@ -98,7 +98,15 @@ const loading = computed(() => item?.value?.loading);
 
 const { getImageUrl } = useImageStore();
 
-const resolvedPoster = computed(() => item.value.poster?.value || poster?.value);
+const resolvedPoster = computed(() => {
+  if (poster?.value) return poster.value;
+  const image = item.value.poster?.value;
+  if (!image) return;
+  if (typeof image === 'string') return image;
+  if (episode.value && 'backdrop' in image) return image.backdrop;
+  return image.poster;
+});
+
 const objectFit = computed(() =>
   resolvedPoster.value === PosterPlaceholder ? 'contain' : 'cover',
 );
@@ -159,6 +167,7 @@ const ListScrollItemTypeLocal = ListScrollItemType;
       '--list-item-height': height ? `${height}px` : undefined,
     }"
     :data-key="item.id"
+    :data-index="item.index"
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : color"
     @mouseenter="onHover(true)"
