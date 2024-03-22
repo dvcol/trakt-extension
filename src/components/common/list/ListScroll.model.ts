@@ -23,6 +23,7 @@ export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
 
 export type ListScrollSourceItem = {
   id: string | number;
+  type?: keyof typeof ListScrollItemType;
 
   movie?: TraktMovie<'short'>;
   show?: TraktShow<'short'>;
@@ -45,14 +46,16 @@ export const ListScrollItemType = {
   season: 'season',
   episode: 'episode',
   person: 'person',
+  loading: 'loading',
+  loadMore: 'load-more',
   placeholder: 'placeholder',
 } as const;
 
 export type ListScrollItem = {
-  id: string | number | 'load-more' | 'empty';
+  id: string | number;
   index: number;
 
-  type?: keyof typeof ListScrollItemType;
+  type?: (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
   title?: string;
   content?: string;
   tags?: ListScrollItemTag[];

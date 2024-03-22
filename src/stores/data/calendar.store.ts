@@ -1,13 +1,13 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { ListScrollItem, ListScrollItemTag } from '~/components/common/list/ListScroll.model';
 import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt-calendar.model';
+
+import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/components/common/list/ListScroll.model';
 
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
-import { debounceLoading } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -21,21 +21,24 @@ export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<neve
 
 export const CalendarPlaceholder: Partial<CalendarItem> = {
   id: 'empty',
-  type: 'placeholder',
+  type: ListScrollItemType.placeholder,
 } as const;
 
 const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date, day: date.getDay() }) as CalendarItem;
+const getLoadingPlaceholder = (date: Date) =>
+  ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.loading }) as CalendarItem;
 
-export const getEmptyWeeks = (fromDate = DateUtils.weeks.previous(1)) => {
+export const getEmptyWeeks = (fromDate = DateUtils.weeks.previous(1), loading?: boolean) => {
   return Array(14)
     .fill(CalendarPlaceholder)
-    .map((placeholder, index) => {
+    .map((_, index) => {
       const date = DateUtils.next(index, fromDate);
-      return getPlaceholder(date);
+      return loading ? getLoadingPlaceholder(date) : getPlaceholder(date);
     });
 };
 
 export const useCalendarStore = defineStore('data.calendar', () => {
+  const firstLoad = ref(true);
   const loading = ref(true);
   const calendar = ref<CalendarItem[]>([]);
 
@@ -70,15 +73,30 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     if (restored?.endCalendar) endCalendar.value = new Date(restored.endCalendar);
   };
 
-  const loadingPlaceholder = (date: Date) => ref(getEmptyWeeks(date).map((placeholder, i) => ({ ...placeholder, id: -1 * (i + 1) }) as CalendarItem));
+  const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
+    if (!firstLoad.value && loading.value) {
+      console.warn('Already fetching calendar');
+      return;
+    }
+    if (firstLoad.value) firstLoad.value = false;
 
-  const fetchCalendar = async (range: 'start' | 'end' = 'start') => {
-    console.info('fetchCalendar', range);
     loading.value = true;
 
-    const startDate = range === 'start' ? startCalendar.value : endCalendar.value;
+    if (mode === 'start') startCalendar.value = DateUtils.previous(days.value, startCalendar.value);
+
+    const startDate = ['start', 'reload'].includes(mode) ? startCalendar.value : endCalendar.value;
+    const endDate = DateUtils.next(days.value, startDate);
     const start_date = startDate.toISOString().split('T')[0];
-    const timeout = debounceLoading(calendar, loadingPlaceholder(startDate));
+
+    if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
+
+    console.info('Fetching calendar', { mode, start_date, endDate: endDate.toISOString().split('T')[0], days: days.value });
+
+    const timeout = setTimeout(() => {
+      if (mode === 'reload') calendar.value = getEmptyWeeks(startDate, true);
+      else if (mode === 'start') calendar.value = [getLoadingPlaceholder(DateUtils.previous(1, endDate)), ...calendar.value];
+      else if (mode === 'end') calendar.value = [...calendar.value, ...getEmptyWeeks(startDate, true)];
+    }, 100);
     try {
       const [shows, movies] = await Promise.all([
         TraktService.calendar({ start_date, days: days.value }, 'shows'),
@@ -121,10 +139,10 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       const spacedData: CalendarItem[] = [];
       newData.forEach((item, index) => {
         if (index === 0) {
-          // if the item isn't at least 7 days before the start date, add placeholders
-          if (item.date.toLocaleDateString() !== DateUtils.previous(7).toLocaleDateString()) {
+          // if the first item isn't the start date, add placeholders
+          if (item.date.toLocaleDateString() !== startDate.toLocaleDateString()) {
             let previousDate: Date = item.date;
-            while (previousDate.toLocaleDateString() !== DateUtils.previous(7).toLocaleDateString()) {
+            while (previousDate.toLocaleDateString() !== startDate.toLocaleDateString()) {
               previousDate = DateUtils.previous(1, previousDate);
               spacedData.push(getPlaceholder(previousDate));
             }
@@ -135,15 +153,17 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         if (index === newData.length - 1) {
           spacedData.push(item);
 
-          // if the item isn't at least 7 days after the end date, add placeholders
-          if (item.date.toLocaleDateString() !== DateUtils.next(7).toLocaleDateString()) {
+          // if the last item isn't one day before the end date, add placeholders
+          const dayBeforeEnd = DateUtils.previous(1, endDate);
+          if (item.date.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
             let nextDate: Date = item.date;
-            while (nextDate.toLocaleDateString() !== DateUtils.next(7).toLocaleDateString()) {
+            while (nextDate.toLocaleDateString() !== dayBeforeEnd.toLocaleDateString()) {
               nextDate = DateUtils.next(1, nextDate);
               spacedData.push(getPlaceholder(nextDate));
+              console.info('Adding placeholder', { nextDate: nextDate.toLocaleDateString() });
             }
-            return;
           }
+          return;
         }
 
         const previous = newData[index - 1];
@@ -163,14 +183,16 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       // if no data in response fill with placeholders
       if (!spacedData.length) spacedData.push(...getEmptyWeeks(startDate));
 
-      if (range === 'start') {
-        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== 'placeholder')];
-      } else {
-        calendar.value = [...calendar.value.filter(c => c.type !== 'placeholder'), ...spacedData];
+      if (mode === 'reload') {
+        calendar.value = [...spacedData];
+      } else if (mode === 'start') {
+        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== 'loading')];
+      } else if (mode === 'end') {
+        calendar.value = [...calendar.value.filter(c => c.type !== 'loading'), ...spacedData];
       }
     } catch (e) {
       console.error('Failed to fetch history');
-      calendar.value = calendar.value.filter(c => c.type !== 'placeholder');
+      calendar.value = calendar.value.filter(c => c.type !== 'loading');
       throw e;
     } finally {
       clearTimeout(timeout);

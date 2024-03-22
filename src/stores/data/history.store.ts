@@ -9,6 +9,7 @@ import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
 export const useHistoryStore = defineStore('data.history', () => {
+  const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
   const history = ref<TraktHistory[]>([]);
@@ -58,6 +59,12 @@ export const useHistoryStore = defineStore('data.history', () => {
     start = historyStart.value,
     end = historyEnd.value,
   }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
+    if (!firstLoad.value && loading.value) {
+      console.warn('Already fetching history');
+      return;
+    }
+    if (firstLoad.value) firstLoad.value = false;
+
     console.info('Fetching History', { page, limit, start, end });
     loading.value = true;
     const timeout = debounceLoading(history, loadingPlaceholder, !page);
@@ -86,9 +93,8 @@ export const useHistoryStore = defineStore('data.history', () => {
     if (start === historyStart.value && end === historyEnd.value) return;
     historyStart.value = start;
     historyEnd.value = end;
-    const result = fetchHistory({ start, end });
+    await fetchHistory({ start, end });
     await saveState();
-    return result;
   };
 
   const initHistoryStore = async () => {

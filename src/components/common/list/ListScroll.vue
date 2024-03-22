@@ -5,16 +5,17 @@ import { ref, toRefs } from 'vue';
 
 import type { PropType, Ref, Transition } from 'vue';
 
-import type {
-  ListScrollItem,
-  VirtualListProps,
-  VirtualListRef,
-} from '~/components/common/list/ListScroll.model';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
 import ListLoadMore from '~/components/common/list/ListLoadMore.vue';
+import {
+  type ListScrollItem,
+  ListScrollItemType,
+  type VirtualListProps,
+  type VirtualListRef,
+} from '~/components/common/list/ListScroll.model';
 
 const listRef = ref<VirtualListRef>();
 
@@ -72,14 +73,8 @@ const emits = defineEmits<{
       pageSize: number;
     },
   ): void;
-  (
-    e: 'onScrollIntoView',
-    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
-  ): void;
-  (
-    e: 'onScrollOutOfView',
-    event: { item: ListScrollItem; index: number; ref?: HTMLDivElement },
-  ): void;
+  (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
+  (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
 
 defineExpose({
@@ -104,7 +99,9 @@ const onScrollHandler = async (e: Event) => {
     scrolled.value = true;
   }
   if (scrollHeight !== scrollTop + clientHeight) return;
-  if (pagination?.value?.page === pagination?.value?.pageCount) return;
+  if (pagination?.value && pagination?.value?.page === pagination?.value?.pageCount) {
+    return;
+  }
   return emits('onScrollBottom', listRef);
 };
 
@@ -120,6 +117,8 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
 const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number }) => {
   emits('onloadMore', { listRef, ...payload });
 };
+
+const ListScrollItemTypeLocal = ListScrollItemType;
 </script>
 
 <template>
@@ -146,28 +145,29 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item }">
-        <NFlex
-          v-if="item.id === 'load-more'"
-          class="load-more"
-          justify="center"
-          align="center"
-          vertical
-          size="small"
-          :theme-overrides="{ gapSmall: '0' }"
-          :style="`height: ${listOptions?.itemSize ?? 145}px;`"
-        >
-          <ListLoadMore
-            :page="pagination?.page"
-            :page-count="pagination?.pageCount"
-            :page-size="pageSize"
-            @on-load-more="onLoadMore"
-          />
-        </NFlex>
+        <slot v-if="item.type === ListScrollItemTypeLocal.loadMore" name="load-more">
+          <NFlex
+            class="load-more"
+            justify="center"
+            align="center"
+            vertical
+            size="small"
+            :theme-overrides="{ gapSmall: '0' }"
+            :style="`height: ${listOptions?.itemSize ?? 145}px;`"
+          >
+            <ListLoadMore
+              :page="pagination?.page"
+              :page-count="pagination?.pageCount"
+              :page-size="pageSize"
+              @on-load-more="onLoadMore"
+            />
+          </NFlex>
+        </slot>
         <ListItem
           v-else
           :key="item.id"
           :item="item"
-          :index="item.index"
+          :height="listOptions?.itemSize ?? 145"
           :size="items.length"
           :hide-date="hideDate"
           :episode="episode"
@@ -177,7 +177,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"
           @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
         >
-          <slot :item="item" :index="item.index" :loading="item.loading" />
+          <slot :item="item" :loading="item.loading" />
         </ListItem>
       </template>
     </NVirtualList>

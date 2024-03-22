@@ -3,9 +3,9 @@ import { NEllipsis, NFlex, NSkeleton, NTag } from 'naive-ui';
 
 import { computed, defineProps, type PropType, toRefs } from 'vue';
 
-import type { ListScrollItem } from '~/components/common/list/ListScroll.model';
-
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import { type ListScrollItem } from '~/components/common/list/ListScroll.model';
+
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('list-item-panel');
@@ -79,23 +79,23 @@ const tags = computed(
       <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
     <NFlex v-if="date || tags?.length" size="medium" class="tags">
-      <NTag v-if="date" class="tag meta" size="small">
-        <NSkeleton v-if="loading" text style="width: 20%" round />
-        <span>{{ date }} </span>
-      </NTag>
-      <NTag
-        v-for="tag of tags"
-        :key="tag.label"
-        class="tag"
-        :class="{
-          meta: tag.meta,
-        }"
-        size="small"
-        :type="tag.type"
-        :bordered="tag.bordered ?? true"
-      >
-        {{ tag.label }}
-      </NTag>
+      <template v-if="date">
+        <NSkeleton v-if="loading" text style="width: 6%" />
+        <NTag v-else class="tag meta" size="small"> {{ date }} </NTag>
+      </template>
+      <template v-for="tag of tags" :key="tag.label">
+        <NSkeleton v-if="loading" text style="width: 6%" />
+        <NTag
+          v-else
+          class="tag"
+          :class="{ meta: tag.meta }"
+          size="small"
+          :type="tag.type"
+          :bordered="tag.bordered ?? true"
+        >
+          {{ tag.label }}
+        </NTag>
+      </template>
     </NFlex>
   </NFlex>
 </template>

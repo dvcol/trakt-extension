@@ -31,34 +31,36 @@ const today = computed(() => {
 
 const listRef = ref<{ list: VirtualListRef }>();
 
-const scrollToToday = (options?: VirtualListScrollToOptions) => {
-  if (!today.value) return;
+const scrollTo = (options?: VirtualListScrollToOptions, index = today.value?.index) => {
+  if (index === undefined) return;
   if (!listRef.value?.list) return;
 
   listRef.value?.list.scrollTo({
-    top: today.value.index * 145,
+    top: index * 145,
     ...options,
   });
 };
 
+const reload = async () => {
+  const promise = fetchCalendar();
+  // watch for loading changes and recenter
+  const unsub = watch(list, async () => scrollTo());
+  await promise;
+  scrollTo();
+  unsub();
+};
+
 watchUserChange({
-  mounted: () => {
-    const unsub = watch(today, async () => {
-      await listRef.value?.list.$nextTick();
-      scrollToToday();
-      unsub();
-    });
-  },
-  fetch: () => fetchCalendar(),
-  userChange: active => {
+  fetch: reload,
+  userChange: async active => {
     clearState();
-    if (active) fetchCalendar();
+    if (active) await reload();
   },
 });
 
 const scrolledOut = ref(false);
 const scrolledDown = ref(true);
-const onClick = () => scrollToToday({ behavior: 'smooth' });
+const onClick = () => scrollTo({ behavior: 'smooth' });
 const onScrollIntoOutOfView = (_scrolled: boolean, _itemRef?: HTMLDivElement) => {
   scrolledOut.value = _scrolled;
   if (!_scrolled || !_itemRef) return;
@@ -67,6 +69,18 @@ const onScrollIntoOutOfView = (_scrolled: boolean, _itemRef?: HTMLDivElement) =>
 const recenterIcon = computed(() =>
   scrolledDown.value ? IconChevronDown : IconChevronUp,
 );
+
+const onScrollTop = async () => {
+  const first = list.value[0];
+  await fetchCalendar('start');
+
+  listRef.value?.list.scrollTo({
+    top: (list.value.findIndex(item => item.id === first.id) - 1) * 145,
+  });
+};
+const onScrollBottom = async () => {
+  await fetchCalendar('end');
+};
 </script>
 
 <template>
@@ -80,6 +94,8 @@ const recenterIcon = computed(() =>
       :scroll-into-view="today?.id ? [today?.id] : []"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
+      @on-scroll-top="onScrollTop"
+      @on-scroll-bottom="onScrollBottom"
     >
       <template #default>
         <!-- TODO buttons here-->
