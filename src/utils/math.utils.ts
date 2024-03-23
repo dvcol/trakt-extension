@@ -5,13 +5,15 @@
  * @param filter - Optional filter function
  */
 export const arrayMax = <T>(array: Array<T>, prop: keyof T, filter?: (item: T) => boolean) =>
-  array.reduce((prev, current) => {
-    if (filter && !filter(current)) return prev;
-    if (prev[prop] === undefined || (current[prop] !== undefined && current[prop] > prev[prop])) {
-      return current;
-    }
-    return prev;
-  });
+  array?.length
+    ? array?.reduce((prev, current) => {
+        if (filter && !filter(current)) return prev;
+        if (prev[prop] === undefined || (current[prop] !== undefined && current[prop] > prev[prop])) {
+          return current;
+        }
+        return prev;
+      })
+    : undefined;
 
 export const findClosestMatch = (value: number, array?: string[]) => {
   if (!array?.length) return 'original';

@@ -103,8 +103,8 @@ export const useImageStore = defineStore('data.image', () => {
   };
 
   const getKeyAndType = ({ id, season, episode, type }: ImageQuery): { key: string; type: ImageQuery['type'] } => {
-    if (type === 'episode' && season && episode) return { key: `${type}-${id}-${season}-${episode}`, type };
-    if (['episode', 'season'].includes(type) && season) return { key: `${type}-${id}-${season}`, type: 'season' };
+    if (type === 'episode' && season !== undefined && episode !== undefined) return { key: `${type}-${id}-${season}-${episode}`, type };
+    if (['episode', 'season'].includes(type) && season !== undefined) return { key: `${type}-${id}-${season}`, type: 'season' };
     if (['episode', 'season', 'show'].includes(type)) return { key: `${type}-${id}`, type: 'show' };
     return { key: `${type}-${id}`, type };
   };
@@ -118,13 +118,16 @@ export const useImageStore = defineStore('data.image', () => {
       payload = await queueRequest(key, () => TraktService.posters.movie(id));
     } else if (type === 'person') {
       payload = await queueRequest(key, () => TraktService.posters.person(id));
-    } else if (type === 'episode' && season && episode) {
+    } else if (type === 'episode' && season !== undefined && episode !== undefined) {
       payload = await queueRequest(key, () => TraktService.posters.episode(id, season, episode));
-    } else if (type === 'season' && season) {
+    } else if (type === 'season' && season !== undefined) {
       payload = await queueRequest(key, () => TraktService.posters.season(id, season));
     } else if (type === 'show') {
       payload = await queueRequest(key, () => TraktService.posters.show(id));
-    } else throw new Error('Unsupported type or missing parameters for fetchImageUrl');
+    } else {
+      console.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
+      throw new Error('Unsupported type or missing parameters for fetchImageUrl');
+    }
 
     if ((type === 'episode' && !payload.stills?.length) || (type === 'season' && !payload.posters?.length)) {
       const sType = 'show';

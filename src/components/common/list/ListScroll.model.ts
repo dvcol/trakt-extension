@@ -2,6 +2,7 @@ import type { NVirtualList, TagProps, VirtualListInst } from 'naive-ui';
 
 import type { Ref } from 'vue';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
+import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
@@ -30,6 +31,7 @@ export type ListScrollSourceItem = {
   season?: TraktSeason<'short'>;
   episode?: TraktEpisode<'short'>;
   person?: TraktPerson<'short'>;
+  list?: TraktList<'short'>;
 };
 
 export type ListScrollItemTag = {
@@ -46,6 +48,7 @@ export const ListScrollItemType = {
   season: 'season',
   episode: 'episode',
   person: 'person',
+  list: 'list',
   loading: 'loading',
   loadMore: 'load-more',
   placeholder: 'placeholder',

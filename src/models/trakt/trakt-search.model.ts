@@ -1,12 +1,11 @@
 import type { TraktApiExtended, TraktApiParams, TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
-import type { Any, EntityTypes } from '~/models/trakt/trakt-entity.model';
+import type { Any, EntityTypes, Short } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
-import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
 export type TraktSearchField = {
   movie: 'title' | 'overview' | 'aliases' | 'people' | 'translations' | 'tagline';
@@ -53,7 +52,7 @@ type BaseTraktSearchResultItem<I extends EntityTypes = Any> = {
  *
  * @see [search]{@link https://trakt.docs.apiary.io/#reference/search}
  */
-export type TraktSearchResult<T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | Any = Any, I extends EntityTypes = Any> = {
+export type TraktSearchResult<T extends 'movie' | 'show' | 'episode' | 'person' | 'list' | Any = Any, I extends EntityTypes = Short> = {
   score: number;
   type: T extends Any ? 'movie' | 'show' | 'episode' | 'person' | 'list' : T;
 } & (T extends 'movie'
@@ -66,7 +65,7 @@ export type TraktSearchResult<T extends 'movie' | 'show' | 'episode' | 'person' 
         ? Pick<BaseTraktSearchResultItem<I>, 'person'>
         : T extends 'list'
           ? Pick<BaseTraktSearchResultItem<I>, 'list'>
-          : { show: TraktShow<I>; episode: TraktEpisode<I> } | RequireAtLeastOne<Omit<BaseTraktSearchResultItem<I>, 'episode'>>);
+          : Partial<BaseTraktSearchResultItem<I>>);
 
 export type TraktIdLookupType = 'trakt' | 'imdb' | 'tmdb' | 'tvdb';
 

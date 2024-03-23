@@ -261,7 +261,7 @@ export class TraktService {
   }
 
   static async search(query: TraktSearch) {
-    const response = await this.traktClient.search.text(query);
-    return response.json();
+    const response = await this.traktClient.search.text.cached(query, undefined, { retention: CacheRetention.Day });
+    return { data: await response.json(), pagination: response.pagination };
   }
 }

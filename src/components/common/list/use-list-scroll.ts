@@ -51,6 +51,7 @@ export const getDate = <D extends string, T extends ListScrollSourceItemWithDate
   const _date = typeof dateFn === 'function' ? dateFn(media) : media[dateFn];
   if (!_date) return;
   const date: ListScrollItem['date'] = { current: new Date(_date) };
+  if (date.current.toString() === 'Invalid Date') return;
   const previous = typeof dateFn === 'function' ? dateFn(array[index - 1]) : array[index - 1]?.[dateFn];
   if (index > 0 && previous) date.previous = new Date(previous);
   const next = typeof dateFn === 'function' ? dateFn(array[index + 1]) : array[index + 1]?.[dateFn];
@@ -84,9 +85,9 @@ export const getPosterQuery =
     } satisfies ImageQuery;
   };
 
-export const useListScroll = <D extends string, T extends ListScrollSourceItemWithDate<D>>(
+export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
   items: Ref<T[]>,
-  dateFn?: D | ((item: T) => ListScrollSourceItemWithDate<D>[D]),
+  dateFn?: D | ((item: T) => T[D]),
 ) => {
   return computed<ListScrollItem[]>(() => {
     const array = items.value;
@@ -122,7 +123,7 @@ export const useListScrollEvents = (
     pagination,
     loading,
     belowThreshold,
-  }: { data: Ref<ListScrollItem[]>; pagination: Ref<TraktClientPagination | undefined>; loading: Ref<boolean>; belowThreshold: Ref<boolean> },
+  }: { data: Ref<ListScrollItem[]>; pagination: Ref<TraktClientPagination | undefined>; loading: Ref<boolean>; belowThreshold?: Ref<boolean> },
 ) => {
   const onScroll: OnScroll = async listRef => {
     const key = data.value[data.value.length - 1].id;
@@ -142,7 +143,7 @@ export const useListScrollEvents = (
    */
   const onUpdated: OnUpdated = listRef => {
     const { scrollHeight, clientHeight } = listRef.value?.$el?.firstElementChild ?? {};
-    if (scrollHeight !== clientHeight || !belowThreshold.value || loading.value) return;
+    if (scrollHeight !== clientHeight || !belowThreshold?.value || loading.value) return;
 
     return onLoadMore();
   };

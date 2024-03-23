@@ -13,6 +13,7 @@ import { type Component, computed, defineProps, h, ref } from 'vue';
 
 import type { TraktSearchType } from '~/models/trakt/trakt-search.model';
 
+import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconAccount from '~/components/icons/IconAccount.vue';
 import IconChevronDown from '~/components/icons/IconChevronDownSmall.vue';
 import IconChevronUp from '~/components/icons/IconChevronUpSmall.vue';
@@ -22,20 +23,18 @@ import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
 import IconYoutube from '~/components/icons/IconYoutube.vue';
 
+import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.store';
 import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'search');
 
-const DefaultSearchType: TraktSearchType[] = ['episode', 'show', 'movie', 'person'];
+const { search, types, query, pageSize, loading } = useSearchStoreRefs();
 
-const search = ref('');
-const escape = ref(false);
-const types = ref<TraktSearchType[]>(DefaultSearchType);
-const typeOptions = ref<TraktSearchType[]>(DefaultSearchType);
+const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
 
-const debouncedSearch = useDebouncedSearch(search);
+const debouncedSearch = useDebouncedSearch(search, 800);
 
 defineProps({
   parentElement: {
@@ -155,8 +154,7 @@ const hideTooltip = () => {
       placement="bottom"
       trigger="focus"
       :show-arrow="false"
-      ò
-      :disabled="!escape"
+      :disabled="!query"
       :delay="100"
       :to="parentElement"
       @mouseenter="showTooltip()"
@@ -166,13 +164,15 @@ const hideTooltip = () => {
       <NFlex class="list" vertical>
         <NFlex v-for="{ key, value } in specials" :key="key" :cols="2" :wrap="false">
           <span class="value">{{ value }}</span>
-          <span>{{ i18n(`tooltip_${ key }`) }}</span>
+          <span>{{ i18n('tooltip_' + key) }}</span>
         </NFlex>
       </NFlex>
       <template #trigger>
         <NInput
           v-model:value="debouncedSearch"
           class="search-input"
+          :loading="loading"
+          :disabled="loading"
           :placeholder="i18n('search', 'navbar')"
           autosize
           clearable
@@ -184,8 +184,10 @@ const hideTooltip = () => {
       </template>
     </NTooltip>
 
+    <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
     <NSwitch
-      v-model:value="escape"
+      v-if="false"
+      v-model:value="query"
       class="search-switch"
       :theme-overrides="{
         buttonColor: 'var(--search-switch-button-color)',
