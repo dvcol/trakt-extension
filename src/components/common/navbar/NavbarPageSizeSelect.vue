@@ -48,6 +48,7 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
 
 <template>
   <NTooltip
+    class="page-size-tooltip"
     :disabled="open"
     :show-arrow="false"
     placement="bottom"
@@ -75,5 +76,11 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
 <style scoped lang="scss">
 .page-select {
   flex: 0 0 5rem;
+}
+</style>
+
+<style lang="scss">
+.page-size-tooltip.page-size-tooltip {
+  margin-top: 12px;
 }
 </style>

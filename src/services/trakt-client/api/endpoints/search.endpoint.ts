@@ -31,6 +31,8 @@ export const search = {
    * @pagination true - {@link TraktApiPagination}
    * @extended true - {@link TraktApiExtended.Full}
    * @filters common - {@link TraktApiCommonFilters}
+   *
+   * @see [search-text-query]{@link https://trakt.docs.apiary.io/#reference/search/text-query/get-text-query-results}
    */
   text: new TraktClientEndpoint<TraktSearch, TraktSearchResult[]>({
     method: HttpMethod.GET,
@@ -39,7 +41,7 @@ export const search = {
       const _params = { ...params };
       if (params.type) _params.type = TraktApiTransforms.array.toString(params.type);
       if (params.fields) _params.fields = TraktApiTransforms.array.toString(params.fields);
-      if (params.query) _params.query = TraktApiTransforms.search.escape(params.query);
+      if (params.escape && params.query) _params.query = TraktApiTransforms.search.escape(params.query);
       return _params;
     },
     opts: {

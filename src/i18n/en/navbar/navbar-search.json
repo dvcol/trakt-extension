@@ -1,0 +1,86 @@
+{
+  "navbar__search__type__movie": {
+    "message": "Movie",
+    "description": "Label for the movie search type"
+  },
+  "navbar__search__type__show": {
+    "message": "Show",
+    "description": "Label for the show search type"
+  },
+  "navbar__search__type__episode": {
+    "message": "Episode",
+    "description": "Label for the episode search type"
+  },
+  "navbar__search__type__person": {
+    "message": "Person",
+    "description": "Label for the person search type"
+  },
+  "navbar__search__text": {
+    "message": "Text",
+    "description": "Label for the search escape switch text"
+  },
+  "navbar__search__query": {
+    "message": "Query",
+    "description": "Label for the search escape switch query"
+  },
+  "navbar__search__tooltip_header": {
+    "message": "In query mode, some characters have special meanings",
+    "description": "Search query tooltip header"
+  },
+  "navbar__search__tooltip_including": {
+    "message": "Indicates that the term must be present in the result.",
+    "description": "Search query tooltip for the including keywords (+)"
+  },
+  "navbar__search__tooltip_excluding": {
+    "message": "Indicates that the term must not be present in the result.",
+    "description": "Search query tooltip for the excluding keywords (-)"
+  },
+  "navbar__search__tooltip_combining_and": {
+    "message": "Represents the logical AND operator, used to combine conditions.",
+    "description": "Search query tooltip for the combining keywords (&&)"
+  },
+  "navbar__search__tooltip_combining_or": {
+    "message": "Represents the logical OR operator, used to specify alternatives.",
+    "description": "Search query tooltip for the combining keywords (||)"
+  },
+  "navbar__search__tooltip_negating": {
+    "message": "Represents the logical NOT operator, used to exclude results.",
+    "description": "Search query tooltip for the negating keywords (!)"
+  },
+  "navbar__search__tooltip_grouping": {
+    "message": "Used for grouping terms and control the order of evaluation.",
+    "description": "Search query tooltip for the grouping keywords ()"
+  },
+  "navbar__search__tooltip_ranges": {
+    "message": "Used to specify character ranges ([] with boundary, {} without)",
+    "description": "Search query tooltip for the ranges keywords [] {}"
+  },
+  "navbar__search__tooltip_boosting": {
+    "message": "Used for boosting the relevance of a term.",
+    "description": "Search query tooltip for the boosting keywords (^)"
+  },
+  "navbar__search__tooltip_escaping": {
+    "message": "Indicates an exact case sensitive search.",
+    "description": "Search query tooltip for the escaping keywords (\")"
+  },
+  "navbar__search__tooltip_fuzzy": {
+    "message": "Indicates a fuzzy search where matching strategy is relaxed.",
+    "description": "Search query tooltip for the fuzzy match keywords (~)"
+  },
+  "navbar__search__tooltip_wildcard": {
+    "message": "Wildcard operator, matches any number of characters within a term.",
+    "description": "Search query tooltip for the wildcard match keywords (*)"
+  },
+  "navbar__search__tooltip_wildcard_single": {
+    "message": "Wildcard operator, matches any single character within a term.",
+    "description": "Search query tooltip for the wildcard match keywords (*)"
+  },
+  "navbar__search__tooltip_field": {
+    "message": "Separates field names from field values in a query.",
+    "description": "Search query tooltip for the field match keywords (:)"
+  },
+  "navbar__search__tooltip_regex": {
+    "message": "Used for searching using regular expressions.",
+    "description": "Search query tooltip for the regex keywords (/)"
+  }
+}

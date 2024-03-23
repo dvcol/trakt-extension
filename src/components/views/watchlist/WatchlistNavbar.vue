@@ -134,11 +134,11 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
   padding: 0 0.5rem;
 
   .list-select {
-    flex: 0 1 50%;
+    flex: 0 1 40%;
   }
 
   .search-input {
-    flex: 1 1 calc(46% - 5rem);
+    flex: 1 1 calc(56% - 5rem);
   }
 }
 </style>

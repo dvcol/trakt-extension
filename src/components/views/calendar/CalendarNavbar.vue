@@ -57,6 +57,7 @@ const open = ref(false);
       </template>
     </NDatePicker>
     <NTooltip
+      class="calendar-tooltip"
       :show-arrow="false"
       placement="bottom"
       :delay="100"
@@ -97,6 +98,10 @@ const open = ref(false);
 </style>
 
 <style lang="scss">
+.calendar-tooltip.calendar-tooltip {
+  margin-top: 12px;
+}
+
 .n-date-panel {
   margin-top: 12px;
   margin-left: -16px;

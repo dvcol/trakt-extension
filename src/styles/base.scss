@@ -36,6 +36,7 @@
   --primary-color: #63e2b7;
   --primary-color-lighter:  #7fe7c4;
   --primary-color-disabled: #548272;
+  --primary-color-dark: color-mix(in srgb, var(--primary-color) 50%, black 20%);
   --primary-color-focus: rgba(99 226 183 / 10%);
   --color-disabled: rgba(255 255 255 / 6%);
   --text-color-disabled: rgba(255 255 255 / 38%);

@@ -52,7 +52,10 @@ export const routes: RouteRecordRaw[] = [
   {
     path: `/${Route.Search}`,
     name: Route.Search,
-    component: () => import('../components/views/search/SearchComponent.vue'),
+    components: {
+      default: () => import('../components/views/search/SearchComponent.vue'),
+      navbar: () => import('../components/views/search/SearchNavbar.vue'),
+    },
   },
   {
     path: `/${Route.Settings}`,
