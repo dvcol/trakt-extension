@@ -139,7 +139,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     :to="parentElement"
     placement="bottom"
     size="small"
-    class="dropdown"
+    class="settings-dropdown"
     @select="onSelect"
   >
     <NFlex justify="space-around" align="center" :wrap="false">
@@ -175,7 +175,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
 </template>
 
 <style lang="scss">
-.dropdown {
+.settings-dropdown {
   min-width: max(calc(100vw / 6), 8rem);
   max-width: 20rem;
   margin-top: 0.75rem;

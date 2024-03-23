@@ -115,11 +115,11 @@ const root = ref<HTMLElement>();
 }
 
 .n-tooltip.n-tooltip {
-  background: var(--bg-color);
+  background: var(--bg-color-60);
   backdrop-filter: blur(var(--bg-blur));
 
   &:hover {
-    background: var(--bg-color-hover);
+    background: var(--bg-black-90);
   }
 
   @media (prefers-color-scheme: light) {

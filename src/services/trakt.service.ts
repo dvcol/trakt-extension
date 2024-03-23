@@ -6,6 +6,7 @@ import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.mo
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
+import type { TraktSearch } from '~/models/trakt/trakt-search.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
@@ -256,6 +257,11 @@ export class TraktService {
       return response.json();
     }
     const response = await this.traktClient.calendars.my.shows.get.cached(query, { cache: 'reload' });
+    return response.json();
+  }
+
+  static async search(query: TraktSearch) {
+    const response = await this.traktClient.search.text(query);
     return response.json();
   }
 }

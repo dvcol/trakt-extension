@@ -8,30 +8,30 @@ import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { TraktApiCommonFilters } from '~/services/trakt-client/api/trakt-api.filters';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
-export type TraktSearchType = 'movie' | 'show' | 'episode' | 'person' | 'list';
-
 export type TraktSearchField = {
-  movie: 'title' | 'tagline' | 'overview' | 'people' | 'translations' | 'aliases';
-  show: 'title' | 'overview' | 'people' | 'translations' | 'aliases';
+  movie: 'title' | 'overview' | 'aliases' | 'people' | 'translations' | 'tagline';
+  show: 'title' | 'overview' | 'aliases' | 'people' | 'translations';
   episode: 'title' | 'overview';
   person: 'name' | 'biography';
   list: 'name' | 'description';
 };
 
-export type TraktSearchFields = TraktSearchField[keyof TraktSearchField];
+export type TraktSearchType = keyof TraktSearchField;
 
 /**
  * Trakt Search request
  * @see search [Trakt API Documentation](https://trakt.docs.apiary.io/#reference/search)
  */
-export type TraktSearch = TraktApiParams<
+export type TraktSearch<T extends TraktSearchType = TraktSearchType> = TraktApiParams<
   {
     /** Search type */
-    type: TraktSearchType | TraktSearchType[];
+    type: T | T[];
     /** Search all text based fields. */
     query: string;
     /** Filter search on (a) specific field(s) */
-    fields?: TraktSearchFields | TraktSearchFields[];
+    fields?: TraktSearchField[T] | TraktSearchField[T][];
+    /** Escape special characters in the query string. */
+    escape?: boolean;
   },
   typeof TraktApiExtended.Full,
   TraktApiCommonFilters,
