@@ -28,7 +28,7 @@ watchUserChange({
   clear: clearState,
 });
 
-const list = useListScroll<AnyListDateTypes, AnyList>(
+const list = useListScroll<AnyList, AnyListDateTypes>(
   filteredListItems,
   anyListDateGetter,
 );

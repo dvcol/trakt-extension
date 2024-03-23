@@ -80,8 +80,16 @@ const emit = defineEmits<{
 
 const i18n = useI18n('list', 'item');
 
-const { item, noHeader, nextHasHeader, poster, episode, hideDate, scrollIntoView } =
-  toRefs(props);
+const {
+  item,
+  noHeader,
+  nextHasHeader,
+  poster,
+  episode,
+  hideDate,
+  scrollIntoView,
+  height,
+} = toRefs(props);
 
 const onHover = (_hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
@@ -153,6 +161,8 @@ onBeforeUnmount(() => {
   });
 });
 
+const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefined));
+
 const ListScrollItemTypeLocal = ListScrollItemType;
 </script>
 
@@ -167,7 +177,7 @@ const ListScrollItemTypeLocal = ListScrollItemType;
       'show-date': !hideDate,
     }"
     :style="{
-      '--list-item-height': height ? `${height}px` : undefined,
+      '--list-item-height': itemHeight,
     }"
     :data-key="item.id"
     :data-index="item.index"
@@ -222,7 +232,10 @@ const ListScrollItemTypeLocal = ListScrollItemType;
           <NImage
             alt="poster-image"
             class="poster"
-            :class="{ episode, loading: !imgLoaded }"
+            :class="{
+              episode,
+              loading: !imgLoaded,
+            }"
             :object-fit="objectFit"
             width="100%"
             lazy

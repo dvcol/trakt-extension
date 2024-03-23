@@ -14,7 +14,7 @@ import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
-export type AnyList = TraktListItem | TraktWatchlist | TraktFavoriteItem | (TraktCollection & { id: number });
+export type AnyList = TraktListItem | TraktWatchlist | TraktFavoriteItem | (TraktCollection & { id: number | string; type?: 'loading' });
 export type ListType = {
   type: 'list' | 'collaboration' | 'collection' | 'watchlist' | 'favorites';
   name: string;
@@ -196,13 +196,13 @@ export const useListStore = defineStore('data.list', () => {
       }
       const newData = response.data.map((item, index) => {
         if ('id' in item) return item;
-        return { ...item, id: index };
+        return { ...item, id: `${page}-${index}` };
       });
       pagination.value = response.pagination;
-      listItems.value = page ? [...listItems.value.filter(l => l.id >= 0), ...newData] : newData;
+      listItems.value = page ? [...listItems.value.filter(l => l.type !== 'loading'), ...newData] : newData;
     } catch (e) {
       console.error('Failed to fetch list');
-      listItems.value = listItems.value.filter(l => l.id >= 0);
+      listItems.value = listItems.value.filter(l => l.type !== 'loading');
       throw e;
     } finally {
       clearTimeout(timeout);

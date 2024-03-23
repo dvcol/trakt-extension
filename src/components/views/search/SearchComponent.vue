@@ -1,11 +1,66 @@
 <script lang="ts" setup>
-// TODO
+import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
+import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
+import ListScroll from '~/components/common/list/ListScroll.vue';
+
+import {
+  useListScroll,
+  useListScrollEvents,
+} from '~/components/common/list/use-list-scroll';
+import {
+  type SearchResult,
+  useSearchStore,
+  useSearchStoreRefs,
+} from '~/stores/data/search.store';
+import { useI18n } from '~/utils';
+import { watchUserChange } from '~/utils/store.utils';
+
+const i18n = useI18n('search');
+
+const { searchResults, loading, pagination } = useSearchStoreRefs();
+const { fetchSearchResults, clearState } = useSearchStore();
+
+watchUserChange({
+  fetch: fetchSearchResults,
+  clear: clearState,
+});
+
+const list = useListScroll<SearchResult>(searchResults);
+
+const { onScroll } = useListScrollEvents(fetchSearchResults, {
+  data: list,
+  pagination,
+  loading,
+});
+
+const { scrolled, listRef, onClick } = useBackToTop();
 </script>
 
 <template>
-  <span>This is a search component</span>
+  <div class="container">
+    <ListScroll
+      ref="listRef"
+      hide-date
+      :items="list"
+      :loading="loading"
+      :scroll-threshold="300"
+      @on-scroll="scrolled = true"
+      @on-scroll-bottom="onScroll"
+    >
+      <template #default>
+        <!-- TODO buttons here-->
+      </template>
+    </ListScroll>
+
+    <FloatingButton :show="scrolled" @on-click="onClick">
+      {{ i18n('back_to_top', 'common', 'button') }}
+    </FloatingButton>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-// TODO
+.container {
+  width: 100%;
+  height: 100%;
+}
 </style>

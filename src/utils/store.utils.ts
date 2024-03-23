@@ -49,11 +49,11 @@ export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktC
       ),
   );
 
-export const useLoadingPlaceholder = <T>(pageSize: Ref<number>) =>
+export const useLoadingPlaceholder = <T>(pageSize: Ref<number> = ref(50)) =>
   computed<T[]>(() =>
     Array(pageSize.value)
-      .fill({ id: -1 })
-      .map((_, i) => ({ id: -1 * (i + 1) }) as T),
+      .fill({ id: -1, type: 'loading' })
+      .map((_, i) => ({ ..._, id: -1 * (i + 1) }) as T),
   );
 
 export const watchUserChange = ({
@@ -106,7 +106,7 @@ export const watchUserChange = ({
   return { active, user };
 };
 
-export const useDebouncedSearch = (search: Ref<string>) => {
+export const useDebouncedSearch = (search: Ref<string>, delay = 350) => {
   const debouncedSearch = ref(search.value);
 
   watch(search, () => {
@@ -119,7 +119,7 @@ export const useDebouncedSearch = (search: Ref<string>) => {
     debouncedSearch,
     debounce(() => {
       search.value = debouncedSearch.value;
-    }, 350),
+    }, delay),
   );
 
   return debouncedSearch;
