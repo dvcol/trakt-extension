@@ -13,9 +13,6 @@ import { useSearchFilter } from '~/utils/store.utils';
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
   type?: ListScrollItem['type'];
-  premiere?: 'season' | 'series' | 'mid_season';
-  finale?: 'season' | 'series' | 'mid_season';
-  day: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   date: Date;
   tags?: ListScrollItemTag[];
 };
@@ -25,7 +22,7 @@ export const CalendarPlaceholder: Partial<CalendarItem> = {
   type: ListScrollItemType.placeholder,
 } as const;
 
-const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date, day: date.getDay() }) as CalendarItem;
+const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date }) as CalendarItem;
 const getLoadingPlaceholder = (date: Date) =>
   ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.loading }) as CalendarItem;
 
@@ -162,37 +159,16 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         TraktService.calendar({ start_date, days: days.value }, 'movies'),
       ]);
       const newData: CalendarItem[] = [
-        ...(shows as TraktCalendarShow[]).map(show => {
-          const date = new Date(show.first_aired);
-          let premiere: CalendarItem['premiere'] | undefined;
-          if (show.episode.season === 1 && show.episode.number === 1) premiere = 'series';
-          else if (show.episode.number === 1) premiere = 'season';
-          return {
-            ...show,
-            id: show.episode.ids.trakt ?? show.show.ids.trakt,
-            date,
-            day: date.getDay(),
-            premiere,
-            tags: premiere
-              ? [
-                  {
-                    label: premiere,
-                    i18n: ['calendar', 'tag', 'label', 'premiere'],
-                    type: premiere === 'season' ? 'info' : 'primary',
-                  },
-                ]
-              : undefined,
-          } as CalendarItem;
-        }),
-        ...(movies as TraktCalendarMovie[]).map(movie => {
-          const date = new Date(movie.released);
-          return {
-            ...movie,
-            id: movie.movie.ids.trakt,
-            date,
-            day: date.getDay() as CalendarItem['day'],
-          };
-        }),
+        ...(shows as TraktCalendarShow[]).map(show => ({
+          ...show,
+          id: show.episode.ids.trakt ?? show.show.ids.trakt,
+          date: new Date(show.first_aired),
+        })),
+        ...(movies as TraktCalendarMovie[]).map(movie => ({
+          ...movie,
+          id: movie.movie.ids.trakt,
+          date: new Date(movie.released),
+        })),
       ].sort((a, b) => a.date.getTime() - b.date.getTime());
 
       const spacedData = spaceDate(newData, startDate, endDate);

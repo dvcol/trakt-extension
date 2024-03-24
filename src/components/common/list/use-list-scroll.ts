@@ -7,6 +7,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { ImageQuery } from '~/stores/data/image.store';
 
 import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
+import { useI18n } from '~/utils';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
 
@@ -15,8 +16,7 @@ export const getTitle = (media: Pick<ListScrollSourceItem, 'person' | 'movie' | 
   if (media.person) return media.person.name;
   if (media.movie) return media.movie.title;
   if (!media.episode) return media.show?.title;
-  const number = media.episode.number?.toString().padStart(2, '0');
-  return `${media.episode.season}x${number} - ${media.episode.title}`;
+  return media.episode.title;
 };
 
 export const getContent = (media: Pick<ListScrollSourceItem, 'movie' | 'episode' | 'show'>): ListScrollItem['content'] => {
@@ -79,6 +79,38 @@ export const getPosterQuery =
     } satisfies ImageQuery;
   };
 
+const i18n = useI18n('common', 'tag');
+export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, type: ListScrollItem['type']): ListScrollItem['tags'] => {
+  const tags: ListScrollItem['tags'] = [];
+  if (type === 'episode' && item.episode) {
+    let premiere: 'season' | 'series' | 'mid_season' | null = null;
+    // let finale: 'season' | 'series' | 'mid_season';
+    if (item.episode.season === 1 && item.episode.number === 1) premiere = 'series';
+    else if (item.episode.number === 1) premiere = 'season';
+
+    if (premiere) {
+      tags.push({
+        label: premiere,
+        i18n: ['calendar', 'tag', 'label', 'premiere'],
+        type: premiere === 'season' ? 'info' : 'primary',
+      });
+    }
+    tags.push({
+      label: `${i18n('season')} ${item.episode.season.toString().padStart(2, '0')} ${i18n('episode')} ${item.episode.number
+        .toString()
+        .padStart(2, '0')}`,
+      type: 'warning',
+    });
+  } else if (type === 'season' && item.season) {
+    tags.push({
+      label: `Season ${item.season.number.toString().padStart(2, '0')}`,
+      type: 'warning',
+    });
+  }
+
+  return tags;
+};
+
 export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
   items: Ref<T[]>,
   dateFn?: D | ((item: T) => T[D]),
@@ -94,8 +126,11 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
       if (!_item.content) _item.content = getContent(item);
       if (!_item.posterRef) _item.posterRef = ref<string | undefined>(undefined);
       if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
+      if (!_item.tags) _item.tags = getTags(item, _item.type);
+
       _item.date = getDate(item, array, index, dateFn);
       _item.meta = {
+        source: item,
         ids: {
           movie: item.movie?.ids,
           show: item.show?.ids,

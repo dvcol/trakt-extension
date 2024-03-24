@@ -54,7 +54,8 @@ export const ListScrollItemType = {
   placeholder: 'placeholder',
 } as const;
 
-export type ListScrollItem = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- meta is intentionally weakly typed
+export type ListScrollItem<T = Record<string, any>> = {
   id: string | number;
   index: number;
 
@@ -63,11 +64,11 @@ export type ListScrollItem = {
   content?: string;
   tags?: ListScrollItemTag[];
 
-  poster?: ImageStoreMedias;
+  poster?: string;
   posterRef?: Ref<ImageStoreMedias | undefined>;
   getPosterQuery?: () => ImageQuery | undefined;
 
-  meta?: Record<string, unknown>;
+  meta?: T;
 
   loading?: boolean;
   date?: {

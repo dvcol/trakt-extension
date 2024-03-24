@@ -1,0 +1,10 @@
+{
+  "common__tag__season": {
+    "message": "Season",
+    "description": "The label for the season tag"
+  },
+  "common__tag__episode": {
+    "message": "Episode",
+    "description": "The label for the episode tag"
+  }
+}

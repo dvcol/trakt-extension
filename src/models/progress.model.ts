@@ -2,7 +2,7 @@ import type { ListScrollItem, ListScrollSourceItem } from '~/models/list-scroll.
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
-import { getContent, getTitle } from '~/components/common/list/use-list-scroll';
+import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
 
 export type ProgressItem = {
   episodeId: string;
@@ -55,15 +55,16 @@ export const progressToListItem = (progress: ProgressItem): Omit<ListScrollItem,
       current: new Date(progress.firstAired),
     },
     type: progress.type,
+    tags: getTags({ episode }, progress.type),
     meta: {
+      source: progress,
+      episode,
+      show,
       ids: {
         show: progress.showId ? Number(progress.showId) : undefined,
         season: progress.seasonId ? Number(progress.seasonId) : undefined,
         episode: progress.episodeId ? Number(progress.episodeId) : undefined,
       },
-      show,
-      episode,
-      source: progress,
     },
   };
 };
