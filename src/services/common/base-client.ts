@@ -106,13 +106,14 @@ type ClientEndpointCall<Parameter extends RecursiveRecord = Record<string, never
 export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> {
   (param?: Parameter, init?: BaseInit): Promise<ResponseOrTypedResponse<Response>>;
 }
+
 export type BaseCacheOption = { force?: boolean; retention?: number; evictOnError?: boolean };
 
 type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
   param?: Parameter,
   init?: BaseInit,
   cacheOptions?: BaseCacheOption,
-) => Promise<ResponseOrTypedResponse<Response>>;
+) => Promise<TypedResponse<Response>>;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class ClientEndpoint<
@@ -181,6 +182,52 @@ const cloneResponse = <T>(response: TypedResponse<T>, cache?: TypedResponse<T>['
   });
   clone.cache = cache;
   return clone as TypedResponse<T>;
+};
+
+export const getCachedFunction = <
+  Parameter extends RecursiveRecord = RecursiveRecord,
+  ResponseBody = unknown,
+  ResponseType extends Response = Response,
+>(
+  clientFn: ClientEndpointCall<Parameter, ResponseBody>,
+  {
+    key,
+    cache,
+    retention,
+  }: {
+    key: string | ((param?: Parameter, init?: BaseInit) => string);
+    cache: CacheStore<ResponseType>;
+    retention?: BaseTemplateOptions['cache'];
+  },
+): ClientEndpointCache<Parameter, ResponseBody> => {
+  return async (param, init, cacheOptions) => {
+    const _key = typeof key === 'function' ? key(param, init) : key;
+    const cached = await cache.get(_key);
+    if (cached && !cacheOptions?.force) {
+      let templateRetention = typeof retention === 'number' ? retention : undefined;
+      if (typeof retention === 'object') templateRetention = retention.retention;
+      const _retention = cacheOptions?.retention ?? templateRetention ?? cache.retention;
+      if (!_retention) return cloneResponse<ResponseType>(cached.value, { previous: cached, current: cached, isCache: true });
+      const expires = cached.cachedAt + _retention;
+      if (expires > Date.now()) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
+    }
+
+    try {
+      const result: TypedResponse<ResponseBody> = await clientFn(param, init);
+      const cacheEntry: CacheStoreEntity<ResponseType> = {
+        cachedAt: Date.now(),
+        value: cloneResponse(result) as ResponseType,
+      };
+      await cache.set(_key, cacheEntry);
+      result.cache = { previous: cached, current: cacheEntry, isCache: false };
+      return result;
+    } catch (error) {
+      if (cacheOptions?.evictOnError ?? (typeof retention === 'object' ? retention?.evictOnError : undefined) ?? cache.evictOnError) {
+        cache.delete(_key);
+      }
+      throw error;
+    }
+  };
 };
 
 /**
@@ -285,39 +332,11 @@ export abstract class BaseClient<
       if (isApiTemplate(template)) {
         const fn: ClientEndpointCall = (param, init) => this._call(template, param, init);
 
-        const cachedFn: ClientEndpointCache = async (param, init, cacheOptions) => {
-          const key = JSON.stringify({ template: template.config, param, init });
-
-          const cached = await this._cache.get(key);
-          if (cached && !cacheOptions?.force) {
-            let templateRetention = typeof template.opts?.cache === 'number' ? template.opts.cache : undefined;
-            if (typeof template.opts?.cache === 'object') templateRetention = template.opts.cache.retention;
-            const retention = cacheOptions?.retention ?? templateRetention ?? this._cache.retention;
-            if (!retention) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
-            const expires = cached.cachedAt + retention;
-            if (expires > Date.now()) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
-          }
-
-          try {
-            const result = await fn(param, init);
-            const cacheEntry = {
-              cachedAt: Date.now(),
-              value: cloneResponse(result) as ResponseType,
-            };
-            await this._cache.set(key, cacheEntry);
-            result.cache = { previous: cached, current: cacheEntry, isCache: false };
-            return result;
-          } catch (error) {
-            if (
-              cacheOptions?.evictOnError ??
-              (typeof template.opts?.cache === 'object' ? template.opts?.cache?.evictOnError : undefined) ??
-              this._cache.evictOnError
-            ) {
-              this._cache.delete(key);
-            }
-            throw error;
-          }
-        };
+        const cachedFn: ClientEndpointCache = getCachedFunction(fn, {
+          key: (param: unknown, init: unknown) => JSON.stringify({ template: template.config, param, init }),
+          cache: this._cache,
+          retention: template.opts?.cache,
+        });
 
         const parseUrl = (param: Record<string, unknown> = {}) => {
           const _params = template.transform?.(param) ?? param;

@@ -1,37 +1,20 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-
-import type { ListScrollItem } from '~/models/list-scroll.model';
+import { onMounted } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
-import { progressToListItem } from '~/models/progress.model';
-import { TraktService } from '~/services/trakt.service';
+
+import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('progress');
 
-const loading = ref(true);
-
-const fetchProgress = async (): Promise<ListScrollItem[]> => {
-  loading.value = true;
-  try {
-    const items = await TraktService.progress();
-    return items.map((item, index) => ({ ...progressToListItem(item), index }));
-  } catch (error) {
-    console.error(error);
-    throw error;
-  } finally {
-    loading.value = false;
-  }
-};
-
-const list = ref<ListScrollItem[]>([]);
+const { progress, loading } = useProgressStoreRefs();
+const { fetchProgress } = useProgressStore();
 
 onMounted(async () => {
-  list.value = await fetchProgress();
-  console.info('list', list.value);
+  await fetchProgress();
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
@@ -39,7 +22,15 @@ const { scrolled, listRef, onClick } = useBackToTop();
 
 <template>
   <div class="container">
-    <ListScroll ref="listRef" :loading="loading" :items="list" episode hide-date>
+    <ListScroll
+      ref="listRef"
+      :loading="loading"
+      :items="progress"
+      episode
+      hide-date
+      @on-scroll="scrolled = true"
+      @on-scroll-top="scrolled = false"
+    >
       <template #default>
         <!-- TODO buttons here-->
       </template>

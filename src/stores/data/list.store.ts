@@ -9,12 +9,17 @@ import type { TraktListItem } from '~/models/trakt/trakt-list.model';
 
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
+import { ListScrollItemType } from '~/models/list-scroll.model';
 import { TraktService } from '~/services/trakt.service';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
-export type AnyList = TraktListItem | TraktWatchlist | TraktFavoriteItem | (TraktCollection & { id: number | string; type?: 'loading' });
+export type AnyList =
+  | TraktListItem
+  | TraktWatchlist
+  | TraktFavoriteItem
+  | (TraktCollection & { id: number | string; type?: typeof ListScrollItemType.loading });
 export type ListType = {
   type: 'list' | 'collaboration' | 'collection' | 'watchlist' | 'favorites';
   name: string;
@@ -199,10 +204,10 @@ export const useListStore = defineStore('data.list', () => {
         return { ...item, id: `${page}-${index}` };
       });
       pagination.value = response.pagination;
-      listItems.value = page ? [...listItems.value.filter(l => l.type !== 'loading'), ...newData] : newData;
+      listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
     } catch (e) {
       console.error('Failed to fetch list');
-      listItems.value = listItems.value.filter(l => l.type !== 'loading');
+      listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.loading);
       throw e;
     } finally {
       clearTimeout(timeout);

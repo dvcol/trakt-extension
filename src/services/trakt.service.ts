@@ -12,6 +12,7 @@ import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.mode
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
+import { getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
@@ -266,14 +267,37 @@ export class TraktService {
     return { data: await response.json(), pagination: response.pagination };
   }
 
+  private static cachedProgress = getCachedFunction(
+    async () => {
+      const response = await fetch('https://trakt.tv/dashboard/on_deck', {
+        credentials: 'include',
+      });
+
+      const htmlString = await response.text();
+      const htmlDoc = new DOMParser().parseFromString(htmlString, 'text/html');
+      const data = Array.from(htmlDoc.querySelectorAll<HTMLAnchorElement>('a[class="watch"]')).map(
+        a => ({ ...a.dataset }) as unknown as ProgressItem,
+      );
+
+      return new Response(JSON.stringify(data)) as TypedResponse<ProgressItem[]>;
+    },
+    {
+      cache: this.caches.trakt,
+      retention: CacheRetention.Day,
+      key: JSON.stringify({
+        template: {
+          method: 'GET',
+          url: 'https://trakt.tv/dashboard/on_deck',
+        },
+        init: {
+          credentials: 'include',
+        },
+      }),
+    },
+  );
+
   static async progress() {
-    const response = await fetch('https://trakt.tv/dashboard/on_deck', {
-      credentials: 'include',
-    });
-
-    const htmlString = await response.text();
-    const htmlDoc = new DOMParser().parseFromString(htmlString, 'text/html');
-
-    return Array.from(htmlDoc.querySelectorAll<HTMLAnchorElement>('a[class="watch"]')).map(a => ({ ...a.dataset }) as unknown as ProgressItem);
+    const response = await this.cachedProgress();
+    return response.json();
   }
 }

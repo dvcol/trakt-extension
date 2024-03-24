@@ -44,7 +44,6 @@ const { scrolled, listRef, onClick } = useBackToTop();
       :loading="loading"
       :pagination="pagination"
       :page-size="pageSize"
-      :scroll-threshold="300"
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
