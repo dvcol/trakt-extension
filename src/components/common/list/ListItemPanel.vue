@@ -79,10 +79,6 @@ const tags = computed(
       <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
     </div>
     <NFlex v-if="date || tags?.length" size="medium" class="tags">
-      <template v-if="date">
-        <NSkeleton v-if="loading" text style="width: 6%" />
-        <NTag v-else class="tag meta" size="small"> {{ date }} </NTag>
-      </template>
       <template v-for="tag of tags" :key="tag.label">
         <NSkeleton v-if="loading" text style="width: 6%" />
         <NTag
@@ -91,9 +87,15 @@ const tags = computed(
           :class="{ meta: tag.meta }"
           size="small"
           :type="tag.type"
-          :bordered="tag.bordered ?? true"
+          :bordered="tag.bordered ?? false"
         >
           {{ tag.label }}
+        </NTag>
+      </template>
+      <template v-if="date">
+        <NSkeleton v-if="loading" text style="width: 6%" />
+        <NTag v-else class="tag" size="small" type="default" :bordered="false">
+          {{ date }}
         </NTag>
       </template>
     </NFlex>
