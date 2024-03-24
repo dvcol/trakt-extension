@@ -17,6 +17,7 @@ import { LoadingBarService } from '~/services/loading-bar.service';
 import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
 import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
+import { isResponseOk } from '~/services/trakt-client/clients/base-trakt-client';
 import { TraktClient } from '~/services/trakt-client/clients/trakt-client';
 import { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoints';
 import { TvdbClient } from '~/services/tvdb-client/clients/tvdb-client';
@@ -273,6 +274,8 @@ export class TraktService {
         credentials: 'include',
       });
 
+      isResponseOk(response);
+
       const htmlString = await response.text();
       const htmlDoc = new DOMParser().parseFromString(htmlString, 'text/html');
       const data = Array.from(htmlDoc.querySelectorAll<HTMLAnchorElement>('a[class="watch"]')).map(
@@ -298,6 +301,7 @@ export class TraktService {
 
   static async progress() {
     const response = await this.cachedProgress();
+    if (!response.ok) throw response;
     return response.json();
   }
 }
