@@ -63,6 +63,7 @@ export const useProgressStore = defineStore('data.progress', () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const progress = ref<ProgressListItem[]>([]);
+  const loggedOut = ref(false);
 
   const clearState = () => {
     progress.value = [];
@@ -84,6 +85,13 @@ export const useProgressStore = defineStore('data.progress', () => {
       const items = await TraktService.progress();
       progress.value = items.map(progressToListItem);
     } catch (error) {
+      if (error instanceof Response && error.status === 401) {
+        console.warn('User is not logged in', error);
+        loggedOut.value = true;
+        progress.value = [];
+        loading.value = false;
+        return;
+      }
       console.error(error);
       progress.value = [];
       throw error;
@@ -93,7 +101,7 @@ export const useProgressStore = defineStore('data.progress', () => {
     }
   };
 
-  return { loading, progress, fetchProgress, clearState };
+  return { loading, progress, fetchProgress, clearState, loggedOut };
 });
 
 export const useProgressStoreRefs = () => storeToRefs(useProgressStore());
