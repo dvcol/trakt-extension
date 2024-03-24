@@ -117,8 +117,6 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
 const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number }) => {
   emits('onloadMore', { listRef, ...payload });
 };
-
-const ListScrollItemTypeLocal = ListScrollItemType;
 </script>
 
 <template>
@@ -145,7 +143,7 @@ const ListScrollItemTypeLocal = ListScrollItemType;
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item }">
-        <slot v-if="item.type === ListScrollItemTypeLocal.loadMore" name="load-more">
+        <slot v-if="item.type === ListScrollItemType.loadMore" name="load-more">
           <NFlex
             class="load-more"
             justify="center"

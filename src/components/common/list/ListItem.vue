@@ -126,6 +126,9 @@ const onLoad = () => {
   imgLoaded.value = true;
 };
 
+const transition = ref(false);
+const timeout = ref();
+
 const getPosters = (_item: ListScrollItem) => {
   imgLoaded.value = false;
   if (_item.posterRef?.value) return;
@@ -136,6 +139,10 @@ const getPosters = (_item: ListScrollItem) => {
     query.type = 'show';
     delete query.episode;
   }
+  setTimeout(() => {
+    if (resolvedPoster.value) return;
+    transition.value = true;
+  }, 100);
   getImageUrl(query, 300, _item.posterRef);
 };
 
@@ -152,6 +159,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  clearTimeout(timeout.value);
   if (!scrollIntoView.value) return;
   emit('onScrollOutOfView', {
     item: item?.value,
@@ -160,8 +168,6 @@ onBeforeUnmount(() => {
 });
 
 const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefined));
-
-const ListScrollItemTypeLocal = ListScrollItemType;
 </script>
 
 <template>
@@ -222,7 +228,7 @@ const ListScrollItemTypeLocal = ListScrollItemType;
           </template>
         </NFlex>
 
-        <slot v-if="item.type === ListScrollItemTypeLocal.placeholder">
+        <slot v-if="item.type === ListScrollItemType.placeholder">
           <NFlex class="placeholder" align="center" justify="center" :wrap="false">
             <NEmpty size="large" :description="i18n('placeholder_empty')" />
           </NFlex>
@@ -234,12 +240,14 @@ const ListScrollItemTypeLocal = ListScrollItemType;
             :class="{
               episode,
               loading: !imgLoaded,
+              transition,
             }"
             :object-fit="objectFit"
             width="100%"
             lazy
             preview-disabled
             :src="resolvedPoster"
+            :fallback-src="PosterPlaceholder"
             :on-load="onLoad"
           />
           <NImage
@@ -358,12 +366,18 @@ const ListScrollItemTypeLocal = ListScrollItemType;
     width: var(--poster-width, 5.3125rem);
     height: var(--poster-height, 8rem);
     opacity: 1;
-    transition: opacity 0.5s var(--n-bezier);
     will-change: opacity;
 
     &.loading {
       opacity: 0;
-      transition: opacity 0.1s;
+    }
+
+    &.transition {
+      transition: opacity 0.5s var(--n-bezier);
+
+      &.loading {
+        transition: opacity 0.1s;
+      }
     }
 
     &.episode {
