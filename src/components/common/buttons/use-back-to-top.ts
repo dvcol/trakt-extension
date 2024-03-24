@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import type { VirtualListRef } from '~/components/common/list/ListScroll.model';
+import type { VirtualListRef } from '~/models/list-scroll.model';
 
 export const useBackToTop = () => {
   const listRef = ref<{ list: VirtualListRef }>();

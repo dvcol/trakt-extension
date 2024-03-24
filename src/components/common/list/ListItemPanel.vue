@@ -4,7 +4,7 @@ import { NEllipsis, NFlex, NSkeleton, NTag } from 'naive-ui';
 import { computed, defineProps, type PropType, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
-import { type ListScrollItem } from '~/components/common/list/ListScroll.model';
+import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { useI18n } from '~/utils';
 

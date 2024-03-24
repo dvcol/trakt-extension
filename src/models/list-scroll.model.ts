@@ -63,7 +63,8 @@ export type ListScrollItem = {
   content?: string;
   tags?: ListScrollItemTag[];
 
-  poster?: Ref<ImageStoreMedias | undefined>;
+  poster?: ImageStoreMedias;
+  posterRef?: Ref<ImageStoreMedias | undefined>;
   getPosterQuery?: () => ImageQuery | undefined;
 
   meta?: Record<string, unknown>;

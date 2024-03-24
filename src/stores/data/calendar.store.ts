@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 
 import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt-calendar.model';
 
-import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/components/common/list/ListScroll.model';
+import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
 
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';

@@ -6,17 +6,11 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import type { ImageQuery } from '~/stores/data/image.store';
 
-import {
-  type ListScrollItem,
-  ListScrollItemType,
-  type ListScrollSourceItem,
-  type OnScroll,
-  type OnUpdated,
-} from '~/components/common/list/ListScroll.model';
+import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
 
-export const getTitle = (media: ListScrollSourceItem): ListScrollItem['title'] => {
+export const getTitle = (media: Pick<ListScrollSourceItem, 'person' | 'movie' | 'episode' | 'show'>): ListScrollItem['title'] => {
   if (!media) return;
   if (media.person) return media.person.name;
   if (media.movie) return media.movie.title;
@@ -25,7 +19,7 @@ export const getTitle = (media: ListScrollSourceItem): ListScrollItem['title'] =
   return `${media.episode.season}x${number} - ${media.episode.title}`;
 };
 
-export const getContent = (media: ListScrollSourceItem): ListScrollItem['content'] => {
+export const getContent = (media: Pick<ListScrollSourceItem, 'movie' | 'episode' | 'show'>): ListScrollItem['content'] => {
   if (!media) return;
   if (media.movie) return media.movie.year?.toString();
   if (!media.episode) return media.show?.year?.toString();
@@ -98,7 +92,7 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
       if (!_item.type) _item.type = getType(item);
       if (!_item.title) _item.title = getTitle(item);
       if (!_item.content) _item.content = getContent(item);
-      if (!_item.poster) _item.poster = ref<string | undefined>(undefined);
+      if (!_item.posterRef) _item.posterRef = ref<string | undefined>(undefined);
       if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
       _item.date = getDate(item, array, index, dateFn);
       _item.meta = {

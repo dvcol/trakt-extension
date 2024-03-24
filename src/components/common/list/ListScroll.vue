@@ -15,7 +15,7 @@ import {
   ListScrollItemType,
   type VirtualListProps,
   type VirtualListRef,
-} from '~/components/common/list/ListScroll.model';
+} from '~/models/list-scroll.model';
 
 const listRef = ref<VirtualListRef>();
 

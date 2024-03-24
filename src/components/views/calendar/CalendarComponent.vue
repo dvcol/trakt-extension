@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue';
 import type {
   VirtualListRef,
   VirtualListScrollToOptions,
-} from '~/components/common/list/ListScroll.model';
+} from '~/models/list-scroll.model';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';

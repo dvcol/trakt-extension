@@ -9,7 +9,7 @@ import {
   type SelectOption,
 } from 'naive-ui';
 
-import { type Component, computed, defineProps, h, ref } from 'vue';
+import { type Component, computed, defineProps, h, onActivated, ref } from 'vue';
 
 import type { TraktSearchType } from '~/models/trakt/trakt-search.model';
 
@@ -127,6 +127,12 @@ const hideTooltip = () => {
   tooltipHover.value = false;
   clearTimeout(timeout.value);
 };
+
+const inputRef = ref();
+
+onActivated(() => {
+  inputRef.value?.focus();
+});
 </script>
 
 <template>
@@ -169,6 +175,7 @@ const hideTooltip = () => {
       </NFlex>
       <template #trigger>
         <NInput
+          ref="inputRef"
           v-model:value="debouncedSearch"
           class="search-input"
           :loading="loading"
