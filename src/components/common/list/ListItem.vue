@@ -14,10 +14,7 @@ import {
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
-import {
-  type ListScrollItem,
-  ListScrollItemType,
-} from '~/components/common/list/ListScroll.model';
+import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 
 import { useImageStore } from '~/stores/data/image.store';
 import { Colors } from '~/styles/colors.style';
@@ -111,7 +108,8 @@ const { getImageUrl } = useImageStore();
 
 const resolvedPoster = computed(() => {
   if (poster?.value) return poster.value;
-  const image = item.value.poster?.value;
+  if (item.value.poster) return item.value.poster;
+  const image = item.value.posterRef?.value;
   if (!image) return;
   if (typeof image === 'string') return image;
   if (episode.value && 'backdrop' in image) return image.backdrop;
@@ -130,15 +128,15 @@ const onLoad = () => {
 
 const getPosters = (_item: ListScrollItem) => {
   imgLoaded.value = false;
-  if (_item.poster?.value) return;
-  if (!_item.poster) return;
+  if (_item.posterRef?.value) return;
+  if (!_item.posterRef) return;
   const query = _item.getPosterQuery?.();
   if (!query) return;
   if (!episode.value && _item.type === 'episode') {
     query.type = 'show';
     delete query.episode;
   }
-  getImageUrl(query, 300, _item.poster);
+  getImageUrl(query, 300, _item.posterRef);
 };
 
 watch(item, getPosters, { immediate: true, flush: 'post' });

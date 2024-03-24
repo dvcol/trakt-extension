@@ -1,3 +1,4 @@
+import type { ProgressItem } from '~/models/progress.model';
 import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
@@ -263,5 +264,16 @@ export class TraktService {
   static async search(query: TraktSearch) {
     const response = await this.traktClient.search.text.cached(query, undefined, { retention: CacheRetention.Day });
     return { data: await response.json(), pagination: response.pagination };
+  }
+
+  static async progress() {
+    const response = await fetch('https://trakt.tv/dashboard/on_deck', {
+      credentials: 'include',
+    });
+
+    const htmlString = await response.text();
+    const htmlDoc = new DOMParser().parseFromString(htmlString, 'text/html');
+
+    return Array.from(htmlDoc.querySelectorAll<HTMLAnchorElement>('a[class="watch"]')).map(a => ({ ...a.dataset }) as unknown as ProgressItem);
   }
 }

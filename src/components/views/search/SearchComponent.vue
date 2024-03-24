@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { onActivated } from 'vue';
+
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
@@ -13,16 +15,14 @@ import {
   useSearchStoreRefs,
 } from '~/stores/data/search.store';
 import { useI18n } from '~/utils';
-import { watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('search');
 
 const { searchResults, loading, pagination } = useSearchStoreRefs();
-const { fetchSearchResults, clearState } = useSearchStore();
+const { fetchSearchResults } = useSearchStore();
 
-watchUserChange({
-  fetch: fetchSearchResults,
-  clear: clearState,
+onActivated(async () => {
+  await fetchSearchResults();
 });
 
 const list = useListScroll<SearchResult>(searchResults);
