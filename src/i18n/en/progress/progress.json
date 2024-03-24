@@ -1,0 +1,10 @@
+{
+  "progress__logout__cookies": {
+    "message": "This view uses session cookies.",
+    "description": "Logout message for cookie-based auth sessions."
+  },
+  "progress__logout__trakt": {
+    "message": "Please sign into trakt.tv directly.",
+    "description": "Login message for trakt.tv auth sessions."
+  }
+}

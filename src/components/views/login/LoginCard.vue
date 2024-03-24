@@ -5,6 +5,8 @@ import type { ButtonProps } from 'naive-ui';
 
 import type { PropType } from 'vue';
 
+import Logo from '~/assets/logo.svg';
+
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('login');
@@ -45,13 +47,7 @@ const emits = defineEmits<{
   <NCard class="card" :title="title ?? i18n('title')" hoverable>
     <template v-if="!hideLogo" #cover>
       <div class="spacer" />
-      <img
-        alt="Vue logo"
-        class="logo"
-        :src="logo ?? '/assets/logo.svg'"
-        width="125"
-        height="125"
-      />
+      <img alt="Vue logo" class="logo" :src="logo ?? Logo" width="125" height="125" />
     </template>
 
     <NFlex class="content" vertical justify="space-evenly">
