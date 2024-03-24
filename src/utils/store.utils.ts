@@ -3,6 +3,7 @@ import { computed, onActivated, onDeactivated, onMounted, ref, type Ref, watch }
 import type { ListScrollSourceItemWithDate } from '~/components/common/list/use-list-scroll';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
+import { ListScrollItemType } from '~/models/list-scroll.model';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { debounce } from '~/utils/debounce.utils';
 
@@ -52,7 +53,7 @@ export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktC
 export const useLoadingPlaceholder = <T>(pageSize: Ref<number> = ref(50)) =>
   computed<T[]>(() =>
     Array(pageSize.value)
-      .fill({ id: -1, type: 'loading' })
+      .fill({ id: -1, type: ListScrollItemType.loading, loading: true })
       .map((_, i) => ({ ..._, id: -1 * (i + 1) }) as T),
   );
 

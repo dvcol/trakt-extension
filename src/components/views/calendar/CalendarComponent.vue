@@ -105,7 +105,6 @@ const onScrollBottom = async () => {
       ref="listRef"
       :items="list"
       :loading="loading"
-      :scroll-threshold="300"
       episode
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"

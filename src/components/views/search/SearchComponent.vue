@@ -43,8 +43,8 @@ const { scrolled, listRef, onClick } = useBackToTop();
       hide-date
       :items="list"
       :loading="loading"
-      :scroll-threshold="300"
       @on-scroll="scrolled = true"
+      @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
     >
       <template #default>

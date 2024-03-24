@@ -55,7 +55,7 @@ const props = defineProps({
   scrollThreshold: {
     type: Number,
     required: false,
-    default: 0,
+    default: 300,
   },
 });
 

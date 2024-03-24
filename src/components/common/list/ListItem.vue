@@ -179,6 +179,7 @@ const ListScrollItemTypeLocal = ListScrollItemType;
     }"
     :data-key="item.id"
     :data-index="item.index"
+    :data-type="item.type"
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : color"
     @mouseenter="onHover(true)"

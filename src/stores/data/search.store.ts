@@ -2,9 +2,10 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { ref, watch } from 'vue';
 
-import type { ListScrollItem } from '~/models/list-scroll.model';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktSearchResult, TraktSearchType } from '~/models/trakt/trakt-search.model';
+
+import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
@@ -88,10 +89,10 @@ export const useSearchStore = defineStore('data.search', () => {
       }));
 
       pagination.value = response.pagination;
-      searchResults.value = page ? [...searchResults.value.filter(s => s.type !== 'loading'), ...data] : data;
+      searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.loading), ...data] : data;
     } catch (e) {
       console.error('Failed to fetch history');
-      searchResults.value = searchResults.value.filter(s => s.type !== 'loading');
+      searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.loading);
       throw e;
     } finally {
       clearTimeout(timeout);

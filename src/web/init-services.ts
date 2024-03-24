@@ -3,6 +3,7 @@ import { useAppStateStore } from '~/stores/app-state.store';
 import { useHistoryStore } from '~/stores/data/history.store';
 import { useImageStore } from '~/stores/data/image.store';
 import { useListsStore, useListStore } from '~/stores/data/list.store';
+import { useSearchStore } from '~/stores/data/search.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { initLocalI18n } from '~/utils';
@@ -26,6 +27,7 @@ export const initServices = async () => {
     useListsStore().initListsStore(),
     useListStore().initListStore(),
     useHistoryStore().initHistoryStore(),
+    useSearchStore().restoreState(),
   ]);
 
   setAppReady(true);

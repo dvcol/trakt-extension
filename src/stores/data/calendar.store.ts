@@ -176,13 +176,13 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       if (mode === 'reload') {
         calendar.value = [...spacedData];
       } else if (mode === 'start') {
-        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== 'loading')];
+        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== ListScrollItemType.loading)];
       } else if (mode === 'end') {
-        calendar.value = [...calendar.value.filter(c => c.type !== 'loading'), ...spacedData];
+        calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
     } catch (e) {
       console.error('Failed to fetch history');
-      calendar.value = calendar.value.filter(c => c.type !== 'loading');
+      calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
       throw e;
     } finally {
       clearTimeout(timeout);
