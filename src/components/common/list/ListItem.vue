@@ -67,6 +67,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  showProgress: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -261,7 +266,12 @@ const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefin
             :src="PosterPlaceholder"
             :fallback-src="PosterPlaceholder"
           />
-          <ListItemPanel :item="item" :loading="loading" :hide-date="hideDate">
+          <ListItemPanel
+            :item="item"
+            :loading="loading"
+            :hide-date="hideDate"
+            :show-progress="showProgress"
+          >
             <slot :item="item" :loading="loading" />
           </ListItemPanel>
         </NFlex>

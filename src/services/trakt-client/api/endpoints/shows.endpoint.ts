@@ -509,12 +509,12 @@ export const shows = {
      *
      * @auth required
      *
-     * @see [get-show-watched-progress]{@link https://trakt.docs.apiary.io/#reference/shows/collection-progress/get-show-watched-progress}
+     * @see [get-show-watched-progress]{@link https://trakt.docs.apiary.io/#reference/shows/watched-progress/get-show-watched-progress}
      */
     watched: new TraktClientEndpoint<
       {
         /** Trakt ID, Trakt slug, or IMDB ID */
-        id: string;
+        id: number | string;
         /** include any hidden seasons */
         hidden?: boolean;
         /** include specials as season 0 */

@@ -1,19 +1,19 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
-import type { ListScrollItem, ListScrollSourceItem } from '~/models/list-scroll.model';
-
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
 import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
+import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-scroll.model';
 import { type ProgressItem } from '~/models/progress.model';
 import { TraktService } from '~/services/trakt.service';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
-type ProgressListItem = Omit<ListScrollItem, 'posterRef'>;
+type ProgressListItem = Omit<ListScrollItem, 'posterRef' | 'progressRef'>;
 
 const titleRegex = /(.*)\s\d+x\d+\s"([^"]+)"/;
+
 export const progressToListItem = (progress: ProgressItem, index: number): ProgressListItem => {
   const match = titleRegex.exec(progress.fullTitle);
 
@@ -41,6 +41,7 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     title: getTitle({ show, episode }),
     content: getContent({ show, episode }),
     poster,
+    getProgressQuery: () => show?.ids?.trakt,
     date: {
       current: new Date(progress.firstAired),
     },
@@ -78,22 +79,23 @@ export const useProgressStore = defineStore('data.progress', () => {
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching progress', progress);
+    console.info('Fetching progress');
     loading.value = true;
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
-      const items = await TraktService.progress();
+      const items = await TraktService.progress.onDeck();
       progress.value = items.map(progressToListItem);
     } catch (error) {
+      progress.value = [];
+      loading.value = false;
+
       if (error instanceof Response && error.status === 401) {
         console.warn('User is not logged in', error);
         loggedOut.value = true;
-        progress.value = [];
-        loading.value = false;
         return;
       }
+
       console.error(error);
-      progress.value = [];
       throw error;
     } finally {
       clearTimeout(timeout);

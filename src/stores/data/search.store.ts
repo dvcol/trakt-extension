@@ -100,25 +100,28 @@ export const useSearchStore = defineStore('data.search', () => {
     }
   };
 
-  watch(search, () => fetchSearchResults());
+  const initSearchStore = async () => {
+    await restoreState();
 
-  watch(pageSize, async () => {
-    await fetchSearchResults();
-    await saveState();
-  });
+    watch(search, () => fetchSearchResults());
 
-  watch(types, async () => {
-    await fetchSearchResults();
-    await saveState();
-  });
+    watch(pageSize, async () => {
+      await fetchSearchResults();
+      await saveState();
+    });
+
+    watch(types, async () => {
+      await fetchSearchResults();
+      await saveState();
+    });
+  };
 
   return {
     types,
     query,
     search,
     clearState,
-    saveState,
-    restoreState,
+    initSearchStore,
     fetchSearchResults,
     searchResults,
     loading,

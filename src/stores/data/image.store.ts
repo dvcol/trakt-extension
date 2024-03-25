@@ -54,7 +54,7 @@ export const useImageStore = defineStore('data.image', () => {
   const tmdbConfig = ref<TmdbConfiguration>();
   const images = reactive<ImageStore>(EmptyImageStore);
 
-  const syncSaveImageStore = debounce(
+  const saveState = debounce(
     (_images = images) =>
       Promise.all([
         storage.local.set(`data.image-store.movie`, _images.movie),
@@ -66,7 +66,7 @@ export const useImageStore = defineStore('data.image', () => {
     1000,
   );
 
-  const syncRestoreImageStore = async (seed?: Partial<ImageStore>) => {
+  const restoreState = async (seed?: Partial<ImageStore>) => {
     const [movie, show, season, episode, person] = await Promise.all([
       storage.local.get<Record<string, string>>(`data.image-store.movie`),
       storage.local.get<Record<string, string>>(`data.image-store.show`),
@@ -87,7 +87,7 @@ export const useImageStore = defineStore('data.image', () => {
   const initImageStore = async (config?: TmdbConfiguration) => {
     if (!config) config = await TraktService.tmdbConfiguration();
     tmdbConfig.value = config;
-    return syncRestoreImageStore();
+    return restoreState();
   };
 
   const imageSizes = computed(() => ({
@@ -145,7 +145,7 @@ export const useImageStore = defineStore('data.image', () => {
       if (!image.poster && !image.backdrop) return;
       images[type][key] = image;
 
-      syncSaveImageStore().catch(err => console.error('Failed to save image store', err));
+      saveState().catch(err => console.error('Failed to save image store', err));
       return { image, key, type };
     }
 
@@ -160,7 +160,7 @@ export const useImageStore = defineStore('data.image', () => {
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
-    syncSaveImageStore().catch(err => console.error('Failed to save image store', err));
+    saveState().catch(err => console.error('Failed to save image store', err));
     return { image, key, type };
   };
 

@@ -5,6 +5,7 @@ import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson } from '~/models/trakt/trakt-people.model';
+import type { BaseTraktProgress, BaseTraktProgressEpisode, BaseTraktProgressSeason } from '~/models/trakt/trakt-progress.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { ImageQuery, ImageStoreMedias } from '~/stores/data/image.store';
@@ -42,6 +43,26 @@ export type ListScrollItemTag = {
   meta?: string;
 };
 
+export type ListScrollItemProgressEpisode = BaseTraktProgressEpisode & {
+  date: Date;
+};
+
+export type ListScrollItemProgressSeason = BaseTraktProgressSeason & {
+  episodes: ListScrollItemProgressEpisode[];
+};
+
+export const ListScrollItemProgressType = {
+  collection: 'collection',
+  watched: 'watched',
+} as const;
+
+export type ListScrollItemProgress = BaseTraktProgress & {
+  type: (typeof ListScrollItemProgressType)[keyof typeof ListScrollItemProgressType];
+  date: Date;
+  seasons: ListScrollItemProgressSeason[];
+  percentage: number;
+};
+
 export const ListScrollItemType = {
   movie: 'movie',
   show: 'show',
@@ -63,6 +84,10 @@ export type ListScrollItem<T = Record<string, any>> = {
   title?: string;
   content?: string;
   tags?: ListScrollItemTag[];
+
+  progress?: ListScrollItemProgress;
+  progressRef?: Ref<ListScrollItemProgress | undefined>;
+  getProgressQuery?: () => string | number | undefined;
 
   poster?: string;
   posterRef?: Ref<ImageStoreMedias | undefined>;
