@@ -57,10 +57,13 @@ export const ListScrollItemProgressType = {
 } as const;
 
 export type ListScrollItemProgress = BaseTraktProgress & {
+  id: string | number;
   type: (typeof ListScrollItemProgressType)[keyof typeof ListScrollItemProgressType];
   date: Date;
   seasons: ListScrollItemProgressSeason[];
   percentage: number;
+  completed: number;
+  total: number;
 };
 
 export const ListScrollItemType = {

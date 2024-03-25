@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { NEllipsis, NFlex, NProgress, NSkeleton, NTag } from 'naive-ui';
+import {
+  NEllipsis,
+  NFlex,
+  NProgress,
+  NSkeleton,
+  NTag,
+  NTooltip,
+  type PopoverProps,
+} from 'naive-ui';
 
-import { computed, defineProps, type PropType, toRefs } from 'vue';
+import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import { type ListScrollItem } from '~/models/list-scroll.model';
@@ -10,7 +18,7 @@ import { useShowStore } from '~/stores/data/show.store';
 import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
-const i18n = useI18n('list-item-panel');
+const i18n = useI18n('list', 'item', 'panel');
 
 const props = defineProps({
   item: {
@@ -74,6 +82,13 @@ const progress = computed(() => {
   if (!id) return;
   return getShowProgress(id).value;
 });
+
+const innerContainer = ref();
+const tooltipOptions = computed<PopoverProps>(() => ({
+  to: innerContainer.value,
+  showArrow: false,
+  delay: 500,
+}));
 </script>
 
 <template>
@@ -84,59 +99,95 @@ const progress = computed(() => {
     size="small"
     :theme-overrides="{ gapSmall: '0' }"
   >
-    <div class="meta type">
-      <NSkeleton v-if="loading" text style="width: 10%" round />
-      <NEllipsis v-else :line-clamp="1">{{ type }}</NEllipsis>
-    </div>
-    <div class="title">
-      <NSkeleton v-if="loading" text style="width: 70%" round />
-      <NEllipsis v-else :line-clamp="2">{{ title }}</NEllipsis>
-    </div>
-    <div class="content">
-      <NSkeleton v-if="loading" text style="width: 60%" round />
-      <NEllipsis v-else :line-clamp="2">{{ content }}</NEllipsis>
-    </div>
-    <NFlex v-if="date || tags?.length" size="medium" class="tags">
-      <template v-for="tag of tags" :key="tag.label">
-        <NSkeleton v-if="loading" text style="width: 6%" />
-        <NTag
-          v-else
-          class="tag"
-          :class="{ meta: tag.meta }"
-          size="small"
-          :type="tag.type"
-          :bordered="tag.bordered ?? false"
+    <div ref="innerContainer">
+      <div class="meta type">
+        <NSkeleton v-if="loading" text style="width: 10%" round />
+        <NEllipsis v-else :line-clamp="1" :tooltip="tooltipOptions">{{ type }}</NEllipsis>
+      </div>
+      <div class="title">
+        <NSkeleton v-if="loading" text style="width: 70%" round />
+        <NEllipsis v-else :line-clamp="2" :tooltip="tooltipOptions">{{
+          title
+        }}</NEllipsis>
+      </div>
+      <div class="content">
+        <NSkeleton v-if="loading" text style="width: 60%" round />
+        <NEllipsis v-else :line-clamp="1" :tooltip="tooltipOptions">{{
+          content
+        }}</NEllipsis>
+      </div>
+      <NFlex v-if="date || tags?.length" size="medium" class="tags">
+        <template v-for="tag of tags" :key="tag.label">
+          <NSkeleton v-if="loading" text style="width: 6%" />
+          <NTag
+            v-else
+            class="tag"
+            :class="{ meta: tag.meta }"
+            size="small"
+            :type="tag.type"
+            :bordered="tag.bordered ?? false"
+          >
+            {{ tag.label }}
+          </NTag>
+        </template>
+        <template v-if="date">
+          <NSkeleton v-if="loading" text style="width: 6%" />
+          <NTag v-else class="tag" size="small" type="default" :bordered="false">
+            {{ date }}
+          </NTag>
+        </template>
+      </NFlex>
+      <div v-if="showProgress" class="panel-progress">
+        <NTooltip
+          class="panel-progress-tooltip"
+          :disabled="!progress"
+          placement="top-end"
+          :delay="100"
+          :to="innerContainer"
         >
-          {{ tag.label }}
-        </NTag>
-      </template>
-      <template v-if="date">
-        <NSkeleton v-if="loading" text style="width: 6%" />
-        <NTag v-else class="tag" size="small" type="default" :bordered="false">
-          {{ date }}
-        </NTag>
-      </template>
-    </NFlex>
-    <NProgress
-      v-if="showProgress"
-      :data-percentage="progress?.percentage"
-      :data-last="progress?.last_episode"
-      :data-next="progress?.next_episode"
-      class="progress"
-      :theme-overrides="{
-        railHeight: 'var(--rail-height)',
-      }"
-      :percentage="progress?.percentage ?? 0"
-      :show-indicator="false"
-      color="var(--trakt-red-dark)"
-    />
+          <NFlex v-if="progress" vertical align="flex-end">
+            <div>
+              <span class="metric">{{ progress?.completed }}</span>
+              <span> / </span>
+              <span class="metric">{{ progress?.total }}</span>
+              <span>&nbsp;</span>
+              <span>{{ i18n('tooltip_episodes') }}</span>
+            </div>
+            <div>
+              <span class="metric">{{ Math.round(progress?.percentage) }}</span>
+              <span>%</span>
+              <span>&nbsp;</span>
+              <span>{{ i18n('tooltip_watched') }}</span>
+            </div>
+            <div>
+              <span class="metric">{{ progress?.total - progress?.completed }}</span>
+              <span>&nbsp;</span>
+              <span>{{ i18n('tooltip_remaining') }}</span>
+            </div>
+          </NFlex>
+          <template #trigger>
+            <NProgress
+              class="line"
+              :data-show-id="progress?.id"
+              :data-percentage="progress?.percentage"
+              :theme-overrides="{
+                railHeight: 'var(--rail-height)',
+              }"
+              :percentage="progress?.percentage ?? 0"
+              :show-indicator="false"
+              color="var(--trakt-red-dark)"
+            />
+          </template>
+        </NTooltip>
+      </div>
+    </div>
   </NFlex>
 </template>
 
 <style lang="scss" scoped>
 .panel {
   flex: 1 1 auto;
-  margin: 0.25rem 0;
+  margin: 0 0 0.25rem;
 
   .title {
     margin-top: 0.1rem;
@@ -168,10 +219,30 @@ const progress = computed(() => {
     }
   }
 
-  .progress {
-    margin-top: 0.75rem;
-
+  .panel-progress {
     --rail-height: 4px;
+
+    padding-top: 0.75rem;
+
+    &:hover {
+      --trakt-red-dark: var(--trakt-red);
+    }
+
+    &-tooltip {
+      font-size: 0.8rem;
+
+      .metric {
+        color: var(--vt-c-white);
+        font-weight: bolder;
+        font-variant-numeric: tabular-nums;
+      }
+    }
   }
+}
+</style>
+
+<style lang="scss">
+.panel-progress-tooltip.n-tooltip.n-tooltip {
+  background: var(--bg-color-80);
 }
 </style>

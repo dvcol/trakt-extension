@@ -114,7 +114,8 @@ const root = ref<HTMLElement>();
   }
 }
 
-.n-tooltip.n-tooltip {
+.n-tooltip.n-tooltip,
+.n-popover-arrow.n-popover-arrow.n-popover-arrow {
   background: var(--bg-color-60);
   backdrop-filter: blur(var(--bg-blur));
 
