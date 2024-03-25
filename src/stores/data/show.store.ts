@@ -15,26 +15,24 @@ type ShowProgressDictionary = Record<string, TraktWatchedProgress>;
 type LoadingDictionary = Record<string, boolean>;
 
 const watchProgressToListProgress = (progress: TraktWatchedProgress, id: string | number): ListScrollItemProgress => {
-  let total = 0;
-  let completed = 0;
-  const item = {
+  const total: number = progress.aired;
+  const { completed } = progress;
+  const percentage = (completed / total) * 100;
+  return {
     id,
+    percentage,
+    total,
     ...progress,
     type: ListScrollItemProgressType.watched,
     date: new Date(progress.last_watched_at),
     seasons: progress.seasons.map(season => ({
       ...season,
-      episodes: season.episodes.map(episode => {
-        total += 1;
-        if (episode.completed) completed += 1;
-        return {
-          ...episode,
-          date: new Date(episode.last_watched_at),
-        };
-      }),
+      episodes: season.episodes.map(episode => ({
+        ...episode,
+        date: new Date(episode.last_watched_at),
+      })),
     })),
   };
-  return { ...item, percentage: (completed / total) * 100, total, completed };
 };
 
 export const useShowStore = defineStore('data.show', () => {

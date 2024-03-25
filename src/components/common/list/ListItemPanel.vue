@@ -137,7 +137,7 @@ const tooltipOptions = computed<PopoverProps>(() => ({
           </NTag>
         </template>
       </NFlex>
-      <div v-if="showProgress" class="panel-progress">
+      <div v-if="showProgress && !loading" class="panel-progress">
         <NTooltip
           class="panel-progress-tooltip"
           :disabled="!progress"
