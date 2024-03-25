@@ -14,10 +14,11 @@ type ShowDictionary = Record<string, TraktShowExtended>;
 type ShowProgressDictionary = Record<string, TraktWatchedProgress>;
 type LoadingDictionary = Record<string, boolean>;
 
-const watchProgressToListProgress = (progress: TraktWatchedProgress): ListScrollItemProgress => {
+const watchProgressToListProgress = (progress: TraktWatchedProgress, id: string | number): ListScrollItemProgress => {
   let total = 0;
-  let watched = 0;
+  let completed = 0;
   const item = {
+    id,
     ...progress,
     type: ListScrollItemProgressType.watched,
     date: new Date(progress.last_watched_at),
@@ -25,7 +26,7 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress): ListScroll
       ...season,
       episodes: season.episodes.map(episode => {
         total += 1;
-        if (episode.completed) watched += 1;
+        if (episode.completed) completed += 1;
         return {
           ...episode,
           date: new Date(episode.last_watched_at),
@@ -33,7 +34,7 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress): ListScroll
       }),
     })),
   };
-  return { ...item, percentage: (watched / total) * 100 };
+  return { ...item, percentage: (completed / total) * 100, total, completed };
 };
 
 export const useShowStore = defineStore('data.show', () => {
@@ -87,7 +88,7 @@ export const useShowStore = defineStore('data.show', () => {
     return computed(() => {
       const progress = showsProgress[id.toString()];
       if (!progress) return undefined;
-      return watchProgressToListProgress(progress);
+      return watchProgressToListProgress(progress, id);
     });
   };
 
