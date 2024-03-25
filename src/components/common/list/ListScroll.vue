@@ -57,6 +57,11 @@ const props = defineProps({
     required: false,
     default: 300,
   },
+  showProgress: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emits = defineEmits<{
@@ -171,6 +176,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :episode="episode"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"
+          :show-progress="showProgress"
           @on-hover="onHover"
           @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"
           @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
