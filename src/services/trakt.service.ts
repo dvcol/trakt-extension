@@ -299,9 +299,16 @@ export class TraktService {
     },
   );
 
-  static async progress() {
-    const response = await this.cachedProgress();
-    if (!response.ok) throw response;
-    return response.json();
-  }
+  static progress = {
+    async onDeck() {
+      const response = await TraktService.cachedProgress();
+      if (!response.ok) throw response;
+      return response.json();
+    },
+
+    async show(showId: string | number) {
+      const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId });
+      return response.json();
+    },
+  };
 }

@@ -44,6 +44,7 @@ const { scrolled, listRef, onClick } = useBackToTop();
         :items="progress"
         episode
         hide-date
+        show-progress
         @on-scroll="scrolled = true"
         @on-scroll-top="scrolled = false"
       >

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { NEllipsis, NFlex, NSkeleton, NTag } from 'naive-ui';
+import { NEllipsis, NFlex, NProgress, NSkeleton, NTag } from 'naive-ui';
 
 import { computed, defineProps, type PropType, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 
+import { useShowStore } from '~/stores/data/show.store';
 import { useI18n } from '~/utils';
+import { deCapitalise } from '~/utils/string.utils';
 
 const i18n = useI18n('list-item-panel');
 
@@ -28,6 +30,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  showProgress: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const { item, hideDate } = toRefs(props);
@@ -36,9 +43,9 @@ const type = computed(() =>
   item.value.type ? i18n(item.value.type, 'common', 'media', 'type') : item.value.type,
 );
 
-const title = computed(() => item.value.title);
+const title = computed(() => deCapitalise(item.value.title));
 
-const content = computed(() => item.value.content);
+const content = computed(() => deCapitalise(item.value.content));
 
 const date = computed(() => {
   if (hideDate.value) return;
@@ -56,6 +63,17 @@ const tags = computed(
       return { ...tag, label: i18n(tag.label, ...tag.i18n) };
     }),
 );
+
+const { getShowProgress } = useShowStore();
+
+const progress = computed(() => {
+  if (item?.value?.progress) return item.value.progress;
+  if (item?.value?.progressRef) return item.value.progressRef.value;
+  if (!item?.value?.getProgressQuery) return;
+  const id = item.value.getProgressQuery();
+  if (!id) return;
+  return getShowProgress(id).value;
+});
 </script>
 
 <template>
@@ -99,6 +117,19 @@ const tags = computed(
         </NTag>
       </template>
     </NFlex>
+    <NProgress
+      v-if="showProgress"
+      :data-percentage="progress?.percentage"
+      :data-last="progress?.last_episode"
+      :data-next="progress?.next_episode"
+      class="progress"
+      :theme-overrides="{
+        railHeight: 'var(--rail-height)',
+      }"
+      :percentage="progress?.percentage ?? 0"
+      :show-indicator="false"
+      color="var(--trakt-red-dark)"
+    />
   </NFlex>
 </template>
 
@@ -135,6 +166,12 @@ const tags = computed(
     .tag {
       width: fit-content;
     }
+  }
+
+  .progress {
+    margin-top: 0.75rem;
+
+    --rail-height: 4px;
   }
 }
 </style>
