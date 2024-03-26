@@ -19,3 +19,34 @@ export const ExternaLinks = {
   reddit: 'https://www.reddit.com/',
   discord: 'https://discord.com/',
 } as const;
+
+export const ResolveExternalLinks = {
+  trakt: ({
+    type,
+    slug,
+    season,
+    episode,
+    base = ExternaLinks.trakt.production,
+  }: {
+    type: 'movies' | 'shows' | 'season' | 'episode' | 'person' | 'comment' | 'list';
+    slug: string;
+    season?: number;
+    episode?: number;
+    base?: string;
+  }) => {
+    if (type === 'episode') return `${base}shows/${slug}/seasons/${season}/episodes/${episode}`;
+    if (type === 'season') return `${base}shows/${slug}/seasons/${season}`;
+    return `${base}${type}/${slug}`;
+  },
+  search: ({
+    id,
+    type,
+    source,
+    base = ExternaLinks.trakt.production,
+  }: {
+    id: string | number;
+    type?: 'movie' | 'show' | 'season' | 'episode' | 'person';
+    source: 'trakt' | 'imdb' | 'tmdb' | 'tvdb';
+    base?: string;
+  }) => `${base}search/${source}/${id}${type ? `?id_type=${type}` : ''}`,
+};
