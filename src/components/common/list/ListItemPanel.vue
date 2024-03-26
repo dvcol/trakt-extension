@@ -16,6 +16,7 @@ import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
 import { useI18n } from '~/utils';
+import { createTab } from '~/utils/browser/browser.utils';
 import { deCapitalise } from '~/utils/string.utils';
 
 const i18n = useI18n('list', 'item', 'panel');
@@ -89,6 +90,11 @@ const tooltipOptions = computed<PopoverProps>(() => ({
   showArrow: false,
   delay: 500,
 }));
+
+const onTagClick = (url?: string) => {
+  if (!url) return;
+  createTab({ url });
+};
 </script>
 
 <template>
@@ -122,10 +128,12 @@ const tooltipOptions = computed<PopoverProps>(() => ({
           <NTag
             v-else
             class="tag"
-            :class="{ meta: tag.meta }"
+            :class="{ meta: tag.meta, link: !!tag.url }"
             size="small"
-            :type="tag.type"
             :bordered="tag.bordered ?? false"
+            :href="tag.url"
+            v-bind="tag"
+            @click="onTagClick(tag.url)"
           >
             {{ tag.label }}
           </NTag>
@@ -216,6 +224,18 @@ const tooltipOptions = computed<PopoverProps>(() => ({
 
     .tag {
       width: fit-content;
+    }
+
+    .link {
+      cursor: pointer;
+
+      &:hover {
+        background-color: color-mix(
+          in srgb,
+          var(--n-close-icon-color-hover),
+          transparent 90%
+        );
+      }
     }
   }
 

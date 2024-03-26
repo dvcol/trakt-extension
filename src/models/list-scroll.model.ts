@@ -38,10 +38,9 @@ export type ListScrollSourceItem = {
 export type ListScrollItemTag = {
   label: string;
   i18n?: boolean | string[];
-  type?: TagProps['type'];
-  bordered?: boolean;
   meta?: string;
-};
+  url?: string;
+} & TagProps;
 
 export type ListScrollItemProgressEpisode = BaseTraktProgressEpisode & {
   date: Date;
