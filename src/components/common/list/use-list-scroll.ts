@@ -7,6 +7,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { ImageQuery } from '~/stores/data/image.store';
 
 import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
+import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
@@ -89,6 +90,11 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
         .padStart(2, '0')}`,
       type: 'warning',
       bordered: true,
+      url: ResolveExternalLinks.search({
+        type: 'episode',
+        source: 'trakt',
+        id: item.episode.ids.trakt,
+      }),
     });
 
     let premiere: 'season' | 'series' | 'mid_season' | null = null;
@@ -108,6 +114,11 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
     tags.push({
       label: `Season ${item.season.number.toString().padStart(2, '0')}`,
       type: 'warning',
+      url: ResolveExternalLinks.search({
+        type: 'season',
+        source: 'trakt',
+        id: item.season.ids.trakt,
+      }),
     });
   }
 
