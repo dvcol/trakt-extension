@@ -18,5 +18,9 @@
   "calendar__tag__label__finale__season": {
     "message": "Season Finale",
     "description": "Label for a season finale"
+  },
+  "calendar__tag__label__finale": {
+    "message": "Finale",
+    "description": "Label for a finale"
   }
 }

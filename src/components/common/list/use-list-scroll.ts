@@ -83,6 +83,14 @@ const i18n = useI18n('common', 'tag');
 export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, type: ListScrollItem['type']): ListScrollItem['tags'] => {
   const tags: ListScrollItem['tags'] = [];
   if (type === 'episode' && item.episode) {
+    tags.push({
+      label: `${i18n('season')} ${item.episode.season.toString().padStart(2, '0')} ${i18n('episode')} ${item.episode.number
+        .toString()
+        .padStart(2, '0')}`,
+      type: 'warning',
+      bordered: true,
+    });
+
     let premiere: 'season' | 'series' | 'mid_season' | null = null;
     // let finale: 'season' | 'series' | 'mid_season';
     if (item.episode.season === 1 && item.episode.number === 1) premiere = 'series';
@@ -93,14 +101,9 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
         label: premiere,
         i18n: ['calendar', 'tag', 'label', 'premiere'],
         type: premiere === 'season' ? 'info' : 'primary',
+        bordered: true,
       });
     }
-    tags.push({
-      label: `${i18n('season')} ${item.episode.season.toString().padStart(2, '0')} ${i18n('episode')} ${item.episode.number
-        .toString()
-        .padStart(2, '0')}`,
-      type: 'warning',
-    });
   } else if (type === 'season' && item.season) {
     tags.push({
       label: `Season ${item.season.number.toString().padStart(2, '0')}`,
