@@ -5,6 +5,7 @@ import type { RecursiveRecord } from '~/utils/typescript.utils';
 import { CancellableFetch, type CancellablePromise } from '~/utils/fetch.utils';
 import { HttpMethod, type HttpMethods } from '~/utils/http.utils';
 import { Observable, ObservableState, type Observer, type Updater } from '~/utils/observable.utils';
+import { ExactMatchRegex } from '~/utils/regex.utils';
 
 export const BaseApiHeaders = {
   /** The authorization token bearer */
@@ -192,15 +193,17 @@ export const getCachedFunction = <
   clientFn: ClientEndpointCall<Parameter, ResponseBody>,
   {
     key,
+    evictionKey,
     cache,
     retention,
   }: {
     key: string | ((param?: Parameter, init?: BaseInit) => string);
+    evictionKey?: string | ((param?: Parameter, init?: BaseInit) => string);
     cache: CacheStore<ResponseType>;
     retention?: BaseTemplateOptions['cache'];
   },
 ): ClientEndpointCache<Parameter, ResponseBody> => {
-  return async (param, init, cacheOptions) => {
+  const cachedFn: ClientEndpointCache<Parameter, ResponseBody> = async (param, init, cacheOptions) => {
     const _key = typeof key === 'function' ? key(param, init) : key;
     const cached = await cache.get(_key);
     if (cached && !cacheOptions?.force) {
@@ -228,6 +231,18 @@ export const getCachedFunction = <
       throw error;
     }
   };
+
+  const evictFn = async (param?: Parameter, init?: BaseInit) => {
+    const _key = evictionKey ?? key;
+    if (!_key) return;
+    const _resolvedKey = typeof _key === 'function' ? _key(param, init) : _key;
+    if (!_resolvedKey.trim()) return;
+    await cache.clear(_resolvedKey);
+    return _resolvedKey;
+  };
+
+  Object.defineProperty(cachedFn, 'evict', { value: evictFn });
+  return cachedFn;
 };
 
 /**
@@ -336,6 +351,7 @@ export abstract class BaseClient<
           key: (param: unknown, init: unknown) => JSON.stringify({ template: template.config, param, init }),
           cache: this._cache,
           retention: template.opts?.cache,
+          evictionKey: `{"template":${JSON.stringify(template.config).replace(ExactMatchRegex, '\\$&')}`,
         });
 
         const parseUrl = (param: Record<string, unknown> = {}) => {
