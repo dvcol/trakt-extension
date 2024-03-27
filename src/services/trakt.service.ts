@@ -311,4 +311,34 @@ export class TraktService {
       return response.json();
     },
   };
+
+  static async activity() {
+    const response = await this.traktClient.sync.lastActivities();
+    return response.json();
+  }
+
+  static evict = {
+    tmdb: TraktService.caches.tmdb.clear,
+    trakt: TraktService.caches.trakt.clear,
+    tvdb: TraktService.caches.tvdb.clear,
+    history: TraktService.traktClient.sync.history.get.cached.evict,
+    watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
+    favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
+    collection: TraktService.traktClient.sync.collection.get.cached.evict,
+    lists: () =>
+      Promise.all([
+        TraktService.traktClient.users.lists.get.cached.evict(),
+        TraktService.traktClient.users.lists.collaborations.cached.evict(),
+        TraktService.traktClient.users.list.items.get.cached.evict(),
+      ]),
+    calendar: () =>
+      Promise.all([
+        TraktService.traktClient.calendars.my.movies.cached.evict(),
+        TraktService.traktClient.calendars.my.shows.new.cached.evict(),
+        TraktService.traktClient.calendars.my.shows.premieres.cached.evict(),
+        TraktService.traktClient.calendars.my.shows.finales.cached.evict(),
+        TraktService.traktClient.calendars.my.shows.get.cached.evict(),
+      ]),
+    progress: () => Promise.all([TraktService.cachedProgress.evict(), TraktService.traktClient.shows.progress.watched.cached.evict()]),
+  };
 }

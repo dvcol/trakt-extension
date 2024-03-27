@@ -18,3 +18,7 @@ export type RecursiveRecord<T = any> =
 export type GenericFunction = (...args: any) => any;
 
 export type ArrayElement<ArrayType extends readonly unknown[] | undefined> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+export type RecursiveType<T, R> = {
+  [K in keyof T]: T[K] extends object ? RecursiveType<T[K], R> : R;
+};

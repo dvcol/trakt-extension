@@ -1,3 +1,5 @@
+import type { RecursiveRecord, RecursiveType } from '~/utils/typescript.utils';
+
 export class DateUtils {
   static clone = (date: Date) => new Date(date);
 
@@ -16,3 +18,32 @@ export class DateUtils {
     next: (weeks = 1, date?: Date) => this.next(weeks, date, 7),
   };
 }
+
+export const toDateObject = <T extends RecursiveRecord<string>>(record?: T): RecursiveType<T, Date> | undefined => {
+  if (!record) return record;
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => {
+      if (typeof value === 'string') return [key, new Date(value)];
+      if (typeof value === 'object') return [key, toDateObject(value)];
+      return [key, value];
+    }),
+  );
+};
+
+const isDate = (value: unknown): value is Date => value instanceof Date;
+
+export const compareDateObject = <T extends RecursiveRecord<Date>>(a?: T, b?: T): RecursiveType<T, boolean> => {
+  if (!a || !b) throw new Error('Cannot compare undefined objects');
+  return Object.fromEntries(
+    Object.keys(a).map(key => {
+      const _key: keyof RecursiveRecord<Date> = key as keyof RecursiveRecord<Date>;
+      if (a && b) {
+        const aValue = a[_key];
+        const bValue = b[_key];
+        if (isDate(aValue) && isDate(bValue)) return [_key, aValue.getTime() !== bValue.getTime()];
+        if (!isDate(aValue) && !isDate(bValue)) return [_key, compareDateObject(aValue, bValue)];
+      }
+      return [_key, a !== b];
+    }),
+  );
+};

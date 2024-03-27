@@ -99,11 +99,9 @@ export interface TraktClientEndpoint<Parameter extends TraktApiParams = Record<s
   (param?: Parameter, init?: TraktApiInit): Promise<TraktApiResponse<Response>>;
 }
 
-export type TraktClientCachedEndpoint<Parameter extends TraktApiParams = Record<string, never>, Response = unknown> = (
-  param?: Parameter,
-  init?: BaseInit,
-  cacheOptions?: BaseCacheOption,
-) => Promise<TraktApiResponse<Response>>;
+export type TraktClientCachedEndpoint<Parameter extends TraktApiParams = Record<string, never>, Response = unknown> = {
+  evict: (param?: Parameter, init?: BaseInit) => Promise<string | undefined>;
+} & ((param?: Parameter, init?: BaseInit, cacheOptions?: BaseCacheOption) => Promise<TraktApiResponse<Response>>);
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension
 export class TraktClientEndpoint<
