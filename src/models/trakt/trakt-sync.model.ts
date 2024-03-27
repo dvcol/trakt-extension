@@ -42,6 +42,9 @@ export type TraktSyncActivity = {
 export type TraktSyncActivities = {
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   all: string;
+  collaborations: Pick<TraktSyncActivity, 'updated_at'>;
+  recommendations: Pick<TraktSyncActivity, 'updated_at'>;
+
   movies: Pick<
     TraktSyncActivity,
     'watched_at' | 'collected_at' | 'rated_at' | 'watchlisted_at' | 'favorited_at' | 'commented_at' | 'paused_at' | 'hidden_at'
@@ -55,7 +58,7 @@ export type TraktSyncActivities = {
   favorites: Pick<TraktSyncActivity, 'updated_at'>;
   account: Pick<TraktSyncActivity, 'settings_at' | 'followed_at' | 'following_at' | 'pending_at' | 'requested_at'>;
   saved_filters: Pick<TraktSyncActivity, 'updated_at'>;
-  noted: Pick<TraktSyncActivity, 'updated_at'>;
+  notes: Pick<TraktSyncActivity, 'updated_at'>;
 };
 
 export type TraktSyncProgress<T extends 'movie' | 'episode' | Any = Any> = {

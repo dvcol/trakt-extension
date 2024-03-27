@@ -3,7 +3,7 @@ import { useLoadingBar } from 'naive-ui';
 
 import { LoadingBarService } from '~/services/loading-bar.service';
 
-LoadingBarService.instance = useLoadingBar();
+LoadingBarService.init(useLoadingBar());
 </script>
 
 <template>

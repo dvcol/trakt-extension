@@ -110,11 +110,9 @@ export interface ClientEndpoint<Parameter extends RecursiveRecord = Record<strin
 
 export type BaseCacheOption = { force?: boolean; retention?: number; evictOnError?: boolean };
 
-type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = (
-  param?: Parameter,
-  init?: BaseInit,
-  cacheOptions?: BaseCacheOption,
-) => Promise<TypedResponse<Response>>;
+type ClientEndpointCache<Parameter extends RecursiveRecord = Record<string, never>, Response = unknown> = {
+  evict: (param?: Parameter, init?: BaseInit) => Promise<string | undefined>;
+} & ((param?: Parameter, init?: BaseInit, cacheOptions?: BaseCacheOption) => Promise<TypedResponse<Response>>);
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class ClientEndpoint<
@@ -203,7 +201,7 @@ export const getCachedFunction = <
     retention?: BaseTemplateOptions['cache'];
   },
 ): ClientEndpointCache<Parameter, ResponseBody> => {
-  const cachedFn: ClientEndpointCache<Parameter, ResponseBody> = async (param, init, cacheOptions) => {
+  const cachedFn = async (param: Parameter, init: BaseInit, cacheOptions: BaseCacheOption) => {
     const _key = typeof key === 'function' ? key(param, init) : key;
     const cached = await cache.get(_key);
     if (cached && !cacheOptions?.force) {
@@ -242,7 +240,7 @@ export const getCachedFunction = <
   };
 
   Object.defineProperty(cachedFn, 'evict', { value: evictFn });
-  return cachedFn;
+  return cachedFn as ClientEndpointCache<Parameter, ResponseBody>;
 };
 
 /**

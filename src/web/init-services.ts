@@ -1,5 +1,6 @@
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { useHistoryStore } from '~/stores/data/history.store';
 import { useImageStore } from '~/stores/data/image.store';
 import { useListsStore, useListStore } from '~/stores/data/list.store';
@@ -31,6 +32,8 @@ export const initServices = async () => {
     useSearchStore().initSearchStore(),
     useShowStore().initShowStore(),
   ]);
+
+  await useActivityStore().initActivityStore();
 
   setAppReady(true);
 };
