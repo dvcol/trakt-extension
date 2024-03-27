@@ -15,6 +15,7 @@ import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
 import { createTab } from '~/utils/browser/browser.utils';
 import { deCapitalise } from '~/utils/string.utils';
@@ -91,9 +92,11 @@ const tooltipOptions = computed<PopoverProps>(() => ({
   delay: 500,
 }));
 
-const onTagClick = (url?: string) => {
+const { openLinksInNewTab } = useExtensionSettingsStoreRefs();
+const onTagClick = (e: MouseEvent, url?: string) => {
+  e.preventDefault();
   if (!url) return;
-  createTab({ url });
+  createTab({ url, active: openLinksInNewTab.value });
 };
 </script>
 
@@ -125,18 +128,17 @@ const onTagClick = (url?: string) => {
       <NFlex v-if="date || tags?.length" size="medium" class="tags">
         <template v-for="tag of tags" :key="tag.label">
           <NSkeleton v-if="loading" text style="width: 6%" />
-          <NTag
-            v-else
-            class="tag"
-            :class="{ meta: tag.meta, link: !!tag.url }"
-            size="small"
-            :bordered="tag.bordered ?? false"
-            :href="tag.url"
-            v-bind="tag"
-            @click="onTagClick(tag.url)"
-          >
-            {{ tag.label }}
-          </NTag>
+          <a v-else :href="tag.url" @click="e => onTagClick(e, tag.url)">
+            <NTag
+              class="tag"
+              :class="{ meta: tag.meta, link: !!tag.url }"
+              size="small"
+              :bordered="tag.bordered ?? false"
+              v-bind="tag"
+            >
+              {{ tag.label }}
+            </NTag>
+          </a>
         </template>
         <template v-if="date">
           <NSkeleton v-if="loading" text style="width: 6%" />
