@@ -6,6 +6,7 @@ import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 
+import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
 import LoginCard from '~/components/views/login/LoginCard.vue';
 import { ExternaLinks } from '~/settings/external.links';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
@@ -21,6 +22,7 @@ onMounted(async () => {
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
+const { onItemClick } = useItemDrawer();
 </script>
 
 <template>
@@ -47,6 +49,7 @@ const { scrolled, listRef, onClick } = useBackToTop();
         show-progress
         @on-scroll="scrolled = true"
         @on-scroll-top="scrolled = false"
+        @on-item-click="onItemClick"
       >
         <template #default>
           <!-- TODO buttons here-->

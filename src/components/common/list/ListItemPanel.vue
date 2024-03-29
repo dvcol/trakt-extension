@@ -95,6 +95,7 @@ const tooltipOptions = computed<PopoverProps>(() => ({
 const { openLinksInNewTab } = useExtensionSettingsStoreRefs();
 const onTagClick = (e: MouseEvent, url?: string) => {
   e.preventDefault();
+  e.stopPropagation();
   if (!url) return;
   createTab({ url, active: openLinksInNewTab.value });
 };

@@ -7,6 +7,7 @@ import {
   useListScroll,
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
+import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
 import {
   type AnyList,
   anyListDateGetter,
@@ -43,6 +44,7 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
+const { onItemClick } = useItemDrawer();
 </script>
 
 <template>
@@ -59,6 +61,7 @@ const { scrolled, listRef, onClick } = useBackToTop();
       @on-scroll-bottom="onScroll"
       @on-updated="onUpdated"
       @onload-more="onLoadMore"
+      @on-item-click="onItemClick"
     >
       <template #default>
         <!-- TODO buttons here-->

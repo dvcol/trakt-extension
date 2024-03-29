@@ -76,6 +76,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'onHover', event: { item: ListScrollItem; hover: boolean }): void;
+  (e: 'onItemClick', event: { item: ListScrollItem }): void;
   (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
   (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
@@ -173,6 +174,8 @@ onBeforeUnmount(() => {
 });
 
 const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefined));
+
+const onClick = () => emit('onItemClick', { item: item?.value });
 </script>
 
 <template>
@@ -193,6 +196,7 @@ const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefin
     :data-type="item.type"
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : color"
+    @click="onClick"
     @mouseenter="onHover(true)"
     @mouseleave="onHover(false)"
   >

@@ -37,7 +37,7 @@ export const useActivityStore = defineStore('data.activity', () => {
     }
   };
 
-  const initActivityStore = async () => {
+  const initActivityStore = async (fetch?: boolean) => {
     await restoreState();
 
     watch(activity, (next, prev) => {
@@ -80,7 +80,7 @@ export const useActivityStore = defineStore('data.activity', () => {
       }
     });
 
-    await fetchActivity();
+    if (fetch) await fetchActivity();
   };
 
   return { activity, loading, fetchActivity, clearState, saveState, restoreState, initActivityStore };

@@ -78,6 +78,7 @@ const emits = defineEmits<{
       pageSize: number;
     },
   ): void;
+  (e: 'onItemClick', event: { item: ListScrollItem }): void;
   (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
   (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
@@ -178,6 +179,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :scroll-into-view="scrollIntoView?.includes(item.id)"
           :show-progress="showProgress"
           @on-hover="onHover"
+          @on-item-click="(...args) => $emit('onItemClick', ...args)"
           @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"
           @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
         >

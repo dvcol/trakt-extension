@@ -14,7 +14,7 @@ const router = useRouter();
 const slots = useSlots();
 
 const navigate = (to: Route) => {
-  router.push(to);
+  router.push({ name: to });
 };
 
 const routes = [

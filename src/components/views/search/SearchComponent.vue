@@ -9,6 +9,7 @@ import {
   useListScroll,
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
+import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
 import {
   type SearchResult,
   useSearchStore,
@@ -34,6 +35,7 @@ const { onScroll } = useListScrollEvents(fetchSearchResults, {
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
+const { onItemClick } = useItemDrawer();
 </script>
 
 <template>
@@ -46,6 +48,7 @@ const { scrolled, listRef, onClick } = useBackToTop();
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
+      @on-item-click="onItemClick"
     >
       <template #default>
         <!-- TODO buttons here-->
