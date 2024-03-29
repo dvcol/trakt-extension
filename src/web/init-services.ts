@@ -33,7 +33,8 @@ export const initServices = async () => {
     useShowStore().initShowStore(),
   ]);
 
-  await useActivityStore().initActivityStore();
+  const { isAuthenticated } = useAuthSettingsStore();
+  await useActivityStore().initActivityStore(isAuthenticated);
 
   setAppReady(true);
 };

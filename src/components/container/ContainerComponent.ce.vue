@@ -114,6 +114,11 @@ const root = ref<HTMLElement>();
   }
 }
 
+.n-drawer {
+  background: linear-gradient(to right, var(--bg-color-60) 5%, var(--bg-color-90));
+  backdrop-filter: blur(var(--bg-blur));
+}
+
 .n-tooltip.n-tooltip,
 .n-popover-arrow.n-popover-arrow.n-popover-arrow {
   background: var(--bg-color-60);

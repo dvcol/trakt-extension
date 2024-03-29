@@ -1,43 +1,86 @@
 <script setup lang="ts">
-import { Transition } from 'vue';
-import { RouterView } from 'vue-router';
+import { NDrawer, NDrawerContent } from 'naive-ui';
+import { ref, Transition, watch } from 'vue';
+import { RouterView, useRouter } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
 import GridBackground from '~/components/common/background/GridBackground.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
+import DrawerHeader from '~/components/views/drawer/DrawerHeader.vue';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
+const { currentRoute, push } = useRouter();
+
+const origin = ref();
+const drawer = ref(false);
+
+watch(
+  currentRoute,
+  (_next, _prev) => {
+    const isDrawer = !!_next.meta?.drawer;
+    drawer.value = isDrawer;
+    origin.value = isDrawer ? _prev : undefined;
+  },
+  {
+    immediate: true,
+  },
+);
+
+const asideRef = ref();
+
+const onClose = () => {
+  if (!origin.value) return;
+  push(origin.value);
+  origin.value = undefined;
+};
 </script>
 
 <template>
-  <header>
-    <RouterView v-slot="{ Component, route }" name="navbar">
+  <header :class="{ open: drawer }">
+    <RouterView v-slot="{ Component }" name="navbar">
       <NavbarComponent v-if="isAuthenticated">
         <template v-if="Component" #drawer="{ parentElement }">
           <Transition name="scale" mode="out-in">
             <KeepAlive>
-              <component
-                :is="Component"
-                :key="route.path"
-                :parent-element="parentElement"
-              />
+              <component :is="Component" :parent-element="parentElement" />
             </KeepAlive>
           </Transition>
         </template>
       </NavbarComponent>
     </RouterView>
   </header>
-  <main>
-    <RouterView v-slot="{ Component, route }">
+  <RouterView v-slot="{ Component }">
+    <main ref="asideRef" style="position: relative">
       <GridBackground v-if="!Component" :size="20" />
       <Transition name="scale" mode="out-in">
         <KeepAlive>
-          <component :is="Component ?? PageLoading" :key="route.path" />
+          <component :is="Component ?? PageLoading" />
         </KeepAlive>
       </Transition>
-    </RouterView>
-  </main>
+    </main>
+    <aside>
+      <RouterView v-slot="{ Component: DrawerComponent }">
+        <NDrawer
+          v-model:show="drawer"
+          :to="asideRef"
+          width="100%"
+          close-on-esc
+          :on-after-leave="onClose"
+          auto-focus
+        >
+          <NDrawerContent closable>
+            <template #header> <DrawerHeader /> </template>
+            <template #default>
+              <KeepAlive>
+                <component :is="DrawerComponent" />
+              </KeepAlive>
+            </template>
+          </NDrawerContent>
+        </NDrawer>
+      </RouterView>
+    </aside>
+  </RouterView>
 </template>
 
 <style lang="scss" scoped>
@@ -59,6 +102,10 @@ header {
 
   > :first-child {
     @include mixin.hover-background;
+  }
+
+  &.open > :first-child {
+    background: var(--bg-color-hover);
   }
 }
 

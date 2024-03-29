@@ -12,6 +12,7 @@ import { useListScroll } from '~/components/common/list/use-list-scroll';
 import IconChevronDown from '~/components/icons/IconChevronDown.vue';
 import IconChevronUp from '~/components/icons/IconChevronUp.vue';
 
+import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useI18n } from '~/utils';
 import { watchUserChange } from '~/utils/store.utils';
@@ -94,9 +95,12 @@ const onScrollTop = async () => {
     top: (list.value.findIndex(item => item.id === first.id) - 1) * 145,
   });
 };
+
 const onScrollBottom = async () => {
   await fetchCalendar('end');
 };
+
+const { onItemClick } = useItemDrawer();
 </script>
 
 <template>
@@ -107,6 +111,7 @@ const onScrollBottom = async () => {
       :loading="loading"
       episode
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
+      @on-item-click="onItemClick"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
       @on-scroll-top="onScrollTop"
