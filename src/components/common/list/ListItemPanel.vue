@@ -137,7 +137,7 @@ const onTagClick = (e: MouseEvent, url?: string) => {
               :bordered="tag.bordered ?? false"
               v-bind="tag"
             >
-              {{ tag.label }}
+              <span class="label">{{ tag.label }}</span>
             </NTag>
           </a>
         </template>
@@ -232,12 +232,20 @@ const onTagClick = (e: MouseEvent, url?: string) => {
     .link {
       cursor: pointer;
 
+      .label {
+        transition: filter 0.3s var(--n-bezier);
+      }
+
       &:hover {
         background-color: color-mix(
           in srgb,
           var(--n-close-icon-color-hover),
           transparent 90%
         );
+
+        .label {
+          filter: saturate(1.5);
+        }
       }
     }
   }
