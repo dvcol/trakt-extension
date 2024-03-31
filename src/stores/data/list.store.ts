@@ -10,6 +10,7 @@ import type { TraktListItem } from '~/models/trakt/trakt-list.model';
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
@@ -110,6 +111,7 @@ export const useListsStore = defineStore('data.lists', () => {
       }
     } catch (e) {
       console.error('Failed to fetch lists');
+      NotificationService.error('Failed to fetch lists', e);
       throw e;
     } finally {
       loading.value = false;
@@ -207,6 +209,7 @@ export const useListStore = defineStore('data.list', () => {
       listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
     } catch (e) {
       console.error('Failed to fetch list');
+      NotificationService.error(`Failed to fetch list '${list}'`, e);
       listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.loading);
       throw e;
     } finally {

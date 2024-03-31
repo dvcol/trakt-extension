@@ -7,6 +7,7 @@ import type { TraktSearchResult, TraktSearchType } from '~/models/trakt/trakt-se
 
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
@@ -91,7 +92,8 @@ export const useSearchStore = defineStore('data.search', () => {
       pagination.value = response.pagination;
       searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.loading), ...data] : data;
     } catch (e) {
-      console.error('Failed to fetch history');
+      console.error('Failed to fetch search query');
+      NotificationService.error('Failed to fetch search query', e);
       searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.loading);
       throw e;
     } finally {

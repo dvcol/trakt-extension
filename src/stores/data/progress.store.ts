@@ -7,6 +7,7 @@ import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
 import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-scroll.model';
 import { type ProgressItem } from '~/models/progress.model';
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
@@ -96,6 +97,7 @@ export const useProgressStore = defineStore('data.progress', () => {
       }
 
       console.error(error);
+      NotificationService.error('Failed to fetch progress', error);
       throw error;
     } finally {
       clearTimeout(timeout);
