@@ -1,2 +1,22 @@
 $header-navbar-height: 2.75rem;
 $header-drawer-height: 3.5rem;
+$header-open-drawer-height: calc(#{$header-navbar-height} + #{$header-drawer-height});
+$navbar-transition: 0.5s var(--n-bezier);
+$navbar-transition-visible: 0.25s var(--n-bezier);
+$navbar-transition-delay: 0.5s;
+$navbar-transition-delay-visible: 0s;
+
+@mixin navbar-transition($transition: height) {
+  transition: $transition $navbar-transition;
+  transition-delay: $navbar-transition-delay;
+
+  &.drawer-visible {
+    height: $header-drawer-height;
+    transition: $transition $navbar-transition-visible;
+    transition-delay: $navbar-transition-delay-visible;
+  }
+
+  &:not(.has-drawer) {
+    transition-delay: $navbar-transition-delay-visible;
+  }
+}
