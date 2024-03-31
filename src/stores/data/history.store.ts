@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
@@ -81,6 +82,7 @@ export const useHistoryStore = defineStore('data.history', () => {
       history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
     } catch (e) {
       console.error('Failed to fetch history');
+      NotificationService.error('Failed to fetch history', e);
       history.value = history.value.filter(h => h.id >= 0);
       throw e;
     } finally {

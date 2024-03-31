@@ -22,3 +22,5 @@ export type ArrayElement<ArrayType extends readonly unknown[] | undefined> = Arr
 export type RecursiveType<T, R> = {
   [K in keyof T]: T[K] extends object ? RecursiveType<T[K], R> : R;
 };
+
+export type Mutable<T> = { -readonly [P in keyof T]: T[P] };

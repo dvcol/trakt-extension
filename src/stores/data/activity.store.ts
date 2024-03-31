@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 
 import type { TraktSyncActivities } from '~/models/trakt/trakt-sync.model';
 
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { compareDateObject, toDateObject } from '~/utils/date.utils';
@@ -31,6 +32,7 @@ export const useActivityStore = defineStore('data.activity', () => {
       await saveState();
     } catch (error) {
       console.error('Failed to fetch activity', error);
+      NotificationService.error('Failed to fetch activity', error);
       throw error;
     } finally {
       loading.value = false;

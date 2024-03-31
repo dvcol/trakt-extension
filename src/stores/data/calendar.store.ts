@@ -5,6 +5,7 @@ import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt
 
 import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
 
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
@@ -181,7 +182,8 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
     } catch (e) {
-      console.error('Failed to fetch history');
+      console.error('Failed to fetch calendar');
+      NotificationService.error('Failed to fetch calendar', e);
       calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
       throw e;
     } finally {
