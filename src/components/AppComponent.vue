@@ -6,11 +6,10 @@ import { RouterView, useRouter } from 'vue-router';
 import { NavbarComponent } from '~/components/common';
 import GridBackground from '~/components/common/background/GridBackground.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
-import DrawerHeader from '~/components/views/drawer/DrawerHeader.vue';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
-const { currentRoute, push } = useRouter();
+const { currentRoute, push, getRoutes } = useRouter();
 
 const origin = ref();
 const drawer = ref(false);
@@ -20,6 +19,7 @@ watch(
   (_next, _prev) => {
     const isDrawer = !!_next.meta?.drawer;
     drawer.value = isDrawer;
+    if (origin.value && isDrawer) return;
     origin.value = isDrawer ? _prev : undefined;
   },
   {
@@ -29,10 +29,14 @@ watch(
 
 const asideRef = ref();
 
-const onClose = () => {
+const onAfterLeave = () => {
   if (!origin.value) return;
   push(origin.value);
   origin.value = undefined;
+};
+
+const onClose = () => {
+  drawer.value = false;
 };
 </script>
 
@@ -66,16 +70,13 @@ const onClose = () => {
           :to="asideRef"
           width="100%"
           close-on-esc
-          :on-after-leave="onClose"
+          :on-after-leave="onAfterLeave"
           auto-focus
         >
-          <NDrawerContent closable>
-            <template #header> <DrawerHeader /> </template>
-            <template #default>
-              <KeepAlive>
-                <component :is="DrawerComponent" />
-              </KeepAlive>
-            </template>
+          <NDrawerContent>
+            <KeepAlive>
+              <component :is="DrawerComponent" @close="onClose" />
+            </KeepAlive>
           </NDrawerContent>
         </NDrawer>
       </RouterView>

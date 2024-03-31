@@ -50,4 +50,4 @@ export const useRouterStore = defineStore('router', () => {
   return { baseName, setBaseName, baseUrl, setBaseUrl, initialLocation, routeParam, setRouteParam, lastRoute, setLastRoute, restoreLastRoute };
 });
 
-export const useRouterStoreRefs = () => storeToRefs(useRouterStore());
+export const useRouterStoreRefs: () => ReturnType<typeof storeToRefs<ReturnType<typeof useRouterStore>>> = () => storeToRefs(useRouterStore());

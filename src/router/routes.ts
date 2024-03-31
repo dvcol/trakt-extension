@@ -10,46 +10,34 @@ export enum Route {
   Login = 'login',
 }
 
+const listItemDrawerRoute = {
+  component: () => import('../components/views/drawer/ListItemDrawer.vue'),
+  props: true,
+  meta: { drawer: true },
+};
+
 const drawerRoutes: RouteRecordRaw[] = [
   {
+    ...listItemDrawerRoute,
     path: 'movie/:movieId',
-    component: () => import('../components/views/drawer/MovieDrawer.vue'),
-    props: true,
-    meta: {
-      drawer: true,
-    },
   },
   {
+    ...listItemDrawerRoute,
     path: 'person/:personId',
-    component: () => import('../components/views/drawer/MovieDrawer.vue'),
-    props: true,
-    meta: {
-      drawer: true,
-    },
   },
   {
+    ...listItemDrawerRoute,
     path: 'show/:showId',
-    component: () => import('../components/views/drawer/MovieDrawer.vue'),
-    props: true,
-    meta: {
-      drawer: true,
-    },
-  },
-  {
-    path: 'show/:showId/season/:seasonId',
-    component: () => import('../components/views/drawer/MovieDrawer.vue'),
-    props: true,
-    meta: {
-      drawer: true,
-    },
-  },
-  {
-    path: 'show/:showId/episode/:episodeId',
-    component: () => import('../components/views/drawer/MovieDrawer.vue'),
-    props: true,
-    meta: {
-      drawer: true,
-    },
+    children: [
+      {
+        ...listItemDrawerRoute,
+        path: 'season/:seasonId',
+      },
+      {
+        ...listItemDrawerRoute,
+        path: 'episode/:episodeId',
+      },
+    ],
   },
 ];
 
@@ -76,6 +64,7 @@ export const routes: RouteRecordRaw[] = [
       default: () => import('../components/views/calendar/CalendarComponent.vue'),
       navbar: () => import('../components/views/calendar/CalendarNavbar.vue'),
     },
+    meta: { navbar: true },
     children: drawerRoutes,
   },
   {
@@ -85,6 +74,7 @@ export const routes: RouteRecordRaw[] = [
       default: () => import('../components/views/history/HistoryComponent.vue'),
       navbar: () => import('../components/views/history/HistoryNavbar.vue'),
     },
+    meta: { navbar: true },
     children: drawerRoutes,
   },
   {
@@ -94,6 +84,7 @@ export const routes: RouteRecordRaw[] = [
       default: () => import('../components/views/watchlist/WatchlistComponent.vue'),
       navbar: () => import('../components/views/watchlist/WatchlistNavbar.vue'),
     },
+    meta: { navbar: true },
     children: drawerRoutes,
   },
   {
@@ -103,6 +94,7 @@ export const routes: RouteRecordRaw[] = [
       default: () => import('../components/views/search/SearchComponent.vue'),
       navbar: () => import('../components/views/search/SearchNavbar.vue'),
     },
+    meta: { navbar: true },
     children: drawerRoutes,
   },
   {
