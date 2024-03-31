@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
 
 import { Route } from '~/router';
+import { NavbarService } from '~/services/navbar.service';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('route');
@@ -27,9 +28,18 @@ const routes = [
 
 const isHover = ref(false);
 const isFocus = ref(false);
-const showDrawer = computed(
-  () => route.name && !!slots.drawer && (isHover.value || isFocus.value),
-);
+
+const hasDrawer = computed(() => {
+  const drawer = !!route.name && !!slots.drawer;
+  NavbarService.drawer.value = drawer;
+  return drawer;
+});
+
+const showDrawer = computed(() => {
+  const show = hasDrawer.value && (isHover.value || isFocus.value);
+  NavbarService.open.value = show;
+  return show;
+});
 
 const navElement = ref<HTMLElement>();
 </script>
@@ -69,7 +79,13 @@ const navElement = ref<HTMLElement>();
         <NavbarSettingsDropdown v-if="navElement" :parent-element="navElement" />
       </NTab>
     </NTabs>
-    <div class="drawer" :class="{ visible: showDrawer }">
+    <div
+      class="drawer"
+      :class="{
+        'has-drawer': hasDrawer,
+        'drawer-visible': showDrawer,
+      }"
+    >
       <slot name="drawer" :parent-element="navElement"></slot>
     </div>
   </nav>
@@ -84,19 +100,13 @@ nav {
   text-align: center;
 
   .drawer {
+    @include layout.navbar-transition;
+
     display: flex;
     align-items: center;
     justify-content: center;
     height: 0;
     overflow: hidden;
-    transition: height 0.5s var(--n-bezier);
-    transition-delay: 0.2s;
-
-    &.visible {
-      height: layout.$header-drawer-height;
-      transition: height 0.25s var(--n-bezier);
-      transition-delay: 0s;
-    }
   }
 
   a {

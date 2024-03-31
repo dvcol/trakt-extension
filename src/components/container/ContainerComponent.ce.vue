@@ -14,6 +14,7 @@ import { computed, ref } from 'vue';
 import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
+import { NavbarService } from '~/services/navbar.service';
 import { lazyComponent } from '~/utils/lazy.utils';
 
 const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
@@ -25,6 +26,9 @@ const override: GlobalThemeOverrides = {
   // TODO red palette
 };
 
+const { drawer } = NavbarService;
+const drawerOpen = NavbarService.open;
+
 const root = ref<HTMLElement>();
 </script>
 
@@ -35,16 +39,40 @@ const root = ref<HTMLElement>();
 
       <NLoadingBarProvider
         :to="root"
-        :loading-bar-style="{ loading: { '--n-color-loading': 'white' } }"
+        :loading-bar-style="{ loading: { '--n-color-loading': 'var(--vt-c-white)' } }"
       >
         <LoadingBarProvider />
       </NLoadingBarProvider>
 
-      <NMessageProvider :to="root">
+      <NMessageProvider
+        :to="root"
+        :max="2"
+        :container-class="
+          [
+            'message-container',
+            drawer ? 'has-drawer' : '',
+            drawerOpen ? 'drawer-visible' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')
+        "
+      >
         <MessageProvider />
       </NMessageProvider>
 
-      <NNotificationProvider :to="root">
+      <NNotificationProvider
+        :to="root"
+        :max="2"
+        :container-class="
+          [
+            'notification-container',
+            drawer ? 'has-drawer' : '',
+            drawerOpen ? 'drawer-visible' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')
+        "
+      >
         <NotificationProvider />
       </NNotificationProvider>
     </NConfigProvider>
@@ -54,6 +82,7 @@ const root = ref<HTMLElement>();
 <style lang="scss">
 @use '~/styles/base.scss';
 @use '~/styles/mixin' as mixin;
+@use '~/styles/layout' as layout;
 
 :host {
   display: flex;
@@ -88,6 +117,26 @@ const root = ref<HTMLElement>();
   height: 100%;
 }
 
+.notification-container.n-notification-container.n-notification-container {
+  @include layout.navbar-transition($transition: top);
+
+  top: layout.$header-navbar-height;
+
+  &.drawer-visible {
+    top: layout.$header-open-drawer-height;
+  }
+}
+
+.message-container.n-message-container.n-message-container {
+  @include layout.navbar-transition($transition: top);
+
+  top: calc(#{layout.$header-navbar-height} + 12px);
+
+  &.drawer-visible {
+    top: calc(#{layout.$header-open-drawer-height} + 12px);
+  }
+}
+
 .n-dropdown-menu,
 .n-date-panel,
 .n-virtual-list {
@@ -119,6 +168,8 @@ const root = ref<HTMLElement>();
   backdrop-filter: blur(var(--bg-blur));
 }
 
+.n-message-wrapper .n-message,
+.n-notification-container .n-notification,
 .n-tooltip.n-tooltip,
 .n-popover-arrow.n-popover-arrow.n-popover-arrow {
   background: var(--bg-color-60);
