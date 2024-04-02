@@ -23,7 +23,7 @@ const props = defineProps({
     default: false,
   },
   size: {
-    type: Number,
+    type: [Number, String] as PropType<number | 'original'>,
     required: false,
     default: 300,
   },
@@ -37,10 +37,12 @@ const onLoad = () => {
   imgLoaded.value = true;
 };
 
+const localPoster = ref<string>();
+
 const resolvedPoster = computed(() => {
   if (poster?.value) return poster.value;
   if (item.value.poster) return item.value.poster;
-  const image = item.value.posterRef?.value;
+  const image = (item.value.posterRef ?? localPoster)?.value;
   if (!image) return;
   if (typeof image === 'string') return image;
   if (episode.value && 'backdrop' in image) return image.backdrop;
@@ -57,9 +59,11 @@ const timeout = ref();
 const { getImageUrl } = useImageStore();
 
 const getPosters = (_item: PosterItem) => {
+  if (poster?.value) return;
+  if (_item.poster) return;
+
   imgLoaded.value = false;
   if (_item.posterRef?.value) return;
-  if (!_item.posterRef) return;
   const query = _item.getPosterQuery?.();
   if (!query) return;
   if (!episode.value && _item.type === 'episode') {
@@ -70,7 +74,7 @@ const getPosters = (_item: PosterItem) => {
     if (imgLoaded.value) return;
     transition.value = true;
   }, 100);
-  getImageUrl(query, size.value, _item.posterRef);
+  getImageUrl(query, size.value, _item.posterRef ?? localPoster);
 };
 
 watch(item, getPosters, { immediate: true, flush: 'post' });

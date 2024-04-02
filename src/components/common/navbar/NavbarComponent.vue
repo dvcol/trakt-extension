@@ -26,6 +26,12 @@ const routes = [
   Route.Search,
 ];
 
+const activeRoute = computed(() => {
+  const _name = route.name?.toString();
+  if (!_name) return;
+  return routes.find(r => r === _name) ?? routes.find(r => _name.startsWith(r));
+});
+
 const isHover = ref(false);
 const isFocus = ref(false);
 
@@ -53,7 +59,7 @@ const navElement = ref<HTMLElement>();
     @focusout="isFocus = false"
   >
     <NTabs
-      :value="route.name?.toString()"
+      :value="activeRoute"
       class="tabs"
       type="segment"
       justify-content="space-evenly"

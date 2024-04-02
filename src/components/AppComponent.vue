@@ -13,16 +13,12 @@ import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 const { currentRoute, push, back } = useRouter();
 
-const origin = ref();
 const panel = ref(false);
 
 watch(
   currentRoute,
   (_next, _prev) => {
-    const isPanel = !!_next.meta?.panel;
-    panel.value = isPanel;
-    if (origin.value && isPanel) return;
-    origin.value = isPanel ? _prev : undefined;
+    panel.value = !!_next.meta?.panel;
   },
   {
     immediate: true,
@@ -32,9 +28,9 @@ watch(
 const asideRef = ref();
 
 const onAfterLeave = () => {
-  if (!origin.value) return;
-  push(origin.value);
-  origin.value = undefined;
+  const base = currentRoute.value?.meta?.base as string;
+  if (!base) return;
+  push({ name: base });
 };
 
 const onClose = () => {

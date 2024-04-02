@@ -305,41 +305,6 @@ const onClick = () => emit('onItemClick', { item: item?.value });
       border-top: 1px solid transparent;
     }
   }
-
-  .poster {
-    flex: 0 0 var(--poster-width, 5.3125rem);
-    justify-content: center;
-    width: var(--poster-width, 5.3125rem);
-    height: var(--poster-height, 8rem);
-    opacity: 1;
-    will-change: opacity;
-
-    &.loading {
-      opacity: 0;
-    }
-
-    &.transition {
-      transition: opacity 0.5s var(--n-bezier);
-
-      &.loading {
-        transition: opacity 0.1s;
-      }
-    }
-
-    &.episode {
-      flex: 0 0 var(--poster-width, 14.23rem);
-      width: var(--poster-width, 14.23rem);
-    }
-
-    &.placeholder {
-      position: absolute;
-      background-color: #111;
-    }
-
-    &:not(.placeholder) {
-      z-index: layers.$in-front;
-    }
-  }
 }
 </style>
 
