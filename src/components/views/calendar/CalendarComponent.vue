@@ -12,7 +12,7 @@ import { useListScroll } from '~/components/common/list/use-list-scroll';
 import IconChevronDown from '~/components/icons/IconChevronDown.vue';
 import IconChevronUp from '~/components/icons/IconChevronUp.vue';
 
-import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
+import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useI18n } from '~/utils';
 import { watchUserChange } from '~/utils/store.utils';
@@ -100,7 +100,7 @@ const onScrollBottom = async () => {
   await fetchCalendar('end');
 };
 
-const { onItemClick } = useItemDrawer();
+const { onItemClick } = usePanelItem();
 </script>
 
 <template>

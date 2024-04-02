@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { NDrawer, NDrawerContent } from 'naive-ui';
+import { NButton, NDrawer, NDrawerContent, NFlex, NIcon } from 'naive-ui';
 import { ref, Transition, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
 import GridBackground from '~/components/common/background/GridBackground.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
+import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
+import IconClose from '~/components/icons/IconClose.vue';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
-const { currentRoute, push, getRoutes } = useRouter();
+const { currentRoute, push, back } = useRouter();
 
 const origin = ref();
-const drawer = ref(false);
+const panel = ref(false);
 
 watch(
   currentRoute,
   (_next, _prev) => {
-    const isDrawer = !!_next.meta?.drawer;
-    drawer.value = isDrawer;
-    if (origin.value && isDrawer) return;
-    origin.value = isDrawer ? _prev : undefined;
+    const isPanel = !!_next.meta?.panel;
+    panel.value = isPanel;
+    if (origin.value && isPanel) return;
+    origin.value = isPanel ? _prev : undefined;
   },
   {
     immediate: true,
@@ -36,12 +38,17 @@ const onAfterLeave = () => {
 };
 
 const onClose = () => {
-  drawer.value = false;
+  panel.value = false;
+};
+
+const onBack = () => {
+  if (window.history.length > 1) return back();
+  return onClose();
 };
 </script>
 
 <template>
-  <header :class="{ open: drawer }">
+  <header :class="{ open: panel }">
     <RouterView v-slot="{ Component }" name="navbar">
       <NavbarComponent v-if="isAuthenticated">
         <template v-if="Component" #drawer="{ parentElement }">
@@ -64,9 +71,9 @@ const onClose = () => {
       </Transition>
     </main>
     <aside>
-      <RouterView v-slot="{ Component: DrawerComponent }">
+      <RouterView v-slot="{ Component: PanelComponent }">
         <NDrawer
-          v-model:show="drawer"
+          v-model:show="panel"
           :to="asideRef"
           width="100%"
           close-on-esc
@@ -74,8 +81,27 @@ const onClose = () => {
           auto-focus
         >
           <NDrawerContent>
+            <!--  Header  -->
+            <NFlex justify="space-between">
+              <NButton circle quaternary @click="onBack">
+                <template #icon>
+                  <NIcon>
+                    <IconChevronLeft />
+                  </NIcon>
+                </template>
+              </NButton>
+              <NButton circle quaternary @click="onClose">
+                <template #icon>
+                  <NIcon>
+                    <IconClose />
+                  </NIcon>
+                </template>
+              </NButton>
+            </NFlex>
+
+            <!--  Content  -->
             <KeepAlive>
-              <component :is="DrawerComponent" @close="onClose" />
+              <component :is="PanelComponent" />
             </KeepAlive>
           </NDrawerContent>
         </NDrawer>

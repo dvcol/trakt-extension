@@ -57,6 +57,10 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
         season: { trakt: progress.seasonId ? Number(progress.seasonId) : undefined },
         episode: { trakt: progress.episodeId ? Number(progress.episodeId) : undefined },
       },
+      number: {
+        season: Number(progress.seasonNumber),
+        episode: Number(progress.episodeNumber),
+      },
     },
   };
 };
