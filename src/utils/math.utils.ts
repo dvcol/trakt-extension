@@ -30,5 +30,7 @@ export const findClosestMatch = (value: number, array?: string[]) => {
     }
   }
 
-  return closestMatch ?? 'original';
+  if (!closestMatch) return 'original';
+  if (Math.abs(parseInt(closestMatch.substring(1), 10)) * 2 < Math.abs(value)) return 'original';
+  return closestMatch;
 };

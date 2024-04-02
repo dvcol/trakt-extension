@@ -142,7 +142,7 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
       if (!_item.type) _item.type = getType(item);
       if (!_item.title) _item.title = getTitle(item);
       if (!_item.content) _item.content = getContent(item);
-      if (!_item.posterRef) _item.posterRef = ref<string | undefined>(undefined);
+      if (!_item.posterRef) _item.posterRef = ref<string>();
       if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
       if (!_item.tags) _item.tags = getTags(item, _item.type);
 

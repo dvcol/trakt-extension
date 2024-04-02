@@ -29,7 +29,7 @@ export type ImageStoreTypes = keyof ImageStore;
 export type ImageStoreMedias = ImageStoreMedia | string;
 
 export type ImageQuery = {
-  id: number;
+  id: string | number;
   season?: number;
   episode?: number;
   type: ImageStoreTypes;
@@ -164,14 +164,15 @@ export const useImageStore = defineStore('data.image', () => {
     return { image, key, type };
   };
 
-  const getImageSize = (type: ImageQuery['type'], size: number) => {
+  const getImageSize = (type: ImageQuery['type'], size: number | 'original') => {
+    if (typeof size === 'string') return size;
     if (type === 'person') return findClosestMatch(size, imageSizes.value.poster);
     if (type === 'episode') return findClosestMatch(size, imageSizes.value.still);
     return findClosestMatch(size, imageSizes.value.poster);
   };
 
   const setResponseValue = (
-    { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number },
+    { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number | 'original' },
     response: Ref<ImageStoreMedias | undefined> = ref(),
   ) => {
     if (typeof image === 'string') response.value = `${baseUrl}${getImageSize(type, size)}${image}`;
@@ -184,7 +185,7 @@ export const useImageStore = defineStore('data.image', () => {
     return response;
   };
 
-  const getImageUrl = async (query: ImageQuery, size: number, response: Ref<ImageStoreMedias | undefined> = ref()) => {
+  const getImageUrl = async (query: ImageQuery, size: number | 'original', response: Ref<ImageStoreMedias | undefined> = ref()) => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
 

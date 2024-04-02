@@ -10,6 +10,7 @@ export const usePanelItem = () => {
     if (!type) return;
     const { path } = currentRoute.value;
     if (!path) return;
+    const base = path.split('/')[1];
     const id = item?.meta?.ids?.[type]?.trakt;
     const showId = item?.meta?.ids?.show?.trakt;
     const seasonNumber = item?.meta?.number?.season;
@@ -19,14 +20,40 @@ export const usePanelItem = () => {
       case 'movie':
       case 'show':
         if (!id) return;
-        return push(`${path}/${type}/${id}`);
+        return push({
+          name: `${base}-${type}`,
+          params: { [`${type}Id`]: id },
+          query: {
+            poster: item?.poster,
+            tmdb: item?.meta?.ids?.[type]?.tmdb,
+          },
+        });
       case 'season':
         if (!showId || !seasonNumber) return;
-        return push({ path: `${path}/show/${showId}/${type}/${seasonNumber}` });
+        return push({
+          name: `${base}-${type}`,
+          params: {
+            showId,
+            seasonNumber,
+          },
+          query: {
+            poster: item?.poster,
+            tmdb: item?.meta?.ids?.show?.tmdb,
+          },
+        });
       case 'episode':
         if (!showId || !seasonNumber || !episodeNumber) return;
         return push({
-          path: `${path}/show/${showId}/season/${seasonNumber}/${type}/${episodeNumber}`,
+          name: `${base}-${type}`,
+          params: {
+            showId,
+            seasonNumber,
+            episodeNumber,
+          },
+          query: {
+            poster: item?.poster,
+            tmdb: item?.meta?.ids?.show?.tmdb,
+          },
         });
       default:
         break;

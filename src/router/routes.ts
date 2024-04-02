@@ -10,39 +10,41 @@ export enum Route {
   Login = 'login',
 }
 
-const PanelRoute = {
-  component: () => import('../components/views/panel/ShowPanel.vue'),
-  props: true,
-  meta: { panel: true },
-};
+const panelRoute = (base: Route, partial: Partial<RouteRecordRaw> = {}): RouteRecordRaw =>
+  ({
+    props: true,
+    meta: { panel: true, base },
+    component: () => import('../components/views/panel/ShowPanel.vue'),
+    ...partial,
+  }) as RouteRecordRaw;
 
-const panelRoutes: RouteRecordRaw[] = [
-  {
-    ...PanelRoute,
+const panelRoutes = (base: Route): RouteRecordRaw[] => [
+  panelRoute(base, {
+    name: `${base}-movie`,
     path: 'movie/:movieId',
     component: () => import('../components/views/panel/MoviePanel.vue'),
-  },
-  {
-    ...PanelRoute,
+  }),
+  panelRoute(base, {
+    name: `${base}-person`,
     path: 'person/:personId',
     component: () => import('../components/views/panel/PersonPanel.vue'),
-  },
-  {
-    ...PanelRoute,
+  }),
+  panelRoute(base, {
+    name: `${base}-show`,
     path: 'show/:showId',
     children: [
-      {
-        ...PanelRoute,
+      panelRoute(base, {
+        name: `${base}-season`,
         path: 'season/:seasonNumber',
         children: [
-          {
-            ...PanelRoute,
+          panelRoute(base, {
+            name: `${base}-episode`,
             path: 'episode/:episodeNumber',
-          },
+          }),
         ],
-      },
+      }),
     ],
-  },
+  }),
 ];
 
 export const routes: RouteRecordRaw[] = [
@@ -59,7 +61,7 @@ export const routes: RouteRecordRaw[] = [
     path: `/${Route.Progress}`,
     name: Route.Progress,
     component: () => import('../components/views/progress/ProgressComponent.vue'),
-    children: panelRoutes,
+    children: panelRoutes(Route.Progress),
   },
   {
     path: `/${Route.Calendar}`,
@@ -69,7 +71,7 @@ export const routes: RouteRecordRaw[] = [
       navbar: () => import('../components/views/calendar/CalendarNavbar.vue'),
     },
     meta: { navbar: true },
-    children: panelRoutes,
+    children: panelRoutes(Route.Calendar),
   },
   {
     path: `/${Route.History}`,
@@ -79,7 +81,7 @@ export const routes: RouteRecordRaw[] = [
       navbar: () => import('../components/views/history/HistoryNavbar.vue'),
     },
     meta: { navbar: true },
-    children: panelRoutes,
+    children: panelRoutes(Route.History),
   },
   {
     path: `/${Route.Watchlist}`,
@@ -89,7 +91,7 @@ export const routes: RouteRecordRaw[] = [
       navbar: () => import('../components/views/watchlist/WatchlistNavbar.vue'),
     },
     meta: { navbar: true },
-    children: panelRoutes,
+    children: panelRoutes(Route.Watchlist),
   },
   {
     path: `/${Route.Search}`,
@@ -99,7 +101,7 @@ export const routes: RouteRecordRaw[] = [
       navbar: () => import('../components/views/search/SearchNavbar.vue'),
     },
     meta: { navbar: true },
-    children: panelRoutes,
+    children: panelRoutes(Route.Search),
   },
   {
     path: `/${Route.Settings}`,
