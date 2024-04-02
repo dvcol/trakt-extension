@@ -28,8 +28,8 @@ export const seasons = {
   summary: new TraktClientEndpoint<
     {
       /** Trakt ID, Trakt slug, or IMDB ID */
-      id: string;
-    } & TraktApiParamsExtended<typeof TraktApiExtended.Episodes>,
+      id: string | number;
+    } & TraktApiParamsExtended<typeof TraktApiExtended.Episodes | typeof TraktApiExtended.Full>,
     TraktSeason<'any'>[]
   >({
     method: HttpMethod.GET,

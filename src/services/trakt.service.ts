@@ -4,10 +4,13 @@ import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentica
 import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
+import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
+import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
+import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
@@ -312,6 +315,23 @@ export class TraktService {
     },
   };
 
+  static show = {
+    async summary(id: string | number) {
+      const response = await TraktService.traktClient.shows.summary.cached({ id, extended: 'full' });
+      return response.json() as Promise<TraktShowExtended>;
+    },
+
+    async seasons(id: string | number) {
+      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' });
+      return response.json() as Promise<TraktSeasonExtended[]>;
+    },
+
+    async episode({ id, season, episode }: { id: string | number; season: number; episode: number }) {
+      const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: 'full' });
+      return response.json() as Promise<TraktEpisodeExtended>;
+    },
+  };
+
   static async activity() {
     const response = await this.traktClient.sync.lastActivities();
     return response.json();
@@ -325,6 +345,9 @@ export class TraktService {
     watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
     collection: TraktService.traktClient.sync.collection.get.cached.evict,
+    shows: TraktService.traktClient.shows.summary.cached.evict,
+    seasons: TraktService.traktClient.seasons.summary.cached.evict,
+    episodes: TraktService.traktClient.episodes.summary.cached.evict,
     lists: () =>
       Promise.all([
         TraktService.traktClient.users.lists.get.cached.evict(),

@@ -158,6 +158,13 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
         },
       };
 
+      if (_item.type === 'episode' || _item.type === 'season') {
+        _item.meta.number = {
+          season: item.episode?.season ?? item.season?.number,
+          episode: item.episode?.number,
+        };
+      }
+
       return _item;
     });
   });

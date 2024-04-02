@@ -2,7 +2,7 @@ import { useRouter } from 'vue-router';
 
 import type { ListScrollItem } from '~/models/list-scroll.model';
 
-export const useItemDrawer = () => {
+export const usePanelItem = () => {
   const { push, currentRoute } = useRouter();
 
   const onItemClick = ({ item }: { item: ListScrollItem }) => {
@@ -12,8 +12,8 @@ export const useItemDrawer = () => {
     if (!path) return;
     const id = item?.meta?.ids?.[type]?.trakt;
     const showId = item?.meta?.ids?.show?.trakt;
-    const seasonId = item?.meta?.ids?.season?.trakt;
-    const episodeId = item?.meta?.ids?.episode?.trakt;
+    const seasonNumber = item?.meta?.number?.season;
+    const episodeNumber = item?.meta?.number?.episode;
     switch (type) {
       case 'person':
       case 'movie':
@@ -21,12 +21,12 @@ export const useItemDrawer = () => {
         if (!id) return;
         return push(`${path}/${type}/${id}`);
       case 'season':
-        if (!showId || !seasonId) return;
-        return push({ path: `${path}/show/${showId}/${type}/${seasonId}` });
+        if (!showId || !seasonNumber) return;
+        return push({ path: `${path}/show/${showId}/${type}/${seasonNumber}` });
       case 'episode':
-        if (!showId || !episodeId) return;
+        if (!showId || !seasonNumber || !episodeNumber) return;
         return push({
-          path: `${path}/show/${showId}/${type}/${episodeId}`,
+          path: `${path}/show/${showId}/season/${seasonNumber}/${type}/${episodeNumber}`,
         });
       default:
         break;

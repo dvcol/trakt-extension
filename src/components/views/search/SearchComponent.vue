@@ -9,7 +9,7 @@ import {
   useListScroll,
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
-import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
+import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import {
   type SearchResult,
   useSearchStore,
@@ -35,7 +35,7 @@ const { onScroll } = useListScrollEvents(fetchSearchResults, {
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
-const { onItemClick } = useItemDrawer();
+const { onItemClick } = usePanelItem();
 </script>
 
 <template>

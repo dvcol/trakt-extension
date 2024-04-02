@@ -6,8 +6,8 @@ import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 
-import { useItemDrawer } from '~/components/views/drawer/use-item-drawer';
 import LoginCard from '~/components/views/login/LoginCard.vue';
+import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ExternaLinks } from '~/settings/external.links';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useI18n } from '~/utils';
@@ -22,7 +22,7 @@ onMounted(async () => {
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();
-const { onItemClick } = useItemDrawer();
+const { onItemClick } = usePanelItem();
 </script>
 
 <template>
