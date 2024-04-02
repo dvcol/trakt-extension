@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NEmpty, NFlex, NImage, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
+import { NEmpty, NFlex, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
 import {
   computed,
@@ -9,14 +9,13 @@ import {
   type PropType,
   ref,
   toRefs,
-  watch,
 } from 'vue';
 
-import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
-import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
-import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
+import type { PosterItem } from '~/models/poster.model';
 
-import { useImageStore } from '~/stores/data/image.store';
+import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
+import PosterComponent from '~/components/common/poster/PosterComponent.vue';
+import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 import { Colors } from '~/styles/colors.style';
 import { useI18n } from '~/utils';
 
@@ -110,50 +109,6 @@ const year = new Date().getFullYear();
 const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
 
-const { getImageUrl } = useImageStore();
-
-const resolvedPoster = computed(() => {
-  if (poster?.value) return poster.value;
-  if (item.value.poster) return item.value.poster;
-  const image = item.value.posterRef?.value;
-  if (!image) return;
-  if (typeof image === 'string') return image;
-  if (episode.value && 'backdrop' in image) return image.backdrop;
-  return image.poster;
-});
-
-const objectFit = computed(() =>
-  resolvedPoster.value === PosterPlaceholder ? 'contain' : 'cover',
-);
-
-const imgLoaded = ref(true);
-
-const onLoad = () => {
-  imgLoaded.value = true;
-};
-
-const transition = ref(false);
-const timeout = ref();
-
-const getPosters = (_item: ListScrollItem) => {
-  imgLoaded.value = false;
-  if (_item.posterRef?.value) return;
-  if (!_item.posterRef) return;
-  const query = _item.getPosterQuery?.();
-  if (!query) return;
-  if (!episode.value && _item.type === 'episode') {
-    query.type = 'show';
-    delete query.episode;
-  }
-  setTimeout(() => {
-    if (resolvedPoster.value) return;
-    transition.value = true;
-  }, 100);
-  getImageUrl(query, 300, _item.posterRef);
-};
-
-watch(item, getPosters, { immediate: true, flush: 'post' });
-
 const itemRef = ref<HTMLElement & InstanceType<typeof NTimelineItem>>();
 
 onMounted(() => {
@@ -165,7 +120,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  clearTimeout(timeout.value);
   if (!scrollIntoView.value) return;
   emit('onScrollOutOfView', {
     item: item?.value,
@@ -243,32 +197,10 @@ const onClick = () => emit('onItemClick', { item: item?.value });
           </NFlex>
         </slot>
         <NFlex v-else class="tile" :wrap="false">
-          <NImage
-            alt="poster-image"
-            class="poster"
-            :class="{
-              episode,
-              loading: !imgLoaded,
-              transition,
-            }"
-            :object-fit="objectFit"
-            width="100%"
-            lazy
-            preview-disabled
-            :src="resolvedPoster"
-            :fallback-src="PosterPlaceholder"
-            :on-load="onLoad"
-          />
-          <NImage
-            alt="poster-image-fallback"
-            class="poster placeholder"
-            :class="{ episode }"
-            object-fit="contain"
-            width="100%"
-            lazy
-            preview-disabled
-            :src="PosterPlaceholder"
-            :fallback-src="PosterPlaceholder"
+          <PosterComponent
+            :item="item as PosterItem"
+            :poster="poster"
+            :episode="episode"
           />
           <ListItemPanel
             :item="item"

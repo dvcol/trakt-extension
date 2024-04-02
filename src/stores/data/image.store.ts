@@ -24,7 +24,7 @@ type ImageStore = {
   person: Record<string, string>;
 };
 
-type ImageStoreTypes = keyof ImageStore;
+export type ImageStoreTypes = keyof ImageStore;
 
 export type ImageStoreMedias = ImageStoreMedia | string;
 
