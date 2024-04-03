@@ -23,10 +23,6 @@ export const usePanelItem = () => {
         return push({
           name: `${base}-${type}`,
           params: { [`${type}Id`]: id },
-          query: {
-            poster: item?.poster,
-            tmdb: item?.meta?.ids?.[type]?.tmdb,
-          },
         });
       case 'season':
         if (!showId || !seasonNumber) return;
@@ -35,10 +31,6 @@ export const usePanelItem = () => {
           params: {
             showId,
             seasonNumber,
-          },
-          query: {
-            poster: item?.poster,
-            tmdb: item?.meta?.ids?.show?.tmdb,
           },
         });
       case 'episode':
@@ -49,10 +41,6 @@ export const usePanelItem = () => {
             showId,
             seasonNumber,
             episodeNumber,
-          },
-          query: {
-            poster: item?.poster,
-            tmdb: item?.meta?.ids?.show?.tmdb,
           },
         });
       default:

@@ -33,6 +33,7 @@
   --bg-red-80: rgba(255 222 223 / 80%);
   --bg-red-90: rgba(255 222 223 / 90%);
   --border-grey: rgb(70 70 70);
+  --border-white: rgb(255 255 255 / 20%);
   --primary-color: #63e2b7;
   --primary-color-lighter:  #7fe7c4;
   --primary-color-disabled: #548272;
@@ -51,6 +52,9 @@
 
   /* Transforms */
   --n-bezier: cubic-bezier(.4, 0, .2, 1);
+
+  /* Bow shadows */
+  --image-box-shadow: 0 0 20px 9px rgb(255 255 255 / 10%);
 
   /* semantic color variables for this project */
   --section-gap: 160px;
