@@ -4,6 +4,10 @@ import { computed, onMounted, type PropType, ref, toRefs, Transition } from 'vue
 
 import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 
+import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
+
+import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
@@ -14,16 +18,53 @@ const props = defineProps({
     type: Object as PropType<TraktEpisodeExtended>,
     required: false,
   },
+  season: {
+    type: Object as PropType<TraktSeasonExtended>,
+    required: false,
+  },
+  show: {
+    type: Object as PropType<TraktShowExtended>,
+    required: false,
+  },
+  mode: {
+    type: String as PropType<'show' | 'season' | 'episode'>,
+    required: false,
+    default: 'episode',
+  },
 });
 
-const { episode } = toRefs(props);
+const { mode, episode, season, show } = toRefs(props);
 
-const episodeTitle = computed(() => {
+const title = computed(() => {
+  if (mode.value === 'show') {
+    if (!show?.value?.title) return;
+    return deCapitalise(show.value.title);
+  }
+  if (mode.value === 'season') {
+    if (!season?.value?.title) return;
+    return deCapitalise(season.value.title);
+  }
   if (!episode?.value?.title) return;
   return deCapitalise(episode.value?.title);
 });
 
-const episodeUrl = computed(() => {
+const url = computed(() => {
+  if (mode.value === 'show') {
+    if (!show?.value?.ids?.trakt) return;
+    return ResolveExternalLinks.search({
+      type: 'show',
+      source: 'trakt',
+      id: show.value.ids.trakt,
+    });
+  }
+  if (mode.value === 'season') {
+    if (!season?.value?.ids?.trakt) return;
+    return ResolveExternalLinks.search({
+      type: 'season',
+      source: 'trakt',
+      id: season.value.ids.trakt,
+    });
+  }
   if (!episode?.value?.ids?.trakt) return;
   return ResolveExternalLinks.search({
     type: 'episode',
@@ -31,6 +72,21 @@ const episodeUrl = computed(() => {
     id: episode.value.ids.trakt,
   });
 });
+
+const overview = computed(() => {
+  if (mode.value === 'show') {
+    if (!show?.value) return;
+    return show?.value?.overview ?? '-';
+  }
+  if (mode.value === 'season') {
+    if (!season?.value) return;
+    return season?.value?.overview ?? show?.value?.overview ?? '-';
+  }
+  if (!episode?.value) return;
+  return episode?.value?.overview ?? '-';
+});
+
+const key = computed(() => `episode-${episode?.value?.ids.trakt}`);
 
 const { openTab } = useExtensionSettingsStore();
 
@@ -45,25 +101,19 @@ onMounted(() => {
 
 <template>
   <Transition :name="transition" mode="out-in">
-    <NFlex
-      :key="`episode-${episode?.ids.trakt}`"
-      justify="center"
-      align="center"
-      vertical
-      class="episode-container"
-    >
+    <NFlex :key="key" justify="center" align="center" vertical class="overview container">
       <TitleLink
-        v-if="episodeTitle"
-        class="episode-title"
-        :href="episodeUrl"
+        v-if="title"
+        class="title"
+        :href="url"
         :component="NH4"
         @on-click="openTab"
       >
-        {{ episodeTitle }}
+        {{ title }}
       </TitleLink>
-      <NSkeleton v-else class="episode-title-skeleton" style="width: 40dvh" round />
+      <NSkeleton v-else class="title-skeleton" style="width: 40dvh" round />
 
-      <div v-if="episode">{{ episode?.overview }}</div>
+      <div v-if="overview">{{ overview }}</div>
       <template v-else>
         <NSkeleton style="width: 100%" />
         <NSkeleton style="width: 100%" />
@@ -93,13 +143,13 @@ onMounted(() => {
   }
 }
 
-.episode {
-  &-container {
+.overview {
+  .container {
     width: 100%;
   }
 
-  &-title:deep(h4),
-  &-title-skeleton {
+  .title:deep(h4),
+  .title-skeleton {
     margin-top: 1rem;
     margin-bottom: 1rem;
     font-weight: bold;
