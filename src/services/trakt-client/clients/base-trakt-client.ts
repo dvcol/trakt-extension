@@ -192,9 +192,11 @@ export class BaseTraktClient extends BaseClient<TraktApiQuery, TraktApiResponse,
     }
 
     // Extended
-    if (template.opts?.extended && params.extended) {
-      if (!template.opts.extended.includes(params.extended)) {
-        throw Error(`Invalid value '${params.extended}', extended should be '${template.opts.extended}'`);
+    if (template.opts?.extended?.length && params.extended) {
+      const templateExtended = template.opts.extended;
+      const paramsExtended = Array.isArray(params.extended) ? params.extended : [params.extended];
+      if (paramsExtended.some(e => !templateExtended.includes(e))) {
+        throw Error(`Invalid value '${params.extended}', extended should be '${template.opts.extended.join(', ')}'`);
       }
       queryParams.set('extended', `${params.extended}`);
     }
