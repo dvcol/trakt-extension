@@ -4,12 +4,12 @@ import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentica
 import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
 import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
-import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
+import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
-import type { TraktSeasonEpisodes } from '~/models/trakt/trakt-season.model';
+import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
@@ -321,9 +321,14 @@ export class TraktService {
       return response.json() as Promise<TraktShowExtended>;
     },
 
+    async season(id: string | number, season: number) {
+      const response = await TraktService.traktClient.seasons.season.cached({ id, season });
+      return response.json() as Promise<TraktEpisodeShort[]>;
+    },
+
     async seasons(id: string | number) {
-      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'episodes' });
-      return response.json() as Promise<TraktSeasonEpisodes[]>;
+      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' });
+      return response.json() as Promise<TraktSeasonExtended[]>;
     },
 
     async episode({ id, season, episode }: { id: string | number; season: number; episode: number }) {
