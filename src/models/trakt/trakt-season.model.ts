@@ -22,9 +22,11 @@ export type TraktSeasonExtended = TraktSeasonShort & {
   network: string;
 };
 
-export type TraktSeasonEpisodes = TraktSeasonShort & {
-  episodes: TraktEpisode[];
+export type TraktSeasonEpisodes<T extends EntityTypes = Short> = TraktSeasonShort & {
+  episodes: TraktEpisode<T>[];
 };
+
+export type TraktSeasonEpisodesExtended = TraktSeasonExtended & TraktSeasonEpisodes<Extended>;
 
 export type TraktSeason<T extends 'episodes' | EntityTypes = Short> = T extends Extended
   ? TraktSeasonExtended
@@ -32,7 +34,7 @@ export type TraktSeason<T extends 'episodes' | EntityTypes = Short> = T extends 
     ? TraktSeasonEpisodes
     : T extends Short
       ? TraktSeasonShort
-      : TraktSeasonShort & Partial<TraktSeasonExtended> & Partial<TraktSeasonEpisodes>;
+      : (Partial<TraktSeasonExtended> & Partial<TraktSeasonEpisodes>) & TraktSeasonShort;
 
 export type TraktSeasonCast = TraktCast<Any, 'episodes', Any>;
 

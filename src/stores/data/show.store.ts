@@ -4,7 +4,7 @@ import { computed, reactive, type Ref, ref } from 'vue';
 
 import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 import type { TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
-import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
+import type { TraktSeasonEpisodes } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import { type ListScrollItemProgress, ListScrollItemProgressType } from '~/models/list-scroll.model';
@@ -13,7 +13,7 @@ import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 
-export type ShowSeasons = Record<number, TraktSeasonExtended>;
+export type ShowSeasons = Record<number, TraktSeasonEpisodes>;
 
 type ShowDictionary = Record<string, TraktShowExtended>;
 type ShowSeasonDictionary = Record<string, ShowSeasons>;
@@ -49,6 +49,7 @@ export const useShowStore = defineStore('data.show', () => {
   const showsSeasons = reactive<ShowSeasonDictionary>({});
   const showsEpisodes = reactive<ShowEpisodeDictionary>({});
   const showsProgress = reactive<ShowProgressDictionary>({});
+
   const showsLoading = reactive<LoadingDictionary>({});
   const showsSeasonsLoading = reactive<LoadingDictionary>({});
   const showsEpisodesLoading = reactive<EpisodeLoadingDictionary>({});
@@ -59,6 +60,7 @@ export const useShowStore = defineStore('data.show', () => {
     Object.assign(showsSeasons, {});
     Object.assign(showsEpisodes, {});
     Object.assign(showsProgress, {});
+
     Object.assign(showsLoading, {});
     Object.assign(showsSeasonsLoading, {});
     Object.assign(showsEpisodesLoading, {});

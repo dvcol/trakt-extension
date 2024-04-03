@@ -127,7 +127,7 @@ const onTagClick = (e: MouseEvent, url?: string) => {
         }}</NEllipsis>
       </div>
       <NFlex v-if="date || tags?.length" size="medium" class="tags">
-        <template v-for="tag of tags" :key="tag.label">
+        <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
           <NSkeleton v-if="loading" text style="width: 6%" />
           <a v-else :href="tag.url" @click="e => onTagClick(e, tag.url)">
             <NTag

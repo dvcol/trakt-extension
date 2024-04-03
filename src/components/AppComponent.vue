@@ -14,11 +14,13 @@ const { isAuthenticated } = useAuthSettingsStoreRefs();
 const { currentRoute, push, back } = useRouter();
 
 const panel = ref(false);
+const base = ref();
 
 watch(
   currentRoute,
   (_next, _prev) => {
     panel.value = !!_next.meta?.panel;
+    base.value = _next.meta?.base;
   },
   {
     immediate: true,
@@ -28,9 +30,8 @@ watch(
 const asideRef = ref();
 
 const onAfterLeave = () => {
-  const base = currentRoute.value?.meta?.base as string;
-  if (!base) return;
-  push({ name: base });
+  if (!base.value) return;
+  push({ name: base.value });
 };
 
 const onClose = () => {
@@ -38,7 +39,7 @@ const onClose = () => {
 };
 
 const onBack = () => {
-  if (window.history.length > 1) return back();
+  if (window.history.state.back) return back();
   return onClose();
 };
 </script>
@@ -72,13 +73,14 @@ const onBack = () => {
           v-model:show="panel"
           :to="asideRef"
           width="100%"
+          class="panel"
           close-on-esc
           :on-after-leave="onAfterLeave"
           auto-focus
         >
           <NDrawerContent>
             <!--  Header  -->
-            <NFlex justify="space-between">
+            <NFlex justify="space-between" class="panel-header">
               <NButton circle quaternary @click="onBack">
                 <template #icon>
                   <NIcon>
@@ -96,9 +98,9 @@ const onBack = () => {
             </NFlex>
 
             <!--  Content  -->
-            <KeepAlive>
+            <div class="panel-content">
               <component :is="PanelComponent" />
-            </KeepAlive>
+            </div>
           </NDrawerContent>
         </NDrawer>
       </RouterView>
@@ -138,5 +140,21 @@ main {
   justify-content: center;
   min-height: calc(100% - #{layout.$header-navbar-height});
   margin-top: layout.$header-navbar-height;
+}
+
+.panel {
+  position: relative;
+  max-height: calc(100% - #{layout.$header-navbar-height});
+  overflow: auto;
+
+  &-header {
+    position: sticky;
+    top: 0;
+  }
+
+  &-content {
+    margin-top: -1.125rem;
+    padding: 0 3rem 1.25rem;
+  }
 }
 </style>

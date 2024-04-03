@@ -9,7 +9,7 @@ import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model'
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
-import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
+import type { TraktSeasonEpisodes } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
@@ -322,8 +322,8 @@ export class TraktService {
     },
 
     async seasons(id: string | number) {
-      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' });
-      return response.json() as Promise<TraktSeasonExtended[]>;
+      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'episodes' });
+      return response.json() as Promise<TraktSeasonEpisodes[]>;
     },
 
     async episode({ id, season, episode }: { id: string | number; season: number; episode: number }) {
