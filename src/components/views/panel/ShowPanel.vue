@@ -59,6 +59,11 @@ const panelType = computed<'show' | 'season' | 'episode'>(() => {
   return 'show';
 });
 
+const season = computed(() => {
+  if (seasonNb?.value === undefined) return;
+  return seasons.value?.[seasonNb.value];
+});
+
 const showTitle = computed(() => {
   if (!show.value?.title) return;
   return deCapitalise(show.value.title);
@@ -153,7 +158,12 @@ const titleUrl = computed(() => {
       :episode-number="episodeNb"
     />
 
-    <ShowPanelOverview v-if="panelType === 'episode'" :episode="episode" />
+    <ShowPanelOverview
+      :episode="episode"
+      :season="season"
+      :show="show"
+      :mode="panelType"
+    />
   </NFlex>
 </template>
 
