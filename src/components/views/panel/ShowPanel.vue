@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { NFlex, NH2, NH4, NSkeleton } from 'naive-ui';
-import { computed, onMounted, onUnmounted, ref, toRefs, Transition, watch } from 'vue';
+import { NFlex, NSkeleton } from 'naive-ui';
+import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 
-import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
+import type {
+  TraktEpisodeExtended,
+  TraktEpisodeShort,
+} from '~/models/trakt/trakt-episode.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
+import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import ShowPanelPoster from '~/components/views/panel/ShowPanelPoster.vue';
+import { ResolveExternalLinks } from '~/settings/external.links';
 import { type ShowSeasons, useShowStore } from '~/stores/data/show.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
@@ -25,10 +32,9 @@ const props = defineProps({
   },
 });
 
-const { getShowRef, getShowSeasonsRef, getShowEpisodeRef } = useShowStore();
-
 const show = ref<TraktShowExtended>();
 const seasons = ref<ShowSeasons>();
+const episodes = ref<TraktEpisodeShort[]>();
 const episode = ref<TraktEpisodeExtended>();
 
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
@@ -47,50 +53,65 @@ const episodeNb = computed(() => {
   return _episodeNumber;
 });
 
+const panelType = computed<'show' | 'season' | 'episode'>(() => {
+  if (episodeNb?.value !== undefined && seasonNb?.value !== undefined) return 'episode';
+  if (seasonNb?.value !== undefined) return 'season';
+  return 'show';
+});
+
 const showTitle = computed(() => {
   if (!show.value?.title) return;
   return deCapitalise(show.value.title);
 });
 
-const episodeTitle = computed(() => {
-  if (!episode.value?.title) return;
-  return deCapitalise(episode.value?.title);
-});
-
 const subscriptions = new Set<() => void>();
+
+const { getShowRef, getShowSeasonsRef, getShowSeasonEpisodesRef, getShowEpisodeRef } =
+  useShowStore();
 
 const watchData = () =>
   watch(
-    props,
+    [showId, seasonNb, episodeNb],
     (next, prev) => {
-      if (next.showId !== prev?.showId) {
+      // show changes
+      if (next.at(0) !== prev?.at(0)) {
         show.value = undefined;
         seasons.value = undefined;
+        episodes.value = undefined;
         episode.value = undefined;
-      } else if (next.episodeNumber !== prev?.episodeNumber) {
+      }
+      // season changes
+      else if (next.at(1) !== prev?.at(1)) {
         episode.value = undefined;
-      } else if (next.seasonNumber !== prev?.seasonNumber) {
+        episodes.value = undefined;
+      }
+      // episode changes
+      else if (next.at(2) !== prev?.at(2)) {
         episode.value = undefined;
       }
 
-      if (showId?.value) subscriptions.add(getShowRef(showId.value, show).unsub);
-      if (showId?.value)
+      if (showId?.value) {
+        subscriptions.add(getShowRef(showId.value, show).unsub);
         subscriptions.add(getShowSeasonsRef(showId.value, seasons).unsub);
-      if (
-        showId?.value &&
-        seasonNb?.value !== undefined &&
-        episodeNb?.value !== undefined
-      ) {
-        subscriptions.add(
-          getShowEpisodeRef(
-            {
-              id: showId.value,
-              season: seasonNb.value,
-              episode: episodeNb.value,
-            },
-            episode,
-          ).unsub,
-        );
+
+        if (seasonNb?.value !== undefined) {
+          subscriptions.add(
+            getShowSeasonEpisodesRef(showId.value, seasonNb?.value, episodes).unsub,
+          );
+        }
+
+        if (seasonNb?.value !== undefined && episodeNb?.value !== undefined) {
+          subscriptions.add(
+            getShowEpisodeRef(
+              {
+                id: showId.value,
+                season: seasonNb.value,
+                episode: episodeNb.value,
+              },
+              episode,
+            ).unsub,
+          );
+        }
       }
     },
     { immediate: true },
@@ -104,14 +125,27 @@ onUnmounted(() => {
   subscriptions.forEach(unsub => unsub());
   subscriptions.clear();
 });
+
+const { openTab } = useExtensionSettingsStore();
+
+const titleUrl = computed(() => {
+  if (!show.value?.ids?.trakt) return;
+  return ResolveExternalLinks.search({
+    type: 'show',
+    source: 'trakt',
+    id: show.value.ids.trakt,
+  });
+});
 </script>
 
 <template>
   <NFlex justify="center" align="center" vertical>
-    <NH2 v-if="showTitle" class="show-title">{{ showTitle }}</NH2>
-    <NSkeleton v-else />
+    <TitleLink v-if="showTitle" class="show-title" :href="titleUrl" @on-click="openTab">
+      {{ showTitle }}
+    </TitleLink>
+    <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
 
-    <ShowPanelPicker :seasons="seasons" :season-number="seasonNb" />
+    <ShowPanelPicker :seasons="seasons" :episodes="episodes" :mode="panelType" />
 
     <ShowPanelPoster
       :show-id="show?.ids.tmdb"
@@ -119,26 +153,12 @@ onUnmounted(() => {
       :episode-number="episodeNb"
     />
 
-    <Transition name="scale" mode="out-in">
-      <NFlex
-        v-if="episodeNumber !== undefined"
-        :key="`season-${seasonNb}-episode-${episodeNb}`"
-        justify="center"
-        align="center"
-        vertical
-        class="episode-container"
-      >
-        <NH4 v-if="episodeTitle" class="episode-title">{{ episodeTitle }}</NH4>
-        <NSkeleton v-else />
-
-        <div v-if="episode">{{ episode?.overview }}</div>
-        <NSkeleton v-else />
-      </NFlex>
-    </Transition>
+    <ShowPanelOverview v-if="panelType === 'episode'" :episode="episode" />
   </NFlex>
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/z-index' as layers;
 @use '~/styles/transition' as transition;
 @include transition.scale;
 
@@ -156,19 +176,13 @@ onUnmounted(() => {
   box-shadow: var(--image-box-shadow);
 }
 
-.show-title {
+.show-title:deep(h2),
+.show-title-skeleton {
   margin-bottom: 0.5rem;
 }
 
-.episode {
-  &-container {
-    width: 100%;
-  }
-
-  &-title {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
-  }
+.show-title-skeleton {
+  height: 1.5rem;
+  margin-top: 0.625rem;
 }
 </style>

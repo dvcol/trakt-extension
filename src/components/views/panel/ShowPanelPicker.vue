@@ -5,6 +5,7 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import { useRoute } from 'vue-router';
 
+import type { TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { ShowSeasons } from '~/stores/data/show.store';
 
 import ButtonLink from '~/components/common/buttons/ButtonLink.vue';
@@ -14,17 +15,23 @@ const props = defineProps({
     type: Object as PropType<ShowSeasons>,
     required: false,
   },
-  seasonNumber: {
-    type: Number,
+  episodes: {
+    type: Array as PropType<TraktEpisodeShort[]>,
     required: false,
+  },
+  mode: {
+    type: String as PropType<'show' | 'season' | 'episode'>,
+    required: false,
+    default: 'episode',
   },
 });
 
-const { seasons, seasonNumber } = toRefs(props);
+const { seasons, episodes } = toRefs(props);
 
 const { meta } = useRoute();
+
 const seasonsLinks = computed(() => {
-  if (!seasons?.value) return [];
+  if (!seasons?.value) return;
   return Object.entries(seasons.value).map(([_number, _season]) => ({
     number: Number(_number),
     link: { name: `${meta.base}-season`, params: { seasonNumber: _number } },
@@ -32,10 +39,9 @@ const seasonsLinks = computed(() => {
 });
 
 const episodeLinks = computed(() => {
-  if (!seasons?.value || seasonNumber?.value === undefined) return [];
-  const _episodes = seasons.value[seasonNumber.value]?.episodes;
-  if (!_episodes.length) return [];
-  return _episodes.map(_episode => ({
+  if (!episodes?.value) return;
+  if (!episodes?.value?.length) return [];
+  return episodes.value.map(_episode => ({
     number: _episode.number,
     link: {
       name: `${meta.base}-episode`,
@@ -47,7 +53,7 @@ const episodeLinks = computed(() => {
 
 <template>
   <NFlex vertical class="picker" justify="center">
-    <NFlex v-if="seasonsLinks" align="baseline" size="small">
+    <NFlex align="baseline" size="small">
       <span class="prefix">Season</span>
 
       <NFlex class="numbers" size="small">
@@ -60,13 +66,14 @@ const episodeLinks = computed(() => {
             {{ number }}
           </ButtonLink>
         </template>
+        <NSkeleton v-else-if="!seasonsLinks" class="skeleton" round />
         <span v-else>none</span>
       </NFlex>
     </NFlex>
-    <NSkeleton v-else />
 
-    <NFlex v-if="episodeLinks" align="baseline" size="small">
+    <NFlex v-if="mode !== 'show'" align="baseline" size="small">
       <span class="prefix">Episode</span>
+
       <NFlex class="numbers" size="small">
         <template v-if="episodeLinks?.length">
           <ButtonLink
@@ -79,10 +86,10 @@ const episodeLinks = computed(() => {
             <span class="label" :class="{ active: isActive }">{{ number }}</span>
           </ButtonLink>
         </template>
+        <NSkeleton v-else-if="!episodeLinks" class="skeleton" round />
         <span v-else>none</span>
       </NFlex>
     </NFlex>
-    <NSkeleton v-else />
   </NFlex>
 </template>
 
@@ -100,6 +107,11 @@ const episodeLinks = computed(() => {
   .numbers {
     flex: 1 1;
     gap: 8px 6px;
+    align-self: center;
+  }
+
+  .skeleton {
+    margin: 0.375rem 0;
   }
 }
 </style>

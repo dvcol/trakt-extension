@@ -15,9 +15,8 @@ import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
-import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
-import { createTab } from '~/utils/browser/browser.utils';
 import { deCapitalise } from '~/utils/string.utils';
 
 const i18n = useI18n('list', 'item', 'panel');
@@ -92,12 +91,12 @@ const tooltipOptions = computed<PopoverProps>(() => ({
   delay: 500,
 }));
 
-const { openLinksInNewTab } = useExtensionSettingsStoreRefs();
+const { openTab } = useExtensionSettingsStore();
 const onTagClick = (e: MouseEvent, url?: string) => {
   e.preventDefault();
   e.stopPropagation();
   if (!url) return;
-  createTab({ url, active: openLinksInNewTab.value });
+  openTab(url);
 };
 </script>
 
