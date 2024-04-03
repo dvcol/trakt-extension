@@ -567,7 +567,7 @@ export const parseUrl = <P extends RecursiveRecord = RecursiveRecord, O extends 
         }
         return segment;
       })
-      .filter(Boolean)
+      .filter(_segment => ![undefined, null, ''].includes(_segment))
       .join('/');
   }
 
