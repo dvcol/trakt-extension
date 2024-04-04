@@ -13,7 +13,7 @@ export const initLocalI18n = () => {
     console.info('Listening to i18n HMR changes');
     import.meta.hot.send('fetch:i18n');
     import.meta.hot.on('update:i18n', (data: { lang: string; locale: Locale }[]) => {
-      data?.forEach(({ lang, locale }) => store.addLocale(locale, lang));
+      data?.forEach(({ lang, locale }) => store.addLocale(locale, lang, true));
     });
   } else if (!store.locales?.[store.lang]) {
     promise = fetch(new URL(`${router.baseUrl ?? './'}_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
