@@ -66,3 +66,9 @@ const key = computed(() => {
     </NFlex>
   </Transition>
 </template>
+
+<style lang="scss" scoped>
+.poster-container {
+  margin-bottom: 1rem;
+}
+</style>

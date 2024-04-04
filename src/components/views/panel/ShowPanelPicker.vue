@@ -53,7 +53,7 @@ const episodeLinks = computed(() => {
 
 <template>
   <NFlex vertical class="picker" justify="center">
-    <NFlex align="baseline" size="small">
+    <NFlex align="baseline" size="small" class="row">
       <span class="prefix">Season</span>
 
       <NFlex class="numbers" size="small">
@@ -67,14 +67,14 @@ const episodeLinks = computed(() => {
           </ButtonLink>
         </template>
         <NSkeleton v-else-if="!seasonsLinks" class="skeleton" round />
-        <span v-else>none</span>
+        <span v-else class="no-data">none</span>
       </NFlex>
     </NFlex>
 
-    <NFlex v-if="mode !== 'show'" align="baseline" size="small">
+    <NFlex v-if="mode !== 'show'" align="baseline" size="small" class="row">
       <span class="prefix">Episode</span>
 
-      <NFlex class="numbers" size="small">
+      <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
           <ButtonLink
             v-for="{ link, number } in episodeLinks"
@@ -87,7 +87,7 @@ const episodeLinks = computed(() => {
           </ButtonLink>
         </template>
         <NSkeleton v-else-if="!episodeLinks" class="skeleton" round />
-        <span v-else>none</span>
+        <span v-else class="no-data">none</span>
       </NFlex>
     </NFlex>
   </NFlex>
@@ -96,12 +96,20 @@ const episodeLinks = computed(() => {
 <style lang="scss" scoped>
 .picker {
   width: 100%;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
 
   .prefix {
     min-width: 3.75rem;
-    margin-right: 0.25rem;
-    color: var(--vt-c-white-soft);
+    margin: 1px 0.25rem auto 0;
+    color: var(--white-50);
+    font-weight: 600;
+    transition: color 0.3s var(--n-bezier);
+  }
+
+  .row:hover {
+    .prefix {
+      color: var(--white-70);
+    }
   }
 
   .numbers {
@@ -112,6 +120,11 @@ const episodeLinks = computed(() => {
 
   .skeleton {
     margin: 0.375rem 0;
+  }
+
+  .no-data {
+    margin: 0 0.5rem;
+    color: var(--vt-c-text-dark-2);
   }
 }
 </style>

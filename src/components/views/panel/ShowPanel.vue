@@ -9,6 +9,7 @@ import type {
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import ShowPanelPoster from '~/components/views/panel/ShowPanelPoster.vue';
@@ -67,6 +68,15 @@ const season = computed(() => {
 const showTitle = computed(() => {
   if (!show.value?.title) return;
   return deCapitalise(show.value.title);
+});
+
+const titleUrl = computed(() => {
+  if (!show.value?.ids?.trakt) return;
+  return ResolveExternalLinks.search({
+    type: 'show',
+    source: 'trakt',
+    id: show.value.ids.trakt,
+  });
 });
 
 const subscriptions = new Set<() => void>();
@@ -132,15 +142,6 @@ onUnmounted(() => {
 });
 
 const { openTab } = useExtensionSettingsStore();
-
-const titleUrl = computed(() => {
-  if (!show.value?.ids?.trakt) return;
-  return ResolveExternalLinks.search({
-    type: 'show',
-    source: 'trakt',
-    id: show.value.ids.trakt,
-  });
-});
 </script>
 
 <template>
@@ -150,13 +151,20 @@ const titleUrl = computed(() => {
     </TitleLink>
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
 
-    <ShowPanelPicker :seasons="seasons" :episodes="episodes" :mode="panelType" />
-
     <ShowPanelPoster
       :show-id="show?.ids.tmdb"
       :season-number="seasonNb"
       :episode-number="episodeNb"
     />
+
+    <ShowPanelDetails
+      :show="show"
+      :season="season"
+      :episode="episode"
+      :mode="panelType"
+    />
+
+    <ShowPanelPicker :seasons="seasons" :episodes="episodes" :mode="panelType" />
 
     <ShowPanelOverview
       :episode="episode"
@@ -188,7 +196,7 @@ const titleUrl = computed(() => {
 
 .show-title:deep(h2),
 .show-title-skeleton {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .show-title-skeleton {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NFlex, NH4, NSkeleton } from 'naive-ui';
-import { computed, onMounted, type PropType, ref, toRefs, Transition } from 'vue';
+import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 
@@ -86,47 +86,33 @@ const overview = computed(() => {
   return episode?.value?.overview ?? '-';
 });
 
-const key = computed(() => `episode-${episode?.value?.ids.trakt}`);
-
 const { openTab } = useExtensionSettingsStore();
-
-const transition = ref('none');
-
-onMounted(() => {
-  setTimeout(() => {
-    transition.value = 'scale';
-  }, 100);
-});
 </script>
 
 <template>
-  <Transition :name="transition" mode="out-in">
-    <NFlex :key="key" justify="center" align="center" vertical class="overview container">
-      <TitleLink
-        v-if="title"
-        class="title"
-        :href="url"
-        :component="NH4"
-        @on-click="openTab"
-      >
-        {{ title }}
-      </TitleLink>
-      <NSkeleton v-else class="title-skeleton" style="width: 40dvh" round />
+  <NFlex justify="center" align="center" vertical class="overview">
+    <TitleLink
+      v-if="title"
+      class="title"
+      :href="url"
+      :component="NH4"
+      @on-click="openTab"
+    >
+      {{ title }}
+    </TitleLink>
+    <NSkeleton v-else class="title-skeleton" style="width: 40dvh" round />
 
-      <div v-if="overview">{{ overview }}</div>
-      <template v-else>
-        <NSkeleton style="width: 100%" />
-        <NSkeleton style="width: 100%" />
-        <NSkeleton style="width: 100%" />
-      </template>
-    </NFlex>
-  </Transition>
+    <div v-if="overview">{{ overview }}</div>
+    <template v-else>
+      <NSkeleton style="width: 100%" />
+      <NSkeleton style="width: 100%" />
+      <NSkeleton style="width: 100%" />
+    </template>
+  </NFlex>
 </template>
 
 <style lang="scss" scoped>
 @use '~/styles/z-index' as layers;
-@use '~/styles/transition' as transition;
-@include transition.scale;
 
 .anchor-link {
   z-index: layers.$in-front;
@@ -144,9 +130,7 @@ onMounted(() => {
 }
 
 .overview {
-  .container {
-    width: 100%;
-  }
+  width: 100%;
 
   .title:deep(h4),
   .title-skeleton {
