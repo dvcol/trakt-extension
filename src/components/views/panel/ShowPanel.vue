@@ -154,6 +154,7 @@ const { openTab } = useExtensionSettingsStore();
     <PanelPoster
       :tmdb="show?.ids.tmdb"
       :mode="panelType"
+      :portait="panelType === 'season'"
       :season-number="seasonNb"
       :episode-number="episodeNb"
     />

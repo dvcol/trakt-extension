@@ -8,6 +8,8 @@ import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/tra
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
+import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
+import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
@@ -342,14 +344,26 @@ export class TraktService {
     return response.json();
   }
 
+  static async movie(id: string | number) {
+    const response = await this.traktClient.movies.summary.cached({ id, extended: 'full' });
+    return response.json() as Promise<TraktMovieExtended>;
+  }
+
+  static async person(id: string | number) {
+    const response = await this.traktClient.people.summary.cached({ id, extended: 'full' });
+    return response.json() as Promise<TraktPersonExtended>;
+  }
+
   static evict = {
-    tmdb: TraktService.caches.tmdb.clear,
-    trakt: TraktService.caches.trakt.clear,
-    tvdb: TraktService.caches.tvdb.clear,
+    tmdb: () => TraktService.tmdbClient.clearCache(),
+    trakt: () => TraktService.traktClient.clearCache(),
+    tvdb: () => TraktService.tvdbClient.clearCache(),
     history: TraktService.traktClient.sync.history.get.cached.evict,
     watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
     collection: TraktService.traktClient.sync.collection.get.cached.evict,
+    movies: TraktService.traktClient.movies.summary.cached.evict,
+    people: TraktService.traktClient.people.summary.cached.evict,
     shows: TraktService.traktClient.shows.summary.cached.evict,
     seasons: () => Promise.all([TraktService.traktClient.seasons.summary.cached.evict(), TraktService.traktClient.seasons.season.cached.evict()]),
     episodes: TraktService.traktClient.episodes.summary.cached.evict,
