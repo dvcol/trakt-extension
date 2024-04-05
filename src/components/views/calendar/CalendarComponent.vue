@@ -109,7 +109,7 @@ const { onItemClick } = usePanelItem();
       ref="listRef"
       :items="list"
       :loading="loading"
-      episode
+      backdrop
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-item-click="onItemClick"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"

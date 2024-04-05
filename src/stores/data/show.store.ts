@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, type Ref, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
@@ -10,6 +10,7 @@ import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 import { type ListScrollItemProgress, ListScrollItemProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { asyncRefGetter } from '~/utils/vue.utils';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
 
@@ -176,33 +177,20 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const getter = <T>(fn: () => Promise<T>, loading: Ref<boolean>, response = ref<T>()) => {
-    const unsub = ref(false);
-    return {
-      response: fn().then(res => {
-        if (!unsub.value) response.value = res;
-        return res;
-      }),
-      loading,
-      unsub: () => {
-        unsub.value = true;
-      },
-    };
-  };
-
   const getShowLoading = (id: number | string) => computed(() => showsLoading[id.toString()]);
   const getShow = async (id: number | string) => {
     if (!shows[id.toString()] && !showsLoading[id.toString()]) await fetchShow(id.toString());
     return shows[id.toString()];
   };
-  const getShowRef = (id: number | string, response = ref<TraktShowExtended>()) => getter(() => getShow(id), getShowLoading(id), response);
+  const getShowRef = (id: number | string, response = ref<TraktShowExtended>()) => asyncRefGetter(() => getShow(id), getShowLoading(id), response);
 
   const getSeasonsLoading = (id: number | string) => computed(() => showsSeasonsLoading[id.toString()]);
   const getShowSeasons = async (id: number | string) => {
     if (!showsSeasons[id.toString()] && !showsSeasonsLoading[id.toString()]) await fetchShowSeasons(id.toString());
     return showsSeasons[id.toString()];
   };
-  const getShowSeasonsRef = (id: number | string, response = ref<ShowSeasons>()) => getter(() => getShowSeasons(id), getSeasonsLoading(id), response);
+  const getShowSeasonsRef = (id: number | string, response = ref<ShowSeasons>()) =>
+    asyncRefGetter(() => getShowSeasons(id), getSeasonsLoading(id), response);
 
   const getSeasonEpisodesLoading = (id: number | string, season: number) => computed(() => showsSeasonEpisodesLoading[id.toString()]?.[season]);
   const getShowSeasonEpisodes = async (id: number | string, season: number) => {
@@ -212,7 +200,7 @@ export const useShowStore = defineStore('data.show', () => {
     return showsSeasonEpisodes[id.toString()]?.[season];
   };
   const getShowSeasonEpisodesRef = (id: number | string, season: number, response = ref<TraktEpisodeShort[]>()) =>
-    getter(() => getShowSeasonEpisodes(id, season), getSeasonEpisodesLoading(id, season), response);
+    asyncRefGetter(() => getShowSeasonEpisodes(id, season), getSeasonEpisodesLoading(id, season), response);
 
   const getEpisodesLoading = (id: number | string, season: number, episode: number) =>
     computed(() => showsEpisodesLoading[id.toString()]?.[season]?.[episode]);
@@ -225,7 +213,7 @@ export const useShowStore = defineStore('data.show', () => {
   const getShowEpisodeRef = (
     { id, season, episode }: { id: number | string; season: number; episode: number },
     response = ref<TraktEpisodeExtended>(),
-  ) => getter(() => getShowEpisode({ id, season, episode }), getEpisodesLoading(id, season, episode), response);
+  ) => asyncRefGetter(() => getShowEpisode({ id, season, episode }), getEpisodesLoading(id, season, episode), response);
 
   const getShowProgressLoading = (id: number | string) => computed(() => progressLoading[id.toString()]);
   const getShowProgress = (id: number | string) => {

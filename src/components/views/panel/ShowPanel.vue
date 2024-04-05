@@ -9,10 +9,10 @@ import type {
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
-import ShowPanelPoster from '~/components/views/panel/ShowPanelPoster.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { type ShowSeasons, useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
@@ -21,7 +21,7 @@ import { deCapitalise } from '~/utils/string.utils';
 const props = defineProps({
   showId: {
     type: String,
-    required: false,
+    required: true,
   },
   seasonNumber: {
     type: String,
@@ -65,7 +65,7 @@ const season = computed(() => {
   return seasons.value?.[seasonNb.value];
 });
 
-const showTitle = computed(() => {
+const title = computed(() => {
   if (!show.value?.title) return;
   return deCapitalise(show.value.title);
 });
@@ -146,13 +146,14 @@ const { openTab } = useExtensionSettingsStore();
 
 <template>
   <NFlex justify="center" align="center" vertical>
-    <TitleLink v-if="showTitle" class="show-title" :href="titleUrl" @on-click="openTab">
-      {{ showTitle }}
+    <TitleLink v-if="title" class="show-title" :href="titleUrl" @on-click="openTab">
+      {{ title }}
     </TitleLink>
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
 
-    <ShowPanelPoster
-      :show-id="show?.ids.tmdb"
+    <PanelPoster
+      :tmdb="show?.ids.tmdb"
+      :mode="panelType"
       :season-number="seasonNb"
       :episode-number="episodeNb"
     />
@@ -176,24 +177,6 @@ const { openTab } = useExtensionSettingsStore();
 </template>
 
 <style lang="scss" scoped>
-@use '~/styles/z-index' as layers;
-@use '~/styles/transition' as transition;
-@include transition.scale;
-
-.poster-container {
-  --poster-height: calc(50dvw * (9 / 16));
-  --poster-width: calc(var(--poster-height) * (2 / 3));
-
-  &.landscape {
-    --poster-width: 50dvw;
-    --poster-height: calc(var(--poster-width) * (9 / 16));
-  }
-
-  position: relative;
-  border: 1px solid var(--border-white);
-  box-shadow: var(--image-box-shadow);
-}
-
 .show-title:deep(h2),
 .show-title-skeleton {
   margin-bottom: 1rem;

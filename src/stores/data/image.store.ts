@@ -50,6 +50,24 @@ const EmptyImageStore: ImageStore = {
   person: {},
 };
 
+const localArrayMax = (
+  array: Array<TmdbImage>,
+  prop: keyof TmdbImage = 'vote_average',
+  filter: (item: TmdbImage) => boolean = i => !!i.file_path,
+) => {
+  const lang = navigator?.language?.split('-')?.at(0) ?? 'en';
+
+  const localArray = array.filter(i => i.iso_639_1 === lang);
+  if (localArray.length) return arrayMax(localArray, prop, filter);
+
+  if (lang !== 'en') {
+    const enArray = array.filter(i => i.iso_639_1 === 'en');
+    if (enArray.length) return arrayMax(enArray, prop, filter);
+  }
+
+  return arrayMax(array, prop, filter);
+};
+
 export const useImageStore = defineStore('data.image', () => {
   const tmdbConfig = ref<TmdbConfiguration>();
   const images = reactive<ImageStore>(EmptyImageStore);
@@ -139,8 +157,8 @@ export const useImageStore = defineStore('data.image', () => {
     if (['movie', 'show'].includes(type)) {
       if (!payload.backdrops?.length && !payload.posters?.length) return;
       const image = {
-        poster: arrayMax(payload.posters ?? [], 'vote_average', i => !!i.file_path)?.file_path,
-        backdrop: arrayMax(payload.backdrops ?? [], 'vote_average', i => !!i.file_path)?.file_path,
+        poster: localArrayMax(payload.posters ?? [], 'vote_average', i => !!i.file_path)?.file_path,
+        backdrop: localArrayMax(payload.backdrops ?? [], 'vote_average', i => !!i.file_path)?.file_path,
       };
       if (!image.poster && !image.backdrop) return;
       images[type][key] = image;
