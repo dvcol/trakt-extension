@@ -1,0 +1,50 @@
+{
+  "panel__picker__season": {
+    "message": "Season",
+    "description": "Season label in the panel picker"
+  },
+  "panel__picker__episode": {
+    "message": "Episode",
+    "description": "Episode label in the panel picker"
+  },
+  "panel__picker__none": {
+    "message": "none",
+    "description": "Label for no data in the panel picker"
+  },
+  "panel__detail__year": {
+    "message": "Year",
+    "description": "Year label in the panel detail"
+  },
+  "panel__detail__country": {
+    "message": "Country",
+    "description": "Country label in the panel detail"
+  },
+  "panel__detail__network": {
+    "message": "Network",
+    "description": "Network label in the panel detail"
+  },
+  "panel__detail__aired": {
+    "message": "Aired",
+    "description": "Aired date label in the panel detail"
+  },
+  "panel__detail__status": {
+    "message": "Status",
+    "description": "Status label in the panel detail"
+  },
+  "panel__detail__runtime": {
+    "message": "Runtime",
+    "description": "Runtime label in the panel detail"
+  },
+  "panel__detail__aired_episodes": {
+    "message": "Aired Episodes",
+    "description": "Season Aired Episodes label in the panel detail"
+  },
+  "panel__detail__type": {
+    "message": "Type",
+    "description": "Type label in the panel detail"
+  },
+  "panel__detail__genres": {
+    "message": "Genres",
+    "description": "Genres label in the panel detail"
+  }
+}

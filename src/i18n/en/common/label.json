@@ -1,0 +1,34 @@
+{
+  "common__tag__label__standard": {
+    "message": "Standard",
+    "description": "Label for a Standard episode type"
+  },
+  "common__tag__label__series_premiere": {
+    "message": "Series Premiere",
+    "description": "Label for a series premiere"
+  },
+  "common__tag__label__season_premiere": {
+    "message": "Season Premiere",
+    "description": "Label for a season premiere"
+  },
+  "common__tag__label__mid_season_premiere": {
+    "message": "Mid Season Premiere",
+    "description": "Label for a mid season premiere"
+  },
+  "common__tag__label__finale__series": {
+    "message": "Series Finale",
+    "description": "Label for a series finale"
+  },
+  "common__tag__label__season_finale": {
+    "message": "Season Finale",
+    "description": "Label for a season finale"
+  },
+  "common__tag__label__mid_season_finale": {
+    "message": "Mid Season Finale",
+    "description": "Label for a season finale"
+  },
+  "common__tag__label__series_finale": {
+    "message": "Series Finale",
+    "description": "Label for a finale"
+  }
+}

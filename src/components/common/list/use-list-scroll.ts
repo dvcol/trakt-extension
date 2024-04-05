@@ -7,6 +7,7 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 import type { ImageQuery } from '~/stores/data/image.store';
 
 import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
+import { TraktEpisodeType, type TraktEpisodeTypes } from '~/models/trakt/trakt-episode.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils';
 
@@ -97,15 +98,15 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
       }),
     });
 
-    let premiere: 'season' | 'series' | 'mid_season' | null = null;
-    // let finale: 'season' | 'series' | 'mid_season';
-    if (item.episode.season === 1 && item.episode.number === 1) premiere = 'series';
-    else if (item.episode.number === 1) premiere = 'season';
+    let premiere: TraktEpisodeTypes | null = null;
+    // let finale: TraktEpisodeTypes;
+    if (item.episode.season === 1 && item.episode.number === 1) premiere = TraktEpisodeType.SeasonPremiere;
+    else if (item.episode.number === 1) premiere = TraktEpisodeType.SeasonPremiere;
 
     if (premiere) {
       tags.push({
         label: premiere,
-        i18n: ['calendar', 'tag', 'label', 'premiere'],
+        i18n: ['common', 'tag', 'label'],
         type: premiere === 'season' ? 'info' : 'primary',
         bordered: true,
       });
