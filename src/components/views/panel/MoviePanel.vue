@@ -1,18 +1,84 @@
 <script setup lang="ts">
-import { onActivated } from 'vue';
+import { NFlex, NSkeleton } from 'naive-ui';
+import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
+
+import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
+
+import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+import { ResolveExternalLinks } from '~/settings/external.links';
+import { useMovieStore } from '~/stores/data/movie.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
   movieId: {
     type: String,
-    required: false,
+    required: true,
   },
 });
 
-onActivated(() => {
-  console.info('MovieDrawer activated', props.movieId);
+const { movieId } = toRefs(props);
+
+const movie = ref<TraktMovieExtended>();
+
+const { getMovieRef } = useMovieStore();
+
+const unsub = ref<() => void>();
+
+onMounted(() =>
+  watch(
+    movieId,
+    async id => {
+      unsub.value?.();
+      if (!id) return;
+      unsub.value = getMovieRef(id, movie).unsub;
+    },
+    { immediate: true },
+  ),
+);
+
+onUnmounted(() => {
+  unsub.value?.();
+  movie.value = undefined;
 });
+
+const title = computed(() => {
+  if (!movie.value?.title) return;
+  return deCapitalise(movie.value.title);
+});
+
+const titleUrl = computed(() => {
+  if (!movie.value?.ids?.trakt) return;
+  return ResolveExternalLinks.search({
+    type: 'movie',
+    source: 'trakt',
+    id: movie.value.ids.trakt,
+  });
+});
+
+const { openTab } = useExtensionSettingsStore();
 </script>
 
 <template>
-  <div>movie {{ movieId }}</div>
+  <NFlex justify="center" align="center" vertical>
+    <TitleLink v-if="title" class="show-title" :href="titleUrl" @on-click="openTab">
+      {{ title }}
+    </TitleLink>
+    <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
+
+    <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
+  </NFlex>
 </template>
+
+<style lang="scss" scoped>
+‡ .show-title:deep(h2),
+.show-title-skeleton {
+  margin-bottom: 1rem;
+}
+
+.show-title-skeleton {
+  height: 1.5rem;
+  margin-top: 0.625rem;
+}
+</style>

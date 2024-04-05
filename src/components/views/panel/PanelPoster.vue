@@ -16,6 +16,10 @@ const props = defineProps({
     type: String as PropType<ImageStoreTypes>,
     required: true,
   },
+  portait: {
+    type: Boolean,
+    required: false,
+  },
   seasonNumber: {
     type: Number,
     required: false,
@@ -61,8 +65,8 @@ const key = computed(() => {
 
 <template>
   <Transition v-if="posterItem" name="scale" mode="out-in">
-    <NFlex :key="key" class="poster-container" :class="{ landscape: mode !== 'season' }">
-      <PosterComponent :item="posterItem" :size="size" backdrop />
+    <NFlex :key="key" class="poster-container" :class="{ landscape: !portait }">
+      <PosterComponent :item="posterItem" :size="size" :backdrop="!portait" />
     </NFlex>
   </Transition>
   <NSkeleton
