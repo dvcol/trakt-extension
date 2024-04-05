@@ -5,7 +5,10 @@ import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
+import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
@@ -68,6 +71,10 @@ const { openTab } = useExtensionSettingsStore();
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
 
     <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
+
+    <MoviePanelDetails :movie="movie" />
+
+    <MoviePanelOverview :movie="movie" />
   </NFlex>
 </template>
 

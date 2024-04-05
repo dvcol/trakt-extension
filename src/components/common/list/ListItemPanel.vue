@@ -12,6 +12,7 @@ import {
 import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import TagLink from '~/components/common/buttons/TagLink.vue';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
@@ -92,9 +93,7 @@ const tooltipOptions = computed<PopoverProps>(() => ({
 }));
 
 const { openTab } = useExtensionSettingsStore();
-const onTagClick = (e: MouseEvent, url?: string) => {
-  e.preventDefault();
-  e.stopPropagation();
+const onTagClick = (url?: string) => {
   if (!url) return;
   openTab(url);
 };
@@ -128,17 +127,7 @@ const onTagClick = (e: MouseEvent, url?: string) => {
       <NFlex v-if="date || tags?.length" size="medium" class="tags">
         <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
           <NSkeleton v-if="loading" text style="width: 6%" />
-          <a v-else :href="tag.url" @click="e => onTagClick(e, tag.url)">
-            <NTag
-              class="tag"
-              :class="{ meta: tag.meta, link: !!tag.url }"
-              size="small"
-              :bordered="tag.bordered ?? false"
-              v-bind="tag"
-            >
-              <span class="label">{{ tag.label }}</span>
-            </NTag>
-          </a>
+          <TagLink :tag="tag" @on-click="onTagClick" />
         </template>
         <template v-if="date">
           <NSkeleton v-if="loading" text style="width: 6%" />
@@ -223,30 +212,6 @@ const onTagClick = (e: MouseEvent, url?: string) => {
   .tags {
     gap: 0.5rem !important;
     margin-top: 0.3rem;
-
-    .tag {
-      width: fit-content;
-    }
-
-    .link {
-      cursor: pointer;
-
-      .label {
-        transition: filter 0.3s var(--n-bezier);
-      }
-
-      &:hover {
-        background-color: color-mix(
-          in srgb,
-          var(--n-close-icon-color-hover),
-          transparent 90%
-        );
-
-        .label {
-          filter: saturate(1.5);
-        }
-      }
-    }
   }
 
   .panel-progress {

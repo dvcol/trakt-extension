@@ -6,6 +6,8 @@ import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+import PersonPanelDetails from '~/components/views/panel/PersonPanelDetails.vue';
+import PersonPanelOverview from '~/components/views/panel/PersonPanelOverview.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { usePersonStore } from '~/stores/data/person.store';
@@ -69,6 +71,10 @@ const { openTab } = useExtensionSettingsStore();
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
 
     <PanelPoster :tmdb="person?.ids.tmdb" mode="person" portait />
+
+    <PersonPanelDetails :person="person" />
+
+    <PersonPanelOverview :person="person" />
   </NFlex>
 </template>
 
