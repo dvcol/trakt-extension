@@ -26,10 +26,12 @@ const routes = [
   Route.Search,
 ];
 
+const activableRoutes = [...routes, Route.Settings];
+
 const activeRoute = computed(() => {
   const _name = route.name?.toString();
   if (!_name) return;
-  return routes.find(r => r === _name) ?? routes.find(r => _name.startsWith(r));
+  return activableRoutes.find(r => r === _name) ?? routes.find(r => _name.startsWith(r));
 });
 
 const isHover = ref(false);
