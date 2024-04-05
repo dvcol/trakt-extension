@@ -351,7 +351,7 @@ export class TraktService {
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
     collection: TraktService.traktClient.sync.collection.get.cached.evict,
     shows: TraktService.traktClient.shows.summary.cached.evict,
-    seasons: TraktService.traktClient.seasons.summary.cached.evict,
+    seasons: () => Promise.all([TraktService.traktClient.seasons.summary.cached.evict(), TraktService.traktClient.seasons.season.cached.evict()]),
     episodes: TraktService.traktClient.episodes.summary.cached.evict,
     lists: () =>
       Promise.all([

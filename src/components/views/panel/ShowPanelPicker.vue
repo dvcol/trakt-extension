@@ -9,6 +9,7 @@ import type { TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { ShowSeasons } from '~/stores/data/show.store';
 
 import ButtonLink from '~/components/common/buttons/ButtonLink.vue';
+import { useI18n } from '~/utils';
 
 const props = defineProps({
   seasons: {
@@ -49,12 +50,14 @@ const episodeLinks = computed(() => {
     },
   }));
 });
+
+const i18n = useI18n('panel', 'picker');
 </script>
 
 <template>
   <NFlex vertical class="picker" justify="center">
     <NFlex align="baseline" size="small" class="row">
-      <span class="prefix">Season</span>
+      <span class="prefix">{{ i18n('season') }}</span>
 
       <NFlex class="numbers" size="small">
         <template v-if="seasonsLinks?.length">
@@ -67,12 +70,12 @@ const episodeLinks = computed(() => {
           </ButtonLink>
         </template>
         <NSkeleton v-else-if="!seasonsLinks" class="skeleton" round />
-        <span v-else class="no-data">none</span>
+        <span v-else class="no-data">{{ i18n('none') }}</span>
       </NFlex>
     </NFlex>
 
     <NFlex v-if="mode !== 'show'" align="baseline" size="small" class="row">
-      <span class="prefix">Episode</span>
+      <span class="prefix">{{ i18n('episode') }}</span>
 
       <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
@@ -87,7 +90,7 @@ const episodeLinks = computed(() => {
           </ButtonLink>
         </template>
         <NSkeleton v-else-if="!episodeLinks" class="skeleton" round />
-        <span v-else class="no-data">none</span>
+        <span v-else class="no-data">{{ i18n('none') }}</span>
       </NFlex>
     </NFlex>
   </NFlex>
