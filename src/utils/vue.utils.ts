@@ -1,4 +1,4 @@
-import { type Ref, watch } from 'vue';
+import { ref, type Ref, watch } from 'vue';
 
 export const promesifyComputed = async <T>(computed: Ref<T>, until: (next?: T, old?: T) => boolean = next => next !== undefined): Promise<T> => {
   let unwatch: () => void;
@@ -13,4 +13,17 @@ export const promesifyComputed = async <T>(computed: Ref<T>, until: (next?: T, o
       { immediate: true },
     );
   });
+};
+export const asyncRefGetter = <T>(fn: () => Promise<T>, loading: Ref<boolean>, response = ref<T>()) => {
+  const unsub = ref(false);
+  return {
+    response: fn().then(res => {
+      if (!unsub.value) response.value = res;
+      return res;
+    }),
+    loading,
+    unsub: () => {
+      unsub.value = true;
+    },
+  };
 };

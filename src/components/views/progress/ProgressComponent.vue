@@ -44,7 +44,7 @@ const { onItemClick } = usePanelItem();
         ref="listRef"
         :loading="loading"
         :items="progress"
-        episode
+        backdrop
         hide-date
         show-progress
         @on-scroll="scrolled = true"

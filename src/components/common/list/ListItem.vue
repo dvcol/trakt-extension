@@ -32,7 +32,7 @@ const props = defineProps({
     type: String,
     required: false,
   },
-  episode: {
+  backdrop: {
     type: Boolean,
     required: false,
   },
@@ -82,16 +82,8 @@ const emit = defineEmits<{
 
 const i18n = useI18n('list', 'item');
 
-const {
-  item,
-  noHeader,
-  nextHasHeader,
-  poster,
-  episode,
-  hideDate,
-  scrollIntoView,
-  height,
-} = toRefs(props);
+const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height } =
+  toRefs(props);
 
 const onHover = (_hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
@@ -200,7 +192,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
           <PosterComponent
             :item="item as PosterItem"
             :poster="poster"
-            :episode="episode"
+            :backdrop="backdrop"
           />
           <ListItemPanel
             :item="item"

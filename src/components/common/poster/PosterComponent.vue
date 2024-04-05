@@ -17,7 +17,7 @@ const props = defineProps({
     type: String,
     required: false,
   },
-  episode: {
+  backdrop: {
     type: Boolean,
     required: false,
     default: false,
@@ -29,7 +29,7 @@ const props = defineProps({
   },
 });
 
-const { episode, poster, item, size } = toRefs(props);
+const { backdrop, poster, item, size } = toRefs(props);
 
 const imgLoaded = ref(true);
 
@@ -45,7 +45,7 @@ const resolvedPoster = computed(() => {
   const image = (item.value.posterRef ?? localPoster)?.value;
   if (!image) return;
   if (typeof image === 'string') return image;
-  if (episode.value && 'backdrop' in image) return image.backdrop;
+  if (backdrop.value && 'backdrop' in image) return image.backdrop;
   return image.poster;
 });
 
@@ -66,7 +66,7 @@ const getPosters = (_item: PosterItem) => {
   if (_item.posterRef?.value) return;
   const query = _item.getPosterQuery?.();
   if (!query) return;
-  if (!episode.value && _item.type === 'episode') {
+  if (!backdrop.value && _item.type === 'episode') {
     query.type = 'show';
     delete query.episode;
   }
@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
     alt="poster-image"
     class="poster"
     :class="{
-      episode,
+      backdrop,
       loading: !imgLoaded,
       transition,
     }"
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
   <NImage
     alt="poster-image-fallback"
     class="poster placeholder"
-    :class="{ episode }"
+    :class="{ backdrop }"
     object-fit="contain"
     width="100%"
     lazy
@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
     }
   }
 
-  &.episode {
+  &.backdrop {
     flex: 0 0 var(--poster-width, 14.23rem);
     width: var(--poster-width, 14.23rem);
   }

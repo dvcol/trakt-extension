@@ -40,7 +40,7 @@ const props = defineProps({
     type: Object as PropType<VirtualListProps>,
     required: false,
   },
-  episode: {
+  backdrop: {
     type: Boolean,
     required: false,
   },
@@ -174,7 +174,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :height="listOptions?.itemSize ?? 145"
           :size="items.length"
           :hide-date="hideDate"
-          :episode="episode"
+          :backdrop="backdrop"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"
           :show-progress="showProgress"
