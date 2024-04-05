@@ -95,7 +95,7 @@ const key = computed(() => {
   }
 
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   border: 1px solid var(--border-white);
   box-shadow: var(--image-box-shadow);
 }
