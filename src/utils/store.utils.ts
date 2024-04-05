@@ -107,7 +107,7 @@ export const watchUserChange = ({
   return { active, user };
 };
 
-export const useDebouncedSearch = (search: Ref<string>, delay = 350) => {
+export const useDebouncedSearch = (search: Ref<string>, delay = 350, disabled?: Ref<boolean>) => {
   const debouncedSearch = ref(search.value);
 
   watch(search, () => {
@@ -119,6 +119,7 @@ export const useDebouncedSearch = (search: Ref<string>, delay = 350) => {
   watch(
     debouncedSearch,
     debounce(() => {
+      if (disabled?.value) return;
       search.value = debouncedSearch.value;
     }, delay),
   );

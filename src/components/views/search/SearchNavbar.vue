@@ -3,6 +3,7 @@ import {
   NFlex,
   NIcon,
   NInput,
+  NPopselect,
   NSelect,
   NSwitch,
   NTooltip,
@@ -30,11 +31,37 @@ import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'search');
 
-const { search, types, query, pageSize, loading } = useSearchStoreRefs();
+const { search, types, query, pageSize, loading, history } = useSearchStoreRefs();
 
 const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
 
-const debouncedSearch = useDebouncedSearch(search, 800);
+const inputFocus = ref(false);
+const toggleFocus = (focus: boolean) => {
+  inputFocus.value = focus;
+};
+
+const debouncedSearch = useDebouncedSearch(search, 1000);
+
+const filteredHistory = computed(() =>
+  [...history.value]
+    .filter(val => {
+      const _search = debouncedSearch.value?.toLowerCase().trim();
+      if (!_search) return false;
+      const _val = val.toLowerCase().trim();
+      if (_val === _search) return false;
+      return _val.includes(_search) || _search.includes(_val);
+    })
+    .slice(0, 10),
+);
+
+const historyOptions = computed(() =>
+  filteredHistory.value.map(value => ({ value, label: value })),
+);
+
+const showHistory = computed(() => {
+  if (!inputFocus.value) return false;
+  return !!filteredHistory.value.length;
+});
 
 defineProps({
   parentElement: {
@@ -131,7 +158,7 @@ const hideTooltip = () => {
 const inputRef = ref();
 
 onActivated(() => {
-  inputRef.value?.focus();
+  if (!search.value) inputRef.value?.focus();
 });
 </script>
 
@@ -174,20 +201,29 @@ onActivated(() => {
         </NFlex>
       </NFlex>
       <template #trigger>
-        <NInput
-          ref="inputRef"
+        <NPopselect
           v-model:value="debouncedSearch"
-          class="search-input"
-          :loading="loading"
-          :disabled="loading"
-          :placeholder="i18n('search', 'navbar')"
-          autosize
-          clearable
+          :options="historyOptions"
+          :to="parentElement"
+          :show="showHistory"
         >
-          <template #prefix>
-            <NIcon :component="IconLoop" />
-          </template>
-        </NInput>
+          <NInput
+            ref="inputRef"
+            v-model:value="debouncedSearch"
+            class="search-input"
+            :loading="loading"
+            :disabled="loading"
+            :placeholder="i18n('search', 'navbar')"
+            autosize
+            clearable
+            :on-input-focus="() => toggleFocus(true)"
+            :on-input-blur="() => toggleFocus(false)"
+          >
+            <template #prefix>
+              <NIcon :component="IconLoop" />
+            </template>
+          </NInput>
+        </NPopselect>
       </template>
     </NTooltip>
 
