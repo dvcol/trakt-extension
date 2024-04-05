@@ -49,4 +49,36 @@ export const ResolveExternalLinks = {
     source: 'trakt' | 'imdb' | 'tmdb' | 'tvdb';
     base?: string;
   }) => `${base}search/${source}/${id}${type ? `?id_type=${type}` : ''}`,
+  imdb: (id: string | number) => {
+    if (id.toString().startsWith('tt')) return `${ExternaLinks.imdb}title/${id}`;
+    if (id.toString().startsWith('nm')) return `${ExternaLinks.imdb}name/${id}`;
+  },
+  tmdb: ({
+    id,
+    season,
+    episode,
+    type,
+  }: {
+    id: string | number;
+    season?: string | number;
+    episode?: string | number;
+    type: 'movie' | 'show' | 'season' | 'episode' | 'person';
+  }) => {
+    if (type === 'person') return `${ExternaLinks.tmdb}person/${id}`;
+    if (type === 'movie') return `${ExternaLinks.tmdb}movie/${id}`;
+    if (type === 'show') return `${ExternaLinks.tmdb}tv/${id}`;
+    if (type === 'season') return `${ExternaLinks.tmdb}tv/${id}/season/${season}`;
+    if (type === 'episode') return `${ExternaLinks.tmdb}tv/${id}/season/${season}/episode/${episode}`;
+  },
+  tvdb: (id: string | number, type: 'movie' | 'show' | 'season' | 'episode' | 'person') => {
+    if (type === 'person') return `${ExternaLinks.tvdb}dereferrer/people/${id}`;
+    if (type === 'movie') return `${ExternaLinks.tvdb}dereferrer/movies/${id}`;
+    if (type === 'show') return `${ExternaLinks.tvdb}dereferrer/series/${id}`;
+    if (type === 'season') return `${ExternaLinks.tvdb}dereferrer/season/${id}`;
+    if (type === 'episode') return `${ExternaLinks.tvdb}dereferrer/episode/${id}`;
+  },
+  facebook: (id: string) => `${ExternaLinks.facebook}${id}`,
+  twitter: (id: string) => `${ExternaLinks.twitter}${id}`,
+  instagram: (id: string) => `${ExternaLinks.instagram}${id}`,
+  wikipedia: (id: string) => `${ExternaLinks.wikipedia}wiki/${id}`,
 };

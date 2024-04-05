@@ -26,7 +26,7 @@ const onTitleClick = (e: MouseEvent) => {
 
 <template>
   <a class="anchor-link" @click="onTitleClick">
-    <component :is="component" class="hover-link">
+    <component :is="component" :class="{ 'hover-link': !!$attrs.href }">
       <slot />
     </component>
   </a>

@@ -46,5 +46,38 @@
   "panel__detail__genres": {
     "message": "Genres",
     "description": "Genres label in the panel detail"
+  },
+  "panel__detail__released": {
+    "message": "Released",
+    "description": "Label for the release date"
+  },
+
+  "panel__detail__age": {
+    "message": "Age",
+    "description": "Person age label in the panel detail"
+  },
+  "panel__detail__birthday": {
+    "message": "Birthday",
+    "description": "Person birthday label in the panel detail"
+  },
+  "panel__detail__death": {
+    "message": "Death",
+    "description": "Person death day label in the panel detail"
+  },
+  "panel__detail__birthplace": {
+    "message": "Birthplace",
+    "description": "Person birthplace label in the panel detail"
+  },
+  "panel__detail__known_for": {
+    "message": "Known For",
+    "description": "Person known for label in the panel detail"
+  },
+  "panel__detail__socials": {
+    "message": "Socials",
+    "description": "Person socials links label in the panel detail"
+  },
+  "panel__detail__links": {
+    "message": "Links",
+    "description": "Links label in the panel detail"
   }
 }

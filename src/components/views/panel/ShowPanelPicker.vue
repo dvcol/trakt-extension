@@ -99,7 +99,7 @@ const i18n = useI18n('panel', 'picker');
 <style lang="scss" scoped>
 .picker {
   width: 100%;
-  margin: 0.5rem 0;
+  margin-top: 0.5rem;
 
   .prefix {
     min-width: 3.75rem;

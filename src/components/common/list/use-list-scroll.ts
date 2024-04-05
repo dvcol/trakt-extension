@@ -106,7 +106,7 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
     if (premiere) {
       tags.push({
         label: premiere,
-        i18n: ['common', 'tag', 'label'],
+        i18n: ['common', 'tag'],
         type: premiere === 'season' ? 'info' : 'primary',
         bordered: true,
       });

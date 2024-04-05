@@ -1,7 +1,8 @@
-import type { NVirtualList, TagProps, VirtualListInst } from 'naive-ui';
+import type { NVirtualList, VirtualListInst } from 'naive-ui';
 
 import type { Ref } from 'vue';
 import type { PosterItem } from '~/models/poster.model';
+import type { TagLink } from '~/models/tag.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
@@ -36,11 +37,8 @@ export type ListScrollSourceItem = {
 };
 
 export type ListScrollItemTag = {
-  label: string;
   i18n?: boolean | string[];
-  meta?: string;
-  url?: string;
-} & TagProps;
+} & TagLink;
 
 export type ListScrollItemProgressEpisode = BaseTraktProgressEpisode & {
   date: Date;

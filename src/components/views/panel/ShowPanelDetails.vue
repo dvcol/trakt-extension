@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { NFlex, NSkeleton, NTag } from 'naive-ui';
+import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
-import ShowPanelDetail from '~/components/views/panel/ShowPanelDetail.vue';
+import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
+import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useI18n } from '~/utils';
 import { capitalizeEachWord } from '~/utils/string.utils';
 
@@ -64,7 +65,7 @@ const runtime = computed(() => {
 
 const genres = computed(() => {
   if (!show?.value) return;
-  return show.value?.genres?.map(capitalizeEachWord) ?? [];
+  return show.value?.genres?.map(g => ({ label: capitalizeEachWord(g) }));
 });
 
 const year = computed(() => {
@@ -85,7 +86,7 @@ const airedEpisodes = computed(() => {
 const episodeType = computed(() => {
   if (!episode?.value) return;
   if (episode.value?.episode_type)
-    return i18n(episode.value?.episode_type, 'common', 'tag', 'label');
+    return i18n(episode.value?.episode_type, 'common', 'tag');
   return '-';
 });
 
@@ -98,27 +99,65 @@ const country = computed(() => {
   if (!show?.value) return;
   return show.value?.country ?? '-';
 });
+
+const ids = computed(() => {
+  if (mode.value === 'episode') {
+    if (!episode?.value) return;
+    return {
+      ...episode.value?.ids,
+      tmdb: show?.value?.ids?.tmdb,
+    };
+  }
+  if (mode.value === 'season') {
+    if (!season?.value) return;
+    return {
+      ...season.value?.ids,
+      tmdb: show?.value?.ids?.tmdb,
+    };
+  }
+  if (!show?.value) return;
+  return show.value?.ids;
+});
 </script>
 
 <template>
   <NFlex size="large" class="container" vertical>
     <NFlex class="row" size="large">
       <!--  Show Year  -->
-      <ShowPanelDetail
-        :label="i18n('year')"
-        :value="year"
-        :skeleton="{ width: '2.25rem' }"
-      />
+      <PanelDetail :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
 
       <!--  Show Country  -->
-      <ShowPanelDetail
+      <PanelDetail
         :label="i18n('country')"
         :value="country"
         :skeleton="{ width: '2ch' }"
       />
 
+      <!--  Show Status  -->
+      <PanelDetail
+        :label="i18n('status')"
+        :value="status"
+        :skeleton="{ width: '7.5rem' }"
+      />
+    </NFlex>
+
+    <NFlex class="row" size="large">
+      <!--  Air date  -->
+      <PanelDetail
+        :label="i18n('aired')"
+        :value="aired"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
+      <!--  Runtime  -->
+      <PanelDetail
+        :label="i18n('runtime')"
+        :value="runtime"
+        :skeleton="{ width: '3.75rem' }"
+      />
+
       <!--  Show Network  -->
-      <ShowPanelDetail
+      <PanelDetail
         :label="i18n('network')"
         :value="network"
         :grow="true"
@@ -127,31 +166,8 @@ const country = computed(() => {
     </NFlex>
 
     <NFlex class="row" size="large">
-      <!--  Air date  -->
-      <ShowPanelDetail
-        :label="i18n('aired')"
-        :value="aired"
-        :skeleton="{ width: '5.125rem' }"
-      />
-
-      <!--  Show Status  -->
-      <ShowPanelDetail
-        :label="i18n('status')"
-        :value="status"
-        :skeleton="{ width: '7.5rem' }"
-      />
-
-      <!--  Runtime  -->
-      <ShowPanelDetail
-        :label="i18n('runtime')"
-        :value="runtime"
-        :skeleton="{ width: '3.75rem' }"
-      />
-    </NFlex>
-
-    <NFlex class="row" size="large">
       <!--  Season aired episodes  -->
-      <ShowPanelDetail
+      <PanelDetail
         v-if="mode !== 'show'"
         :label="i18n('aired_episodes')"
         :value="airedEpisodes"
@@ -159,7 +175,7 @@ const country = computed(() => {
       />
 
       <!--  Type  -->
-      <ShowPanelDetail
+      <PanelDetail
         v-if="mode === 'episode'"
         :label="i18n('type')"
         :value="episodeType"
@@ -168,17 +184,20 @@ const country = computed(() => {
     </NFlex>
 
     <!--  Genres  -->
-    <NFlex class="detail genres" align="center" justify="flex-start">
-      <span class="prefix">{{ i18n('genres') }}</span>
-      <template v-if="genres">
-        <NTag v-for="(genre, i) of genres" :key="i" size="small" round>{{ genre }}</NTag>
-      </template>
-      <template v-else>
-        <NSkeleton style="width: 3rem" round />
-        <NSkeleton style="width: 3rem" round />
-        <NSkeleton style="width: 3rem" round />
-      </template>
-    </NFlex>
+    <PanelDetail
+      :label="i18n('genres')"
+      :values="genres"
+      :skeleton="{ width: '3rem' }"
+      array
+    />
+
+    <!--  links  -->
+    <PanelLinks
+      :ids="ids"
+      :mode="mode"
+      :season="episode?.season ?? season?.number"
+      :episode="episode?.number"
+    />
   </NFlex>
 </template>
 
@@ -187,30 +206,5 @@ const country = computed(() => {
 .row {
   flex: 1 1 auto;
   width: 100%;
-}
-
-.prefix {
-  min-width: 2.5rem;
-  color: var(--white-50);
-  font-weight: 600;
-  transition: color 0.3s var(--n-bezier);
-}
-
-.detail {
-  flex: 0 1 30%;
-
-  &:hover .prefix {
-    color: var(--white-70);
-  }
-
-  &.grow {
-    flex: 1 1 auto;
-  }
-
-  &.genres {
-    flex: 1 1 auto;
-    width: 100%;
-    margin: 0.5rem 0;
-  }
 }
 </style>
