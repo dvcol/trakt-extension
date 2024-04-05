@@ -17,7 +17,7 @@ const { movie } = toRefs(props);
 
 const title = computed(() => {
   if (!movie?.value) return;
-  if (!movie.value?.tagline) return '-';
+  if (!movie.value?.tagline) return ' ';
   return deCapitalise(movie.value?.tagline);
 });
 

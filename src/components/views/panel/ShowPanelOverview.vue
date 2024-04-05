@@ -44,8 +44,8 @@ const title = computed(() => {
     if (!season?.value?.title) return '-';
     return deCapitalise(season.value.title);
   }
-  if (!episode?.value) return '-';
-  if (!episode?.value?.title) return;
+  if (!episode?.value) return;
+  if (!episode?.value?.title) return '-';
   return deCapitalise(episode.value?.title);
 });
 
