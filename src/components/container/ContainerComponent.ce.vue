@@ -151,6 +151,7 @@ const root = ref<HTMLElement>();
   }
 }
 
+.n-popselect-menu,
 .n-select-menu {
   @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
 

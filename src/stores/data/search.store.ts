@@ -10,6 +10,7 @@ import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.mo
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { debounce } from '~/utils/debounce.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 export type SearchResult = Omit<TraktSearchResult, 'type'> & {
@@ -33,26 +34,64 @@ export const useSearchStore = defineStore('data.search', () => {
 
   const searchResults = ref<SearchResult[]>([]);
 
+  const history = ref<Set<string>>(new Set());
+
+  const saveHistory = debounce(() => storage.local.set('data.search.history', [...history.value]), 1000);
+  const saveSearch = debounce(() => storage.local.set('data.search.last', { value: search.value, date: Date.now() }), 1000);
+
+  const addToHistory = (value: string = search.value) => {
+    const newArray = [...history.value, value].filter(Boolean);
+    // Keep only the last 100 elements
+    if (newArray.length > 100) {
+      history.value = new Set(newArray.slice(-100));
+    } else {
+      history.value = new Set(newArray);
+    }
+    return Promise.all([saveHistory(), saveSearch()]);
+  };
+
   const clearState = () => {
     types.value = DefaultSearchType;
     query.value = false;
     pagination.value = undefined;
     search.value = '';
+    history.value = new Set();
   };
 
   const saveState = async () =>
     storage.local.set('data.search', {
       types: [...types.value],
       query: query.value,
+      pageSize: pageSize.value,
+      search: {
+        value: search.value,
+        date: new Date(),
+      },
     });
 
   const restoreState = async () => {
-    const restored = await storage.local.get<{
-      types: TraktSearchType[];
-      query: boolean;
-    }>('data.search');
-    if (restored?.types) types.value = restored.types;
-    if (restored?.query) query.value = restored.query;
+    const [_state, _history, _search] = await Promise.all([
+      storage.local.get<{
+        types: TraktSearchType[];
+        query: boolean;
+        pageSize: number;
+      }>('data.search'),
+      storage.local.get<string[]>('data.search.history'),
+      storage.local.get<{
+        value: string;
+        date: Date;
+      }>('data.search.last'),
+    ]);
+
+    if (_state?.types) types.value = _state.types;
+    if (_state?.query) query.value = _state.query;
+    if (_state?.pageSize) pageSize.value = _state.pageSize;
+    if (_history) history.value = new Set(_history);
+
+    if (_search?.date) {
+      const day = new Date(_search.date).toLocaleDateString();
+      if (day === new Date().toLocaleDateString()) search.value = _search.value;
+    }
   };
 
   const loadingPlaceholder = useLoadingPlaceholder<SearchResult>(pageSize);
@@ -105,7 +144,10 @@ export const useSearchStore = defineStore('data.search', () => {
   const initSearchStore = async () => {
     await restoreState();
 
-    watch(search, () => fetchSearchResults());
+    watch(search, async () => {
+      await fetchSearchResults();
+      await addToHistory().catch(e => console.error('Failed to save search history', e));
+    });
 
     watch(pageSize, async () => {
       await fetchSearchResults();
@@ -122,6 +164,7 @@ export const useSearchStore = defineStore('data.search', () => {
     types,
     query,
     search,
+    history,
     clearState,
     initSearchStore,
     fetchSearchResults,
