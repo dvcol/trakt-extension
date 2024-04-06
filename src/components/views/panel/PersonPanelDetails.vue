@@ -2,10 +2,14 @@
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { PanelTag } from '~/models/tag.model';
+import type { TagLink } from '~/models/tag.model';
 import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 
-import IconExternalLink from '~/components/icons/IconExternalLink.vue';
+import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
+import IconFacebook from '~/components/icons/IconFacebook.vue';
+import IconInstagram from '~/components/icons/IconInstagram.vue';
+import IconTwitter from '~/components/icons/IconTwitter.vue';
+import IconWikipedia from '~/components/icons/IconWikipedia.vue';
 import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
@@ -57,40 +61,40 @@ const birthplace = computed(() => {
 
 const socials = computed(() => {
   if (!person?.value) return;
-  const _socials: PanelTag[] = [];
+  const _socials: TagLink[] = [];
   if (person.value?.homepage) {
     _socials.push({
       label: 'Homepage',
       url: person.value?.homepage,
-      icon: IconExternalLink,
+      icon: IconExternalLinkRounded,
     });
   }
   if (person.value?.social_ids?.facebook) {
     _socials.push({
       label: 'Facebook',
       url: ResolveExternalLinks.facebook(person.value?.social_ids.facebook),
-      icon: IconExternalLink,
+      icon: IconFacebook,
     });
   }
   if (person.value?.social_ids?.instagram) {
     _socials.push({
       label: 'Instagram',
       url: ResolveExternalLinks.instagram(person.value?.social_ids.instagram),
-      icon: IconExternalLink,
+      icon: IconInstagram,
     });
   }
   if (person.value?.social_ids?.twitter) {
     _socials.push({
       label: 'Twitter',
       url: ResolveExternalLinks.twitter(person.value?.social_ids.twitter),
-      icon: IconExternalLink,
+      icon: IconTwitter,
     });
   }
   if (person.value?.social_ids?.wikipedia) {
     _socials.push({
       label: 'Wikipedia',
       url: ResolveExternalLinks.wikipedia(person.value?.social_ids.wikipedia),
-      icon: IconExternalLink,
+      icon: IconWikipedia,
     });
   }
   return _socials;
