@@ -1,0 +1,50 @@
+{
+  "panel__buttons__list_type__watchlist": {
+    "message": "Watchlist",
+    "description": "Label for the watchlist button in the panel"
+  },
+  "panel__buttons__label__checkin": {
+    "message": "Start Checkin",
+    "description": "Label for the checkin button in the panel"
+  },
+  "panel__buttons__label__cancel": {
+    "message": "Cancel Checkin",
+    "description": "Label for the cancel button in the checkin panel"
+  },
+  "panel__buttons__label__history__add": {
+    "message": "Add to my History",
+    "description": "Label for the add to history button in the panel"
+  },
+  "panel__buttons__label__history__remove": {
+    "message": "Remove from History",
+    "description": "Label for the remove from history button in the panel"
+  },
+  "panel__buttons__label__collection__add": {
+    "message": "Add to my Collection",
+    "description": "Label for the add to collection button in the panel"
+  },
+  "panel__buttons__label__collection__remove": {
+    "message": "Remove from Collection",
+    "description": "Label for the remove from collection button in the panel"
+  },
+  "panel__buttons__label__list__add": {
+    "message": "Add to my List",
+    "description": "Label for the add to list button in the panel"
+  },
+  "panel__buttons__label__list__update": {
+    "message": "Update my Lists",
+    "description": "Label for the update lists button in the panel"
+  },
+  "panel__buttons__label__now": {
+    "message": "Right Now",
+    "description": "Label for the right now select option in the panel"
+  },
+  "panel__buttons__label__release": {
+    "message": "Release Date",
+    "description": "Label for the release date select option in the panel"
+  },
+  "panel__buttons__label__other": {
+    "message": "Other Date",
+    "description": "Label for the other date select option in the panel"
+  }
+}

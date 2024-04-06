@@ -22,17 +22,5 @@
   "list__item__placeholder_empty": {
     "message": "Nothing on this day.",
     "description": "Empty placeholder for list item."
-  },
-  "list__item__panel__tooltip_episodes": {
-    "message": "episodes",
-    "description": "Tooltip for episodes watched in list item panel."
-  },
-  "list__item__panel__tooltip_watched": {
-    "message": "watched",
-    "description": "Tooltip for watched percentages in list item panel."
-  },
-  "list__item__panel__tooltip_remaining": {
-    "message": "remaining",
-    "description": "Tooltip for remaining episodes in list item panel."
   }
 }

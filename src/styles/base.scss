@@ -16,10 +16,11 @@
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgb(235 235 235 / 64%);
   
-  /* ui color variables */
+  /* background color variables */
   --bg-blur: 1px;
   --bg-blur-20: 20px;
   --bg-blur-40: 40px;
+  --bg-blur-hover: var(--bg-blur-20);
   --bg-black: rgba(0 0 0);
   --bg-black-20: rgba(0 0 0 / 20%);
   --bg-black-30: rgba(0 0 0 / 30%);
@@ -35,6 +36,16 @@
   --bg-red-70: rgba(255 222 223 / 70%);
   --bg-red-80: rgba(255 222 223 / 80%);
   --bg-red-90: rgba(255 222 223 / 90%);
+  --bg-color-primary: rgb(24 42 36);
+  --bg-color-primary-80: rgba(24 42 36 / 80%);
+  --bg-color-info: rgb(22 35 42);
+  --bg-color-info-80:  rgb(22 35 42 / 80%);
+  --bg-color-warning: rgb(43 37 25);
+  --bg-color-warning-80: rgb(43 37 25 / 80%);
+  --bg-color-error: rgb(45 27 28);
+  --bg-color-error-80: rgb(45 27 28 / 80%);
+
+  /* ui color variables */
   --white: rgb(255 255 255);
   --white-50: rgb(255 255 255 / 50%);
   --white-70: rgb(255 255 255 / 70%);
@@ -43,14 +54,16 @@
   --primary-color: #63e2b7;
   --primary-color-lighter:  #7fe7c4;
   --primary-color-disabled: #548272;
-  --primary-color-dark: color-mix(in srgb, var(--primary-color) 50%, black 20%);
+  --primary-color-dark: color-mix(in srgb, var(--primary-color) 40%, black 60%);
   --primary-color-focus: rgba(99 226 183 / 10%);
+  --info-color: #70c0e8;
+  --info-color-dark: color-mix(in srgb, var(--info-color) 40%, black 60%);
   --color-disabled: rgba(255 255 255 / 6%);
   --text-color-disabled: rgba(255 255 255 / 38%);
   --color-warning: #f2c97d;
   --color-warning-lighter: #f5d599;
   --color-error: #e88080;
-  --color-error-ligther: #e98b8b;
+  --color-error-lighter: #e98b8b;
 
   /* trakt.tv brand color */
   --trakt-red: #ed1c24;

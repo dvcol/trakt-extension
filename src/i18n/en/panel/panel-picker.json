@@ -1,0 +1,14 @@
+{
+  "panel__picker__season": {
+    "message": "Season",
+    "description": "Season label in the panel picker"
+  },
+  "panel__picker__episode": {
+    "message": "Episode",
+    "description": "Episode label in the panel picker"
+  },
+  "panel__picker__none": {
+    "message": "none",
+    "description": "Label for no data in the panel picker"
+  }
+}

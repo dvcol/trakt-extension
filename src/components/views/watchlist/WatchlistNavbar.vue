@@ -4,14 +4,11 @@ import { NFlex, NIcon, NInput, NSelect, type SelectOption } from 'naive-ui';
 import { type Component, computed, defineProps, h, ref } from 'vue';
 
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
-import IconCheckedList from '~/components/icons/IconCheckedList.vue';
-import IconGrid from '~/components/icons/IconGrid.vue';
-import IconHeart from '~/components/icons/IconHeart.vue';
-import IconList from '~/components/icons/IconList.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
 import {
-  type ListType,
+  type ListEntity,
+  ListType,
   useListsStore,
   useListsStoreRefs,
   useListStoreRefs,
@@ -24,27 +21,14 @@ const i18n = useI18n('navbar', 'list');
 const { pageSize, searchList } = useListStoreRefs();
 
 const { loading, lists, activeList } = useListsStoreRefs();
-const { fetchLists, clearState } = useListsStore();
+const { fetchLists, clearState, getIcon } = useListsStore();
 
-const getIcon = (list: ListType) => {
-  switch (list.type) {
-    case 'collection':
-      return IconGrid;
-    case 'watchlist':
-      return IconCheckedList;
-    case 'favorites':
-      return IconHeart;
-    case 'collaboration':
-      return IconList;
-    default:
-      return IconList;
-  }
-};
-
-type ListOption = SelectOption & { source: ListType; icon: Component };
+type ListOption = SelectOption & { source: ListEntity; icon: Component };
 const listOptions = computed<ListOption[]>(() =>
   lists.value.map((list, i) => ({
-    label: ['collection', 'watchlist', 'favorites'].includes(list.type)
+    label: [ListType.Collection, ListType.Watchlist, ListType.Favorites]
+      .map(String)
+      .includes(list.type)
       ? i18n(list.name)
       : list.name,
     value: list.id,

@@ -9,6 +9,10 @@ import type { TraktListItem } from '~/models/trakt/trakt-list.model';
 
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
+import IconCheckedList from '~/components/icons/IconCheckedList.vue';
+import IconGrid from '~/components/icons/IconGrid.vue';
+import IconHeart from '~/components/icons/IconHeart.vue';
+import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
@@ -21,8 +25,19 @@ export type AnyList =
   | TraktWatchlist
   | TraktFavoriteItem
   | (TraktCollection & { id: number | string; type?: typeof ListScrollItemType.loading });
-export type ListType = {
-  type: 'list' | 'collaboration' | 'collection' | 'watchlist' | 'favorites';
+
+export const ListType = {
+  List: 'list',
+  Collaboration: 'collaboration',
+  Collection: 'collection',
+  Watchlist: 'watchlist',
+  Favorites: 'favorites',
+} as const;
+
+export type ListTypes = (typeof ListType)[keyof typeof ListType];
+
+export type ListEntity = {
+  type: ListTypes;
   name: string;
   id: number | string;
   scope?: 'movies' | 'shows';
@@ -36,21 +51,28 @@ export const anyListDateGetter = (item: AnyList) => {
   if ('collected_at' in item) return item.collected_at;
 };
 
-export const DefaultLists: Record<string, ListType> = {
-  Watchlist: { type: 'watchlist', id: 'watchlist', name: 'list_type__watchlist' },
-  Favorites: { type: 'favorites', id: 'favorites', name: 'list_type__favorites' },
-  MovieCollection: { type: 'collection', id: 'collection-movies', scope: 'movies', name: 'list_type__collection_movie' },
-  ShowCollection: { type: 'collection', id: 'collection-shows', scope: 'shows', name: 'list_type__collection_show' },
+export const DefaultListId = {
+  Watchlist: 'watchlist',
+  Favorites: 'favorites',
+  MovieCollection: 'movie-collection',
+  ShowCollection: 'show-collection',
 } as const;
 
-const DefaultList: ListType[] = Object.values(DefaultLists);
+export const DefaultLists: Record<string, ListEntity> = {
+  Watchlist: { type: ListType.Watchlist, id: DefaultListId.Watchlist, name: 'list_type__watchlist' },
+  Favorites: { type: ListType.Favorites, id: DefaultListId.Favorites, name: 'list_type__favorites' },
+  MovieCollection: { type: ListType.Collection, id: DefaultListId.MovieCollection, scope: 'movies', name: 'list_type__collection_movie' },
+  ShowCollection: { type: ListType.Collection, id: DefaultListId.ShowCollection, scope: 'shows', name: 'list_type__collection_show' },
+} as const;
+
+const DefaultList: ListEntity[] = Object.values(DefaultLists);
 
 export const useListsStore = defineStore('data.lists', () => {
   const firstLoad = ref(true);
   const loading = ref(true);
 
-  const lists = ref<ListType[]>(DefaultList);
-  const activeList = ref<ListType>(DefaultLists.Watchlist);
+  const lists = ref<ListEntity[]>(DefaultList);
+  const activeList = ref<ListEntity>(DefaultLists.Watchlist);
 
   const saveState = async () =>
     storage.local.set('data.lists', {
@@ -60,8 +82,8 @@ export const useListsStore = defineStore('data.lists', () => {
 
   const restoreState = async () => {
     const restored = await storage.local.get<{
-      lists: ListType[];
-      activeList: ListType;
+      lists: ListEntity[];
+      activeList: ListEntity;
     }>('data.lists');
     if (restored?.lists) lists.value = restored.lists;
     if (restored?.activeList === activeList.value) return;
@@ -94,7 +116,7 @@ export const useListsStore = defineStore('data.lists', () => {
               type: 'list',
               name: l.name,
               id: l.ids.trakt,
-            }) satisfies ListType,
+            }) satisfies ListEntity,
         ),
         ...collaborations.map(
           l =>
@@ -102,7 +124,7 @@ export const useListsStore = defineStore('data.lists', () => {
               type: 'collaboration',
               name: l.name,
               id: l.ids.trakt,
-            }) satisfies ListType,
+            }) satisfies ListEntity,
         ),
       ];
       if (activeList.value?.id && !lists.value.some(l => activeList.value.id === l?.id)) {
@@ -119,6 +141,21 @@ export const useListsStore = defineStore('data.lists', () => {
     }
   };
 
+  const getIcon = (list: ListEntity) => {
+    switch (list.type) {
+      case ListType.Collection:
+        return IconGrid;
+      case ListType.Watchlist:
+        return IconCheckedList;
+      case ListType.Favorites:
+        return IconHeart;
+      case ListType.Collaboration:
+        return IconList;
+      default:
+        return IconList;
+    }
+  };
+
   const initListsStore = async () => {
     await restoreState();
 
@@ -127,7 +164,7 @@ export const useListsStore = defineStore('data.lists', () => {
     });
   };
 
-  return { loading, lists, activeList, fetchLists, clearState, initListsStore };
+  return { loading, lists, activeList, fetchLists, clearState, initListsStore, getIcon };
 });
 
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
@@ -167,7 +204,7 @@ export const useListStore = defineStore('data.list', () => {
     page,
     limit = pageSize.value,
     list = activeList.value,
-  }: { page?: number; limit?: number; list?: ListType } = {}) => {
+  }: { page?: number; limit?: number; list?: ListEntity } = {}) => {
     if (!firstLoad.value && loading.value) {
       console.warn('Already fetching list');
       return;

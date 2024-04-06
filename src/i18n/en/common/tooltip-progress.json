@@ -1,0 +1,18 @@
+{
+  "common__tooltip__progress__episodes": {
+    "message": "episodes",
+    "description": "Tooltip for episodes watched in progress tooltip."
+  },
+  "common__tooltip__progress__watched": {
+    "message": "watched",
+    "description": "Tooltip for watched percentages in progress tooltip."
+  },
+  "common__tooltip__progress__collection": {
+    "message": "collected",
+    "description": "Tooltip for collected percentages in progress tooltip."
+  },
+  "common__tooltip__progress__remaining": {
+    "message": "remaining",
+    "description": "Tooltip for remaining episodes in progress tooltip."
+  }
+}

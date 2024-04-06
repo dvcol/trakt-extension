@@ -461,7 +461,7 @@ export const shows = {
     collection: new TraktClientEndpoint<
       {
         /** Trakt ID, Trakt slug, or IMDB ID */
-        id: string;
+        id: string | number;
         /** include any hidden seasons */
         hidden?: boolean;
         /** include specials as season 0 */

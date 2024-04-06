@@ -1,8 +1,8 @@
 @mixin hover-background(
-  $from: var(--bg-color),
-  $to: var(--bg-color-hover),
-  $blur: var(--bg-blur),
-  $blur-hover: var(--bg-blur-20),
+  $from: var(--custom-bg-color, var(--bg-color)),
+  $to: var(--custom-bg-color-hover, var(--bg-color-hover)),
+  $blur: var(--custom-bg-blur, var(--bg-blur)),
+  $blur-hover: var(--custom-bg-blur-hover, var(--bg-blur-hover)),
   $transition: 0.5s var(--n-bezier),
   $additional-transition: ""
 ) {

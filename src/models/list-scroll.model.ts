@@ -50,14 +50,16 @@ export type SeasonProgress = BaseTraktProgressSeason & {
   finished: boolean;
 };
 
-export const ListScrollItemProgressType = {
-  collection: 'collection',
-  watched: 'watched',
+export const ShowProgressType = {
+  Collection: 'collection',
+  Watched: 'watched',
 } as const;
+
+export type ShowProgressTypes = (typeof ShowProgressType)[keyof typeof ShowProgressType];
 
 export type ShowProgress = BaseTraktProgress & {
   id: string | number;
-  type: (typeof ListScrollItemProgressType)[keyof typeof ListScrollItemProgressType];
+  type: ShowProgressTypes;
   date: Date;
   seasons: SeasonProgress[];
   percentage: number;
