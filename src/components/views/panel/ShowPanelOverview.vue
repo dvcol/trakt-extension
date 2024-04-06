@@ -77,14 +77,14 @@ const url = computed(() => {
 const overview = computed(() => {
   if (mode.value === 'show') {
     if (!show?.value) return;
-    return show?.value?.overview ?? '-';
+    return show?.value?.overview || '-';
   }
   if (mode.value === 'season') {
     if (!season?.value) return;
-    return season?.value?.overview ?? show?.value?.overview ?? '-';
+    return (season?.value?.overview ?? show?.value?.overview) || '-';
   }
   if (!episode?.value) return;
-  return episode?.value?.overview ?? '-';
+  return episode?.value?.overview || '-';
 });
 </script>
 

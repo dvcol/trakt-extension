@@ -16,7 +16,7 @@ const { person } = toRefs(props);
 
 const biography = computed(() => {
   if (!person?.value) return;
-  return person?.value?.biography ?? '-';
+  return person?.value?.biography || '-';
 });
 </script>
 

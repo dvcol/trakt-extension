@@ -56,7 +56,7 @@ const knownFor = computed(() => {
 
 const birthplace = computed(() => {
   if (!person?.value) return;
-  return person.value?.birthplace ?? '-';
+  return person.value?.birthplace || '-';
 });
 
 const socials = computed(() => {
@@ -139,16 +139,18 @@ const socials = computed(() => {
       />
     </NFlex>
 
-    <!--  socials  -->
-    <PanelDetail
-      :label="i18n('socials')"
-      :values="socials"
-      :skeleton="{ width: '3rem' }"
-      array
-    />
+    <NFlex class="lists" vertical size="large">
+      <!--  socials  -->
+      <PanelDetail
+        :label="i18n('socials')"
+        :values="socials"
+        :skeleton="{ width: '3rem' }"
+        array
+      />
 
-    <!--  links  -->
-    <PanelLinks :ids="person?.ids" mode="person" />
+      <!--  links  -->
+      <PanelLinks :ids="person?.ids" mode="person" />
+    </NFlex>
   </NFlex>
 </template>
 
@@ -157,5 +159,9 @@ const socials = computed(() => {
 .row {
   flex: 1 1 auto;
   width: 100%;
+}
+
+.lists {
+  margin: 1.5rem 0 0.5rem;
 }
 </style>
