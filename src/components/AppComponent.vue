@@ -47,7 +47,7 @@ const onBack = () => {
 <template>
   <header :class="{ open: panel }">
     <RouterView v-slot="{ Component }" name="navbar">
-      <NavbarComponent v-if="isAuthenticated">
+      <NavbarComponent v-if="isAuthenticated" :disabled="panel">
         <template v-if="Component" #drawer="{ parentElement }">
           <Transition name="scale" mode="out-in">
             <KeepAlive>
@@ -130,7 +130,7 @@ header {
   }
 
   &.open > :first-child {
-    background: var(--bg-color-hover);
+    background: var(--bg-gradient-60-90);
     backdrop-filter: blur(var(--bg-blur-20));
   }
 }
