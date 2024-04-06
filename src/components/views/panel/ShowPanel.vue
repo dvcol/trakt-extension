@@ -9,6 +9,7 @@ import type {
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import PanelButtons from '~/components/views/panel/PanelButtons.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
@@ -41,13 +42,18 @@ const episode = ref<TraktEpisodeExtended>();
 
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
-const { getShowProgress } = useShowStore();
+const { getShowWatchedProgress, getShowCollectionProgress } = useShowStore();
 
 const i18n = useI18n('panel', 'show');
 
-const progress = computed(() => {
+const watchedProgress = computed(() => {
   if (!showId?.value) return;
-  return getShowProgress(showId.value).value;
+  return getShowWatchedProgress(showId.value).value;
+});
+
+const collectionProgress = computed(() => {
+  if (!showId?.value) return;
+  return getShowCollectionProgress(showId.value).value;
 });
 
 const seasonNb = computed(() => {
@@ -73,6 +79,42 @@ const panelType = computed<'show' | 'season' | 'episode'>(() => {
 const season = computed(() => {
   if (seasonNb?.value === undefined) return;
   return seasons.value?.[seasonNb.value];
+});
+
+const watchedProgressEntity = computed(() => {
+  if (!watchedProgress?.value) return;
+
+  if (panelType.value === 'season') {
+    if (seasonNb.value === undefined) return;
+    return watchedProgress.value?.seasons?.find(
+      _season => _season.number === seasonNb.value,
+    );
+  }
+  if (panelType.value === 'episode') {
+    if (seasonNb.value === undefined || episodeNb.value === undefined) return;
+    return watchedProgress.value?.seasons
+      ?.find(_season => _season.number === seasonNb.value)
+      ?.episodes?.find(_episode => _episode.number === episodeNb.value);
+  }
+  return watchedProgress.value;
+});
+
+const collectionProgressEntity = computed(() => {
+  if (!collectionProgress?.value) return;
+
+  if (panelType.value === 'season') {
+    if (seasonNb.value === undefined) return;
+    return collectionProgress.value?.seasons?.find(
+      _season => _season.number === seasonNb.value,
+    );
+  }
+  if (panelType.value === 'episode') {
+    if (seasonNb.value === undefined || episodeNb.value === undefined) return;
+    return collectionProgress.value?.seasons
+      ?.find(_season => _season.number === seasonNb.value)
+      ?.episodes?.find(_episode => _episode.number === episodeNb.value);
+  }
+  return collectionProgress.value;
 });
 
 const title = computed(() => {
@@ -182,13 +224,17 @@ const { openTab } = useExtensionSettingsStore();
       :mode="panelType"
     />
 
-    <ShowPanelPicker :seasons="seasons" :episodes="episodes" :mode="panelType" />
+    <PanelButtons
+      :mode="panelType"
+      :watched-progress="watchedProgressEntity"
+      :collection-progress="collectionProgressEntity"
+    />
 
     <ShowPanelPicker
       :mode="panelType"
       :seasons="seasons"
       :episodes="episodes"
-      :progress="progress"
+      :progress="watchedProgress"
     />
 
     <ShowPanelOverview

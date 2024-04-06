@@ -5,7 +5,6 @@ import {
   NProgress,
   NSkeleton,
   NTag,
-  NTooltip,
   type PopoverProps,
 } from 'naive-ui';
 
@@ -13,6 +12,7 @@ import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import TagLink from '~/components/common/buttons/TagLink.vue';
+import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
@@ -74,7 +74,7 @@ const tags = computed(
     }),
 );
 
-const { getShowProgress } = useShowStore();
+const { getShowWatchedProgress } = useShowStore();
 
 const progress = computed<ShowProgress | undefined>(() => {
   if (item?.value?.progress) return item.value?.progress;
@@ -82,7 +82,7 @@ const progress = computed<ShowProgress | undefined>(() => {
   if (!item?.value?.getProgressQuery) return;
   const id = item.value?.getProgressQuery();
   if (!id) return;
-  return getShowProgress(id).value;
+  return getShowWatchedProgress(id).value;
 });
 
 const innerContainer = ref();
@@ -137,47 +137,19 @@ const onTagClick = (url?: string) => {
         </template>
       </NFlex>
       <div v-if="showProgress && !loading" class="panel-progress">
-        <NTooltip
-          class="panel-progress-tooltip"
-          :disabled="!progress"
-          placement="top-end"
-          :delay="100"
-          :to="innerContainer"
-        >
-          <NFlex v-if="progress" vertical align="flex-end">
-            <div>
-              <span class="metric">{{ progress?.completed }}</span>
-              <span> / </span>
-              <span class="metric">{{ progress?.aired }}</span>
-              <span>&nbsp;</span>
-              <span>{{ i18n('tooltip_episodes') }}</span>
-            </div>
-            <div>
-              <span class="metric">{{ Math.round(progress?.percentage) }}</span>
-              <span>%</span>
-              <span>&nbsp;</span>
-              <span>{{ i18n('tooltip_watched') }}</span>
-            </div>
-            <div>
-              <span class="metric">{{ progress?.aired - progress?.completed }}</span>
-              <span>&nbsp;</span>
-              <span>{{ i18n('tooltip_remaining') }}</span>
-            </div>
-          </NFlex>
-          <template #trigger>
-            <NProgress
-              class="line"
-              :data-show-id="progress?.id"
-              :data-percentage="progress?.percentage"
-              :theme-overrides="{
-                railHeight: 'var(--rail-height)',
-              }"
-              :percentage="progress?.percentage ?? 0"
-              :show-indicator="false"
-              color="var(--trakt-red-dark)"
-            />
-          </template>
-        </NTooltip>
+        <ProgressTooltip :progress="progress" :to="innerContainer" placement="top-end">
+          <NProgress
+            class="line"
+            :data-show-id="progress?.id"
+            :data-percentage="progress?.percentage"
+            :theme-overrides="{
+              railHeight: 'var(--rail-height)',
+            }"
+            :percentage="progress?.percentage ?? 0"
+            :show-indicator="false"
+            color="var(--trakt-red-dark)"
+          />
+        </ProgressTooltip>
       </div>
     </div>
   </NFlex>
@@ -221,16 +193,6 @@ const onTagClick = (url?: string) => {
 
     &:hover {
       --trakt-red-dark: var(--trakt-red);
-    }
-
-    &-tooltip {
-      font-size: 0.8rem;
-
-      .metric {
-        color: var(--vt-c-white);
-        font-weight: bolder;
-        font-variant-numeric: tabular-nums;
-      }
     }
   }
 }

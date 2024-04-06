@@ -140,28 +140,18 @@ const root = ref<HTMLElement>();
 .n-dropdown-menu,
 .n-date-panel,
 .n-virtual-list {
-  @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
-
-  @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
-  }
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background(var(--bg-color-80), var(--bg-color-90));
-  }
+  @include mixin.hover-background(
+    $from: var(--custom-bg-color, var(--bg-color-80)),
+    $to: var(--custom-bg-color-hover, var(--bg-color-90))
+  );
 }
 
 .n-popselect-menu,
 .n-select-menu {
-  @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
-
-  @media (prefers-color-scheme: dark) {
-    @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
-  }
-
-  @media (prefers-color-scheme: light) {
-    @include mixin.hover-background(var(--bg-color-20), var(--bg-color-80));
-  }
+  @include mixin.hover-background(
+    $from: var(--custom-bg-color, var(--bg-color-20)),
+    $to: var(--custom-bg-color-hover, var(--bg-color-80))
+  );
 }
 
 .n-drawer-mask {
@@ -177,11 +167,12 @@ const root = ref<HTMLElement>();
 .n-notification-container .n-notification,
 .n-tooltip.n-tooltip,
 .n-popover-arrow.n-popover-arrow.n-popover-arrow {
-  background: var(--bg-color-60);
+  background: var(--custom-bg-color, var(--bg-color-60));
   backdrop-filter: blur(var(--bg-blur));
 
   &:hover {
-    background: var(--bg-black-90);
+    background: var(--custom-bg-color-hover, var(--bg-black-90));
+    backdrop-filter: var(--custom-bg-blur-hover, var(--bg-blur-hover));
   }
 
   @media (prefers-color-scheme: light) {

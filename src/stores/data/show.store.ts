@@ -3,11 +3,11 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
-import type { TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
+import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
-import { ListScrollItemProgressType, type ShowProgress } from '~/models/list-scroll.model';
+import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { asyncRefGetter } from '~/utils/vue.utils';
@@ -18,27 +18,28 @@ type ShowDictionary = Record<string, TraktShowExtended>;
 type ShowSeasonDictionary = Record<string, ShowSeasons>;
 type ShowSeasonEpisodesDictionary = Record<string, Record<number, TraktEpisodeShort[]>>;
 type ShowEpisodeDictionary = Record<string, Record<number, Record<number, TraktEpisodeExtended>>>;
-type ShowProgressDictionary = Record<string, TraktWatchedProgress>;
+type ShowWatchedProgressDictionary = Record<string, TraktWatchedProgress>;
+type ShowCollectionProgressDictionary = Record<string, TraktCollectionProgress>;
 
 type LoadingDictionary = Record<string, boolean>;
 type SeasonEpisodesLoadingDictionary = Record<string, Record<number, boolean>>;
 type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boolean>>>;
 
-const watchProgressToListProgress = (progress: TraktWatchedProgress, id: string | number): ShowProgress => {
+const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
   return {
     id,
     ...progress,
     percentage: (progress.completed / progress.aired) * 100,
     finished: progress.completed === progress.aired,
-    type: ListScrollItemProgressType.watched,
-    date: new Date(progress.last_watched_at),
+    type: 'last_watched_at' in progress ? ShowProgressType.Watched : ShowProgressType.Collection,
+    date: new Date('last_watched_at' in progress ? progress.last_watched_at : progress.last_collected_at),
     seasons: progress.seasons.map(season => ({
       ...season,
       percentage: (season.completed / season.aired) * 100,
       finished: season.completed === season.aired,
       episodes: season.episodes.map(episode => ({
         ...episode,
-        date: new Date(episode.last_watched_at),
+        date: new Date('last_watched_at' in episode ? episode.last_watched_at : episode.collected_at),
       })),
     })),
   };
@@ -49,26 +50,30 @@ export const useShowStore = defineStore('data.show', () => {
   const showsSeasons = reactive<ShowSeasonDictionary>({});
   const showsSeasonEpisodes = reactive<ShowSeasonEpisodesDictionary>({});
   const showsEpisodes = reactive<ShowEpisodeDictionary>({});
-  const showsProgress = reactive<ShowProgressDictionary>({});
+  const showsWatchedProgress = reactive<ShowWatchedProgressDictionary>({});
+  const showsCollectionProgress = reactive<ShowCollectionProgressDictionary>({});
 
   const showsLoading = reactive<LoadingDictionary>({});
   const showsSeasonsLoading = reactive<LoadingDictionary>({});
   const showsSeasonEpisodesLoading = reactive<SeasonEpisodesLoadingDictionary>({});
   const showsEpisodesLoading = reactive<EpisodeLoadingDictionary>({});
-  const progressLoading = reactive<LoadingDictionary>({});
+  const showWatchedProgressLoading = reactive<LoadingDictionary>({});
+  const showCollectionProgressLoading = reactive<LoadingDictionary>({});
 
   const clearState = () => {
     Object.assign(shows, {});
     Object.assign(showsSeasons, {});
     Object.assign(showsSeasonEpisodes, {});
     Object.assign(showsEpisodes, {});
-    Object.assign(showsProgress, {});
+    Object.assign(showsWatchedProgress, {});
+    Object.assign(showsCollectionProgress, {});
 
     Object.assign(showsLoading, {});
     Object.assign(showsSeasonsLoading, {});
     Object.assign(showsSeasonEpisodesLoading, {});
     Object.assign(showsEpisodesLoading, {});
-    Object.assign(progressLoading, {});
+    Object.assign(showWatchedProgressLoading, {});
+    Object.assign(showCollectionProgressLoading, {});
   };
 
   const fetchShow = async (id: string) => {
@@ -91,20 +96,38 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowProgress = async (id: string) => {
-    if (progressLoading[id]) {
+    if (showWatchedProgressLoading[id]) {
       console.warn('Already fetching show progress', id);
     }
 
     console.info('Fetching Show Progress', id);
 
-    progressLoading[id] = true;
+    showWatchedProgressLoading[id] = true;
     try {
-      showsProgress[id] = await TraktService.progress.show(id);
+      showsWatchedProgress[id] = await TraktService.progress.watched(id);
     } catch (e) {
       console.error('Failed to fetch show progress', id);
       throw e;
     } finally {
       showsLoading[id] = false;
+    }
+  };
+
+  const fetchShowCollectionProgress = async (id: string) => {
+    if (showCollectionProgressLoading[id]) {
+      console.warn('Already fetching show collection progress', id);
+    }
+
+    console.info('Fetching Show Collection Progress', id);
+
+    showCollectionProgressLoading[id] = true;
+    try {
+      showsCollectionProgress[id] = await TraktService.progress.collection(id);
+    } catch (e) {
+      console.error('Failed to fetch show collection progress', id);
+      throw e;
+    } finally {
+      showCollectionProgressLoading[id] = false;
     }
   };
 
@@ -214,11 +237,22 @@ export const useShowStore = defineStore('data.show', () => {
     response = ref<TraktEpisodeExtended>(),
   ) => asyncRefGetter(() => getShowEpisode({ id, season, episode }), getEpisodesLoading(id, season, episode), response);
 
-  const getShowProgressLoading = (id: number | string) => computed(() => progressLoading[id.toString()]);
-  const getShowProgress = (id: number | string) => {
-    if (!showsProgress[id.toString()] && !progressLoading[id.toString()]) fetchShowProgress(id.toString()).catch(console.error);
+  const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
+  const getShowWatchedProgress = (id: number | string) => {
+    if (!showsWatchedProgress[id.toString()] && !showWatchedProgressLoading[id.toString()]) fetchShowProgress(id.toString()).catch(console.error);
     return computed(() => {
-      const progress = showsProgress[id.toString()];
+      const progress = showsWatchedProgress[id.toString()];
+      if (!progress) return undefined;
+      return watchProgressToListProgress(progress, id);
+    });
+  };
+
+  const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
+  const getShowCollectionProgress = (id: number | string) => {
+    if (!showsCollectionProgress[id.toString()] && !showCollectionProgressLoading[id.toString()])
+      fetchShowCollectionProgress(id.toString()).catch(console.error);
+    return computed(() => {
+      const progress = showsCollectionProgress[id.toString()];
       if (!progress) return undefined;
       return watchProgressToListProgress(progress, id);
     });
@@ -238,8 +272,10 @@ export const useShowStore = defineStore('data.show', () => {
     getShowEpisode,
     getShowEpisodeRef,
     getEpisodesLoading,
-    getShowProgress,
+    getShowWatchedProgress,
     getShowProgressLoading,
+    getShowCollectionProgress,
+    getShowCollectionLoading,
   };
 });
 

@@ -10,6 +10,7 @@ import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
 import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
+import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
@@ -311,9 +312,14 @@ export class TraktService {
       return response.json();
     },
 
-    async show(showId: string | number) {
+    async watched(showId: string | number) {
       const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId, specials: true, count_specials: false });
-      return response.json();
+      return response.json() as Promise<TraktWatchedProgress>;
+    },
+
+    async collection(showId: string | number) {
+      const response = await TraktService.traktClient.shows.progress.collection.cached({ id: showId, specials: true, count_specials: false });
+      return response.json() as Promise<TraktCollectionProgress>;
     },
   };
 
@@ -361,7 +367,13 @@ export class TraktService {
     history: TraktService.traktClient.sync.history.get.cached.evict,
     watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
-    collection: TraktService.traktClient.sync.collection.get.cached.evict,
+    collection: () =>
+      Promise.all([
+        // List of collected items
+        TraktService.traktClient.sync.collection.get.cached.evict(),
+        // Collection progress for shows
+        TraktService.traktClient.shows.progress.collection.cached.evict(),
+      ]),
     movies: TraktService.traktClient.movies.summary.cached.evict,
     people: TraktService.traktClient.people.summary.cached.evict,
     shows: TraktService.traktClient.shows.summary.cached.evict,
@@ -381,6 +393,12 @@ export class TraktService {
         TraktService.traktClient.calendars.my.shows.finales.cached.evict(),
         TraktService.traktClient.calendars.my.shows.get.cached.evict(),
       ]),
-    progress: () => Promise.all([TraktService.cachedProgress.evict(), TraktService.traktClient.shows.progress.watched.cached.evict()]),
+    progress: () =>
+      Promise.all([
+        // Progress on deck
+        TraktService.cachedProgress.evict(),
+        // Progress for watched episodes
+        TraktService.traktClient.shows.progress.watched.cached.evict(),
+      ]),
   };
 }
