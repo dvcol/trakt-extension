@@ -164,9 +164,13 @@ const root = ref<HTMLElement>();
   }
 }
 
-.n-drawer {
-  background: linear-gradient(to right, var(--bg-color-60) 5%, var(--bg-color-90));
+.n-drawer-mask {
+  background: var(--bg-gradient-60-90);
   backdrop-filter: blur(var(--bg-blur-20));
+}
+
+.n-drawer {
+  background: transparent;
 }
 
 .n-message-wrapper .n-message,

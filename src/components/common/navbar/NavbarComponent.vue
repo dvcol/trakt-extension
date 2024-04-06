@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NTab, NTabs } from 'naive-ui';
-import { computed, ref, useSlots } from 'vue';
+import { computed, ref, toRefs, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
@@ -8,6 +8,16 @@ import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDop
 import { Route } from '~/router';
 import { NavbarService } from '~/services/navbar.service';
 import { useI18n } from '~/utils';
+
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+});
+
+const { disabled } = toRefs(props);
 
 const i18n = useI18n('route');
 const route = useRoute();
@@ -44,7 +54,7 @@ const hasDrawer = computed(() => {
 });
 
 const showDrawer = computed(() => {
-  const show = hasDrawer.value && (isHover.value || isFocus.value);
+  const show = !disabled.value && hasDrawer.value && (isHover.value || isFocus.value);
   NavbarService.open.value = show;
   return show;
 });
