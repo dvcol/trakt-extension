@@ -2,9 +2,9 @@
 import { NFlex, NSkeleton, type SkeletonProps } from 'naive-ui';
 
 import type { PropType } from 'vue';
-import type { PanelTag } from '~/models/tag.model';
+import type { TagLink } from '~/models/tag.model';
 
-import TagLink from '~/components/common/buttons/TagLink.vue';
+import TagLinkComponent from '~/components/common/buttons/TagLink.vue';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 
 defineProps({
@@ -17,7 +17,7 @@ defineProps({
     required: false,
   },
   values: {
-    type: Array as PropType<PanelTag[]>,
+    type: Array as PropType<TagLink[]>,
     required: false,
   },
   array: {
@@ -42,7 +42,7 @@ const { openTab } = useExtensionSettingsStore();
     <span class="prefix">{{ label }}</span>
     <template v-if="array">
       <template v-if="values">
-        <TagLink
+        <TagLinkComponent
           v-for="(tag, i) of values"
           :key="i"
           :tag="{ ...tag, round: true }"

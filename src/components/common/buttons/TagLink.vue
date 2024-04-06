@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NTag } from 'naive-ui';
+import { NIcon, NTag } from 'naive-ui';
 import { type PropType, toRefs } from 'vue';
 
 import type { TagLink } from '~/models/tag.model';
@@ -34,6 +34,9 @@ const onClick = (e: MouseEvent) => {
       v-bind="tag"
     >
       <span class="label">{{ tag?.label }}</span>
+      <template v-if="tag?.icon" #icon>
+        <NIcon class="icon" :component="tag.icon" v-bind="tag.iconProps" />
+      </template>
     </NTag>
   </a>
 </template>
@@ -48,6 +51,10 @@ const onClick = (e: MouseEvent) => {
 
   .label {
     transition: filter 0.3s var(--n-bezier);
+  }
+
+  .icon {
+    padding-left: 0.15rem;
   }
 
   &:hover {
