@@ -26,7 +26,7 @@ const onTitleClick = (e: MouseEvent) => {
 
 <template>
   <a class="anchor-link" @click="onTitleClick">
-    <component :is="component" :class="{ 'hover-link': !!$attrs.href }">
+    <component :is="component" class="content" :class="{ 'hover-link': !!$attrs.href }">
       <slot />
     </component>
   </a>
@@ -39,6 +39,10 @@ const onTitleClick = (e: MouseEvent) => {
   z-index: layers.$in-front;
   color: inherit;
   text-decoration: none;
+
+  .content {
+    margin: 0;
+  }
 }
 
 .hover-link {

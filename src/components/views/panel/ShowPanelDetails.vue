@@ -70,12 +70,12 @@ const genres = computed(() => {
 
 const year = computed(() => {
   if (!show?.value) return;
-  return show.value?.year ?? '-';
+  return show.value?.year || '-';
 });
 
 const status = computed(() => {
   if (!show?.value) return;
-  return capitalizeEachWord(show.value?.status) ?? '-';
+  return capitalizeEachWord(show.value?.status) || '-';
 });
 
 const airedEpisodes = computed(() => {
@@ -92,12 +92,12 @@ const episodeType = computed(() => {
 
 const network = computed(() => {
   if (!show?.value && !season?.value) return;
-  return show?.value?.network ?? season?.value?.network ?? '-';
+  return (show?.value?.network ?? season?.value?.network) || '-';
 });
 
 const country = computed(() => {
   if (!show?.value) return;
-  return show.value?.country ?? '-';
+  return show.value?.country || '-';
 });
 
 const ids = computed(() => {
@@ -183,21 +183,23 @@ const ids = computed(() => {
       />
     </NFlex>
 
-    <!--  Genres  -->
-    <PanelDetail
-      :label="i18n('genres')"
-      :values="genres"
-      :skeleton="{ width: '3rem' }"
-      array
-    />
+    <NFlex class="lists" vertical size="large">
+      <!--  Genres  -->
+      <PanelDetail
+        :label="i18n('genres')"
+        :values="genres"
+        :skeleton="{ width: '3rem' }"
+        array
+      />
 
-    <!--  links  -->
-    <PanelLinks
-      :ids="ids"
-      :mode="mode"
-      :season="episode?.season ?? season?.number"
-      :episode="episode?.number"
-    />
+      <!--  links  -->
+      <PanelLinks
+        :ids="ids"
+        :mode="mode"
+        :season="episode?.season ?? season?.number"
+        :episode="episode?.number"
+      />
+    </NFlex>
   </NFlex>
 </template>
 
@@ -206,5 +208,9 @@ const ids = computed(() => {
 .row {
   flex: 1 1 auto;
   width: 100%;
+}
+
+.lists {
+  margin: 0.25rem 0 0.5rem;
 }
 </style>

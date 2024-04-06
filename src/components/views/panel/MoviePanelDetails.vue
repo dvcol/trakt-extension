@@ -40,17 +40,17 @@ const genres = computed(() => {
 
 const year = computed(() => {
   if (!movie?.value) return;
-  return movie.value?.year ?? '-';
+  return movie.value?.year || '-';
 });
 
 const status = computed(() => {
   if (!movie?.value) return;
-  return capitalizeEachWord(movie.value?.status) ?? '-';
+  return capitalizeEachWord(movie.value?.status) || '-';
 });
 
 const country = computed(() => {
   if (!movie?.value) return;
-  return movie.value?.country ?? '-';
+  return movie.value?.country || '-';
 });
 </script>
 
@@ -91,16 +91,18 @@ const country = computed(() => {
       />
     </NFlex>
 
-    <!--  Genres  -->
-    <PanelDetail
-      :label="i18n('genres')"
-      :values="genres"
-      :skeleton="{ width: '3rem' }"
-      array
-    />
+    <NFlex class="lists" vertical size="large">
+      <!--  Genres  -->
+      <PanelDetail
+        :label="i18n('genres')"
+        :values="genres"
+        :skeleton="{ width: '3rem' }"
+        array
+      />
 
-    <!--  links  -->
-    <PanelLinks :ids="movie?.ids" mode="movie" />
+      <!--  links  -->
+      <PanelLinks :ids="movie?.ids" mode="movie" />
+    </NFlex>
   </NFlex>
 </template>
 
@@ -109,5 +111,9 @@ const country = computed(() => {
 .row {
   flex: 1 1 auto;
   width: 100%;
+}
+
+.lists {
+  margin: 1.25rem 0 1rem;
 }
 </style>

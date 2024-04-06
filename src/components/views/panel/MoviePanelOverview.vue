@@ -23,7 +23,7 @@ const title = computed(() => {
 
 const overview = computed(() => {
   if (!movie?.value) return;
-  return movie?.value?.overview ?? '-';
+  return movie?.value?.overview || '-';
 });
 </script>
 

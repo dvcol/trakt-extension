@@ -79,11 +79,6 @@ const { openTab } = useExtensionSettingsStore();
 </template>
 
 <style lang="scss" scoped>
-‡ .show-title:deep(h2),
-.show-title-skeleton {
-  margin-bottom: 1rem;
-}
-
 .show-title-skeleton {
   height: 1.5rem;
   margin-top: 0.625rem;
