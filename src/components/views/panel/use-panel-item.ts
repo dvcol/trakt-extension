@@ -25,7 +25,7 @@ export const usePanelItem = () => {
           params: { [`${type}Id`]: id },
         });
       case 'season':
-        if (!showId || !seasonNumber) return;
+        if (showId === undefined || seasonNumber === undefined) return;
         return push({
           name: `${base}-${type}`,
           params: {
@@ -34,7 +34,7 @@ export const usePanelItem = () => {
           },
         });
       case 'episode':
-        if (!showId || !seasonNumber || !episodeNumber) return;
+        if (showId === undefined || seasonNumber === undefined || episodeNumber === undefined) return;
         return push({
           name: `${base}-${type}`,
           params: {

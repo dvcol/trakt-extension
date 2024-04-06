@@ -166,7 +166,7 @@ const root = ref<HTMLElement>();
 
 .n-drawer {
   background: linear-gradient(to right, var(--bg-color-60) 5%, var(--bg-color-90));
-  backdrop-filter: blur(var(--bg-blur));
+  backdrop-filter: blur(var(--bg-blur-20));
 }
 
 .n-message-wrapper .n-message,

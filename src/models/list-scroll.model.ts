@@ -40,12 +40,14 @@ export type ListScrollItemTag = {
   i18n?: boolean | string[];
 } & TagLink;
 
-export type ListScrollItemProgressEpisode = BaseTraktProgressEpisode & {
+export type EpisodeProgress = BaseTraktProgressEpisode & {
   date: Date;
 };
 
-export type ListScrollItemProgressSeason = BaseTraktProgressSeason & {
-  episodes: ListScrollItemProgressEpisode[];
+export type SeasonProgress = BaseTraktProgressSeason & {
+  episodes: EpisodeProgress[];
+  percentage: number;
+  finished: boolean;
 };
 
 export const ListScrollItemProgressType = {
@@ -53,14 +55,13 @@ export const ListScrollItemProgressType = {
   watched: 'watched',
 } as const;
 
-export type ListScrollItemProgress = BaseTraktProgress & {
+export type ShowProgress = BaseTraktProgress & {
   id: string | number;
   type: (typeof ListScrollItemProgressType)[keyof typeof ListScrollItemProgressType];
   date: Date;
-  seasons: ListScrollItemProgressSeason[];
+  seasons: SeasonProgress[];
   percentage: number;
-  completed: number;
-  total: number;
+  finished: boolean;
 };
 
 export const ListScrollItemType = {
@@ -85,8 +86,8 @@ export type ListScrollItem<T = Record<string, any>> = Omit<PosterItem, 'type'> &
   content?: string;
   tags?: ListScrollItemTag[];
 
-  progress?: ListScrollItemProgress;
-  progressRef?: Ref<ListScrollItemProgress | undefined>;
+  progress?: ShowProgress;
+  progressRef?: Ref<ShowProgress | undefined>;
   getProgressQuery?: () => string | number | undefined;
 
   meta?: T;

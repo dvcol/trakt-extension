@@ -13,7 +13,7 @@ import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import TagLink from '~/components/common/buttons/TagLink.vue';
-import { type ListScrollItem } from '~/models/list-scroll.model';
+import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
@@ -76,11 +76,11 @@ const tags = computed(
 
 const { getShowProgress } = useShowStore();
 
-const progress = computed(() => {
-  if (item?.value?.progress) return item.value.progress;
-  if (item?.value?.progressRef) return item.value.progressRef.value;
+const progress = computed<ShowProgress | undefined>(() => {
+  if (item?.value?.progress) return item.value?.progress;
+  if (item?.value?.progressRef) return item.value?.progressRef.value;
   if (!item?.value?.getProgressQuery) return;
-  const id = item.value.getProgressQuery();
+  const id = item.value?.getProgressQuery();
   if (!id) return;
   return getShowProgress(id).value;
 });
@@ -148,7 +148,7 @@ const onTagClick = (url?: string) => {
             <div>
               <span class="metric">{{ progress?.completed }}</span>
               <span> / </span>
-              <span class="metric">{{ progress?.total }}</span>
+              <span class="metric">{{ progress?.aired }}</span>
               <span>&nbsp;</span>
               <span>{{ i18n('tooltip_episodes') }}</span>
             </div>
@@ -159,7 +159,7 @@ const onTagClick = (url?: string) => {
               <span>{{ i18n('tooltip_watched') }}</span>
             </div>
             <div>
-              <span class="metric">{{ progress?.total - progress?.completed }}</span>
+              <span class="metric">{{ progress?.aired - progress?.completed }}</span>
               <span>&nbsp;</span>
               <span>{{ i18n('tooltip_remaining') }}</span>
             </div>

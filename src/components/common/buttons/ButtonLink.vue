@@ -24,10 +24,10 @@ defineProps({
   >
     <NButton
       tag="a"
-      quaternary
+      :secondary="isActive"
+      :quaternary="!isActive"
       class="button-link"
       :class="$attrs.class"
-      :type="isActive ? 'primary' : 'default'"
       round
       size="small"
       :href="href"

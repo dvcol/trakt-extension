@@ -312,7 +312,7 @@ export class TraktService {
     },
 
     async show(showId: string | number) {
-      const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId });
+      const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId, specials: true, count_specials: false });
       return response.json();
     },
   };
