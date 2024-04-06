@@ -7,7 +7,7 @@ import type { TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
-import { type ListScrollItemProgress, ListScrollItemProgressType } from '~/models/list-scroll.model';
+import { ListScrollItemProgressType, type ShowProgress } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { asyncRefGetter } from '~/utils/vue.utils';
@@ -24,19 +24,18 @@ type LoadingDictionary = Record<string, boolean>;
 type SeasonEpisodesLoadingDictionary = Record<string, Record<number, boolean>>;
 type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boolean>>>;
 
-const watchProgressToListProgress = (progress: TraktWatchedProgress, id: string | number): ListScrollItemProgress => {
-  const total: number = progress.aired;
-  const { completed } = progress;
-  const percentage = (completed / total) * 100;
+const watchProgressToListProgress = (progress: TraktWatchedProgress, id: string | number): ShowProgress => {
   return {
     id,
-    percentage,
-    total,
     ...progress,
+    percentage: (progress.completed / progress.aired) * 100,
+    finished: progress.completed === progress.aired,
     type: ListScrollItemProgressType.watched,
     date: new Date(progress.last_watched_at),
     seasons: progress.seasons.map(season => ({
       ...season,
+      percentage: (season.completed / season.aired) * 100,
+      finished: season.completed === season.aired,
       episodes: season.episodes.map(episode => ({
         ...episode,
         date: new Date(episode.last_watched_at),

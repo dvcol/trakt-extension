@@ -5,6 +5,7 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import { useRoute } from 'vue-router';
 
+import type { ShowProgress } from '~/models/list-scroll.model';
 import type { TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { ShowSeasons } from '~/stores/data/show.store';
 
@@ -12,6 +13,11 @@ import ButtonLink from '~/components/common/buttons/ButtonLink.vue';
 import { useI18n } from '~/utils';
 
 const props = defineProps({
+  mode: {
+    type: String as PropType<'show' | 'season' | 'episode'>,
+    required: false,
+    default: 'episode',
+  },
   seasons: {
     type: Object as PropType<ShowSeasons>,
     required: false,
@@ -20,34 +26,40 @@ const props = defineProps({
     type: Array as PropType<TraktEpisodeShort[]>,
     required: false,
   },
-  mode: {
-    type: String as PropType<'show' | 'season' | 'episode'>,
+  progress: {
+    type: Object as PropType<ShowProgress>,
     required: false,
-    default: 'episode',
   },
 });
 
-const { seasons, episodes } = toRefs(props);
+const { seasons, episodes, progress } = toRefs(props);
 
 const { meta } = useRoute();
 
 const seasonsLinks = computed(() => {
   if (!seasons?.value) return;
-  return Object.entries(seasons.value).map(([_number, _season]) => ({
-    number: Number(_number),
-    link: { name: `${meta.base}-season`, params: { seasonNumber: _number } },
-  }));
+  return Object.entries(seasons.value).map(([_number, _season]) => {
+    const number = Number(_number);
+    return {
+      number,
+      link: { name: `${meta.base}-season`, params: { seasonNumber: _number } },
+      finished: progress?.value?.seasons?.find(s => s.number === number)?.finished,
+    };
+  });
 });
 
 const episodeLinks = computed(() => {
   if (!episodes?.value) return;
   if (!episodes?.value?.length) return [];
-  return episodes.value.map(_episode => ({
+  return episodes.value.map((_episode, i) => ({
     number: _episode.number,
     link: {
       name: `${meta.base}-episode`,
       params: { episodeNumber: _episode.number, seasonNumber: _episode.season },
     },
+    finished: progress?.value?.seasons
+      ?.find(s => s.number === _episode.season)
+      ?.episodes?.find(e => e.number === _episode.number)?.completed,
   }));
 });
 
@@ -62,9 +74,10 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers" size="small">
         <template v-if="seasonsLinks?.length">
           <ButtonLink
-            v-for="{ link, number } in seasonsLinks"
+            v-for="{ link, number, finished } in seasonsLinks"
             :key="`season-${number}`"
             :link="{ to: link }"
+            :button="{ type: finished ? 'primary' : undefined }"
           >
             {{ number }}
           </ButtonLink>
@@ -80,10 +93,11 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
           <ButtonLink
-            v-for="{ link, number } in episodeLinks"
+            v-for="{ link, number, finished } in episodeLinks"
             :key="`episode-${ number }`"
             v-slot="{ isActive }"
             :link="{ to: link }"
+            :button="{ type: finished ? 'primary' : undefined }"
             class="link"
           >
             <span class="label" :class="{ active: isActive }">{{ number }}</span>

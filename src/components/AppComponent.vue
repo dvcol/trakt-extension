@@ -131,6 +131,7 @@ header {
 
   &.open > :first-child {
     background: var(--bg-color-hover);
+    backdrop-filter: blur(var(--bg-blur-20));
   }
 }
 

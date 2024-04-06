@@ -40,6 +40,13 @@ const episode = ref<TraktEpisodeExtended>();
 
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
+const { getShowProgress } = useShowStore();
+
+const progress = computed(() => {
+  if (!showId?.value) return;
+  return getShowProgress(showId.value).value;
+});
+
 const seasonNb = computed(() => {
   if (seasonNumber?.value === undefined) return;
   const _seasonNumber = Number(seasonNumber.value);
