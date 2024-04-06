@@ -13,6 +13,10 @@ defineProps({
     type: String,
     required: false,
   },
+  label: {
+    type: String,
+    required: false,
+  },
   overview: {
     type: String,
     required: false,
@@ -28,6 +32,7 @@ const { openTab } = useExtensionSettingsStore();
       v-if="title"
       class="title"
       :href="url"
+      :title="label"
       :component="NH4"
       @on-click="openTab"
     >

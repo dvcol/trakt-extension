@@ -9,6 +9,10 @@ defineProps({
     required: false,
     default: NH2,
   },
+  label: {
+    type: String,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -25,7 +29,7 @@ const onTitleClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <a class="anchor-link" @click="onTitleClick">
+  <a class="anchor-link" :title="label" @click="onTitleClick">
     <component :is="component" class="content" :class="{ 'hover-link': !!$attrs.href }">
       <slot />
     </component>

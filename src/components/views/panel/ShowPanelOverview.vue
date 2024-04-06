@@ -9,6 +9,7 @@ import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
@@ -32,6 +33,8 @@ const props = defineProps({
 });
 
 const { mode, episode, season, show } = toRefs(props);
+
+const i18n = useI18n('panel', 'show', 'oerview');
 
 const title = computed(() => {
   if (mode.value === 'show') {
@@ -74,6 +77,8 @@ const url = computed(() => {
   });
 });
 
+const label = computed(() => i18n(`open_${mode.value}_in_trakt`, 'common', 'tooltip'));
+
 const overview = computed(() => {
   if (mode.value === 'show') {
     if (!show?.value) return;
@@ -89,5 +94,5 @@ const overview = computed(() => {
 </script>
 
 <template>
-  <PanelOverview :title="title" :url="url" :overview="overview" />
+  <PanelOverview :title="title" :label="label" :url="url" :overview="overview" />
 </template>

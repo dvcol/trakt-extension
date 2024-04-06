@@ -65,6 +65,7 @@ const socials = computed(() => {
   if (person.value?.homepage) {
     _socials.push({
       label: 'Homepage',
+      title: i18n({ key: 'open', substitutions: ['home page'] }, 'common', 'tooltip'),
       url: person.value?.homepage,
       icon: IconExternalLinkRounded,
     });
@@ -72,6 +73,7 @@ const socials = computed(() => {
   if (person.value?.social_ids?.facebook) {
     _socials.push({
       label: 'Facebook',
+      title: i18n({ key: 'open_in', substitutions: ['Facebook'] }, 'common', 'tooltip'),
       url: ResolveExternalLinks.facebook(person.value?.social_ids.facebook),
       icon: IconFacebook,
     });
@@ -79,6 +81,7 @@ const socials = computed(() => {
   if (person.value?.social_ids?.instagram) {
     _socials.push({
       label: 'Instagram',
+      title: i18n({ key: 'open_in', substitutions: ['Instagram'] }, 'common', 'tooltip'),
       url: ResolveExternalLinks.instagram(person.value?.social_ids.instagram),
       icon: IconInstagram,
     });
@@ -86,6 +89,7 @@ const socials = computed(() => {
   if (person.value?.social_ids?.twitter) {
     _socials.push({
       label: 'Twitter',
+      title: i18n({ key: 'open_in', substitutions: ['Twitter'] }, 'common', 'tooltip'),
       url: ResolveExternalLinks.twitter(person.value?.social_ids.twitter),
       icon: IconTwitter,
     });
@@ -93,6 +97,7 @@ const socials = computed(() => {
   if (person.value?.social_ids?.wikipedia) {
     _socials.push({
       label: 'Wikipedia',
+      title: i18n({ key: 'open_in', substitutions: ['Wikipedia'] }, 'common', 'tooltip'),
       url: ResolveExternalLinks.wikipedia(person.value?.social_ids.wikipedia),
       icon: IconWikipedia,
     });

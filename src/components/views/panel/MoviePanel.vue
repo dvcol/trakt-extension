@@ -12,6 +12,7 @@ import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
@@ -46,6 +47,8 @@ onUnmounted(() => {
   movie.value = undefined;
 });
 
+const i18n = useI18n('movie', 'panel');
+
 const title = computed(() => {
   if (!movie.value?.title) return;
   return deCapitalise(movie.value.title);
@@ -65,7 +68,13 @@ const { openTab } = useExtensionSettingsStore();
 
 <template>
   <NFlex justify="center" align="center" vertical>
-    <TitleLink v-if="title" class="show-title" :href="titleUrl" @on-click="openTab">
+    <TitleLink
+      v-if="title"
+      class="show-title"
+      :href="titleUrl"
+      :title="i18n('open_in_trakt', 'common', 'tooltip')"
+      @on-click="openTab"
+    >
       {{ title }}
     </TitleLink>
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />

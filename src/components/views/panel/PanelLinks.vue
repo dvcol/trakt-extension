@@ -37,12 +37,22 @@ const { ids, mode, season, episode } = toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
+const labelKey = computed(() => {
+  const label = ['show', 'episode', 'season'].includes(mode.value)
+    ? `open_${mode.value}_in`
+    : 'open_in';
+  return (source: string) => {
+    return i18n({ key: label, substitutions: [source] }, 'common', 'tooltip');
+  };
+});
+
 const links = computed(() => {
   if (!ids?.value) return;
   const _links: TagLink[] = [];
   if (ids.value.trakt) {
     _links.push({
       label: 'Trakt',
+      title: labelKey.value('Trakt.tv'),
       url: ResolveExternalLinks.search({
         type: mode.value,
         source: 'trakt',
@@ -60,6 +70,7 @@ const links = computed(() => {
   if (ids.value.imdb) {
     _links.push({
       label: 'IMDb',
+      title: labelKey.value('IMDb.com'),
       url: ResolveExternalLinks.imdb(ids.value.imdb),
       icon: IconIMDb,
       iconProps: {
@@ -73,6 +84,7 @@ const links = computed(() => {
   if (ids.value.tmdb) {
     _links.push({
       label: 'TMDb',
+      title: labelKey.value('TheMovieDb.org'),
       url: ResolveExternalLinks.tmdb({
         id: ids.value.tmdb,
         type: mode.value,
@@ -90,6 +102,7 @@ const links = computed(() => {
   if (ids.value.tvdb) {
     _links.push({
       label: 'TVDb',
+      title: labelKey.value('TheTVDB.com'),
       url: ResolveExternalLinks.tvdb(ids.value.tvdb, mode.value),
       icon: IconTVDb,
       iconProps: {

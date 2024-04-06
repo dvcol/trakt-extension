@@ -26,7 +26,12 @@ const onClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <a :href="tag?.url" @click="onClick">
+  <a
+    :href="tag?.url"
+    :title="tag?.title"
+    :data-tag="JSON.stringify(tag)"
+    @click="onClick"
+  >
     <NTag
       class="tag"
       :class="{ meta: tag?.meta, link: !!tag?.url }"
