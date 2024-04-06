@@ -16,6 +16,7 @@ import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { type ShowSeasons, useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
@@ -41,6 +42,8 @@ const episode = ref<TraktEpisodeExtended>();
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
 const { getShowProgress } = useShowStore();
+
+const i18n = useI18n('panel', 'show');
 
 const progress = computed(() => {
   if (!showId?.value) return;
@@ -153,7 +156,13 @@ const { openTab } = useExtensionSettingsStore();
 
 <template>
   <NFlex justify="center" align="center" vertical>
-    <TitleLink v-if="title" class="show-title" :href="titleUrl" @on-click="openTab">
+    <TitleLink
+      v-if="title"
+      class="show-title"
+      :href="titleUrl"
+      :title="i18n('open_show_in_trakt', 'common', 'tooltip')"
+      @on-click="openTab"
+    >
       {{ title }}
     </TitleLink>
     <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
@@ -174,6 +183,13 @@ const { openTab } = useExtensionSettingsStore();
     />
 
     <ShowPanelPicker :seasons="seasons" :episodes="episodes" :mode="panelType" />
+
+    <ShowPanelPicker
+      :mode="panelType"
+      :seasons="seasons"
+      :episodes="episodes"
+      :progress="progress"
+    />
 
     <ShowPanelOverview
       :episode="episode"

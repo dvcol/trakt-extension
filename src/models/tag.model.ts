@@ -3,6 +3,7 @@ import type { Component } from 'vue';
 
 export type TagLink = TagProps & {
   label: string;
+  title?: string;
   url?: string;
   meta?: boolean;
   icon?: Component;

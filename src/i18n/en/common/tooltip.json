@@ -1,0 +1,38 @@
+{
+  "common__tooltip__open": {
+    "message": "Open $1",
+    "description": "Label for a link that opens a page in a new tab"
+  },
+  "common__tooltip__open_in": {
+    "message": "Open in $1",
+    "description": "Label for a link that opens a page in a new tab"
+  },
+  "common__tooltip__open_show_in": {
+    "message": "Open show in $1",
+    "description": "Label for a show link that opens a page in a new tab"
+  },
+  "common__tooltip__open_episode_in": {
+    "message": "Open episode in $1",
+    "description": "Label for a episode link that opens a page in a new tab"
+  },
+  "common__tooltip__open_season_in": {
+    "message": "Open season in $1",
+    "description": "Label for a season link that opens a page in a new tab"
+  },
+  "common__tooltip__open_in_trakt": {
+    "message": "Open in Trakt.tv",
+    "description": "Label for opening a trakt.tv link in a new tab."
+  },
+  "common__tooltip__open_show_in_trakt": {
+    "message": "Open show in Trakt.tv",
+    "description": "Label for opening a trakt.tv show link in a new tab."
+  },
+  "common__tooltip__open_episode_in_trakt": {
+    "message": "Open episode in Trakt.tv",
+    "description": "Label for opening a trakt.tv episode  link  in a new tab."
+  },
+  "common__tooltip__open_season_in_trakt": {
+    "message": "Open season in Trakt.tv",
+    "description": "Label for opening a trakt.tv season link in a new tab."
+  }
+}

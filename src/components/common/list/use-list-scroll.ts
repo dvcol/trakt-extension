@@ -81,14 +81,19 @@ export const getPosterQuery =
     } satisfies ImageQuery;
   };
 
-const i18n = useI18n('common', 'tag');
+const i18n = useI18n('common');
+
+const i18nEpisode = i18n('episode', 'common', 'tag');
+const i18nSeason = i18n('season', 'common', 'tag');
+const openInEpisode = i18n('open_episode_in_trakt', 'common', 'tooltip');
+const openInSeason = i18n('open_season_in_trakt', 'common', 'tooltip');
+
 export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, type: ListScrollItem['type']): ListScrollItem['tags'] => {
   const tags: ListScrollItem['tags'] = [];
   if (type === 'episode' && item.episode) {
     tags.push({
-      label: `${i18n('season')} ${item.episode.season.toString().padStart(2, '0')} ${i18n('episode')} ${item.episode.number
-        .toString()
-        .padStart(2, '0')}`,
+      label: `${i18nSeason} ${item.episode.season.toString().padStart(2, '0')} ${i18nEpisode} ${item.episode.number.toString().padStart(2, '0')}`,
+      title: openInEpisode,
       type: 'warning',
       bordered: true,
       url: ResolveExternalLinks.search({
@@ -113,7 +118,8 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
     }
   } else if (type === 'season' && item.season) {
     tags.push({
-      label: `Season ${item.season.number.toString().padStart(2, '0')}`,
+      label: `${i18nSeason} ${item.season.number.toString().padStart(2, '0')}`,
+      title: openInSeason,
       type: 'warning',
       url: ResolveExternalLinks.search({
         type: 'season',
