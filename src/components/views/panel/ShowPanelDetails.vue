@@ -40,16 +40,28 @@ const aired = computed(() => {
   if (mode.value === 'episode') {
     if (!episode?.value) return;
     if (!episode.value?.first_aired) return '-';
-    return new Date(episode.value?.first_aired).toLocaleDateString();
+    return new Date(episode.value?.first_aired);
   }
   if (mode.value === 'season') {
     if (!season?.value) return;
     if (!season.value?.first_aired) return '-';
-    return new Date(season.value?.first_aired).toLocaleDateString();
+    return new Date(season.value?.first_aired);
   }
   if (!show?.value) return;
   if (!show.value?.first_aired) return '-';
-  return new Date(show.value?.first_aired).toLocaleDateString();
+  return new Date(show.value?.first_aired);
+});
+
+const airedDate = computed(() => {
+  if (!aired.value) return;
+  if (typeof aired.value === 'string') return aired.value;
+  return aired.value.toLocaleDateString();
+});
+
+const airedTime = computed(() => {
+  if (!aired.value) return;
+  if (typeof aired.value === 'string') return '-';
+  return aired.value.toLocaleTimeString();
 });
 
 const runtime = computed(() => {
@@ -133,19 +145,20 @@ const ids = computed(() => {
         :skeleton="{ width: '2ch' }"
       />
 
-      <!--  Show Status  -->
+      <!--  Show Network  -->
       <PanelDetail
-        :label="i18n('status')"
-        :value="status"
-        :skeleton="{ width: '7.5rem' }"
+        :label="i18n('network')"
+        :value="network"
+        grow
+        :skeleton="{ width: '5.5rem' }"
       />
     </NFlex>
 
     <NFlex class="row" size="large">
       <!--  Air date  -->
       <PanelDetail
-        :label="i18n('aired')"
-        :value="aired"
+        :label="i18n('aired_date')"
+        :value="airedDate"
         :skeleton="{ width: '5.125rem' }"
       />
 
@@ -156,16 +169,22 @@ const ids = computed(() => {
         :skeleton="{ width: '3.75rem' }"
       />
 
-      <!--  Show Network  -->
+      <!--  Show Status  -->
       <PanelDetail
-        :label="i18n('network')"
-        :value="network"
-        :grow="true"
-        :skeleton="{ width: '5.5rem' }"
+        :label="i18n('status')"
+        :value="status"
+        :skeleton="{ width: '7.5rem' }"
       />
     </NFlex>
 
     <NFlex class="row" size="large">
+      <!--  Air Time  -->
+      <PanelDetail
+        :label="i18n('aired_Time')"
+        :value="airedTime"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
       <!--  Season aired episodes  -->
       <PanelDetail
         v-if="mode !== 'show'"
@@ -174,7 +193,7 @@ const ids = computed(() => {
         :skeleton="{ width: '3rem' }"
       />
 
-      <!--  Type  -->
+      <!--  Episode Type  -->
       <PanelDetail
         v-if="mode === 'episode'"
         :label="i18n('type')"

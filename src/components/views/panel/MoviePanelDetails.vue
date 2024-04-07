@@ -24,7 +24,19 @@ const i18n = useI18n('panel', 'detail');
 const released = computed(() => {
   if (!movie?.value) return;
   if (!movie.value?.released) return '-';
-  return new Date(movie.value?.released).toLocaleDateString();
+  return new Date(movie.value?.released);
+});
+
+const releasedDate = computed(() => {
+  if (!released.value) return;
+  if (typeof released.value === 'string') return released.value;
+  return released.value.toLocaleDateString();
+});
+
+const releasedTime = computed(() => {
+  if (!released.value) return;
+  if (typeof released.value === 'string') return released.value;
+  return released.value.toLocaleTimeString();
 });
 
 const runtime = computed(() => {
@@ -78,8 +90,15 @@ const country = computed(() => {
     <NFlex class="row" size="large">
       <!--  Release date  -->
       <PanelDetail
-        :label="i18n('released')"
-        :value="released"
+        :label="i18n('released_date')"
+        :value="releasedDate"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
+      <!--  Release Time  -->
+      <PanelDetail
+        :label="i18n('released_time')"
+        :value="releasedTime"
         :skeleton="{ width: '5.125rem' }"
       />
 

@@ -15,6 +15,14 @@
     "message": "Aired",
     "description": "Aired date label in the panel detail"
   },
+  "panel__detail__aired_date": {
+    "message": "Aired Date",
+    "description": "Aired date label in the panel detail"
+  },
+  "panel__detail__aired_time": {
+    "message": "Aired Time",
+    "description": "Aired time label in the panel detail"
+  },
   "panel__detail__status": {
     "message": "Status",
     "description": "Status label in the panel detail"
@@ -37,6 +45,14 @@
   },
   "panel__detail__released": {
     "message": "Released",
+    "description": "Label for the release date"
+  },
+  "panel__detail__released_date": {
+    "message": "Released Date",
+    "description": "Label for the release date"
+  },
+  "panel__detail__released_time": {
+    "message": "Released Time",
     "description": "Label for the release date"
   },
 

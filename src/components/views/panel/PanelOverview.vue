@@ -41,11 +41,7 @@ const { openTab } = useExtensionSettingsStore();
     <NSkeleton v-else class="title-skeleton" style="width: 40dvh" round />
 
     <div v-if="overview">{{ overview }}</div>
-    <template v-else>
-      <NSkeleton style="width: 100%" />
-      <NSkeleton style="width: 100%" />
-      <NSkeleton style="width: 100%" />
-    </template>
+    <NSkeleton v-else style="width: 100%" :repeat="3" :sharp="false" />
   </NFlex>
 </template>
 
