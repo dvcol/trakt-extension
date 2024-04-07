@@ -7,7 +7,7 @@
     "message": "Start Checkin",
     "description": "Label for the checkin button in the panel"
   },
-  "panel__buttons__label__cancel": {
+  "panel__buttons__label__cancel_checkin": {
     "message": "Cancel Checkin",
     "description": "Label for the cancel button in the checkin panel"
   },
@@ -46,5 +46,17 @@
   "panel__buttons__label__other": {
     "message": "Other Date",
     "description": "Label for the other date select option in the panel"
+  },
+  "panel__buttons__label__remove": {
+    "message": "Remove",
+    "description": "Label for the remove from collection button in the panel"
+  },
+  "panel__buttons__label__remaining": {
+    "message": "Add remaining",
+    "description": "Label for the add remaining to collection button in the panel"
+  },
+  "panel__buttons__label__cancel": {
+    "message": "Cancel",
+    "description": "Label for the cancel button in the checkin panel"
   }
 }

@@ -3,7 +3,9 @@ import { NButton, NFlex, NIcon } from 'naive-ui';
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue';
 
 import IconCalendar from '~/components/icons/IconCalendar.vue';
+import IconCancel from '~/components/icons/IconCancel.vue';
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
+import IconClose from '~/components/icons/IconClose.vue';
 import IconCloseSmall from '~/components/icons/IconCloseSmall.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
@@ -94,6 +96,37 @@ const timeOptions = [
   { label: i18n('label__other'), value: 'custom', icon: IconCalendar },
 ];
 
+const cancelOption = {
+  label: i18n('label__cancel'),
+  value: 'cancel',
+  icon: IconCancel,
+};
+
+const removeOption = {
+  label: i18n('label__remove'),
+  value: 'remove',
+  icon: IconClose,
+};
+
+const removeOptions = [removeOption, cancelOption];
+const mixedOptions = [...timeOptions, removeOption];
+
+const watchedOptions = computed(() => {
+  if (watched.value) return removeOptions;
+  if (watchedPercentage.value > 0 && watchedPercentage.value < 100) {
+    return mixedOptions;
+  }
+  return timeOptions;
+});
+
+const collectionOptions = computed(() => {
+  if (collected.value) return removeOptions;
+  if (collectionPercentage.value > 0 && collectionPercentage.value < 100) {
+    return mixedOptions;
+  }
+  return timeOptions;
+});
+
 const { lists } = useListsStoreRefs();
 const { fetchLists, getIcon } = useListsStore();
 
@@ -129,7 +162,7 @@ onMounted(() => {
             }"
           />
         </template>
-        <span>{{ i18n(`label__${ checkin ? 'cancel' : 'checkin' }`) }}</span>
+        <span>{{ i18n(`label__${ checkin ? 'cancel_checkin' : 'checkin' }`) }}</span>
       </NButton>
     </NFlex>
 
@@ -156,7 +189,7 @@ onMounted(() => {
     <NFlex class="button-container collection" justify="center" align="center">
       <PanelButtonProgress
         :select="{
-          options: timeOptions,
+          options: collectionOptions,
         }"
         :tooltip="{
           disabled: !['show', 'season'].includes(mode),
@@ -166,7 +199,6 @@ onMounted(() => {
         :progress="collectionProgress"
         :percentage="collectionPercentage"
         :filled="collected"
-        :disabled="collected === undefined"
         type="info"
       >
         {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
@@ -177,7 +209,7 @@ onMounted(() => {
     <NFlex class="button-container history" justify="center" align="center">
       <PanelButtonProgress
         :select="{
-          options: timeOptions,
+          options: watchedOptions,
         }"
         :tooltip="{
           disabled: !['show', 'season'].includes(mode),
@@ -186,7 +218,6 @@ onMounted(() => {
         :progress="watchedProgress"
         :percentage="watchedPercentage"
         :filled="watched"
-        :disabled="watched === undefined"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>

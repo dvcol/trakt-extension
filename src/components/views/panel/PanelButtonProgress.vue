@@ -9,7 +9,7 @@ import {
   type TooltipProps,
 } from 'naive-ui';
 
-import { type Component, h, type PropType, ref } from 'vue';
+import { type Component, computed, h, type PropType, ref, toRefs } from 'vue';
 
 import type {
   EpisodeProgress,
@@ -21,7 +21,7 @@ import type {
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import { useI18n } from '~/utils';
 
-defineProps({
+const props = defineProps({
   select: {
     type: Object as PropType<PopselectProps>,
     required: true,
@@ -58,6 +58,13 @@ defineProps({
   },
 });
 
+const { percentage } = toRefs(props);
+
+const progressBackground = computed(() => {
+  if (percentage?.value === undefined) return false;
+  return percentage.value > 0 && percentage.value < 100;
+});
+
 const renderLabel = (option: SelectOption & { icon: Component }) => [
   h(NIcon, {
     style: {
@@ -72,6 +79,7 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
 const i18n = useI18n('panel', 'buttons');
 
 const root = ref();
+const trigger = ref();
 </script>
 
 <template>
@@ -80,7 +88,7 @@ const root = ref();
     class="button-progress-container"
     :data-progress="percentage"
     :style="{
-      '--progress': `${ percentage }%`,
+      '--progress': `${percentage}%`,
       '--progress-color': `var(--${type}-color-dark)`,
     }"
   >
@@ -95,7 +103,7 @@ const root = ref();
     >
       <NPopselect
         :style="{
-          '--custom-bg-color': `var(--bg-color-${ type }-80)`,
+          '--custom-bg-color': `var(--bg-color-${type}-80)`,
           '--custom-bg-color-hover': `var(--bg-color-${type})`,
         }"
         :to="root"
@@ -103,9 +111,12 @@ const root = ref();
         trigger="focus"
         :disabled="disabled"
         v-bind="select"
+        :on-update:show="_show => !_show && trigger?.$el?.blur()"
       >
         <NButton
-          :class="{ filled, progress }"
+          ref="trigger"
+          class="button"
+          :class="{ filled, progress: progressBackground }"
           round
           :secondary="!filled"
           :disabled="disabled"
@@ -127,6 +138,22 @@ const root = ref();
     margin-left: calc(0% - var(--n-icon-margin));
   }
 
+  .button {
+    background: linear-gradient(to right, var(--n-color) 0%, var(--n-color) 100%);
+    transition:
+      color 0.3s var(--n-bezier),
+      background 0.3s var(--n-bezier),
+      background-color 0.3s var(--n-bezier),
+      opacity 0.3s var(--n-bezier),
+      border-color 0.3s var(--n-bezier),
+      filter 0.3s var(--n-bezier);
+    will-change: color, background, background-color, opacity, border-color, filter;
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+  }
+
   .progress:not(.filled) {
     background: linear-gradient(
       to right,
@@ -135,16 +162,6 @@ const root = ref();
       var(--n-color) var(--progress, 0%),
       var(--n-color) 100%
     );
-    transition:
-      color 0.3s var(--n-bezier),
-      background-color 0.3s var(--n-bezier),
-      opacity 0.3s var(--n-bezier),
-      border-color 0.3s var(--n-bezier),
-      filter 0.3s var(--n-bezier);
-
-    &:hover {
-      filter: brightness(1.2);
-    }
   }
 }
 </style>
