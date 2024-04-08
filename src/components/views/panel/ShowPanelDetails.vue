@@ -183,7 +183,7 @@ const ids = computed(() => {
     <NFlex class="row" size="large">
       <!--  Air Time  -->
       <PanelDetail
-        :label="i18n('aired_Time')"
+        :label="i18n('aired_time')"
         :value="airedTime"
         :skeleton="{ width: '5.125rem' }"
       />
