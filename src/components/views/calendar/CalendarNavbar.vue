@@ -69,7 +69,7 @@ const open = ref(false);
         <NInput
           v-model:value="debouncedSearch"
           class="search-input"
-          :placeholder="i18n('search', 'navbar')"
+          :placeholder="i18n('filter', 'navbar')"
           autosize
           clearable
         >

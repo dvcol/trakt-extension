@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {
+  NAutoComplete,
   NFlex,
   NIcon,
-  NInput,
-  NPopselect,
   NSelect,
   NSwitch,
   NTooltip,
@@ -57,11 +56,6 @@ const filteredHistory = computed(() =>
 const historyOptions = computed(() =>
   filteredHistory.value.map(value => ({ value, label: value })),
 );
-
-const showHistory = computed(() => {
-  if (!inputFocus.value) return false;
-  return !!filteredHistory.value.length;
-});
 
 defineProps({
   parentElement: {
@@ -201,29 +195,24 @@ onActivated(() => {
         </NFlex>
       </NFlex>
       <template #trigger>
-        <NPopselect
+        <NAutoComplete
+          ref="inputRef"
           v-model:value="debouncedSearch"
+          class="search-input"
+          :loading="loading"
+          :disabled="loading"
+          :placeholder="i18n('search', 'navbar')"
+          autosize
+          clearable
+          :on-input-focus="() => toggleFocus(true)"
+          :on-input-blur="() => toggleFocus(false)"
           :options="historyOptions"
           :to="parentElement"
-          :show="showHistory"
         >
-          <NInput
-            ref="inputRef"
-            v-model:value="debouncedSearch"
-            class="search-input"
-            :loading="loading"
-            :disabled="loading"
-            :placeholder="i18n('search', 'navbar')"
-            autosize
-            clearable
-            :on-input-focus="() => toggleFocus(true)"
-            :on-input-blur="() => toggleFocus(false)"
-          >
-            <template #prefix>
-              <NIcon :component="IconLoop" />
-            </template>
-          </NInput>
-        </NPopselect>
+          <template #prefix>
+            <NIcon :component="IconLoop" />
+          </template>
+        </NAutoComplete>
       </template>
     </NTooltip>
 

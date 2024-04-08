@@ -6,5 +6,9 @@
   "navbar__search": {
     "message": "Search",
     "description": "Search placeholder."
+  },
+  "navbar__filter": {
+    "message": "Filter",
+    "description": "Search placeholder."
   }
 }
