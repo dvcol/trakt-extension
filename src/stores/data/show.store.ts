@@ -79,6 +79,7 @@ export const useShowStore = defineStore('data.show', () => {
   const fetchShow = async (id: string) => {
     if (showsLoading[id]) {
       console.warn('Already fetching show', id);
+      return;
     }
 
     console.info('Fetching Show', id);
@@ -98,31 +99,33 @@ export const useShowStore = defineStore('data.show', () => {
   const fetchShowProgress = async (id: string) => {
     if (showWatchedProgressLoading[id]) {
       console.warn('Already fetching show progress', id);
+      return;
     }
 
     console.info('Fetching Show Progress', id);
 
     showWatchedProgressLoading[id] = true;
     try {
-      showsWatchedProgress[id] = await TraktService.progress.watched(id);
+      showsWatchedProgress[id] = await TraktService.progress.show.watched(id);
     } catch (e) {
       console.error('Failed to fetch show progress', id);
       throw e;
     } finally {
-      showsLoading[id] = false;
+      showWatchedProgressLoading[id] = false;
     }
   };
 
   const fetchShowCollectionProgress = async (id: string) => {
     if (showCollectionProgressLoading[id]) {
       console.warn('Already fetching show collection progress', id);
+      return;
     }
 
     console.info('Fetching Show Collection Progress', id);
 
     showCollectionProgressLoading[id] = true;
     try {
-      showsCollectionProgress[id] = await TraktService.progress.collection(id);
+      showsCollectionProgress[id] = await TraktService.progress.show.collection(id);
     } catch (e) {
       console.error('Failed to fetch show collection progress', id);
       throw e;
@@ -134,6 +137,7 @@ export const useShowStore = defineStore('data.show', () => {
   const fetchShowSeasons = async (id: string) => {
     if (showsSeasonsLoading[id]) {
       console.warn('Already fetching show seasons', id);
+      return;
     }
 
     console.info('Fetching Show Seasons', id);
@@ -157,6 +161,7 @@ export const useShowStore = defineStore('data.show', () => {
   const fetchShowSeasonEpisodes = async (id: string, season: number) => {
     if (showsSeasonEpisodesLoading[id]?.[season]) {
       console.warn('Already fetching show season episodes', id, season);
+      return;
     }
 
     console.info('Fetching Show Season Episodes', id, season);
@@ -179,6 +184,7 @@ export const useShowStore = defineStore('data.show', () => {
   const fetchShowEpisode = async (id: string, season: number, episode: number) => {
     if (showsEpisodesLoading[id]?.[season]?.[episode]) {
       console.warn('Already fetching show episodes', id, season, episode);
+      return;
     }
 
     console.info('Fetching Show Episodes', id, season, episode);

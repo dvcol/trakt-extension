@@ -46,18 +46,20 @@ export const useActivityStore = defineStore('data.activity', () => {
       const changed = compareDateObject(toDateObject(prev), toDateObject(next));
       console.info('Activity changed', changed);
 
-      if (
-        changed?.episodes?.watched_at ||
-        changed?.movies?.watched_at ||
-        changed?.shows?.hidden_at ||
-        changed?.seasons?.hidden_at ||
-        changed?.movies?.hidden_at
-      ) {
-        TraktService.evict.progress();
+      if (changed?.episodes?.watched_at || changed?.shows?.hidden_at || changed?.seasons?.hidden_at) {
+        TraktService.evict.progress.show();
         TraktService.evict.history();
         TraktService.evict.calendar();
-        console.info('Evicted progress, history and calendar');
+        console.info('Evicted show progress, history and calendar');
       }
+
+      if (changed?.movies?.watched_at || changed?.movies?.hidden_at) {
+        TraktService.evict.progress.movie();
+        TraktService.evict.history();
+        TraktService.evict.calendar();
+        console.info('Evicted movie progress, history and calendar');
+      }
+
       if (
         changed?.watchlist?.updated_at ||
         changed?.episodes?.watchlisted_at ||
@@ -72,9 +74,13 @@ export const useActivityStore = defineStore('data.activity', () => {
         TraktService.evict.lists();
         console.info('Evicted lists');
       }
-      if (changed?.episodes?.collected_at || changed?.movies?.collected_at) {
-        TraktService.evict.collection();
-        console.info('Evicted collection');
+      if (changed?.episodes?.collected_at) {
+        TraktService.evict.collection.show();
+        console.info('Evicted show collection');
+      }
+      if (changed?.movies?.collected_at) {
+        TraktService.evict.collection.movie();
+        console.info('Evicted movie collection');
       }
       if (changed?.favorites?.updated_at) {
         TraktService.evict.favorites();

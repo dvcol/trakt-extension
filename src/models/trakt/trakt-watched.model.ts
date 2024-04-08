@@ -19,7 +19,7 @@ export type TraktWatchedShow<N extends 'no-seasons' | Short | Any = Any> = N ext
   ? { show: TraktShow }
   : { show: TraktShow; seasons: TraktWatchedSeason[] };
 
-export type TraktWatched<T extends 'movie' | 'show' | Any = Any, N extends 'no-seasons' | Short | Any = Any> = {
+type BaseTraktWatched = {
   plays: number;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   last_watched_at: string;
@@ -27,11 +27,10 @@ export type TraktWatched<T extends 'movie' | 'show' | Any = Any, N extends 'no-s
   last_updated_at: string;
   /** Timestamp in ISO 8601 GMT format (YYYY-MM-DD'T'hh:mm:ss.sssZ) */
   reset_at?: string;
-} & T extends 'movie'
-  ? { movie: TraktMovie }
-  : T extends 'show'
-    ? TraktWatchedShow<N>
-    : { movie: TraktMovie } | TraktWatchedShow<N>;
+};
+
+export type TraktWatched<T extends 'movie' | 'show' | Any = Any, N extends 'no-seasons' | Short | Any = Any> = BaseTraktWatched &
+  (T extends 'movie' ? { movie: TraktMovie } : T extends 'show' ? TraktWatchedShow<N> : { movie: TraktMovie } | TraktWatchedShow<N>);
 
 export type TraktWatching<T extends 'movie' | 'show' | Any = Any> = {
   expires_at: string;

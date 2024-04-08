@@ -137,7 +137,6 @@ export const useListsStore = defineStore('data.lists', () => {
       throw e;
     } finally {
       loading.value = false;
-      console.info('Fetched Lists', loading.value);
     }
   };
 
