@@ -100,7 +100,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
     <NInput
       v-model:value="debouncedSearch"
       class="search-input"
-      :placeholder="i18n('search', 'navbar')"
+      :placeholder="i18n('filter', 'navbar')"
       autosize
       clearable
     >
