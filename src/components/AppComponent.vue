@@ -78,7 +78,7 @@ const onBack = () => {
           :on-after-leave="onAfterLeave"
           auto-focus
         >
-          <NDrawerContent>
+          <NDrawerContent :native-scrollbar="false">
             <!--  Header  -->
             <NFlex justify="space-between" class="panel-header">
               <NButton circle quaternary @click="onBack">
@@ -150,7 +150,7 @@ main {
 
   &-header {
     position: sticky;
-    top: 0;
+    top: 1rem;
   }
 
   &-content {
