@@ -2,7 +2,9 @@
 import {
   type ButtonProps,
   NButton,
+  NDatePicker,
   NIcon,
+  NModal,
   NPopselect,
   type PopselectProps,
   type SelectOption,
@@ -57,12 +59,38 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (o: 'onSelect', value: string | number | (string | number)[], date?: number): void;
+}>();
+
 const { percentage } = toRefs(props);
+
+const root = ref();
+const trigger = ref();
 
 const progressBackground = computed(() => {
   if (percentage?.value === undefined) return false;
   return percentage.value > 0 && percentage.value < 100;
 });
+
+const showPicker = ref(false);
+
+const onSelect = (value: string | number | (string | number)[]) => {
+  if (value === 'custom') {
+    showPicker.value = true;
+    return;
+  }
+  emit('onSelect', value);
+};
+
+const onClear = () => {
+  showPicker.value = false;
+};
+
+const onConfirm = (value: number) => {
+  showPicker.value = false;
+  emit('onSelect', 'custom', value);
+};
 
 const renderLabel = (option: SelectOption & { icon: Component }) => [
   h(NIcon, {
@@ -74,9 +102,6 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
   }),
   option.label?.toString(),
 ];
-
-const root = ref();
-const trigger = ref();
 </script>
 
 <template>
@@ -85,16 +110,16 @@ const trigger = ref();
     class="button-progress-container"
     :data-progress="percentage"
     :style="{
-      '--progress': `${percentage}%`,
-      '--progress-color': `var(--${type}-color-dark)`,
+      '--progress': `${ percentage }%`,
+      '--progress-color': `var(--${ type }-color-dark)`,
     }"
   >
     <ProgressTooltip
       :progress="progress"
       :to="root"
       :style="{
-        '--custom-bg-color': `var(--bg-color-${type}-80)`,
-        '--custom-bg-color-hover': `var(--bg-color-${type})`,
+        '--custom-bg-color': `var(--bg-color-${ type }-80)`,
+        '--custom-bg-color-hover': `var(--bg-color-${ type })`,
       }"
       v-bind="tooltip"
     >
@@ -103,8 +128,8 @@ const trigger = ref();
       </template>
       <NPopselect
         :style="{
-          '--custom-bg-color': `var(--bg-color-${type}-80)`,
-          '--custom-bg-color-hover': `var(--bg-color-${type})`,
+          '--custom-bg-color': `var(--bg-color-${ type }-80)`,
+          '--custom-bg-color-hover': `var(--bg-color-${ type })`,
         }"
         :to="root"
         :render-label="renderLabel"
@@ -112,6 +137,7 @@ const trigger = ref();
         :disabled="disabled"
         v-bind="select"
         :on-update:show="_show => !_show && trigger?.$el?.blur()"
+        :on-update-value="onSelect"
       >
         <NButton
           ref="trigger"
@@ -129,6 +155,24 @@ const trigger = ref();
         </NButton>
       </NPopselect>
     </ProgressTooltip>
+
+    <NModal
+      v-model:show="showPicker"
+      :to="root"
+      :style="{
+        '--custom-bg-color': `var(--bg-color-${ type }-80)`,
+        '--custom-bg-color-hover': `var(--bg-color-${ type })`,
+      }"
+      class="picker-modal"
+    >
+      <NDatePicker
+        panel
+        type="datetime"
+        clearable
+        :on-clear="onClear"
+        :on-confirm="onConfirm"
+      />
+    </NModal>
   </div>
 </template>
 
@@ -163,5 +207,9 @@ const trigger = ref();
       var(--n-color) 100%
     );
   }
+}
+
+.picker-modal {
+  margin: auto;
 }
 </style>
