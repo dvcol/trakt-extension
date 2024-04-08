@@ -3,7 +3,7 @@ import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
-import type { TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
+import type { TraktCollection, TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
 import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
@@ -14,6 +14,7 @@ import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/tra
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
@@ -312,14 +313,28 @@ export class TraktService {
       return response.json();
     },
 
-    async watched(showId: string | number) {
-      const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId, specials: true, count_specials: false });
-      return response.json() as Promise<TraktWatchedProgress>;
+    show: {
+      async watched(showId: string | number) {
+        const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId, specials: true, count_specials: false });
+        return response.json() as Promise<TraktWatchedProgress>;
+      },
+
+      async collection(showId: string | number) {
+        const response = await TraktService.traktClient.shows.progress.collection.cached({ id: showId, specials: true, count_specials: false });
+        return response.json() as Promise<TraktCollectionProgress>;
+      },
     },
 
-    async collection(showId: string | number) {
-      const response = await TraktService.traktClient.shows.progress.collection.cached({ id: showId, specials: true, count_specials: false });
-      return response.json() as Promise<TraktCollectionProgress>;
+    movie: {
+      async watched(): Promise<TraktWatched<'movie', 'short'>[]> {
+        const response = await TraktService.traktClient.sync.watched.cached({ type: 'movies' });
+        return response.json() as Promise<TraktWatched<'movie', 'short'>[]>;
+      },
+
+      async collection(): Promise<TraktCollection<'movie', 'short', 'short'>[]> {
+        const response = await TraktService.traktClient.sync.collection.get.cached({ type: 'movies' });
+        return response.json() as Promise<TraktCollection<'movie', 'short', 'short'>[]>;
+      },
     },
   };
 
@@ -367,13 +382,6 @@ export class TraktService {
     history: TraktService.traktClient.sync.history.get.cached.evict,
     watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,
-    collection: () =>
-      Promise.all([
-        // List of collected items
-        TraktService.traktClient.sync.collection.get.cached.evict(),
-        // Collection progress for shows
-        TraktService.traktClient.shows.progress.collection.cached.evict(),
-      ]),
     movies: TraktService.traktClient.movies.summary.cached.evict,
     people: TraktService.traktClient.people.summary.cached.evict,
     shows: TraktService.traktClient.shows.summary.cached.evict,
@@ -393,12 +401,31 @@ export class TraktService {
         TraktService.traktClient.calendars.my.shows.finales.cached.evict(),
         TraktService.traktClient.calendars.my.shows.get.cached.evict(),
       ]),
-    progress: () =>
-      Promise.all([
-        // Progress on deck
-        TraktService.cachedProgress.evict(),
-        // Progress for watched episodes
-        TraktService.traktClient.shows.progress.watched.cached.evict(),
-      ]),
+    progress: {
+      show: () =>
+        Promise.all([
+          // Progress on deck
+          TraktService.cachedProgress.evict(),
+          // Progress for watched episodes
+          TraktService.traktClient.shows.progress.watched.cached.evict(),
+        ]),
+      movie: () =>
+        Promise.all([
+          // Progress on deck
+          TraktService.cachedProgress.evict(),
+          // Progress for watched episodes
+          TraktService.traktClient.sync.watched.cached.evict(),
+        ]),
+    },
+    collection: {
+      show: () =>
+        Promise.all([
+          // List of collected items
+          TraktService.traktClient.sync.collection.get.cached.evict(),
+          // Collection progress for shows
+          TraktService.traktClient.shows.progress.collection.cached.evict(),
+        ]),
+      movie: TraktService.traktClient.sync.collection.get.cached.evict,
+    },
   };
 }

@@ -9,8 +9,8 @@ import type {
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
-import PanelButtons from '~/components/views/panel/PanelButtons.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
@@ -42,7 +42,12 @@ const episode = ref<TraktEpisodeExtended>();
 
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
-const { getShowWatchedProgress, getShowCollectionProgress } = useShowStore();
+const {
+  getShowWatchedProgress,
+  getShowCollectionProgress,
+  getShowProgressLoading,
+  getShowCollectionLoading,
+} = useShowStore();
 
 const i18n = useI18n('panel', 'show');
 
@@ -51,9 +56,19 @@ const watchedProgress = computed(() => {
   return getShowWatchedProgress(showId.value).value;
 });
 
+const watchedLoading = computed(() => {
+  if (!showId?.value) return;
+  return getShowProgressLoading(showId.value).value;
+});
+
 const collectionProgress = computed(() => {
   if (!showId?.value) return;
   return getShowCollectionProgress(showId.value).value;
+});
+
+const collectionLoading = computed(() => {
+  if (!showId?.value) return;
+  return getShowCollectionLoading(showId.value).value;
 });
 
 const seasonNb = computed(() => {
@@ -224,10 +239,12 @@ const { openTab } = useExtensionSettingsStore();
       :mode="panelType"
     />
 
-    <PanelButtons
+    <ShowPanelButtons
       :mode="panelType"
       :watched-progress="watchedProgressEntity"
+      :watched-loading="watchedLoading"
       :collection-progress="collectionProgressEntity"
+      :collection-loading="collectionLoading"
     />
 
     <ShowPanelPicker

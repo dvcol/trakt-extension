@@ -2,21 +2,17 @@
 import { NButton, NFlex, NIcon } from 'naive-ui';
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue';
 
-import IconCalendar from '~/components/icons/IconCalendar.vue';
-import IconCancel from '~/components/icons/IconCancel.vue';
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
-import IconClose from '~/components/icons/IconClose.vue';
 import IconCloseSmall from '~/components/icons/IconCloseSmall.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
 import IconListEmpty from '~/components/icons/IconListEmpty.vue';
-import IconLocation from '~/components/icons/IconLocation.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
-import IconRestore from '~/components/icons/IconRestore.vue';
-
 import IconTrakt from '~/components/icons/IconTrakt.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
+
+import { usePanelButtons } from '~/components/views/panel/use-panel-buttons';
 import {
   type EpisodeProgress,
   type SeasonProgress,
@@ -40,8 +36,16 @@ const props = defineProps({
     type: Object as PropType<ShowProgress | SeasonProgress | EpisodeProgress>,
     required: false,
   },
+  watchedLoading: {
+    type: Boolean,
+    required: false,
+  },
   collectionProgress: {
     type: Object as PropType<ShowProgress | SeasonProgress | EpisodeProgress>,
+    required: false,
+  },
+  collectionLoading: {
+    type: Boolean,
     required: false,
   },
   checkin: {
@@ -52,13 +56,21 @@ const props = defineProps({
     type: Number,
     required: false,
   },
+  checkinLoading: {
+    type: Boolean,
+    required: false,
+  },
   activeLists: {
     type: Array as PropType<ListEntity['id'][]>,
     required: false,
   },
+  activeLoading: {
+    type: Boolean,
+    required: false,
+  },
 });
 
-const { mode, watchedProgress, collectionProgress } = toRefs(props);
+const { mode, watchedProgress, collectionProgress, activeLoading } = toRefs(props);
 
 const watched = computed(() => {
   const _progress = watchedProgress?.value;
@@ -90,26 +102,7 @@ const i18n = useI18n('panel', 'buttons');
 
 const root = ref<HTMLDivElement>();
 
-const timeOptions = [
-  { label: i18n('label__now'), value: 'now', icon: IconLocation },
-  { label: i18n('label__release'), value: 'release', icon: IconRestore },
-  { label: i18n('label__other'), value: 'custom', icon: IconCalendar },
-];
-
-const cancelOption = {
-  label: i18n('label__cancel'),
-  value: 'cancel',
-  icon: IconCancel,
-};
-
-const removeOption = {
-  label: i18n('label__remove'),
-  value: 'remove',
-  icon: IconClose,
-};
-
-const removeOptions = [removeOption, cancelOption];
-const mixedOptions = [...timeOptions, removeOption];
+const { removeOptions, mixedOptions, timeOptions } = usePanelButtons();
 
 const watchedOptions = computed(() => {
   if (watched.value) return removeOptions;
@@ -127,8 +120,12 @@ const collectionOptions = computed(() => {
   return timeOptions;
 });
 
-const { lists } = useListsStoreRefs();
+const { lists, loading } = useListsStoreRefs();
 const { fetchLists, getIcon } = useListsStore();
+
+const listsLoading = computed(() => {
+  return loading.value || activeLoading.value;
+});
 
 const listOptions = computed(() => {
   return lists.value
@@ -151,7 +148,7 @@ onMounted(() => {
   <div ref="root" class="panel-buttons">
     <!--  Checkin  -->
     <NFlex class="button-container checkin" justify="center" align="center">
-      <NButton round :secondary="!checkin" type="error">
+      <NButton round :secondary="!checkin" type="error" :disabled="checkinLoading">
         <template #icon>
           <NIcon
             class="button-icon"
@@ -179,6 +176,7 @@ onMounted(() => {
         }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
+        :disabled="listsLoading"
         type="warning"
       >
         {{ i18n(`label__list__${ activeLists?.length ? 'update' : 'add' }`) }}
@@ -199,6 +197,7 @@ onMounted(() => {
         :progress="collectionProgress"
         :percentage="collectionPercentage"
         :filled="collected"
+        :disabled="collectionLoading"
         type="info"
       >
         {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
@@ -218,6 +217,7 @@ onMounted(() => {
         :progress="watchedProgress"
         :percentage="watchedPercentage"
         :filled="watched"
+        :disabled="watchedLoading"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>

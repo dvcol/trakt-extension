@@ -23,6 +23,7 @@ export const usePersonStore = defineStore('data.person', () => {
   const fetchPerson = async (id: string | number) => {
     if (loading[id]) {
       console.warn('Already fetching person', id);
+      return;
     }
 
     console.info('Fetching person', id);
