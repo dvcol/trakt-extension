@@ -56,6 +56,27 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (e: 'onListUpdate', value: ListEntity['id'][]): void;
+  (e: 'onCollectionUpdate', value: ListEntity['id'], date?: number): void;
+  (e: 'onWatchedUpdate', value: ListEntity['id'], date?: number): void;
+}>();
+
+const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
+  emit('onListUpdate', value as ListEntity['id'][]);
+};
+
+const onCollectionUpdate = (
+  value: ListEntity['id'] | ListEntity['id'][],
+  date?: number,
+) => {
+  emit('onCollectionUpdate', value as ListEntity['id'], date);
+};
+
+const onWatchedUpdate = (value: ListEntity['id'] | ListEntity['id'][], date?: number) => {
+  emit('onWatchedUpdate', value as ListEntity['id'], date);
+};
+
 const { mode, watchedProgress, collectionProgress, activeLoading } = toRefs(props);
 
 const watched = computed(() => {
@@ -150,6 +171,7 @@ onMounted(() => {
         :filled="!!activeLists?.length"
         :disabled="listsLoading"
         type="warning"
+        @on-select="onListUpdate"
       >
         <template #tooltip>
           <NFlex vertical size="small" align="center" justify="center">
@@ -177,6 +199,7 @@ onMounted(() => {
         :filled="collected"
         :disabled="collectionLoading"
         type="info"
+        @on-select="onCollectionUpdate"
       >
         {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>
@@ -196,6 +219,7 @@ onMounted(() => {
         :percentage="watchedPercentage"
         :filled="watched"
         :disabled="watchedLoading"
+        @on-select="onWatchedUpdate"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>
