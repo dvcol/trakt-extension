@@ -8,9 +8,8 @@ export const usePanelItem = () => {
   const onItemClick = ({ item }: { item: ListScrollItem }) => {
     const type = item?.type;
     if (!type) return;
-    const { path } = currentRoute.value;
-    if (!path) return;
-    const base = path.split('/')[1];
+    const base = currentRoute.value.name?.toString();
+    if (!base) return;
     const id = item?.meta?.ids?.[type]?.trakt;
     const showId = item?.meta?.ids?.show?.trakt;
     const seasonNumber = item?.meta?.number?.season;
