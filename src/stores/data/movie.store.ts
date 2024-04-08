@@ -6,7 +6,6 @@ import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { asyncRefGetter } from '~/utils/vue.utils';
 
 type MovieDictionary = Record<string, TraktMovieExtended>;
 type MovieWatchedDictionary = Record<string, boolean>;
@@ -55,12 +54,7 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieLoading = (id: string | number) => computed(() => loading[id.toString()]);
-  const getMovie = async (id: string | number) => {
-    if (!movies[id.toString()] && !loading[id.toString()]) await fetchMovie(id);
-    return movies[id.toString()];
-  };
-  const getMovieRef = (id: string | number, response = ref<TraktMovieExtended>()) =>
-    asyncRefGetter(() => getMovie(id), getMovieLoading(id), response);
+  const getMovie = (id: string | number) => computed(() => movies[id.toString()]);
 
   const fetchMovieWatched = async () => {
     if (loadingWatched.value) {
@@ -120,7 +114,6 @@ export const useMovieStore = defineStore('data.movie', () => {
     clearState,
     fetchMovie,
     getMovie,
-    getMovieRef,
     getMovieLoading,
     fetchMovieWatched,
     getMovieWatched,
