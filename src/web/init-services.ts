@@ -21,6 +21,9 @@ export const initServices = async () => {
 
   TraktService.listen();
 
+  const { isAuthenticated } = useAuthSettingsStore();
+  await useActivityStore().initActivityStore(isAuthenticated);
+
   await Promise.all([
     initLocalI18n().promise,
     syncRestoreAllUsers(),
@@ -30,9 +33,6 @@ export const initServices = async () => {
     useHistoryStore().initHistoryStore(),
     useSearchStore().initSearchStore(),
   ]);
-
-  const { isAuthenticated } = useAuthSettingsStore();
-  await useActivityStore().initActivityStore(isAuthenticated);
 
   setAppReady(true);
 };

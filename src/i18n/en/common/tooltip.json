@@ -34,5 +34,13 @@
   "common__tooltip__open_season_in_trakt": {
     "message": "Open season in Trakt.tv",
     "description": "Label for opening a trakt.tv season link in a new tab."
+  },
+  "common__tooltip__list_de_sync": {
+    "message": "List state might be de-synchronised.",
+    "description": "Warning message that the list state might be de-synchronised."
+  },
+  "common__tooltip__list_click_to_refresh": {
+    "message": "Click un-checked list to refresh.",
+    "description": "Label for a link that refreshes the list state."
   }
 }

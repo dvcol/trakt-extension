@@ -11,6 +11,7 @@ import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue'
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useListsStoreRefs, useListStore } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
@@ -67,6 +68,21 @@ onUnmounted(() => {
   movie.value = undefined;
 });
 
+const { lists } = useListsStoreRefs();
+const { isListLoading, isItemInList } = useListStore();
+
+const listLoading = computed(() => {
+  if (!movieId?.value) return;
+  return isListLoading(movieId.value).value;
+});
+
+const activeLists = computed(() => {
+  if (!movieId?.value) return;
+  return lists.value
+    ?.filter(list => isItemInList(list.id, movieId.value).value)
+    .map(list => list.id);
+});
+
 const i18n = useI18n('movie', 'panel');
 
 const title = computed(() => {
@@ -108,6 +124,8 @@ const { openTab } = useExtensionSettingsStore();
       :watched-loading="loadingWatched"
       :collected="collected"
       :collected-loading="loadingCollected"
+      :active-loading="listLoading"
+      :active-lists="activeLists"
     />
 
     <MoviePanelOverview :movie="movie" />

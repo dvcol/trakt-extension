@@ -40,6 +40,7 @@ const percentage = computed(() => {
 const remaining = computed(() => {
   if (!progress?.value) return;
   if (!('aired' in progress.value)) return;
+  if (!progress.value.completed) return;
   return progress.value.aired - progress.value.completed;
 });
 
@@ -54,27 +55,33 @@ const i18n = useI18n('common', 'tooltip', 'progress');
 </script>
 
 <template>
-  <NTooltip class="progress-tooltip" :disabled="disabled || !progress" :delay="100">
-    <NFlex v-if="progress && isCount" vertical align="flex-end">
-      <div v-if="'aired' in progress">
-        <span class="metric">{{ progress?.completed ?? '-' }}</span>
-        <span> / </span>
-        <span class="metric">{{ progress?.aired ?? '-' }}</span>
-        <span>&nbsp;</span>
-        <span>{{ i18n('episodes') }}</span>
-      </div>
-      <div v-if="percentage">
-        <span class="metric">{{ percentage }}</span>
-        <span>%</span>
-        <span>&nbsp;</span>
-        <span>{{ i18n(type) }}</span>
-      </div>
-      <div v-if="remaining">
-        <span class="metric">{{ remaining }}</span>
-        <span>&nbsp;</span>
-        <span>{{ i18n('remaining') }}</span>
-      </div>
-    </NFlex>
+  <NTooltip
+    class="progress-tooltip"
+    :disabled="disabled || (!$slots.label && !progress)"
+    :delay="100"
+  >
+    <slot name="label">
+      <NFlex v-if="progress && isCount" vertical align="flex-end">
+        <div v-if="'aired' in progress">
+          <span class="metric">{{ progress?.completed ?? '-' }}</span>
+          <span> / </span>
+          <span class="metric">{{ progress?.aired ?? '-' }}</span>
+          <span>&nbsp;</span>
+          <span>{{ i18n('episodes') }}</span>
+        </div>
+        <div>
+          <span class="metric">{{ percentage }}</span>
+          <span>%</span>
+          <span>&nbsp;</span>
+          <span>{{ i18n(type) }}</span>
+        </div>
+        <div v-if="remaining">
+          <span class="metric">{{ remaining }}</span>
+          <span>&nbsp;</span>
+          <span>{{ i18n('remaining') }}</span>
+        </div>
+      </NFlex>
+    </slot>
     <template #trigger>
       <slot />
     </template>
