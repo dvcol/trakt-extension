@@ -1,16 +1,13 @@
 <script lang="ts" setup>
-import { NButton, NFlex, NIcon } from 'naive-ui';
+import { NFlex } from 'naive-ui';
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
-import IconCloseSmall from '~/components/icons/IconCloseSmall.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
 import IconListEmpty from '~/components/icons/IconListEmpty.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
-
-import IconTrakt from '~/components/icons/IconTrakt.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
 import { usePanelButtons } from '~/components/views/panel/use-panel-buttons';
 import {
@@ -35,18 +32,6 @@ const props = defineProps({
     required: false,
   },
   collectedLoading: {
-    type: Boolean,
-    required: false,
-  },
-  checkin: {
-    type: Boolean,
-    required: false,
-  },
-  checkinProgress: {
-    type: Number,
-    required: false,
-  },
-  checkinLoading: {
     type: Boolean,
     required: false,
   },
@@ -104,23 +89,6 @@ onMounted(() => {
 
 <template>
   <div ref="root" class="panel-buttons">
-    <!--  Checkin  -->
-    <NFlex class="button-container checkin" justify="center" align="center">
-      <NButton round :secondary="!checkin" type="error" :disabled="checkinLoading">
-        <template #icon>
-          <NIcon
-            class="button-icon"
-            :component="checkin ? IconCloseSmall : IconTrakt"
-            :style="{
-              '--trakt-icon-path': 'var(--color-error-lighter)',
-              '--trakt-icon-circle': 'transparent',
-            }"
-          />
-        </template>
-        <span>{{ i18n(`label__${ checkin ? 'cancel_checkin' : 'checkin' }`) }}</span>
-      </NButton>
-    </NFlex>
-
     <!--  List  -->
     <NFlex class="button-container list" justify="center" align="center">
       <PanelButtonProgress
@@ -176,7 +144,7 @@ onMounted(() => {
 .panel-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem 1rem;
+  gap: 1.25rem 1.5rem;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -187,25 +155,23 @@ onMounted(() => {
       margin-left: calc(0% - var(--n-icon-margin));
     }
 
-    &.history,
-    &.collection {
-      min-width: 12.5rem;
+    &.history {
+      min-width: 10.125rem;
     }
 
-    &.checkin,
+    &.collection {
+      min-width: 11.375rem;
+    }
+
     &.list {
-      min-width: 10rem;
+      min-width: 8.875rem;
     }
   }
 }
 
-@media (width <= 800px) {
+@media (width > 800px) {
   .panel-buttons {
-    width: 80%;
-
-    .button-container {
-      flex: 1 1 40%;
-    }
+    gap: 1.25rem 3rem;
   }
 }
 </style>

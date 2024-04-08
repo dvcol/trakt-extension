@@ -71,7 +71,7 @@ const { openTab } = useExtensionSettingsStore();
 }
 
 .detail {
-  flex: 0 1 30%;
+  flex: 0 1 31.5%;
 
   &:hover .prefix {
     color: var(--white-70);
