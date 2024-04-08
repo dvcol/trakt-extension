@@ -61,7 +61,10 @@ const airedDate = computed(() => {
 const airedTime = computed(() => {
   if (!aired.value) return;
   if (typeof aired.value === 'string') return '-';
-  return aired.value.toLocaleTimeString();
+  return aired.value.toLocaleTimeString(navigator.language, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 });
 
 const runtime = computed(() => {
@@ -157,7 +160,7 @@ const ids = computed(() => {
     <NFlex class="row" size="large">
       <!--  Air date  -->
       <PanelDetail
-        :label="i18n('aired_date')"
+        :label="i18n('aired')"
         :value="airedDate"
         :skeleton="{ width: '5.125rem' }"
       />

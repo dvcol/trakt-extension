@@ -12,27 +12,27 @@
     "description": "Label for the cancel button in the checkin panel"
   },
   "panel__buttons__label__history__add": {
-    "message": "Add to my History",
+    "message": "Add to History",
     "description": "Label for the add to history button in the panel"
   },
   "panel__buttons__label__history__remove": {
-    "message": "Remove from History",
+    "message": "Remove History",
     "description": "Label for the remove from history button in the panel"
   },
   "panel__buttons__label__collection__add": {
-    "message": "Add to my Collection",
+    "message": "Add to Collection",
     "description": "Label for the add to collection button in the panel"
   },
   "panel__buttons__label__collection__remove": {
-    "message": "Remove from Collection",
+    "message": "Remove Collection",
     "description": "Label for the remove from collection button in the panel"
   },
   "panel__buttons__label__list__add": {
-    "message": "Add to my List",
+    "message": "Add to Lists",
     "description": "Label for the add to list button in the panel"
   },
   "panel__buttons__label__list__update": {
-    "message": "Update my Lists",
+    "message": "Update Lists",
     "description": "Label for the update lists button in the panel"
   },
   "panel__buttons__label__now": {
@@ -58,5 +58,13 @@
   "panel__buttons__label__cancel": {
     "message": "Cancel",
     "description": "Label for the cancel button in the checkin panel"
+  },
+  "panel__buttons__label__collected": {
+    "message": "Collected",
+    "description": "Label for the collected button in the checkin panel"
+  },
+  "panel__buttons__label__watched": {
+    "message": "Watched",
+    "description": "Label for the watched button in the checkin panel"
   }
 }

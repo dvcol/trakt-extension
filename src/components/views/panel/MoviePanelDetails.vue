@@ -36,7 +36,10 @@ const releasedDate = computed(() => {
 const releasedTime = computed(() => {
   if (!released.value) return;
   if (typeof released.value === 'string') return released.value;
-  return released.value.toLocaleTimeString();
+  return released.value.toLocaleTimeString(navigator.language, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 });
 
 const runtime = computed(() => {
@@ -69,6 +72,13 @@ const country = computed(() => {
 <template>
   <NFlex size="large" class="container" vertical>
     <NFlex class="row" size="large">
+      <!--  Release date  -->
+      <PanelDetail
+        :label="i18n('released')"
+        :value="releasedDate"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
       <!--  Year  -->
       <PanelDetail :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
 
@@ -78,23 +88,9 @@ const country = computed(() => {
         :value="country"
         :skeleton="{ width: '2ch' }"
       />
-
-      <!--  Status  -->
-      <PanelDetail
-        :label="i18n('status')"
-        :value="status"
-        :skeleton="{ width: '7.5rem' }"
-      />
     </NFlex>
 
     <NFlex class="row" size="large">
-      <!--  Release date  -->
-      <PanelDetail
-        :label="i18n('released_date')"
-        :value="releasedDate"
-        :skeleton="{ width: '5.125rem' }"
-      />
-
       <!--  Release Time  -->
       <PanelDetail
         :label="i18n('released_time')"
@@ -107,6 +103,13 @@ const country = computed(() => {
         :label="i18n('runtime')"
         :value="runtime"
         :skeleton="{ width: '3.75rem' }"
+      />
+
+      <!--  Status  -->
+      <PanelDetail
+        :label="i18n('status')"
+        :value="status"
+        :skeleton="{ width: '7.5rem' }"
       />
     </NFlex>
 
