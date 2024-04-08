@@ -169,7 +169,7 @@ onMounted(() => {
         }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
-        :disabled="listsLoading"
+        :loading="listsLoading"
         type="warning"
         @on-select="onListUpdate"
       >
@@ -197,7 +197,7 @@ onMounted(() => {
         :progress="collectionProgress"
         :percentage="collectionPercentage"
         :filled="collected"
-        :disabled="collectionLoading"
+        :loading="collectionLoading"
         type="info"
         @on-select="onCollectionUpdate"
       >
@@ -218,7 +218,7 @@ onMounted(() => {
         :progress="watchedProgress"
         :percentage="watchedPercentage"
         :filled="watched"
-        :disabled="watchedLoading"
+        :loading="watchedLoading"
         @on-select="onWatchedUpdate"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}

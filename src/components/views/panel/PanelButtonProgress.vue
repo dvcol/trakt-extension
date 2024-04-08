@@ -43,6 +43,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+  },
 
   icon: {
     type: Object as PropType<Component>,
@@ -134,7 +138,7 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
         :to="root"
         :render-label="renderLabel"
         trigger="focus"
-        :disabled="disabled"
+        :disabled="disabled || loading"
         v-bind="select"
         :on-update:show="_show => !_show && trigger?.$el?.blur()"
         :on-update-value="onSelect"
@@ -146,6 +150,7 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
           round
           :secondary="!filled"
           :disabled="disabled"
+          :loading="loading"
           :type="type"
         >
           <template #icon>
@@ -157,6 +162,7 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
     </ProgressTooltip>
 
     <NModal
+      v-if="false"
       v-model:show="showPicker"
       :to="root"
       :style="{
