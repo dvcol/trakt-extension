@@ -30,9 +30,13 @@ const props = defineProps({
     type: Object as PropType<ShowProgress>,
     required: false,
   },
+  collection: {
+    type: Object as PropType<ShowProgress>,
+    required: false,
+  },
 });
 
-const { seasons, episodes, progress } = toRefs(props);
+const { seasons, episodes, progress, collection } = toRefs(props);
 
 const { meta } = useRoute();
 
@@ -44,6 +48,7 @@ const seasonsLinks = computed(() => {
       number,
       link: { name: `${meta.base}-season`, params: { seasonNumber: _number } },
       finished: progress?.value?.seasons?.find(s => s.number === number)?.finished,
+      collected: collection?.value?.seasons?.find(s => s.number === number)?.finished,
     };
   });
 });
@@ -60,6 +65,9 @@ const episodeLinks = computed(() => {
     finished: progress?.value?.seasons
       ?.find(s => s.number === _episode.season)
       ?.episodes?.find(e => e.number === _episode.number)?.completed,
+    collected: collection?.value?.seasons
+      ?.find(s => s.number === _episode.season)
+      ?.episodes?.find(e => e.number === _episode.number)?.completed,
   }));
 });
 
@@ -74,10 +82,10 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers" size="small">
         <template v-if="seasonsLinks?.length">
           <ButtonLink
-            v-for="{ link, number, finished } in seasonsLinks"
+            v-for="{ link, number, finished, collected } in seasonsLinks"
             :key="`season-${number}`"
             :link="{ to: link }"
-            :button="{ type: finished ? 'primary' : undefined }"
+            :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
           >
             {{ number }}
           </ButtonLink>
@@ -93,11 +101,11 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
           <ButtonLink
-            v-for="{ link, number, finished } in episodeLinks"
+            v-for="{ link, number, finished, collected } in episodeLinks"
             :key="`episode-${ number }`"
             v-slot="{ isActive }"
             :link="{ to: link }"
-            :button="{ type: finished ? 'primary' : undefined }"
+            :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
             class="link"
           >
             <span class="label" :class="{ active: isActive }">{{ number }}</span>

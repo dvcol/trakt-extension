@@ -100,11 +100,20 @@ onMounted(() => {
           multiple: true,
           scrollable: true,
         }"
+        :tooltip="{
+          delay: 500,
+        }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
         :disabled="listsLoading"
         type="warning"
       >
+        <template #tooltip>
+          <NFlex vertical size="small" align="center" justify="center">
+            <div>{{ i18n('list_de_sync', 'common', 'tooltip') }}</div>
+            <div>{{ i18n('list_click_to_refresh', 'common', 'tooltip') }}</div>
+          </NFlex>
+        </template>
         {{ i18n(`label__list__${ activeLists?.length ? 'update' : 'add' }`) }}
       </PanelButtonProgress>
     </NFlex>

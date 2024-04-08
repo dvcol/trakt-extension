@@ -19,7 +19,6 @@ import type {
 } from '~/models/list-scroll.model';
 
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
-import { useI18n } from '~/utils';
 
 const props = defineProps({
   select: {
@@ -76,8 +75,6 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
   option.label?.toString(),
 ];
 
-const i18n = useI18n('panel', 'buttons');
-
 const root = ref();
 const trigger = ref();
 </script>
@@ -101,6 +98,9 @@ const trigger = ref();
       }"
       v-bind="tooltip"
     >
+      <template v-if="$slots.tooltip" #label>
+        <slot name="tooltip" />
+      </template>
       <NPopselect
         :style="{
           '--custom-bg-color': `var(--bg-color-${type}-80)`,

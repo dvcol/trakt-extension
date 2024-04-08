@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
@@ -168,6 +168,9 @@ export const useListsStore = defineStore('data.lists', () => {
 
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
 
+type ListDictionary = Record<string, Record<string, boolean>>;
+type ListDictionaryLoading = Record<string, boolean>;
+
 export const useListStore = defineStore('data.list', () => {
   const firstLoad = ref(true);
   const loading = ref(true);
@@ -177,6 +180,9 @@ export const useListStore = defineStore('data.list', () => {
   const listItems = ref<AnyList[]>([]);
   const searchList = ref('');
   const threshold = ref(10);
+
+  const listDictionary = reactive<ListDictionary>({});
+  const listDictionaryLoading = reactive<ListDictionaryLoading>({});
 
   const saveState = async () => storage.local.set('data.list.page-size', pageSize.value);
   const restoreState = async () => {
@@ -189,6 +195,23 @@ export const useListStore = defineStore('data.list', () => {
     listItems.value = [];
     pagination.value = undefined;
     searchList.value = '';
+
+    Object.assign(listDictionary, {});
+    Object.assign(listDictionaryLoading, {});
+  };
+
+  const addToDictionary = (list: ListEntity, item: AnyList) => {
+    if (![ListType.List, ListType.Watchlist].map(String).includes(list.type)) return;
+    if (!listDictionary[list.id]) listDictionary[list.id] = {};
+    if ('movie' in item && item.movie?.ids?.trakt) {
+      listDictionary[list.id][item.movie.ids.trakt] = true;
+    } else if ('show' in item && item.show?.ids?.trakt) {
+      listDictionary[list.id][item.show.ids.trakt] = true;
+    } else if ('season' in item && item.season?.ids?.trakt) {
+      listDictionary[list.id][item.season.ids.trakt] = true;
+    } else if ('episode' in item && item.episode?.ids?.trakt) {
+      listDictionary[list.id][item.episode.ids.trakt] = true;
+    }
   };
 
   const { activeList } = useListsStoreRefs();
@@ -212,6 +235,7 @@ export const useListStore = defineStore('data.list', () => {
 
     console.info('Fetching List', list);
     loading.value = true;
+    listDictionaryLoading[list.id] = true;
     const timeout = debounceLoading(listItems, loadingPlaceholder, !page);
     try {
       const query = {
@@ -238,6 +262,7 @@ export const useListStore = defineStore('data.list', () => {
         throw new Error('Invalid list type');
       }
       const newData = response.data.map((item, index) => {
+        addToDictionary(list, item as AnyList);
         if ('id' in item) return item;
         return { ...item, id: `${page}-${index}` };
       });
@@ -251,8 +276,12 @@ export const useListStore = defineStore('data.list', () => {
     } finally {
       clearTimeout(timeout);
       loading.value = false;
+      listDictionaryLoading[list.id] = false;
     }
   };
+
+  const isListLoading = (listId: ListEntity['id']) => computed(() => listDictionaryLoading[listId]);
+  const isItemInList = (listId: ListEntity['id'], itemId: string | number) => computed(() => listDictionary[listId]?.[itemId]);
 
   const initListStore = async () => {
     await restoreState();
@@ -281,6 +310,8 @@ export const useListStore = defineStore('data.list', () => {
     fetchListItems,
     filteredListItems,
     initListStore,
+    isListLoading,
+    isItemInList,
   };
 });
 

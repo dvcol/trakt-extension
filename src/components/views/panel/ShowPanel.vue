@@ -15,6 +15,7 @@ import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useListsStoreRefs, useListStore } from '~/stores/data/list.store';
 import { type ShowSeasons, useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
@@ -132,6 +133,21 @@ const collectionProgressEntity = computed(() => {
   return collectionProgress.value;
 });
 
+const { lists } = useListsStoreRefs();
+const { isListLoading, isItemInList } = useListStore();
+
+const listLoading = computed(() => {
+  if (!showId?.value) return;
+  return isListLoading(showId.value).value;
+});
+
+const activeLists = computed(() => {
+  if (!showId?.value) return;
+  return lists.value
+    ?.filter(list => isItemInList(list.id, showId.value).value)
+    .map(list => list.id);
+});
+
 const title = computed(() => {
   if (!show.value?.title) return;
   return deCapitalise(show.value.title);
@@ -245,6 +261,8 @@ const { openTab } = useExtensionSettingsStore();
       :watched-loading="watchedLoading"
       :collection-progress="collectionProgressEntity"
       :collection-loading="collectionLoading"
+      :active-loading="listLoading"
+      :active-lists="activeLists"
     />
 
     <ShowPanelPicker
@@ -252,6 +270,7 @@ const { openTab } = useExtensionSettingsStore();
       :seasons="seasons"
       :episodes="episodes"
       :progress="watchedProgress"
+      :collection="collectionProgress"
     />
 
     <ShowPanelOverview
