@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { NFlex, NSkeleton } from 'naive-ui';
-import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
-
-import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
+import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
@@ -26,10 +24,9 @@ const props = defineProps({
 
 const { movieId } = toRefs(props);
 
-const movie = ref<TraktMovieExtended>();
-
 const {
-  getMovieRef,
+  getMovie,
+  fetchMovie,
   getMovieWatched,
   getMovieCollected,
   fetchMovieWatched,
@@ -37,6 +34,11 @@ const {
 } = useMovieStore();
 
 const { loadingCollected, loadingWatched } = useMovieStoreRefs();
+
+const movie = computed(() => {
+  if (!movieId?.value) return;
+  return getMovie(movieId.value).value;
+});
 
 const watched = computed(() => {
   if (!movieId?.value) return;
@@ -48,24 +50,16 @@ const collected = computed(() => {
   return !!getMovieCollected(movieId.value)?.value;
 });
 
-const unsub = ref<() => void>();
-
-onMounted(() =>
+onMounted(() => {
   watch(
     movieId,
-    async id => {
-      unsub.value?.();
-      if (!id) return;
-      unsub.value = getMovieRef(id, movie).unsub;
-      await Promise.all([fetchMovieWatched(), fetchMovieCollected()]);
+    id => {
+      fetchMovie(id);
     },
     { immediate: true },
-  ),
-);
-
-onUnmounted(() => {
-  unsub.value?.();
-  movie.value = undefined;
+  );
+  fetchMovieWatched();
+  fetchMovieCollected();
 });
 
 const { lists } = useListsStoreRefs();
