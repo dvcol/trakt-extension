@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { NFlex, NSkeleton } from 'naive-ui';
-import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
-
-import type {
-  TraktEpisodeExtended,
-  TraktEpisodeShort,
-} from '~/models/trakt/trakt-episode.model';
-import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
@@ -16,7 +10,7 @@ import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useListsStoreRefs, useListStore } from '~/stores/data/list.store';
-import { type ShowSeasons, useShowStore } from '~/stores/data/show.store';
+import { useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
@@ -36,14 +30,17 @@ const props = defineProps({
   },
 });
 
-const show = ref<TraktShowExtended>();
-const seasons = ref<ShowSeasons>();
-const episodes = ref<TraktEpisodeShort[]>();
-const episode = ref<TraktEpisodeExtended>();
-
 const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
 const {
+  getShow,
+  fetchShow,
+  getShowSeasons,
+  fetchShowSeasons,
+  getShowSeasonEpisodes,
+  fetchShowSeasonEpisodes,
+  getShowEpisode,
+  fetchShowEpisode,
   getShowWatchedProgress,
   getShowCollectionProgress,
   getShowProgressLoading,
@@ -90,6 +87,31 @@ const panelType = computed<'show' | 'season' | 'episode'>(() => {
   if (episodeNb?.value !== undefined && seasonNb?.value !== undefined) return 'episode';
   if (seasonNb?.value !== undefined) return 'season';
   return 'show';
+});
+
+const show = computed(() => {
+  if (!showId?.value) return;
+  return getShow(showId.value).value;
+});
+
+const seasons = computed(() => {
+  if (!showId?.value) return;
+  return getShowSeasons(showId.value).value;
+});
+
+const episodes = computed(() => {
+  if (!showId?.value || seasonNb?.value === undefined) return;
+  return getShowSeasonEpisodes(showId.value, seasonNb.value).value;
+});
+
+const episode = computed(() => {
+  if (!showId?.value || seasonNb?.value === undefined || episodeNb?.value === undefined)
+    return;
+  return getShowEpisode({
+    id: showId.value,
+    season: seasonNb.value,
+    episode: episodeNb.value,
+  }).value;
 });
 
 const season = computed(() => {
@@ -162,66 +184,25 @@ const titleUrl = computed(() => {
   });
 });
 
-const subscriptions = new Set<() => void>();
-
-const { getShowRef, getShowSeasonsRef, getShowSeasonEpisodesRef, getShowEpisodeRef } =
-  useShowStore();
-
-const watchData = () =>
+onMounted(() => {
   watch(
     [showId, seasonNb, episodeNb],
-    (next, prev) => {
-      // show changes
-      if (next.at(0) !== prev?.at(0)) {
-        show.value = undefined;
-        seasons.value = undefined;
-        episodes.value = undefined;
-        episode.value = undefined;
-      }
-      // season changes
-      else if (next.at(1) !== prev?.at(1)) {
-        episode.value = undefined;
-        episodes.value = undefined;
-      }
-      // episode changes
-      else if (next.at(2) !== prev?.at(2)) {
-        episode.value = undefined;
-      }
+    ([_showId, _seasonNb, _episodeNb]) => {
+      if (_showId !== undefined) {
+        fetchShow(_showId);
+        fetchShowSeasons(_showId);
 
-      if (showId?.value) {
-        subscriptions.add(getShowRef(showId.value, show).unsub);
-        subscriptions.add(getShowSeasonsRef(showId.value, seasons).unsub);
-
-        if (seasonNb?.value !== undefined) {
-          subscriptions.add(
-            getShowSeasonEpisodesRef(showId.value, seasonNb?.value, episodes).unsub,
-          );
+        if (_seasonNb !== undefined) {
+          fetchShowSeasonEpisodes(_showId, _seasonNb);
         }
 
-        if (seasonNb?.value !== undefined && episodeNb?.value !== undefined) {
-          subscriptions.add(
-            getShowEpisodeRef(
-              {
-                id: showId.value,
-                season: seasonNb.value,
-                episode: episodeNb.value,
-              },
-              episode,
-            ).unsub,
-          );
+        if (_seasonNb !== undefined && _episodeNb !== undefined) {
+          fetchShowEpisode(_showId, _seasonNb, _episodeNb);
         }
       }
     },
     { immediate: true },
   );
-
-onMounted(() => {
-  subscriptions.add(watchData());
-});
-
-onUnmounted(() => {
-  subscriptions.forEach(unsub => unsub());
-  subscriptions.clear();
 });
 
 const { openTab } = useExtensionSettingsStore();

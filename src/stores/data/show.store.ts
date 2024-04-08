@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
@@ -10,7 +10,6 @@ import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { asyncRefGetter } from '~/utils/vue.utils';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
 
@@ -206,42 +205,33 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const getShowLoading = (id: number | string) => computed(() => showsLoading[id.toString()]);
-  const getShow = async (id: number | string) => {
-    if (!shows[id.toString()] && !showsLoading[id.toString()]) await fetchShow(id.toString());
-    return shows[id.toString()];
-  };
-  const getShowRef = (id: number | string, response = ref<TraktShowExtended>()) => asyncRefGetter(() => getShow(id), getShowLoading(id), response);
+  const getShow = (id: number | string) =>
+    computed(() => {
+      if (showsLoading[id.toString()]) return undefined;
+      return shows[id.toString()];
+    });
 
   const getSeasonsLoading = (id: number | string) => computed(() => showsSeasonsLoading[id.toString()]);
-  const getShowSeasons = async (id: number | string) => {
-    if (!showsSeasons[id.toString()] && !showsSeasonsLoading[id.toString()]) await fetchShowSeasons(id.toString());
-    return showsSeasons[id.toString()];
-  };
-  const getShowSeasonsRef = (id: number | string, response = ref<ShowSeasons>()) =>
-    asyncRefGetter(() => getShowSeasons(id), getSeasonsLoading(id), response);
+  const getShowSeasons = (id: number | string) =>
+    computed(() => {
+      if (showsSeasonsLoading[id.toString()]) return undefined;
+      return showsSeasons[id.toString()];
+    });
 
   const getSeasonEpisodesLoading = (id: number | string, season: number) => computed(() => showsSeasonEpisodesLoading[id.toString()]?.[season]);
-  const getShowSeasonEpisodes = async (id: number | string, season: number) => {
-    if (!showsSeasonEpisodes[id.toString()]?.[season] && !showsSeasonEpisodesLoading[id.toString()]?.[season]) {
-      await fetchShowSeasonEpisodes(id.toString(), season);
-    }
-    return showsSeasonEpisodes[id.toString()]?.[season];
-  };
-  const getShowSeasonEpisodesRef = (id: number | string, season: number, response = ref<TraktEpisodeShort[]>()) =>
-    asyncRefGetter(() => getShowSeasonEpisodes(id, season), getSeasonEpisodesLoading(id, season), response);
+  const getShowSeasonEpisodes = (id: number | string, season: number) =>
+    computed(() => {
+      if (showsSeasonEpisodesLoading[id.toString()]?.[season]) return undefined;
+      return showsSeasonEpisodes[id.toString()]?.[season];
+    });
 
   const getEpisodesLoading = (id: number | string, season: number, episode: number) =>
     computed(() => showsEpisodesLoading[id.toString()]?.[season]?.[episode]);
-  const getShowEpisode = async ({ id, season, episode }: { id: number | string; season: number; episode: number }) => {
-    if (!showsEpisodes[id.toString()]?.[season]?.[episode] && !showsEpisodesLoading[id.toString()]?.[season]?.[episode]) {
-      await fetchShowEpisode(id.toString(), season, episode);
-    }
-    return showsEpisodes[id.toString()]?.[season]?.[episode];
-  };
-  const getShowEpisodeRef = (
-    { id, season, episode }: { id: number | string; season: number; episode: number },
-    response = ref<TraktEpisodeExtended>(),
-  ) => asyncRefGetter(() => getShowEpisode({ id, season, episode }), getEpisodesLoading(id, season, episode), response);
+  const getShowEpisode = ({ id, season, episode }: { id: number | string; season: number; episode: number }) =>
+    computed(() => {
+      if (showsEpisodesLoading[id.toString()]?.[season]?.[episode]) return undefined;
+      return showsEpisodes[id.toString()]?.[season]?.[episode];
+    });
 
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
   const getShowWatchedProgress = (id: number | string) => {
@@ -267,16 +257,16 @@ export const useShowStore = defineStore('data.show', () => {
   return {
     clearState,
     getShow,
-    getShowRef,
+    fetchShow,
     getShowLoading,
     getShowSeasons,
-    getShowSeasonsRef,
+    fetchShowSeasons,
     getSeasonsLoading,
     getShowSeasonEpisodes,
-    getShowSeasonEpisodesRef,
+    fetchShowSeasonEpisodes,
     getSeasonEpisodesLoading,
     getShowEpisode,
-    getShowEpisodeRef,
+    fetchShowEpisode,
     getEpisodesLoading,
     getShowWatchedProgress,
     getShowProgressLoading,
