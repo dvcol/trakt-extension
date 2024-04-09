@@ -3,7 +3,7 @@ import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
-import { useRoute } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 
 import type { ShowProgress } from '~/models/list-scroll.model';
 import type { TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
@@ -39,6 +39,9 @@ const props = defineProps({
 const { seasons, episodes, progress, collection } = toRefs(props);
 
 const { meta } = useRoute();
+
+const showLink = computed(() => ({ name: `${meta.base}-show` }));
+const seasonLink = computed(() => ({ name: `${meta.base}-season` }));
 
 const seasonsLinks = computed(() => {
   if (!seasons?.value) return;
@@ -77,7 +80,9 @@ const i18n = useI18n('panel', 'picker');
 <template>
   <NFlex vertical class="picker" justify="center">
     <NFlex align="baseline" size="small" class="row">
-      <span class="prefix">{{ i18n('season') }}</span>
+      <RouterLink class="prefix" :to="showLink">
+        <span>{{ i18n('season') }}</span>
+      </RouterLink>
 
       <NFlex class="numbers" size="small">
         <template v-if="seasonsLinks?.length">
@@ -96,7 +101,9 @@ const i18n = useI18n('panel', 'picker');
     </NFlex>
 
     <NFlex v-if="mode !== 'show'" align="baseline" size="small" class="row">
-      <span class="prefix">{{ i18n('episode') }}</span>
+      <RouterLink class="prefix" :to="seasonLink">
+        <span>{{ i18n('episode') }}</span>
+      </RouterLink>
 
       <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
@@ -106,7 +113,6 @@ const i18n = useI18n('panel', 'picker');
             v-slot="{ isActive }"
             :link="{ to: link }"
             :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
-            class="link"
           >
             <span class="label" :class="{ active: isActive }">{{ number }}</span>
           </ButtonLink>
@@ -127,6 +133,7 @@ const i18n = useI18n('panel', 'picker');
     margin: 1px 0.25rem auto 0;
     color: var(--white-50);
     font-weight: 600;
+    text-decoration: none;
     transition: color 0.3s var(--n-bezier);
   }
 
