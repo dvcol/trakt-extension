@@ -346,7 +346,10 @@ export abstract class BaseClient<
         const fn: ClientEndpointCall = (param, init) => this._call(template, param, init);
 
         const cachedFn: ClientEndpointCache = getCachedFunction(fn, {
-          key: (param: unknown, init: unknown) => JSON.stringify({ template: template.config, param, init }),
+          key: (param: unknown, init: unknown) => {
+            const _param = template?.transform?.(param as RecursiveRecord) ?? param;
+            return JSON.stringify({ template: template.config, param: _param, init });
+          },
           cache: this._cache,
           retention: template.opts?.cache,
           evictionKey: `{"template":${JSON.stringify(template.config).replace(ExactMatchRegex, '\\$&')}`,

@@ -144,10 +144,11 @@ export const useCalendarStore = defineStore('data.calendar', () => {
     const startDate = ['start', 'reload'].includes(mode) ? startCalendar.value : endCalendar.value;
     const endDate = DateUtils.next(days.value - 1, startDate);
     const start_date = startDate.toISOString().split('T')[0];
+    const end_date = endDate.toISOString().split('T')[0];
 
     if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
 
-    console.info('Fetching calendar', { mode, start_date, endDate: endDate.toISOString().split('T')[0], days: days.value });
+    console.info('Fetching calendar', { mode, start_date, end_date, days: days.value });
 
     const timeout = setTimeout(() => {
       if (mode === 'reload') calendar.value = getEmptyWeeks(startDate, true);
