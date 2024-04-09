@@ -238,7 +238,7 @@ onActivated(() => {
 
 <style lang="scss" scoped>
 .search-switch {
-  --search-switch-button-color: var(--vt-c-white-soft);
+  --search-switch-button-color: var(--white-soft);
   --search-switch-active-rail-color: var(--primary-color-dark);
 
   .label {
@@ -249,7 +249,7 @@ onActivated(() => {
 
   // stylelint-disable-next-line selector-class-pattern -- overriding theme class
   &.n-switch--active .label {
-    color: var(--vt-c-white-soft);
+    color: var(--white-soft);
   }
 }
 

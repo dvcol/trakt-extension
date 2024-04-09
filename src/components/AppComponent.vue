@@ -141,7 +141,6 @@ main {
   justify-content: center;
   min-height: calc(100% - #{layout.$header-navbar-height});
   margin-top: layout.$header-navbar-height;
-  overflow: hidden;
 }
 
 .panel {
