@@ -39,7 +39,7 @@ const root = ref<HTMLElement>();
 
       <NLoadingBarProvider
         :to="root"
-        :loading-bar-style="{ loading: { '--n-color-loading': 'var(--vt-c-white)' } }"
+        :loading-bar-style="{ loading: { '--n-color-loading': 'var(--white)' } }"
       >
         <LoadingBarProvider />
       </NLoadingBarProvider>
@@ -176,7 +176,7 @@ const root = ref<HTMLElement>();
   }
 
   @media (prefers-color-scheme: light) {
-    color: var(--vt-c-black);
+    color: var(--black);
   }
 }
 </style>

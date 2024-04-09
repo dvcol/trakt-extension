@@ -93,7 +93,7 @@ const i18n = useI18n('common', 'tooltip', 'progress');
   font-size: 0.8rem;
 
   .metric {
-    color: var(--vt-c-white);
+    color: var(--white);
     font-weight: bolder;
     font-variant-numeric: tabular-nums;
   }

@@ -76,15 +76,28 @@ const navElement = ref<HTMLElement>();
       type="segment"
       justify-content="space-evenly"
       animated
+      :style="{
+        '--n-bar-color': 'var(--trakt-red-dark)',
+        '--n-tab-text-color-active': 'var(--navbar-text-color-active)',
+        '--n-tab-text-color-hover': 'var(--navbar-text-color-hover)',
+        '--n-tab-color-segment': 'var(--navbar-tab-color)',
+        '--n-color-segment': 'inherit',
+      }"
     >
       <template v-for="_route in routes" :key="_route">
         <NTab
-          class="tab"
+          :style="
+            _route === activeRoute
+              ? { '--n-tab-text-color-hover': 'var(--navbar-text-color-hover-active)' }
+              : undefined
+          "
           :name="_route.toLowerCase()"
           type="segment"
           @click="navigate(_route)"
         >
-          <span> {{ i18n(_route.toLowerCase()) }}</span>
+          <span>
+            {{ i18n(_route.toLowerCase()) }}
+          </span>
         </NTab>
       </template>
       <NTab
@@ -113,6 +126,11 @@ const navElement = ref<HTMLElement>();
 @use '~/styles/layout' as layout;
 
 nav {
+  --navbar-tab-color: var(--trakt-red-darker);
+  --navbar-text-color-hover: var(--trakt-red);
+  --navbar-text-color-hover-active: var(--white);
+  --navbar-text-color-active: var(--white);
+
   padding: 0 0.25rem;
   font-size: 12px;
   text-align: center;
@@ -136,43 +154,6 @@ nav {
     display: flex;
     justify-content: center;
     min-height: 2.75rem;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
-nav {
-  .tabs {
-    --n-bar-color: var(--trakt-red-dark) !important;
-    --n-tab-text-color-active: var(--vt-c-white) !important;
-    --n-tab-text-color-hover: color-mix(
-      in srgb,
-      var(--trakt-red) 90%,
-      var(--vt-c-white)
-    ) !important;
-    --n-tab-color-segment: color-mix(
-      in srgb,
-      var(--trakt-red) 50%,
-      transparent
-    ) !important;
-    --n-color-segment: inherit !important;
-
-    .tab {
-      min-height: 1.25rem;
-    }
-
-    /* stylelint-disable-next-line selector-class-pattern -- overriding theme class  */
-    .n-tabs-tab--active {
-      --n-tab-text-color-hover: color-mix(
-        in srgb,
-        var(--trakt-white) 99%,
-        var(--vt-c-red)
-      ) !important;
-    }
-
-    .n-tabs-capsule {
-      backdrop-filter: blur(1px);
-    }
   }
 }
 </style>

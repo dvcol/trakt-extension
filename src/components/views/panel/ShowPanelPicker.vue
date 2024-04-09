@@ -155,7 +155,7 @@ const i18n = useI18n('panel', 'picker');
 
   .no-data {
     margin: 0 0.5rem;
-    color: var(--vt-c-text-dark-2);
+    color: var(--color-text);
   }
 }
 </style>
