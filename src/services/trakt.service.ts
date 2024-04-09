@@ -19,7 +19,7 @@ import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.mode
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
-import { getCachedFunction, type TypedResponse } from '~/services/common/base-client';
+import { type BaseCacheOption, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
@@ -61,7 +61,10 @@ export class TraktService {
 
   static {
     this.caches = {
-      trakt: new ChromeCacheStore<TraktApiResponse>({ prefix: 'trakt-cache' }),
+      trakt: new ChromeCacheStore<TraktApiResponse>({
+        prefix: 'trakt-cache',
+        retention: CacheRetention.Week,
+      }),
       tvdb: new ChromeCacheStore<TvdbApiResponse>({
         prefix: 'tvdb-cache',
         retention: CacheRetention.Year,
@@ -80,6 +83,10 @@ export class TraktService {
   static changeUser(user: string) {
     this.caches.trakt.prefix = `trakt-cache-${user}`;
     this.caches.tvdb.prefix = `tvdb-cache-${user}`;
+  }
+
+  static changeRetention(retention: number) {
+    this.caches.trakt.retention = retention;
   }
 
   private static async saveAuth(
@@ -314,8 +321,12 @@ export class TraktService {
     },
 
     show: {
-      async watched(showId: string | number) {
-        const response = await TraktService.traktClient.shows.progress.watched.cached({ id: showId, specials: true, count_specials: false });
+      async watched(showId: string | number, cacheOption?: BaseCacheOption) {
+        const response = await TraktService.traktClient.shows.progress.watched.cached(
+          { id: showId, specials: true, count_specials: false },
+          undefined,
+          cacheOption,
+        );
         return response.json() as Promise<TraktWatchedProgress>;
       },
 

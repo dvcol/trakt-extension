@@ -162,7 +162,6 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
     </ProgressTooltip>
 
     <NModal
-      v-if="false"
       v-model:show="showPicker"
       :to="root"
       :style="{

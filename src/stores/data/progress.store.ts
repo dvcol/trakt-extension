@@ -9,6 +9,7 @@ import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-sc
 import { type ProgressItem } from '~/models/progress.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { CacheRetention } from '~/utils/cache.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 type ProgressListItem = Omit<ListScrollItem, 'posterRef' | 'progressRef'>;
@@ -42,7 +43,12 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     title: getTitle({ show, episode }),
     content: getContent({ show, episode }),
     poster,
-    getProgressQuery: () => show?.ids?.trakt,
+    getProgressQuery: () => ({
+      id: show?.ids?.trakt,
+      cacheOptions: {
+        retention: CacheRetention.Day,
+      },
+    }),
     date: {
       current: new Date(progress.firstAired),
     },

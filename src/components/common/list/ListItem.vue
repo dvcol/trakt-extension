@@ -97,6 +97,10 @@ const nextHasHead = computed(
 );
 const date = computed(() => item?.value?.date?.current);
 
+const isToday = computed(
+  () => date.value?.toLocaleDateString() === new Date().toLocaleDateString(),
+);
+
 const year = new Date().getFullYear();
 const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
@@ -163,7 +167,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
         <NFlex
           v-if="!hideDate"
           class="header"
-          :class="{ hover }"
+          :class="{ hover, today: isToday }"
           vertical
           justify="flex-start"
           align="center"
@@ -250,11 +254,15 @@ const onClick = () => emit('onItemClick', { item: item?.value });
     color: var(--n-text-color);
     font-size: 14px;
     border-top: 1px solid var(--border-grey);
+    transition: color 0.2s var(--n-bezier);
+    will-change: color;
+
+    &.today {
+      color: var(--color-warning);
+    }
 
     &.hover {
       color: var(--trakt-red);
-      transition: color 0.2s var(--n-bezier);
-      will-change: color;
     }
 
     .month {
