@@ -3,10 +3,11 @@ import type { TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt/t
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 
-import { validateStartDate } from '~/models/trakt/trakt-entity.model';
+import { getDateTransform, getDateValidate } from '~/models/trakt/trakt-entity.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 
 import { HttpMethod } from '~/utils/http.utils';
+import { DateISO8601Short } from '~/utils/regex.utils';
 
 const opts: TraktApiTemplateOptions = {
   extended: [TraktApiExtended.Full],
@@ -19,7 +20,8 @@ const opts: TraktApiTemplateOptions = {
   },
 };
 
-const validate: TraktApiTemplate<TraktCalendarQuery>['validate'] = validateStartDate;
+const validate: TraktApiTemplate<TraktCalendarQuery>['validate'] = getDateValidate('start_date', DateISO8601Short);
+const transform: TraktApiTemplate<TraktCalendarQuery>['transform'] = getDateTransform('start_date', true);
 
 /**
  * By default, the calendar will return all shows or movies for the specified time period and can be global or user specific.
@@ -48,6 +50,7 @@ export const calendars = {
         url: '/calendars/my/shows/:start_date/:days',
         opts: { auth: true, ...opts },
         validate,
+        transform,
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
@@ -63,6 +66,7 @@ export const calendars = {
         url: '/calendars/my/shows/new/:start_date/:days',
         opts: { auth: true, ...opts },
         validate,
+        transform,
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
@@ -78,6 +82,7 @@ export const calendars = {
         url: '/calendars/my/shows/premieres/:start_date/:days',
         opts: { auth: true, ...opts },
         validate,
+        transform,
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
@@ -93,6 +98,7 @@ export const calendars = {
         url: '/calendars/my/shows/finales/:start_date/:days',
         opts: { auth: true, ...opts },
         validate,
+        transform,
       }),
     },
     /**
@@ -109,6 +115,7 @@ export const calendars = {
       url: '/calendars/my/movies/:start_date/:days',
       opts: { auth: true, ...opts },
       validate,
+      transform,
     }),
     /**
      * Returns all movies with a DVD release date during the time period specified.
@@ -124,6 +131,7 @@ export const calendars = {
       url: '/calendars/my/dvd/:start_date/:days',
       opts: { auth: true, ...opts },
       validate,
+      transform,
     }),
   },
   all: {
@@ -140,6 +148,7 @@ export const calendars = {
         url: '/calendars/all/shows/:start_date/:days',
         opts,
         validate,
+        transform,
       }),
       /**
        * Returns all new show premieres (series_premiere) airing during the time period specified.
@@ -153,6 +162,7 @@ export const calendars = {
         url: '/calendars/all/shows/new/:start_date/:days',
         opts,
         validate,
+        transform,
       }),
       /**
        * Returns all show premieres (mid_season_premiere, season_premiere, series_premiere) airing during the time period specified.
@@ -166,6 +176,7 @@ export const calendars = {
         url: '/calendars/all/shows/premieres/:start_date/:days',
         opts,
         validate,
+        transform,
       }),
       /**
        * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
@@ -179,6 +190,7 @@ export const calendars = {
         url: '/calendars/all/finales/:start_date/:days',
         opts,
         validate,
+        transform,
       }),
       /**
        * Returns all movies with a release date during the time period specified.
@@ -192,6 +204,7 @@ export const calendars = {
         url: '/calendars/all/movies/:start_date/:days',
         opts,
         validate,
+        transform,
       }),
     },
     /**
@@ -206,6 +219,7 @@ export const calendars = {
       url: '/calendars/all/dvd/:start_date/:days',
       opts,
       validate,
+      transform,
     }),
   },
 };

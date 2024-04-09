@@ -23,7 +23,7 @@ export type TraktCalendarStartAndDay = {
    * Date (in UTC) from which to start the calendar.
    * Defaults to today.
    */
-  start_date?: string;
+  start_date?: string | number | Date;
   /**
    * Number of days to display.
    * Defaults to 7.

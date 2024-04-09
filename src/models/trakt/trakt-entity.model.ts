@@ -1,4 +1,4 @@
-import type { TraktApiTemplate } from '~/models/trakt/trakt-client.model';
+import type { TraktApiParams, TraktApiTemplate } from '~/models/trakt/trakt-client.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { RequireAtLeastOne } from '~/utils/typescript.utils';
 
@@ -75,7 +75,7 @@ export type StartDateParam = {
    * The start_date is only accurate to the hour, for caching purposes. Please drop the minutes and seconds from your timestamp to help optimize our cached data.
    * For example, use 2021-07-17T12:00:00Z and not 2021-07-17T12:23:34Z.
    */
-  start_date?: string;
+  start_date?: string | number | Date;
 };
 
 export const EntityType = {
@@ -90,12 +90,24 @@ export type Extended = typeof EntityType.Extended;
 
 export type EntityTypes = (typeof EntityType)[keyof typeof EntityType];
 
-export const validateStartDate: TraktApiTemplate<StartDateParam>['validate'] = param => {
-  if (param.start_date) TraktApiValidators.date(param.start_date);
-  return true;
+export const getDateValidate = <T extends TraktApiParams>(prop: keyof T, regex?: RegExp): TraktApiTemplate<T>['validate'] => {
+  return param => {
+    const _date = param[prop];
+    if (_date === undefined) return true;
+    if (typeof _date === 'string') return TraktApiValidators.date(_date, regex);
+    return true;
+  };
 };
 
-export const transformStartDate: TraktApiTemplate<StartDateParam>['transform'] = param => {
-  if (param.start_date) return { ...param, start_date: TraktApiTransforms.date.dropMinutes(param.start_date) };
-  return param;
+export const getDateTransform = <T extends TraktApiParams>(prop: keyof T, short?: boolean): TraktApiTemplate<T>['transform'] => {
+  return param => {
+    let _date = param[prop] as string | number | Date;
+    if (_date === undefined) return param;
+    if (typeof _date !== 'string') _date = _date instanceof Date ? _date.toISOString() : new Date(_date).toISOString();
+    if (short && _date.includes('T')) _date = _date.split('T').at(0)!;
+    return { ...param, [prop]: TraktApiTransforms.date.dropMinutes(_date) };
+  };
 };
+
+export const validateStartDate: TraktApiTemplate<StartDateParam>['validate'] = getDateValidate('start_date');
+export const transformStartDate: TraktApiTemplate<StartDateParam>['transform'] = getDateTransform('start_date', true);
