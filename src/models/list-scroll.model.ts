@@ -10,6 +10,7 @@ import type { TraktPerson } from '~/models/trakt/trakt-people.model';
 import type { BaseTraktProgress, BaseTraktProgressEpisode, BaseTraktProgressSeason } from '~/models/trakt/trakt-progress.model';
 import type { TraktSeason } from '~/models/trakt/trakt-season.model';
 import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { BaseCacheOption } from '~/services/common/base-client';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type VirtualListProps = {
@@ -90,7 +91,7 @@ export type ListScrollItem<T = Record<string, any>> = Omit<PosterItem, 'type'> &
 
   progress?: ShowProgress;
   progressRef?: Ref<ShowProgress | undefined>;
-  getProgressQuery?: () => string | number | undefined;
+  getProgressQuery?: () => { id: string | number | undefined; cacheOptions?: BaseCacheOption };
 
   meta?: T;
 

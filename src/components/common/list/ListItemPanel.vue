@@ -80,9 +80,9 @@ const progress = computed<ShowProgress | undefined>(() => {
   if (item?.value?.progress) return item.value?.progress;
   if (item?.value?.progressRef) return item.value?.progressRef.value;
   if (!item?.value?.getProgressQuery) return;
-  const id = item.value?.getProgressQuery();
+  const { id, cacheOptions } = item.value?.getProgressQuery() ?? {};
   if (!id) return;
-  return getShowWatchedProgress(id).value;
+  return getShowWatchedProgress(id, cacheOptions).value;
 });
 
 const innerContainer = ref();

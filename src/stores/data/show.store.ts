@@ -7,6 +7,8 @@ import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/tra
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
+import type { BaseCacheOption } from '~/services/common/base-client';
+
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
@@ -95,7 +97,7 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const fetchShowProgress = async (id: string) => {
+  const fetchShowProgress = async (id: string, cacheOption?: BaseCacheOption) => {
     if (showWatchedProgressLoading[id]) {
       console.warn('Already fetching show progress', id);
       return;
@@ -105,7 +107,7 @@ export const useShowStore = defineStore('data.show', () => {
 
     showWatchedProgressLoading[id] = true;
     try {
-      showsWatchedProgress[id] = await TraktService.progress.show.watched(id);
+      showsWatchedProgress[id] = await TraktService.progress.show.watched(id, cacheOption);
     } catch (e) {
       console.error('Failed to fetch show progress', id);
       throw e;
@@ -234,8 +236,10 @@ export const useShowStore = defineStore('data.show', () => {
     });
 
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
-  const getShowWatchedProgress = (id: number | string) => {
-    if (!showsWatchedProgress[id.toString()] && !showWatchedProgressLoading[id.toString()]) fetchShowProgress(id.toString()).catch(console.error);
+  const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption) => {
+    if (!showsWatchedProgress[id.toString()] && !showWatchedProgressLoading[id.toString()]) {
+      fetchShowProgress(id.toString(), cacheOptions).catch(console.error);
+    }
     return computed(() => {
       const progress = showsWatchedProgress[id.toString()];
       if (!progress) return undefined;
