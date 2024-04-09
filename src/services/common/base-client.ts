@@ -88,13 +88,16 @@ export type BaseTemplate<P extends RecursiveRecord = RecursiveRecord, O extends 
   transform?: (param: P) => P;
 };
 
+export type CacheResponse<T> = {
+  previous?: CacheStoreEntity<TypedResponse<T>>;
+  current?: CacheStoreEntity<TypedResponse<T>>;
+  isCache?: boolean;
+  evict?: () => string | boolean | undefined | Promise<string | boolean | undefined>;
+};
+
 export type TypedResponse<T> = Omit<Response, 'json'> & {
   json(): Promise<T>;
-  cache?: {
-    previous?: CacheStoreEntity<TypedResponse<T>>;
-    current?: CacheStoreEntity<TypedResponse<T>>;
-    isCache?: boolean;
-  };
+  cache?: CacheResponse<T>;
 };
 
 export type ResponseOrTypedResponse<T = unknown> = T extends never ? Response : TypedResponse<T>;
@@ -203,14 +206,15 @@ export const getCachedFunction = <
 ): ClientEndpointCache<Parameter, ResponseBody> => {
   const cachedFn = async (param: Parameter, init: BaseInit, cacheOptions: BaseCacheOption) => {
     const _key = typeof key === 'function' ? key(param, init) : key;
+    const evict = () => cache.delete(_key);
     const cached = await cache.get(_key);
     if (cached && !cacheOptions?.force) {
       let templateRetention = typeof retention === 'number' ? retention : undefined;
       if (typeof retention === 'object') templateRetention = retention.retention;
       const _retention = cacheOptions?.retention ?? templateRetention ?? cache.retention;
-      if (!_retention) return cloneResponse<ResponseType>(cached.value, { previous: cached, current: cached, isCache: true });
+      if (!_retention) return cloneResponse<ResponseType>(cached.value, { previous: cached, current: cached, isCache: true, evict });
       const expires = cached.cachedAt + _retention;
-      if (expires > Date.now()) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true });
+      if (expires > Date.now()) return cloneResponse(cached.value, { previous: cached, current: cached, isCache: true, evict });
     }
 
     try {
@@ -218,13 +222,14 @@ export const getCachedFunction = <
       const cacheEntry: CacheStoreEntity<ResponseType> = {
         cachedAt: Date.now(),
         value: cloneResponse(result) as ResponseType,
+        key: _key,
       };
       await cache.set(_key, cacheEntry);
-      result.cache = { previous: cached, current: cacheEntry, isCache: false };
+      result.cache = { previous: cached, current: cacheEntry, isCache: false, evict };
       return result;
     } catch (error) {
       if (cacheOptions?.evictOnError ?? (typeof retention === 'object' ? retention?.evictOnError : undefined) ?? cache.evictOnError) {
-        cache.delete(_key);
+        evict();
       }
       throw error;
     }

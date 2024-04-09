@@ -19,7 +19,7 @@ import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.mode
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
-import { type BaseCacheOption, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
+import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
@@ -35,6 +35,20 @@ import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
 import { CacheRetention, ChromeCacheStore } from '~/utils/cache.utils';
+
+export const shouldEvict = (date?: string | number | Date, cache?: CacheResponse<unknown>): boolean => {
+  // no date or cache skip
+  if (!date || !cache?.evict) return false;
+  // date in the past skip
+  if (new Date(date) <= new Date()) return false;
+  // cached today skip
+  if (cache?.current?.cachedAt) {
+    const _cachedAt = new Date(cache.current.cachedAt).toLocaleDateString();
+    const _today = new Date().toLocaleDateString();
+    if (_cachedAt === _today) return false;
+  }
+  return true;
+};
 
 export class TraktService {
   private static traktClient: TraktClient;
@@ -352,38 +366,48 @@ export class TraktService {
   static show = {
     async summary(id: string | number) {
       const response = await TraktService.traktClient.shows.summary.cached({ id, extended: 'full' });
-      return response.json() as Promise<TraktShowExtended>;
+      const data = await response.json();
+      if (shouldEvict(data?.first_aired, response?.cache)) response.cache?.evict?.();
+      return data as TraktShowExtended;
     },
 
     async season(id: string | number, season: number) {
       const response = await TraktService.traktClient.seasons.season.cached({ id, season });
-      return response.json() as Promise<TraktEpisodeShort[]>;
+      const data = await response.json();
+      if (data.some(e => shouldEvict(e?.first_aired, response?.cache))) response.cache?.evict?.();
+      return data as TraktEpisodeShort[];
     },
 
     async seasons(id: string | number) {
       const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' });
-      return response.json() as Promise<TraktSeasonExtended[]>;
+      const data = await response.json();
+      if (data.some(s => shouldEvict(s?.first_aired, response?.cache))) response.cache?.evict?.();
+      return data as TraktSeasonExtended[];
     },
 
     async episode({ id, season, episode }: { id: string | number; season: number; episode: number }) {
       const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: 'full' });
-      return response.json() as Promise<TraktEpisodeExtended>;
+      const data = await response.json();
+      if (shouldEvict(data?.first_aired, response?.cache)) response.cache?.evict?.();
+      return data as TraktEpisodeExtended;
     },
   };
 
-  static async activity() {
-    const response = await this.traktClient.sync.lastActivities();
-    return response.json();
-  }
-
   static async movie(id: string | number) {
     const response = await this.traktClient.movies.summary.cached({ id, extended: 'full' });
-    return response.json() as Promise<TraktMovieExtended>;
+    const data = await response.json();
+    if (shouldEvict(data?.released, response?.cache)) response.cache?.evict?.();
+    return data as TraktMovieExtended;
   }
 
   static async person(id: string | number) {
     const response = await this.traktClient.people.summary.cached({ id, extended: 'full' });
     return response.json() as Promise<TraktPersonExtended>;
+  }
+
+  static async activity() {
+    const response = await this.traktClient.sync.lastActivities();
+    return response.json();
   }
 
   static evict = {

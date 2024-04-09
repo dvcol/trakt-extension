@@ -3,6 +3,7 @@ import type { ResponseOrTypedResponse, TypedResponse } from '~/services/common/b
 import { storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
 
 export type CacheStoreEntity<V = unknown, T = string> = {
+  key: string;
   value: V;
   type?: T;
   cachedAt: number;
