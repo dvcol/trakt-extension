@@ -14,6 +14,7 @@ import {
 } from '~/components/views/panel/use-panel-buttons';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import {
+  DefaultListId,
   DefaultLists,
   type ListEntity,
   ListType,
@@ -65,12 +66,6 @@ const watchedProgress = computed(() => {
   if (!showId?.value) return;
   return getShowWatchedProgress(showId.value).value;
 });
-
-const watchedLoading = computed(() => {
-  if (!showId?.value) return;
-  return getShowProgressLoading(showId.value).value;
-});
-
 const collectionProgress = computed(() => {
   if (!showId?.value) return;
   return getShowCollectionProgress(showId.value).value;
@@ -188,9 +183,25 @@ const activeItemCollectionLoading = computed(() => {
 });
 
 const collectionLoading = computed(() => {
-  if (!showId?.value) return;
   if (activeItemCollectionLoading.value) return true;
+  if (!showId?.value) return true;
   return getShowCollectionLoading(showId.value).value;
+});
+
+const activeItemWatchedLoading = computed(() => {
+  const _id = activeItem.value?.ids?.trakt;
+  if (_id === undefined) return;
+  return isItemListLoading({
+    listType: ListType.History,
+    itemType: panelType.value,
+    itemId: _id,
+  }).value;
+});
+
+const watchedLoading = computed(() => {
+  if (activeItemWatchedLoading.value) return true;
+  if (!showId?.value) return true;
+  return getShowProgressLoading(showId.value).value;
 });
 
 const activeLists = computed(() => {
@@ -246,8 +257,17 @@ const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => 
 const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
   if (!panelType.value || !activeItem.value?.ids) return;
 
-  // TODO : implement add/remove from history
-  // addToOrRemoveFromList(DefaultLists.Watchlist, `${panelType.value}s`, activeItem.value.ids);
+  await addToOrRemoveFromList({
+    list: {
+      id: DefaultListId.History,
+      type: ListType.History,
+      name: 'list_type__history',
+    },
+    itemType: panelType.value,
+    itemIds: activeItem.value.ids,
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
   if (!showId.value) return;
   await fetchShowProgress(showId.value, { force: true });
 };
