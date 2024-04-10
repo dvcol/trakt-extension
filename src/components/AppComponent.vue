@@ -63,7 +63,7 @@ const onBack = () => {
       <GridBackground v-if="!Component" :size="20" />
       <Transition name="scale" mode="out-in">
         <KeepAlive>
-          <component :is="Component ?? PageLoading" />
+          <component :is="Component ?? PageLoading" :panel="panel" />
         </KeepAlive>
       </Transition>
     </main>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NFlex } from 'naive-ui';
-import { onMounted, Transition } from 'vue';
+import { onActivated, onMounted, toRefs, Transition, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
@@ -12,13 +12,28 @@ import { ExternaLinks } from '~/settings/external.links';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useI18n } from '~/utils';
 
+const props = defineProps({
+  panel: {
+    type: Boolean,
+    required: false,
+  },
+});
+
+const { panel } = toRefs(props);
+
 const i18n = useI18n('progress');
 
 const { progress, loading, loggedOut } = useProgressStoreRefs();
 const { fetchProgress } = useProgressStore();
 
-onMounted(async () => {
+onActivated(async () => {
   await fetchProgress();
+});
+
+onMounted(() => {
+  watch(panel, async value => {
+    if (!value) await fetchProgress();
+  });
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();

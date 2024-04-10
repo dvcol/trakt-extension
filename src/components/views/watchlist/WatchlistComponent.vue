@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { onMounted, toRefs, watch } from 'vue';
+
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
@@ -19,6 +21,15 @@ import {
 import { useI18n } from '~/utils';
 import { watchUserChange } from '~/utils/store.utils';
 
+const props = defineProps({
+  panel: {
+    type: Boolean,
+    required: false,
+  },
+});
+
+const { panel } = toRefs(props);
+
 const i18n = useI18n('list');
 
 const {
@@ -34,6 +45,12 @@ const { fetchListItems, clearState } = useListStore();
 watchUserChange({
   fetch: fetchListItems,
   clear: clearState,
+});
+
+onMounted(() => {
+  watch(panel, async value => {
+    if (!value) await fetchListItems();
+  });
 });
 
 const list = useListScroll<AnyList, AnyListDateTypes>(
