@@ -1,0 +1,10 @@
+{
+  "common__notification__added_to": {
+    "message": "added to",
+    "description": "Notification message when an item is added to a list"
+  },
+  "common__notification__removed_from": {
+    "message": "removed from",
+    "description": "Notification message when an item is removed from a list"
+  }
+}

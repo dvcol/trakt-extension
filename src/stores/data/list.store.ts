@@ -18,6 +18,7 @@ import { ListScrollItemType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useI18n } from '~/utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
@@ -306,6 +307,8 @@ export const useListStore = defineStore('data.list', () => {
     }
   };
 
+  const i18n = useI18n('common', 'notification');
+
   const addToOrRemoveFromList = async ({
     list,
     itemType,
@@ -368,6 +371,19 @@ export const useListStore = defineStore('data.list', () => {
       } else {
         console.error(`Unknown list type ${listType}.`);
       }
+      NotificationService.message.success(
+        [
+          i18n(itemType, 'common', 'media', 'type'),
+          i18n(remove ? 'removed_from' : 'added_to'),
+          i18n(list.type, 'common', 'list').toLowerCase(),
+          list.type === ListType.List ? `'${list.name}'` : '',
+        ]
+          .filter(Boolean)
+          .join(' '),
+        {
+          duration: 50000,
+        },
+      );
     } catch (e) {
       console.error('Failed to add item to list');
       NotificationService.error(`Failed to add item to list '${list.name}'`, e);

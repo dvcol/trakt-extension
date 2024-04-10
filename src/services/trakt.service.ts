@@ -322,7 +322,7 @@ export class TraktService {
     },
     {
       cache: this.caches.trakt,
-      retention: CacheRetention.Day,
+      retention: CacheRetention.Hour * 2,
       key: JSON.stringify({
         template: {
           method: 'GET',

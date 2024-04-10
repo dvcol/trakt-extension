@@ -80,6 +80,8 @@ const root = ref<HTMLElement>();
 </template>
 
 <style lang="scss">
+/* stylelint-disable selector-class-pattern -- library class name */
+
 @use '~/styles/base.scss';
 @use '~/styles/mixin' as mixin;
 @use '~/styles/layout' as layout;
@@ -137,6 +139,8 @@ const root = ref<HTMLElement>();
   }
 }
 
+.n-notification-container .n-notification,
+.n-message-wrapper .n-message,
 .n-dropdown-menu,
 .n-date-panel,
 .n-virtual-list {
@@ -144,6 +148,27 @@ const root = ref<HTMLElement>();
     $from: var(--custom-bg-color, var(--bg-color-80)),
     $to: var(--custom-bg-color-hover, var(--bg-color-90))
   );
+}
+
+.n-notification-container .n-notification,
+.n-message-wrapper .n-message.n-message--error-type {
+  --custom-bg-color: var(--bg-color-error-80);
+  --custom-bg-color-hover: var(--bg-color-error);
+}
+
+.n-message-wrapper .n-message.n-message--success-type {
+  --custom-bg-color: var(--bg-color-success-80);
+  --custom-bg-color-hover: var(--bg-color-success);
+}
+
+.n-message-wrapper .n-message.n-message--info-type {
+  --custom-bg-color: var(--bg-color-info-80);
+  --custom-bg-color-hover: var(--bg-color-info);
+}
+
+.n-message-wrapper .n-message.n-message--warning-type {
+  --custom-bg-color: var(--bg-color-warning-80);
+  --custom-bg-color-hover: var(--bg-color-warning);
 }
 
 .n-popselect-menu,
@@ -163,8 +188,6 @@ const root = ref<HTMLElement>();
   background: transparent;
 }
 
-.n-message-wrapper .n-message,
-.n-notification-container .n-notification,
 .n-tooltip.n-tooltip,
 .n-popover-arrow.n-popover-arrow.n-popover-arrow {
   background: var(--custom-bg-color, var(--bg-color-60));
