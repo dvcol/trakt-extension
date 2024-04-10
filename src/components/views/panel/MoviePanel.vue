@@ -14,6 +14,7 @@ import {
 } from '~/components/views/panel/use-panel-buttons';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import {
+  DefaultListId,
   DefaultLists,
   type ListEntity,
   ListType,
@@ -93,6 +94,16 @@ const collectionLoading = computed(() => {
   }).value;
 });
 
+const watchedLoading = computed(() => {
+  if (loadingWatched.value) return true;
+  if (movieId.value === undefined) return true;
+  return isItemListLoading({
+    listType: ListType.History,
+    itemType: 'movie',
+    itemId: movieId.value,
+  }).value;
+});
+
 const activeLists = computed(() => {
   if (movieId?.value === undefined) return;
   return lists.value
@@ -133,8 +144,17 @@ const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => 
 const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
   if (!movie.value?.ids) return;
 
-  // TODO : implement add/remove from history
-  // addToOrRemoveFromList(DefaultLists.Watchlist, `${panelType.value}s`, activeItem.value.ids);
+  await addToOrRemoveFromList({
+    list: {
+      id: DefaultListId.History,
+      type: ListType.History,
+      name: 'list_type__history',
+    },
+    itemType: 'movie',
+    itemIds: movie.value?.ids,
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
 
   const _id = movie.value?.ids?.trakt;
   if (_id === undefined) return;
@@ -179,7 +199,7 @@ const { openTab } = useExtensionSettingsStore();
 
     <MoviePanelButtons
       :watched="watched"
-      :watched-loading="loadingWatched"
+      :watched-loading="watchedLoading"
       :collected="collected"
       :collected-loading="collectionLoading"
       :active-loading="listLoading"

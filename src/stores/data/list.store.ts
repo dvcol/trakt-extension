@@ -33,6 +33,7 @@ export const ListType = {
   Collection: 'collection',
   Watchlist: 'watchlist',
   Favorites: 'favorites',
+  History: 'history',
 } as const;
 
 export type ListTypes = (typeof ListType)[keyof typeof ListType];
@@ -42,14 +43,15 @@ export const DefaultListId = {
   Favorites: 'favorites',
   MovieCollection: 'movie-collection',
   ShowCollection: 'show-collection',
+  History: 'history',
 } as const;
 
 export type DefaultListIds = (typeof DefaultListId)[keyof typeof DefaultListId];
 
 export type ListEntity = {
   type: ListTypes;
-  name: string;
   id: number | string | DefaultListIds;
+  name: string;
   owner?: TraktUser;
   scope?: 'movies' | 'shows';
 };
@@ -270,11 +272,11 @@ export const useListStore = defineStore('data.list', () => {
 
       let response;
 
-      if (list.type === 'watchlist') {
+      if (list.type === ListType.Watchlist) {
         response = await TraktService.watchlist(query);
-      } else if (list.type === 'favorites') {
+      } else if (list.type === ListType.Favorites) {
         response = await TraktService.favorites(query);
-      } else if (list.type === 'collection' && list.scope) {
+      } else if (list.type === ListType.Collection && list.scope) {
         response = await TraktService.collection({
           ...query,
           type: list.scope,
@@ -317,7 +319,7 @@ export const useListStore = defineStore('data.list', () => {
     date?: Date | string | number;
     remove?: boolean;
   }) => {
-    const listId = list.id.toString();
+    const listId = list.id?.toString();
     const listType = list.type;
     const userId = list.owner?.username;
 
@@ -340,7 +342,14 @@ export const useListStore = defineStore('data.list', () => {
     typeLoading[listType] = true;
 
     try {
-      if (listType === ListType.Watchlist) {
+      if (listType === ListType.History) {
+        if (remove) {
+          await TraktService.remove.history({ [`${itemType}s`]: [{ ids: itemIds }] });
+        } else {
+          const _date = date ? new Date(date).toISOString() : undefined;
+          await TraktService.add.history({ [`${itemType}s`]: [{ watched_at: _date, ids: itemIds }] });
+        }
+      } else if (listType === ListType.Watchlist) {
         await TraktService[remove ? 'remove' : 'add'].watchlist({ [`${itemType}s`]: [{ ids: itemIds }] });
         updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
       } else if (listType === 'favorites') {
