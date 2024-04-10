@@ -3,17 +3,25 @@ import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
 import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
-import type { TraktCollection, TraktCollectionGetQuery } from '~/models/trakt/trakt-collection.model';
+import type { TraktCollection, TraktCollectionGetQuery, TraktCollectionRequest } from '~/models/trakt/trakt-collection.model';
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
-import type { TraktFavoriteGetQuery } from '~/models/trakt/trakt-favorite.model';
-import type { TraktHistoryGetQuery } from '~/models/trakt/trakt-history.model';
-import type { TraktList, TraktListItemsGetQuery } from '~/models/trakt/trakt-list.model';
+import type { TraktFavoriteGetQuery, TraktFavoriteRequest } from '~/models/trakt/trakt-favorite.model';
+import type { TraktHistoryGetQuery, TraktHistoryRemovedRequest, TraktHistoryRequest } from '~/models/trakt/trakt-history.model';
+
+import type {
+  TraktList,
+  TraktListItemsGetQuery,
+  TraktUserListItemAddedRequest,
+  TraktUserListItemRemoveRequest,
+} from '~/models/trakt/trakt-list.model';
+
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
 import type { TraktSearch } from '~/models/trakt/trakt-search.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+import type { TraktSyncRequest } from '~/models/trakt/trakt-sync.model';
 import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
@@ -344,8 +352,12 @@ export class TraktService {
         return response.json() as Promise<TraktWatchedProgress>;
       },
 
-      async collection(showId: string | number) {
-        const response = await TraktService.traktClient.shows.progress.collection.cached({ id: showId, specials: true, count_specials: false });
+      async collection(showId: string | number, cacheOption?: BaseCacheOption) {
+        const response = await TraktService.traktClient.shows.progress.collection.cached(
+          { id: showId, specials: true, count_specials: false },
+          undefined,
+          cacheOption,
+        );
         return response.json() as Promise<TraktCollectionProgress>;
       },
     },
@@ -410,6 +422,76 @@ export class TraktService {
     return response.json();
   }
 
+  static add = {
+    async watchlist(payload: TraktSyncRequest) {
+      const response = await TraktService.traktClient.sync.watchlist.add(payload);
+      TraktService.evict.watchlist().catch(console.error);
+      return response.json();
+    },
+
+    async list(payload: TraktUserListItemAddedRequest) {
+      const response = await TraktService.traktClient.users.list.items.add(payload);
+      TraktService.evict.list().catch(console.error);
+      return response.json();
+    },
+
+    async history(payload: TraktHistoryRequest) {
+      const response = await TraktService.traktClient.sync.history.add(payload);
+      TraktService.evict.history().catch(console.error);
+      if ('movies' in payload) TraktService.evict.progress.movie().catch(console.error);
+      else TraktService.evict.progress.show().catch(console.error);
+      return response.json();
+    },
+
+    async collection(payload: TraktCollectionRequest) {
+      const response = await TraktService.traktClient.sync.collection.add(payload);
+      if ('movies' in payload) TraktService.evict.collection.movie().catch(console.error);
+      else TraktService.evict.collection.show().catch(console.error);
+      return response.json();
+    },
+
+    async favorites(payload: TraktFavoriteRequest) {
+      const response = await TraktService.traktClient.sync.favorites.add(payload);
+      TraktService.evict.favorites().catch(console.error);
+      return response.json();
+    },
+  };
+
+  static remove = {
+    async watchlist(payload: TraktSyncRequest) {
+      const response = await TraktService.traktClient.sync.watchlist.remove(payload);
+      TraktService.evict.watchlist().catch(console.error);
+      return response.json();
+    },
+
+    async list(payload: TraktUserListItemRemoveRequest) {
+      const response = await TraktService.traktClient.users.list.items.remove(payload);
+      TraktService.evict.list().catch(console.error);
+      return response.json();
+    },
+
+    async history(payload: TraktHistoryRemovedRequest) {
+      const response = await TraktService.traktClient.sync.history.remove(payload);
+      TraktService.evict.history().catch(console.error);
+      if ('movies' in payload) TraktService.evict.progress.movie().catch(console.error);
+      else TraktService.evict.progress.show().catch(console.error);
+      return response.json();
+    },
+
+    async collection(payload: TraktSyncRequest) {
+      const response = await TraktService.traktClient.sync.collection.remove(payload);
+      if ('movies' in payload) TraktService.evict.collection.movie().catch(console.error);
+      else TraktService.evict.collection.show().catch(console.error);
+      return response.json();
+    },
+
+    async favorites(payload: TraktFavoriteRequest) {
+      const response = await TraktService.traktClient.sync.favorites.remove(payload);
+      TraktService.evict.favorites().catch(console.error);
+      return response.json();
+    },
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
@@ -422,6 +504,7 @@ export class TraktService {
     shows: TraktService.traktClient.shows.summary.cached.evict,
     seasons: () => Promise.all([TraktService.traktClient.seasons.summary.cached.evict(), TraktService.traktClient.seasons.season.cached.evict()]),
     episodes: TraktService.traktClient.episodes.summary.cached.evict,
+    list: TraktService.traktClient.users.list.items.get.cached.evict,
     lists: () =>
       Promise.all([
         TraktService.traktClient.users.lists.get.cached.evict(),

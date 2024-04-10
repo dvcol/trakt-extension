@@ -116,7 +116,7 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const fetchShowCollectionProgress = async (id: string) => {
+  const fetchShowCollectionProgress = async (id: string, cacheOption?: BaseCacheOption) => {
     if (showCollectionProgressLoading[id]) {
       console.warn('Already fetching show collection progress', id);
       return;
@@ -126,7 +126,7 @@ export const useShowStore = defineStore('data.show', () => {
 
     showCollectionProgressLoading[id] = true;
     try {
-      showsCollectionProgress[id] = await TraktService.progress.show.collection(id);
+      showsCollectionProgress[id] = await TraktService.progress.show.collection(id, cacheOption);
     } catch (e) {
       console.error('Failed to fetch show collection progress', id);
       throw e;
@@ -262,6 +262,8 @@ export const useShowStore = defineStore('data.show', () => {
     clearState,
     getShow,
     fetchShow,
+    fetchShowProgress,
+    fetchShowCollectionProgress,
     getShowLoading,
     getShowSeasons,
     fetchShowSeasons,

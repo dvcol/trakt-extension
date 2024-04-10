@@ -9,7 +9,11 @@ import IconListEmpty from '~/components/icons/IconListEmpty.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
-import { usePanelButtons } from '~/components/views/panel/use-panel-buttons';
+import {
+  PanelButtonsOption,
+  type PanelButtonsOptions,
+  usePanelButtons,
+} from '~/components/views/panel/use-panel-buttons';
 import {
   type ListEntity,
   ListType,
@@ -45,7 +49,33 @@ const props = defineProps({
   },
 });
 
-const { watched, collected, activeLoading } = toRefs(props);
+const emit = defineEmits<{
+  (e: 'onListUpdate', value: ListEntity['id'], remove: boolean): void;
+  (e: 'onCollectionUpdate', value: PanelButtonsOptions, date?: number): void;
+  (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
+}>();
+
+const { watched, collected, activeLoading, activeLists } = toRefs(props);
+
+const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
+  const newList = Array.isArray(value) ? value : [value];
+  const removed = activeLists?.value?.find(id => !newList.includes(id));
+  if (removed) emit('onListUpdate', removed, true);
+  const added = newList.find(id => !activeLists?.value?.includes(id));
+  if (added) emit('onListUpdate', added, false);
+};
+
+const onCollectionUpdate = (value: unknown, date?: number) => {
+  if (value === PanelButtonsOption.Cancel) return;
+  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
+  emit('onCollectionUpdate', value as PanelButtonsOptions, date);
+};
+
+const onWatchedUpdate = (value: unknown, date?: number) => {
+  if (value === PanelButtonsOption.Cancel) return;
+  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
+  emit('onWatchedUpdate', value as PanelButtonsOptions, date);
+};
 
 const i18n = useI18n('panel', 'buttons');
 
@@ -63,11 +93,11 @@ const collectionOptions = computed(() => {
   return timeOptions;
 });
 
-const { lists, loading } = useListsStoreRefs();
+const { lists, listsLoading } = useListsStoreRefs();
 const { fetchLists, getIcon } = useListsStore();
 
-const listsLoading = computed(() => {
-  return loading.value || activeLoading.value;
+const listLoading = computed(() => {
+  return listsLoading.value || activeLoading.value;
 });
 
 const listOptions = computed(() => {
@@ -105,8 +135,9 @@ onMounted(() => {
         }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
-        :disabled="listsLoading"
+        :disabled="listLoading"
         type="warning"
+        @on-select="onListUpdate"
       >
         <template #tooltip>
           <NFlex vertical size="small" align="center" justify="center">
@@ -128,6 +159,7 @@ onMounted(() => {
         :filled="collected"
         :disabled="collectedLoading"
         type="info"
+        @on-select="onCollectionUpdate"
       >
         {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>
@@ -142,6 +174,7 @@ onMounted(() => {
         :icon="watched ? IconPlayFilled : IconPlay"
         :filled="watched"
         :disabled="watchedLoading"
+        @on-select="onWatchedUpdate"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
       </PanelButtonProgress>

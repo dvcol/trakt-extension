@@ -82,6 +82,9 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
+  const changeMovieWatched = (id: string | number, remove?: boolean) => {
+    moviesWatched[id.toString()] = !remove;
+  };
 
   const fetchMovieCollected = async () => {
     if (loadingCollected.value) {
@@ -109,6 +112,9 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
+  const changeMovieCollected = (id: string | number, remove?: boolean) => {
+    moviesCollected[id.toString()] = !remove;
+  };
 
   return {
     clearState,
@@ -121,6 +127,8 @@ export const useMovieStore = defineStore('data.movie', () => {
     fetchMovieCollected,
     getMovieCollected,
     loadingCollected,
+    changeMovieWatched,
+    changeMovieCollected,
   };
 });
 

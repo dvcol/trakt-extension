@@ -21,8 +21,14 @@ import { watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('list');
 
-const { filteredListItems, pagination, loading, pageSize, belowThreshold, searchList } =
-  useListStoreRefs();
+const {
+  filteredListItems,
+  pagination,
+  listLoading,
+  pageSize,
+  belowThreshold,
+  searchList,
+} = useListStoreRefs();
 const { fetchListItems, clearState } = useListStore();
 
 watchUserChange({
@@ -40,7 +46,7 @@ const listItems = addLoadMore(list, pagination, searchList);
 const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, {
   data: listItems,
   pagination,
-  loading,
+  loading: listLoading,
   belowThreshold,
 });
 
@@ -54,7 +60,7 @@ const { onItemClick } = usePanelItem();
       ref="listRef"
       hide-date
       :items="list"
-      :loading="loading"
+      :loading="listLoading"
       :pagination="pagination"
       :page-size="pageSize"
       @on-scroll="scrolled = true"
