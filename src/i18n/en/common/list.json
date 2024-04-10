@@ -1,0 +1,26 @@
+{
+  "common__list__list": {
+    "message": "List",
+    "description": "List of media items"
+  },
+  "common__list__collaboration": {
+    "message": "Collaboration",
+    "description": "Shared list of media items"
+  },
+  "common__list__collection": {
+    "message": "Collection",
+    "description": "Collection of media items"
+  },
+  "common__list__watchlist": {
+    "message": "Watchlist",
+    "description": "Watchlisted media items"
+  },
+  "common__list__favorites": {
+    "message": "Favorites",
+    "description": "List of favorites media items"
+  },
+  "common__list__history": {
+    "message": "History",
+    "description": "List of watched media items"
+  }
+}
