@@ -334,7 +334,7 @@ export const useListStore = defineStore('data.list', () => {
       return;
     }
 
-    console.info('Adding item to list', listId, itemType, itemIds);
+    console.info(`${remove ? 'Removing' : 'Adding'} item to list`, listId, itemType, itemIds);
 
     if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
     if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};

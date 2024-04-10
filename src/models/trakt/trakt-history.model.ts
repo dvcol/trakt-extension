@@ -51,7 +51,7 @@ export type TraktHistoryAdded = {
 
 export type TraktHistoryRemovedRequest = TraktSyncRequest & {
   /** Array of history ids. */
-  ids: number[];
+  ids?: number[];
 };
 
 export type TraktHistoryRemoved = {

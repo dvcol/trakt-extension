@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { onMounted, toRefs, watch } from 'vue';
+
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
@@ -12,6 +14,15 @@ import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.stor
 import { useI18n } from '~/utils';
 import { watchUserChange } from '~/utils/store.utils';
 
+const props = defineProps({
+  panel: {
+    type: Boolean,
+    required: false,
+  },
+});
+
+const { panel } = toRefs(props);
+
 const { filteredHistory, pagination, loading, pageSize, belowThreshold, searchHistory } =
   useHistoryStoreRefs();
 const { fetchHistory, clearState } = useHistoryStore();
@@ -21,6 +32,12 @@ const i18n = useI18n('history');
 watchUserChange({
   fetch: fetchHistory,
   clear: clearState,
+});
+
+onMounted(() => {
+  watch(panel, async value => {
+    if (!value) await fetchHistory();
+  });
 });
 
 const list = useListScroll(filteredHistory, 'watched_at');
