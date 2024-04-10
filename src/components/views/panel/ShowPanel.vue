@@ -227,6 +227,8 @@ const titleUrl = computed(() => {
   });
 });
 
+const releaseDate = computed(() => activeItem.value?.first_aired);
+
 const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   if (!panelType.value || !activeItem.value?.ids) return;
   const _list = lists.value.find(list => list.id === value);
@@ -240,8 +242,14 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   });
 };
 
-const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => {
+const onCollectionUpdate = async (
+  value: PanelButtonsOptions,
+  date?: string | number | Date,
+) => {
   if (!panelType.value || !activeItem.value?.ids) return;
+  if (date === undefined && value === PanelButtonsOption.Release) {
+    date = releaseDate.value;
+  }
 
   await addToOrRemoveFromList({
     list: DefaultLists.ShowCollection,
@@ -254,8 +262,14 @@ const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => 
   await fetchShowCollectionProgress(showId.value, { force: true });
 };
 
-const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
+const onWatchedUpdate = async (
+  value: PanelButtonsOptions,
+  date?: string | number | Date,
+) => {
   if (!panelType.value || !activeItem.value?.ids) return;
+  if (date === undefined && value === PanelButtonsOption.Release) {
+    date = releaseDate.value;
+  }
 
   await addToOrRemoveFromList({
     list: {
@@ -332,6 +346,7 @@ const { openTab } = useExtensionSettingsStore();
       :collection-loading="collectionLoading"
       :active-loading="listLoading"
       :active-lists="activeLists"
+      :has-release="!!releaseDate"
       @on-list-update="onListUpdate"
       @on-collection-update="onCollectionUpdate"
       @on-watched-update="onWatchedUpdate"

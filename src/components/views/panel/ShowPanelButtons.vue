@@ -58,6 +58,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hasRelease: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -66,8 +70,14 @@ const emit = defineEmits<{
   (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
 }>();
 
-const { mode, watchedProgress, collectionProgress, activeLoading, activeLists } =
-  toRefs(props);
+const {
+  mode,
+  watchedProgress,
+  collectionProgress,
+  activeLoading,
+  activeLists,
+  hasRelease,
+} = toRefs(props);
 
 const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
   const newList = Array.isArray(value) ? value : [value];
@@ -122,19 +132,31 @@ const root = ref<HTMLDivElement>();
 const { removeOptions, mixedOptions, timeOptions } = usePanelButtons();
 
 const watchedOptions = computed(() => {
-  if (watched.value) return removeOptions;
-  if (watchedPercentage.value > 0 && watchedPercentage.value < 100) {
-    return mixedOptions;
+  const _options = [];
+  if (watched.value) _options.push(...removeOptions);
+  else if (watchedPercentage.value > 0 && watchedPercentage.value < 100) {
+    _options.push(...mixedOptions);
+  } else {
+    _options.push(...timeOptions);
   }
-  return timeOptions;
+  if (!hasRelease.value) {
+    return _options.filter(option => option.value !== PanelButtonsOption.Release);
+  }
+  return _options;
 });
 
 const collectionOptions = computed(() => {
-  if (collected.value) return removeOptions;
-  if (collectionPercentage.value > 0 && collectionPercentage.value < 100) {
-    return mixedOptions;
+  const _options = [];
+  if (collected.value) _options.push(...removeOptions);
+  else if (collectionPercentage.value > 0 && collectionPercentage.value < 100) {
+    _options.push(...mixedOptions);
+  } else {
+    _options.push(...timeOptions);
   }
-  return timeOptions;
+  if (!hasRelease.value) {
+    return _options.filter(option => option.value !== PanelButtonsOption.Release);
+  }
+  return _options;
 });
 
 const { lists, listsLoading } = useListsStoreRefs();
