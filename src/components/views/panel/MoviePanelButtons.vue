@@ -47,6 +47,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hasRelease: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -55,7 +59,7 @@ const emit = defineEmits<{
   (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
 }>();
 
-const { watched, collected, activeLoading, activeLists } = toRefs(props);
+const { watched, collected, activeLoading, activeLists, hasRelease } = toRefs(props);
 
 const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
   const newList = Array.isArray(value) ? value : [value];
@@ -84,13 +88,19 @@ const root = ref<HTMLDivElement>();
 const { removeOptions, timeOptions } = usePanelButtons();
 
 const watchedOptions = computed(() => {
-  if (watched.value) return removeOptions;
-  return timeOptions;
+  const _options = watched.value ? removeOptions : timeOptions;
+  if (!hasRelease.value) {
+    return _options.filter(option => option.value !== PanelButtonsOption.Release);
+  }
+  return _options;
 });
 
 const collectionOptions = computed(() => {
-  if (collected.value) return removeOptions;
-  return timeOptions;
+  const _options = collected.value ? removeOptions : timeOptions;
+  if (!hasRelease.value) {
+    return _options.filter(option => option.value !== PanelButtonsOption.Release);
+  }
+  return _options;
 });
 
 const { lists, listsLoading } = useListsStoreRefs();

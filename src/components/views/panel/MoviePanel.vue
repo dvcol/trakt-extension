@@ -125,8 +125,16 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   });
 };
 
-const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => {
+const releaseDate = computed(() => movie.value?.released);
+
+const onCollectionUpdate = async (
+  value: PanelButtonsOptions,
+  date?: string | number | Date,
+) => {
   if (!movie.value?.ids) return;
+  if (date === undefined && value === PanelButtonsOption.Release) {
+    date = releaseDate.value;
+  }
 
   await addToOrRemoveFromList({
     list: DefaultLists.ShowCollection,
@@ -141,8 +149,14 @@ const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => 
   changeMovieCollected(_id, value === PanelButtonsOption.Remove);
 };
 
-const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
+const onWatchedUpdate = async (
+  value: PanelButtonsOptions,
+  date?: string | number | Date,
+) => {
   if (!movie.value?.ids) return;
+  if (date === undefined && value === PanelButtonsOption.Release) {
+    date = releaseDate.value;
+  }
 
   await addToOrRemoveFromList({
     list: {
@@ -204,6 +218,7 @@ const { openTab } = useExtensionSettingsStore();
       :collected-loading="collectionLoading"
       :active-loading="listLoading"
       :active-lists="activeLists"
+      :has-release="!!releaseDate"
       @on-list-update="onListUpdate"
       @on-collection-update="onCollectionUpdate"
       @on-watched-update="onWatchedUpdate"
