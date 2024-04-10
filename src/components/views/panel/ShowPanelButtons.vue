@@ -10,7 +10,11 @@ import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
 
-import { usePanelButtons } from '~/components/views/panel/use-panel-buttons';
+import {
+  PanelButtonsOption,
+  type PanelButtonsOptions,
+  usePanelButtons,
+} from '~/components/views/panel/use-panel-buttons';
 import {
   type EpisodeProgress,
   type SeasonProgress,
@@ -57,27 +61,33 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'onListUpdate', value: ListEntity['id'][]): void;
-  (e: 'onCollectionUpdate', value: ListEntity['id'], date?: number): void;
-  (e: 'onWatchedUpdate', value: ListEntity['id'], date?: number): void;
+  (e: 'onListUpdate', value: ListEntity['id'], remove: boolean): void;
+  (e: 'onCollectionUpdate', value: PanelButtonsOptions, date?: number): void;
+  (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
 }>();
 
+const { mode, watchedProgress, collectionProgress, activeLoading, activeLists } =
+  toRefs(props);
+
 const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
-  emit('onListUpdate', value as ListEntity['id'][]);
+  const newList = Array.isArray(value) ? value : [value];
+  const removed = activeLists?.value?.find(id => !newList.includes(id));
+  if (removed) emit('onListUpdate', removed, true);
+  const added = newList.find(id => !activeLists?.value?.includes(id));
+  if (added) emit('onListUpdate', added, false);
 };
 
-const onCollectionUpdate = (
-  value: ListEntity['id'] | ListEntity['id'][],
-  date?: number,
-) => {
-  emit('onCollectionUpdate', value as ListEntity['id'], date);
+const onCollectionUpdate = (value: unknown, date?: number) => {
+  if (value === PanelButtonsOption.Cancel) return;
+  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
+  emit('onCollectionUpdate', value as PanelButtonsOptions, date);
 };
 
-const onWatchedUpdate = (value: ListEntity['id'] | ListEntity['id'][], date?: number) => {
-  emit('onWatchedUpdate', value as ListEntity['id'], date);
+const onWatchedUpdate = (value: unknown, date?: number) => {
+  if (value === PanelButtonsOption.Cancel) return;
+  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
+  emit('onWatchedUpdate', value as PanelButtonsOptions, date);
 };
-
-const { mode, watchedProgress, collectionProgress, activeLoading } = toRefs(props);
 
 const watched = computed(() => {
   const _progress = watchedProgress?.value;
@@ -127,11 +137,11 @@ const collectionOptions = computed(() => {
   return timeOptions;
 });
 
-const { lists, loading } = useListsStoreRefs();
+const { lists, listsLoading } = useListsStoreRefs();
 const { fetchLists, getIcon } = useListsStore();
 
-const listsLoading = computed(() => {
-  return loading.value || activeLoading.value;
+const listLoading = computed(() => {
+  return listsLoading.value || activeLoading.value;
 });
 
 const listOptions = computed(() => {
@@ -169,7 +179,7 @@ onMounted(() => {
         }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
-        :loading="listsLoading"
+        :loading="listLoading"
         type="warning"
         @on-select="onListUpdate"
       >

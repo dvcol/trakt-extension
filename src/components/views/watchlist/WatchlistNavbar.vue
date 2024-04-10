@@ -20,7 +20,7 @@ const i18n = useI18n('navbar', 'list');
 
 const { pageSize, searchList } = useListStoreRefs();
 
-const { loading, lists, activeList } = useListsStoreRefs();
+const { listsLoading, lists, activeList } = useListsStoreRefs();
 const { fetchLists, clearState, getIcon } = useListsStore();
 
 type ListOption = SelectOption & { source: ListEntity; icon: Component };
@@ -88,7 +88,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
       class="list-select"
       :options="listOptions"
       :to="parentElement"
-      :loading="loading"
+      :loading="listsLoading"
       :render-label="renderLabel"
       :render-tag="renderTag"
       filterable

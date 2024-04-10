@@ -9,9 +9,9 @@ import type {
   TraktListItemsGetQuery,
   TraktListReordered,
   TraktUserListItemAdded,
+  TraktUserListItemAddedRequest,
   TraktUserListItemRemoved,
   TraktUserListItemRemoveRequest,
-  TraktUserListItemRequest,
 } from '~/models/trakt/trakt-list.model';
 import type { TraktNoteItem, TraktNoteTypes } from '~/models/trakt/trakt-note.model';
 import type { TraktRating } from '~/models/trakt/trakt-rating.model';
@@ -927,16 +927,7 @@ export const users = {
        *
        * @see [add-items-to-personal-list]{@link https://trakt.docs.apiary.io/#reference/users/add-list-items/add-items-to-personal-list}
        */
-      add: new TraktClientEndpoint<
-        {
-          /** User slug */
-          id: string;
-          /** List Trakt ID or Trakt slug */
-          list_id: string;
-        } & TraktUserListItemRequest,
-        TraktUserListItemAdded,
-        false
-      >({
+      add: new TraktClientEndpoint<TraktUserListItemAddedRequest, TraktUserListItemAdded, false>({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/items',
         opts: {
@@ -966,16 +957,7 @@ export const users = {
        *
        * @see [remove-items-from-personal-list]{@link https://trakt.docs.apiary.io/#reference/users/remove-list-items/remove-items-from-personal-list}
        */
-      remove: new TraktClientEndpoint<
-        {
-          /** User slug */
-          id: string;
-          /** List Trakt ID or Trakt slug */
-          list_id: string;
-        } & TraktUserListItemRemoveRequest,
-        TraktUserListItemRemoved,
-        false
-      >({
+      remove: new TraktClientEndpoint<TraktUserListItemRemoveRequest, TraktUserListItemRemoved, false>({
         method: HttpMethod.POST,
         url: '/users/:id/lists/:list_id/items/remove',
         opts: {

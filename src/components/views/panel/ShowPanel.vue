@@ -8,8 +8,18 @@ import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
 import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
+import {
+  PanelButtonsOption,
+  type PanelButtonsOptions,
+} from '~/components/views/panel/use-panel-buttons';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { useListsStoreRefs, useListStore } from '~/stores/data/list.store';
+import {
+  DefaultLists,
+  type ListEntity,
+  ListType,
+  useListsStoreRefs,
+  useListStore,
+} from '~/stores/data/list.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
@@ -35,6 +45,8 @@ const { showId, seasonNumber, episodeNumber } = toRefs(props);
 const {
   getShow,
   fetchShow,
+  fetchShowProgress,
+  fetchShowCollectionProgress,
   getShowSeasons,
   fetchShowSeasons,
   getShowSeasonEpisodes,
@@ -64,11 +76,6 @@ const collectionProgress = computed(() => {
   return getShowCollectionProgress(showId.value).value;
 });
 
-const collectionLoading = computed(() => {
-  if (!showId?.value) return;
-  return getShowCollectionLoading(showId.value).value;
-});
-
 const seasonNb = computed(() => {
   if (seasonNumber?.value === undefined) return;
   const _seasonNumber = Number(seasonNumber.value);
@@ -81,12 +88,6 @@ const episodeNb = computed(() => {
   const _episodeNumber = Number(episodeNumber.value);
   if (Number.isNaN(_episodeNumber)) return;
   return _episodeNumber;
-});
-
-const panelType = computed<'show' | 'season' | 'episode'>(() => {
-  if (episodeNb?.value !== undefined && seasonNb?.value !== undefined) return 'episode';
-  if (seasonNb?.value !== undefined) return 'season';
-  return 'show';
 });
 
 const show = computed(() => {
@@ -117,6 +118,18 @@ const episode = computed(() => {
 const season = computed(() => {
   if (seasonNb?.value === undefined) return;
   return seasons.value?.[seasonNb.value];
+});
+
+const panelType = computed<'show' | 'season' | 'episode'>(() => {
+  if (episodeNb?.value !== undefined && seasonNb?.value !== undefined) return 'episode';
+  if (seasonNb?.value !== undefined) return 'season';
+  return 'show';
+});
+
+const activeItem = computed(() => {
+  if (panelType.value === 'episode') return episode.value;
+  if (panelType.value === 'season') return season.value;
+  return show.value;
 });
 
 const watchedProgressEntity = computed(() => {
@@ -156,17 +169,36 @@ const collectionProgressEntity = computed(() => {
 });
 
 const { lists } = useListsStoreRefs();
-const { isListLoading, isItemInList } = useListStore();
+const { isListTypeLoading, isItemInList, addToOrRemoveFromList, isItemListLoading } =
+  useListStore();
 
-const listLoading = computed(() => {
+const listLoading = computed(
+  () =>
+    isListTypeLoading(ListType.Watchlist).value || isListTypeLoading(ListType.List).value,
+);
+
+const activeItemCollectionLoading = computed(() => {
+  const _id = activeItem.value?.ids?.trakt;
+  if (_id === undefined) return;
+  return isItemListLoading({
+    listType: ListType.Collection,
+    itemType: panelType.value,
+    itemId: _id,
+  }).value;
+});
+
+const collectionLoading = computed(() => {
   if (!showId?.value) return;
-  return isListLoading(showId.value).value;
+  if (activeItemCollectionLoading.value) return true;
+  return getShowCollectionLoading(showId.value).value;
 });
 
 const activeLists = computed(() => {
-  if (!showId?.value) return;
+  const _id = activeItem?.value?.ids?.trakt;
+  const _type = panelType.value;
+  if (_id === undefined || !_type) return;
   return lists.value
-    ?.filter(list => isItemInList(list.id, showId.value).value)
+    ?.filter(list => isItemInList(list.id, _type, _id).value)
     .map(list => list.id);
 });
 
@@ -183,6 +215,42 @@ const titleUrl = computed(() => {
     id: show.value.ids.trakt,
   });
 });
+
+const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
+  if (!panelType.value || !activeItem.value?.ids) return;
+  const _list = lists.value.find(list => list.id === value);
+  if (!_list) return;
+
+  await addToOrRemoveFromList({
+    list: _list,
+    itemType: panelType.value,
+    itemIds: activeItem.value.ids,
+    remove,
+  });
+};
+
+const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => {
+  if (!panelType.value || !activeItem.value?.ids) return;
+
+  await addToOrRemoveFromList({
+    list: DefaultLists.ShowCollection,
+    itemType: panelType.value,
+    itemIds: activeItem.value.ids,
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
+  if (!showId.value) return;
+  await fetchShowCollectionProgress(showId.value, { force: true });
+};
+
+const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
+  if (!panelType.value || !activeItem.value?.ids) return;
+
+  // TODO : implement add/remove from history
+  // addToOrRemoveFromList(DefaultLists.Watchlist, `${panelType.value}s`, activeItem.value.ids);
+  if (!showId.value) return;
+  await fetchShowProgress(showId.value, { force: true });
+};
 
 onMounted(() => {
   watch(
@@ -244,6 +312,9 @@ const { openTab } = useExtensionSettingsStore();
       :collection-loading="collectionLoading"
       :active-loading="listLoading"
       :active-lists="activeLists"
+      @on-list-update="onListUpdate"
+      @on-collection-update="onCollectionUpdate"
+      @on-watched-update="onWatchedUpdate"
     />
 
     <ShowPanelPicker

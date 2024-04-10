@@ -5,8 +5,9 @@ import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import type { TraktCollection } from '~/models/trakt/trakt-collection.model';
 import type { TraktFavoriteItem } from '~/models/trakt/trakt-favorite.model';
+import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 import type { TraktListItem } from '~/models/trakt/trakt-list.model';
-
+import type { TraktUser } from '~/models/trakt/trakt-user.model';
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
@@ -36,10 +37,20 @@ export const ListType = {
 
 export type ListTypes = (typeof ListType)[keyof typeof ListType];
 
+export const DefaultListId = {
+  Watchlist: 'watchlist',
+  Favorites: 'favorites',
+  MovieCollection: 'movie-collection',
+  ShowCollection: 'show-collection',
+} as const;
+
+export type DefaultListIds = (typeof DefaultListId)[keyof typeof DefaultListId];
+
 export type ListEntity = {
   type: ListTypes;
   name: string;
-  id: number | string;
+  id: number | string | DefaultListIds;
+  owner?: TraktUser;
   scope?: 'movies' | 'shows';
 };
 
@@ -51,19 +62,12 @@ export const anyListDateGetter = (item: AnyList) => {
   if ('collected_at' in item) return item.collected_at;
 };
 
-export const DefaultListId = {
-  Watchlist: 'watchlist',
-  Favorites: 'favorites',
-  MovieCollection: 'movie-collection',
-  ShowCollection: 'show-collection',
-} as const;
-
-export const DefaultLists: Record<string, ListEntity> = {
+export const DefaultLists = {
   Watchlist: { type: ListType.Watchlist, id: DefaultListId.Watchlist, name: 'list_type__watchlist' },
   Favorites: { type: ListType.Favorites, id: DefaultListId.Favorites, name: 'list_type__favorites' },
   MovieCollection: { type: ListType.Collection, id: DefaultListId.MovieCollection, scope: 'movies', name: 'list_type__collection_movie' },
   ShowCollection: { type: ListType.Collection, id: DefaultListId.ShowCollection, scope: 'shows', name: 'list_type__collection_show' },
-} as const;
+} as const satisfies Record<string, ListEntity>;
 
 const DefaultList: ListEntity[] = Object.values(DefaultLists);
 
@@ -113,17 +117,19 @@ export const useListsStore = defineStore('data.lists', () => {
         ...personals.map(
           l =>
             ({
-              type: 'list',
+              type: ListType.List,
               name: l.name,
               id: l.ids.trakt,
+              owner: l.user,
             }) satisfies ListEntity,
         ),
         ...collaborations.map(
           l =>
             ({
-              type: 'collaboration',
+              type: ListType.Collaboration,
               name: l.name,
               id: l.ids.trakt,
+              owner: l.user,
             }) satisfies ListEntity,
         ),
       ];
@@ -163,19 +169,28 @@ export const useListsStore = defineStore('data.lists', () => {
     });
   };
 
-  return { loading, lists, activeList, fetchLists, clearState, initListsStore, getIcon };
+  return { listsLoading: loading, lists, activeList, fetchLists, clearState, initListsStore, getIcon };
 });
 
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
 
-type ListDictionary = Record<string, Record<string, boolean>>;
+type ListItemTypes = 'show' | 'season' | 'episode' | 'movie';
+type MinimalItem = Partial<Record<ListItemTypes, { ids: Pick<TraktApiIds, 'trakt'> }>>;
+
+type ListDictionary = Record<string, Partial<Record<ListItemTypes, Record<string, boolean>>>>;
 type ListDictionaryLoading = Record<string, boolean>;
+
+type ListTypeLoading = Partial<Record<ListTypes, boolean>>;
+type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListItemTypes, Record<string, boolean>>>>>;
 
 export const useListStore = defineStore('data.list', () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
   const pagination = ref<TraktClientPagination>();
+
+  const typeLoading = reactive<ListTypeLoading>({});
+  const typeItemLoading = reactive<ListDictionaryItemLoading>({});
 
   const listItems = ref<AnyList[]>([]);
   const searchList = ref('');
@@ -200,17 +215,23 @@ export const useListStore = defineStore('data.list', () => {
     Object.assign(listDictionaryLoading, {});
   };
 
-  const addToDictionary = (list: ListEntity, item: AnyList) => {
+  const updateDictionary = (list: ListEntity, item: MinimalItem, remove?: boolean) => {
     if (![ListType.List, ListType.Watchlist].map(String).includes(list.type)) return;
-    if (!listDictionary[list.id]) listDictionary[list.id] = {};
-    if ('movie' in item && item.movie?.ids?.trakt) {
-      listDictionary[list.id][item.movie.ids.trakt] = true;
-    } else if ('show' in item && item.show?.ids?.trakt) {
-      listDictionary[list.id][item.show.ids.trakt] = true;
-    } else if ('season' in item && item.season?.ids?.trakt) {
-      listDictionary[list.id][item.season.ids.trakt] = true;
-    } else if ('episode' in item && item.episode?.ids?.trakt) {
-      listDictionary[list.id][item.episode.ids.trakt] = true;
+    const _id = list.id.toString();
+
+    if (!listDictionary[_id]) listDictionary[_id] = {};
+    if ('movie' in item && item.movie?.ids?.trakt !== undefined) {
+      if (!listDictionary[_id].movie) listDictionary[_id].movie = {};
+      listDictionary[_id].movie![item.movie.ids.trakt.toString()] = !remove;
+    } else if ('episode' in item && item.episode?.ids?.trakt !== undefined) {
+      if (!listDictionary[_id].episode) listDictionary[_id].episode = {};
+      listDictionary[_id].episode![item.episode.ids.trakt.toString()] = !remove;
+    } else if ('season' in item && item.season?.ids?.trakt !== undefined) {
+      if (!listDictionary[_id].season) listDictionary[_id].season = {};
+      listDictionary[_id].season![item.season.ids.trakt.toString()] = !remove;
+    } else if ('show' in item && item.show?.ids?.trakt !== undefined) {
+      if (!listDictionary[_id].show) listDictionary[_id].show = {};
+      listDictionary[_id].show![item.show.ids.trakt.toString()] = !remove;
     }
   };
 
@@ -234,8 +255,10 @@ export const useListStore = defineStore('data.list', () => {
     if (firstLoad.value) firstLoad.value = false;
 
     console.info('Fetching List', list);
+
     loading.value = true;
-    listDictionaryLoading[list.id] = true;
+    typeLoading[list.type] = true;
+    listDictionaryLoading[list.id.toString()] = true;
     const timeout = debounceLoading(listItems, loadingPlaceholder, !page);
     try {
       const query = {
@@ -256,13 +279,13 @@ export const useListStore = defineStore('data.list', () => {
           ...query,
           type: list.scope,
         });
-      } else if (list.id) {
+      } else if (list.id !== undefined) {
         response = await TraktService.list({ ...query, id: user.value, list_id: list.id.toString() });
       } else {
         throw new Error('Invalid list type');
       }
       const newData = response.data.map((item, index) => {
-        addToDictionary(list, item as AnyList);
+        updateDictionary(list, item as MinimalItem);
         if ('id' in item) return item;
         return { ...item, id: `${page}-${index}` };
       });
@@ -276,12 +299,85 @@ export const useListStore = defineStore('data.list', () => {
     } finally {
       clearTimeout(timeout);
       loading.value = false;
-      listDictionaryLoading[list.id] = false;
+      typeLoading[list.type] = false;
+      listDictionaryLoading[list.id.toString()] = false;
     }
   };
 
-  const isListLoading = (listId: ListEntity['id']) => computed(() => listDictionaryLoading[listId]);
-  const isItemInList = (listId: ListEntity['id'], itemId: string | number) => computed(() => listDictionary[listId]?.[itemId]);
+  const addToOrRemoveFromList = async ({
+    list,
+    itemType,
+    itemIds,
+    date,
+    remove,
+  }: {
+    list: ListEntity;
+    itemType: ListItemTypes;
+    itemIds: Pick<TraktApiIds, 'trakt'>;
+    date?: Date | string | number;
+    remove?: boolean;
+  }) => {
+    const listId = list.id.toString();
+    const listType = list.type;
+    const userId = list.owner?.username;
+
+    if (!listType) throw new Error('List type is missing');
+    if (listType === ListType.List || listType === ListType.Collaboration) {
+      if (listId === undefined) throw new Error('List ID is missing');
+      if (userId === undefined) throw new Error('User ID is missing');
+    }
+
+    if (typeItemLoading[listType]?.[itemType]?.[itemIds.trakt.toString()]) {
+      console.warn('Already adding item to list');
+      return;
+    }
+
+    console.info('Adding item to list', listId, itemType, itemIds);
+
+    if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
+    if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};
+    typeItemLoading[listType]![itemType]![itemIds.trakt.toString()] = true;
+    typeLoading[listType] = true;
+
+    try {
+      if (listType === ListType.Watchlist) {
+        await TraktService[remove ? 'remove' : 'add'].watchlist({ [`${itemType}s`]: [{ ids: itemIds }] });
+        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
+      } else if (listType === 'favorites') {
+        await TraktService[remove ? 'remove' : 'add'].favorites({ [`${itemType}s`]: [{ ids: itemIds }] });
+      } else if (listType === ListType.Collection) {
+        console.info(`${remove ? 'Removing' : 'adding'} item to/form collection`, { [`${itemType}s`]: [{ ids: itemIds }] });
+        if (remove) {
+          await TraktService.remove.collection({ [`${itemType}s`]: [{ ids: itemIds }] });
+        } else {
+          const _date = date ? new Date(date).toISOString() : undefined;
+          await TraktService.add.collection({ [`${itemType}s`]: [{ collected_at: _date, ids: itemIds }] });
+        }
+      } else if ([ListType.List, ListType.Collaboration].includes(listType)) {
+        await TraktService[remove ? 'remove' : 'add'].list({ id: userId!, list_id: listId, [`${itemType}s`]: [{ ids: itemIds }] });
+        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
+      } else {
+        console.error(`Unknown list type ${listType}.`);
+      }
+    } catch (e) {
+      console.error('Failed to add item to list');
+      NotificationService.error(`Failed to add item to list '${list.name}'`, e);
+      throw e;
+    } finally {
+      typeItemLoading[listType]![itemType]![itemIds.trakt.toString()] = false;
+      typeLoading[listType] = false;
+    }
+  };
+
+  const isListLoading = (listId: ListEntity['id']) => computed(() => listDictionaryLoading[listId.toString()]);
+  const isItemInList = (listId: ListEntity['id'], itemType: ListItemTypes, itemId: string | number) =>
+    computed(() => {
+      return listDictionary[listId.toString()]?.[itemType]?.[itemId.toString()];
+    });
+  const isItemListLoading = ({ listType, itemType, itemId }: { listType: ListTypes; itemType: ListItemTypes; itemId: string | number }) =>
+    computed(() => typeItemLoading[listType]?.[itemType]?.[itemId]);
+
+  const isListTypeLoading = (listType: ListTypes) => computed(() => typeLoading[listType]);
 
   const initListStore = async () => {
     await restoreState();
@@ -299,7 +395,7 @@ export const useListStore = defineStore('data.list', () => {
   };
 
   return {
-    loading,
+    listLoading: loading,
     listItems,
     pagination,
     pageSize,
@@ -312,6 +408,9 @@ export const useListStore = defineStore('data.list', () => {
     initListStore,
     isListLoading,
     isItemInList,
+    isListTypeLoading,
+    isItemListLoading,
+    addToOrRemoveFromList,
   };
 });
 

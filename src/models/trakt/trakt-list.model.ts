@@ -111,6 +111,13 @@ export type TraktUserListItemRequest = {
   people: { notes?: string } & TraktUserListItem<'person'>[];
 };
 
+export type TraktUserListItemAddedRequest = {
+  /** User slug */
+  id: string;
+  /** List Trakt ID or Trakt slug */
+  list_id: string;
+} & Partial<TraktUserListItemRequest>;
+
 export type TraktUserListItemAdded = {
   added: {
     movies: number;
@@ -141,11 +148,16 @@ export type TraktUserListItemAdded = {
 };
 
 export type TraktUserListItemRemoveRequest = {
-  movies: TraktUserListItem<'movie'>[];
-  shows: TraktUserListItem<'show'>[];
-  seasons: TraktUserListItem<'season'>[];
-  episodes: TraktUserListItem<'episode'>[];
-  people: TraktUserListItem<'person'>[];
+  /** User slug */
+  id: string;
+  /** List Trakt ID or Trakt slug */
+  list_id: string;
+} & {
+  movies?: TraktUserListItem<'movie'>[];
+  shows?: TraktUserListItem<'show'>[];
+  seasons?: TraktUserListItem<'season'>[];
+  episodes?: TraktUserListItem<'episode'>[];
+  people?: TraktUserListItem<'person'>[];
 };
 
 export type TraktUserListItemRemoved = {

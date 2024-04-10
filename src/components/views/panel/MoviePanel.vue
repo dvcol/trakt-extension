@@ -8,8 +8,18 @@ import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 
+import {
+  PanelButtonsOption,
+  type PanelButtonsOptions,
+} from '~/components/views/panel/use-panel-buttons';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { useListsStoreRefs, useListStore } from '~/stores/data/list.store';
+import {
+  DefaultLists,
+  type ListEntity,
+  ListType,
+  useListsStoreRefs,
+  useListStore,
+} from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
@@ -31,6 +41,8 @@ const {
   getMovieCollected,
   fetchMovieWatched,
   fetchMovieCollected,
+  changeMovieWatched,
+  changeMovieCollected,
 } = useMovieStore();
 
 const { loadingCollected, loadingWatched } = useMovieStoreRefs();
@@ -63,19 +75,71 @@ onMounted(() => {
 });
 
 const { lists } = useListsStoreRefs();
-const { isListLoading, isItemInList } = useListStore();
+const { isListTypeLoading, isItemInList, isItemListLoading, addToOrRemoveFromList } =
+  useListStore();
 
-const listLoading = computed(() => {
-  if (!movieId?.value) return;
-  return isListLoading(movieId.value).value;
+const listLoading = computed(
+  () =>
+    isListTypeLoading(ListType.Watchlist).value || isListTypeLoading(ListType.List).value,
+);
+
+const collectionLoading = computed(() => {
+  if (loadingCollected.value) return true;
+  if (movieId.value === undefined) return true;
+  return isItemListLoading({
+    listType: ListType.Collection,
+    itemType: 'movie',
+    itemId: movieId.value,
+  }).value;
 });
 
 const activeLists = computed(() => {
-  if (!movieId?.value) return;
+  if (movieId?.value === undefined) return;
   return lists.value
-    ?.filter(list => isItemInList(list.id, movieId.value).value)
+    ?.filter(list => isItemInList(list.id, 'movie', movieId.value).value)
     .map(list => list.id);
 });
+
+const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
+  if (!movie.value?.ids) return;
+
+  const _list = lists.value.find(list => list.id === value);
+  if (!_list) return;
+
+  await addToOrRemoveFromList({
+    list: _list,
+    itemType: 'movie',
+    itemIds: movie.value?.ids,
+    remove,
+  });
+};
+
+const onCollectionUpdate = async (value: PanelButtonsOptions, date?: number) => {
+  if (!movie.value?.ids) return;
+
+  await addToOrRemoveFromList({
+    list: DefaultLists.ShowCollection,
+    itemType: 'movie',
+    itemIds: movie.value?.ids,
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
+
+  const _id = movie.value?.ids?.trakt;
+  if (_id === undefined) return;
+  changeMovieCollected(_id, value === PanelButtonsOption.Remove);
+};
+
+const onWatchedUpdate = async (value: PanelButtonsOptions, date?: number) => {
+  if (!movie.value?.ids) return;
+
+  // TODO : implement add/remove from history
+  // addToOrRemoveFromList(DefaultLists.Watchlist, `${panelType.value}s`, activeItem.value.ids);
+
+  const _id = movie.value?.ids?.trakt;
+  if (_id === undefined) return;
+  changeMovieWatched(_id, value === PanelButtonsOption.Remove);
+};
 
 const i18n = useI18n('movie', 'panel');
 
@@ -117,9 +181,12 @@ const { openTab } = useExtensionSettingsStore();
       :watched="watched"
       :watched-loading="loadingWatched"
       :collected="collected"
-      :collected-loading="loadingCollected"
+      :collected-loading="collectionLoading"
       :active-loading="listLoading"
       :active-lists="activeLists"
+      @on-list-update="onListUpdate"
+      @on-collection-update="onCollectionUpdate"
+      @on-watched-update="onWatchedUpdate"
     />
 
     <MoviePanelOverview :movie="movie" />
