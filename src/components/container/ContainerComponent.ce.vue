@@ -202,4 +202,14 @@ const root = ref<HTMLElement>();
     color: var(--black);
   }
 }
+
+.n-layout-sider {
+  .n-layout-toggle-bar {
+    right: -15px;
+  }
+
+  .n-anchor .n-anchor-link .n-anchor-link__title {
+    padding-right: 0;
+  }
+}
 </style>
