@@ -12,8 +12,8 @@
     >
       <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="46;0" />
     </path>
-    <rect width="6" height="0" x="9" y="20"
-fill="currentColor" rx="1">
+    <rect width="6" height="0" x="9" y="20" fill="currentColor"
+rx="1">
       <animate
         fill="freeze"
         attributeName="height"

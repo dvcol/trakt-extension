@@ -1,0 +1,22 @@
+{
+  "settings__menu__account": {
+    "message": "Account",
+    "description": "Account menu item"
+  },
+  "settings__menu__cache": {
+    "message": "Cache",
+    "description": "Cache menu item"
+  },
+  "settings__menu__tabs": {
+    "message": "Tabs",
+    "description": "Tabs menu item"
+  },
+  "settings__menu__logs": {
+    "message": "Logs",
+    "description": "Logs menu item"
+  },
+  "settings__menu__links": {
+    "message": "Links",
+    "description": "Links menu item"
+  }
+}
