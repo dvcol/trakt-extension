@@ -6,6 +6,7 @@ import { computed, defineProps, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { DropdownProps } from 'naive-ui';
+
 import type { Component } from 'vue';
 
 import type { ArrayElement } from '~/utils/typescript.utils';
@@ -14,6 +15,7 @@ import IconAccount from '~/components/icons/IconAccount.vue';
 import IconAccountAdd from '~/components/icons/IconAccountAdd.vue';
 import IconCog from '~/components/icons/IconCog.vue';
 import IconExternalLink from '~/components/icons/IconExternalLink.vue';
+import IconLightbulb from '~/components/icons/IconLightbulb.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 
 import { Route } from '~/router';
@@ -78,6 +80,7 @@ const toOption = (
 const options = computed<DropdownProps['options']>(() => {
   const baseOptions: DropdownProps['options'] = [
     toOption('settings', IconCog),
+    toOption('about', IconLightbulb),
     { type: 'divider', key: 'external-links' },
     toOption('trakt', IconExternalLink),
     { type: 'divider', key: 'session-divider' },
@@ -108,10 +111,11 @@ const loadUser = async (account: string) => {
 };
 
 const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
-  console.info('Selected:', key);
   switch (key) {
     case 'settings':
       return router.push(Route.Settings);
+    case 'about':
+      return router.push(Route.About);
     case 'trakt':
       return createTab({
         url: ExternaLinks.trakt[TraktService.isStaging ? 'staging' : 'production'],

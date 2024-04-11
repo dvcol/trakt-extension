@@ -22,5 +22,9 @@
   "route__settings": {
     "message": "Settings",
     "description": "Settings and options route name"
+  },
+  "route__about": {
+    "message": "About",
+    "description": "About page route name"
   }
 }
