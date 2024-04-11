@@ -64,7 +64,7 @@ onDeactivated(() => {
       class="content"
       :native-scrollbar="false"
       :content-style="{
-        padding: '1rem 1rem',
+        padding: '1rem',
       }"
     >
       <NCard
