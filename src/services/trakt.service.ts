@@ -45,17 +45,18 @@ import { createTab } from '~/utils/browser/browser.utils';
 import { CacheRetention, ChromeCacheStore } from '~/utils/cache.utils';
 
 export const shouldEvict = (date?: string | number | Date, cache?: CacheResponse<unknown>): boolean => {
-  // no date or cache skip
-  if (!date || !cache?.evict) return false;
-  // date in the past skip
-  if (new Date(date) <= new Date()) return false;
+  // no cache skip
+  if (!cache?.evict) return false;
   // cached today skip
   if (cache?.current?.cachedAt) {
     const _cachedAt = new Date(cache.current.cachedAt).toLocaleDateString();
     const _today = new Date().toLocaleDateString();
     if (_cachedAt === _today) return false;
   }
-  return true;
+  // no date, force evict
+  if (date === undefined) return true;
+  // date in the future, force evict
+  return new Date(date) > new Date();
 };
 
 export class TraktService {
