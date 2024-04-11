@@ -20,21 +20,31 @@ const sections: Section[] = [
   { title: 'menu__links', reference: ref() },
 ];
 
-const focus = ref(false);
+const focus = ref();
 const target = ref();
 
 const scrollTo = (section: Section) => {
   target.value = section;
-  focus.value = true;
+  focus.value = section;
   section.reference?.value?.[0]?.$el?.scrollIntoView({
     behavior: 'smooth',
     block: 'center',
   });
 };
 
+const onEnter = (section: Section) => {
+  target.value = section;
+};
+
+const onLeave = (section: Section) => {
+  if (focus.value?.title === section?.title) {
+    focus.value = undefined;
+  }
+};
+
 onDeactivated(() => {
   target.value = undefined;
-  focus.value = false;
+  focus.value = undefined;
 });
 </script>
 
@@ -73,10 +83,10 @@ onDeactivated(() => {
         :ref="section.reference"
         :key="section.title"
         class="card"
-        :class="{ target: focus && target?.title === section.title }"
+        :class="{ target: focus?.title === section.title }"
         :title="i18n(section.title)"
-        @mouseenter="target = section"
-        @mouseleave="focus = false"
+        @mouseenter="onEnter(section)"
+        @mouseleave="onLeave(section)"
       >
         card Content
       </NCard>
