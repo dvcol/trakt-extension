@@ -41,7 +41,11 @@ const activableRoutes = [...routes, Route.Settings];
 const activeRoute = computed(() => {
   const _name = route.name?.toString();
   if (!_name) return;
-  return activableRoutes.find(r => r === _name) ?? routes.find(r => _name.startsWith(r));
+  return (
+    activableRoutes.find(r => r === _name) ??
+    routes.find(r => _name.startsWith(r)) ??
+    Route.Settings
+  );
 });
 
 const isHover = ref(false);

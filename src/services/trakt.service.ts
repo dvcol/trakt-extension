@@ -346,7 +346,7 @@ export class TraktService {
     show: {
       async watched(showId: string | number, cacheOption?: BaseCacheOption) {
         const response = await TraktService.traktClient.shows.progress.watched.cached(
-          { id: showId, specials: true, count_specials: false },
+          { id: showId, specials: true, count_specials: true },
           undefined,
           cacheOption,
         );
@@ -355,7 +355,7 @@ export class TraktService {
 
       async collection(showId: string | number, cacheOption?: BaseCacheOption) {
         const response = await TraktService.traktClient.shows.progress.collection.cached(
-          { id: showId, specials: true, count_specials: false },
+          { id: showId, specials: true, count_specials: true },
           undefined,
           cacheOption,
         );

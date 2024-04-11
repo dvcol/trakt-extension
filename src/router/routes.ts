@@ -7,6 +7,7 @@ export enum Route {
   Progress = 'progress',
   Search = 'search',
   Settings = 'settings',
+  About = 'about',
   Login = 'login',
 }
 
@@ -107,5 +108,10 @@ export const routes: RouteRecordRaw[] = [
     path: `/${Route.Settings}`,
     name: Route.Settings,
     component: () => import('../components/views/settings/SettingsComponent.vue'),
+  },
+  {
+    path: `/${Route.About}`,
+    name: Route.About,
+    component: () => import('../components/views/about/AboutComponent.vue'),
   },
 ];

@@ -14,5 +14,9 @@
   "navbar__settings__trakt": {
     "message": "Trakt",
     "description": "Open trakt website."
+  },
+  "navbar__settings__about": {
+    "message": "About",
+    "description": "About page."
   }
 }
