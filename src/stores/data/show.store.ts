@@ -27,22 +27,37 @@ type SeasonEpisodesLoadingDictionary = Record<string, Record<number, boolean>>;
 type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boolean>>>;
 
 const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
-  return {
+  let completed = 0;
+  let aired = 0;
+
+  const result = {
     id,
     ...progress,
-    percentage: (progress.completed / progress.aired) * 100,
-    finished: progress.completed === progress.aired,
     type: 'last_watched_at' in progress ? ShowProgressType.Watched : ShowProgressType.Collection,
     date: new Date('last_watched_at' in progress ? progress.last_watched_at : progress.last_collected_at),
-    seasons: progress.seasons.map(season => ({
-      ...season,
-      percentage: (season.completed / season.aired) * 100,
-      finished: season.completed === season.aired,
-      episodes: season.episodes.map(episode => ({
-        ...episode,
-        date: new Date('last_watched_at' in episode ? episode.last_watched_at : episode.collected_at),
-      })),
-    })),
+    seasons: progress.seasons.map(season => {
+      if (season.number > 0) {
+        completed += season.completed;
+        aired += season.aired;
+      }
+
+      return {
+        ...season,
+        percentage: (season.completed / season.aired) * 100,
+        finished: season.completed === season.aired,
+        episodes: season.episodes.map(episode => ({
+          ...episode,
+          date: new Date('last_watched_at' in episode ? episode.last_watched_at : episode.collected_at),
+        })),
+      };
+    }),
+  };
+  return {
+    ...result,
+    completed,
+    aired,
+    percentage: (completed / aired) * 100,
+    finished: completed === aired,
   };
 };
 
