@@ -4,6 +4,7 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 
+import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconIMDb from '~/components/icons/IconIMDb.vue';
 import IconTMDb from '~/components/icons/IconTMDb.vue';
 import IconTVDb from '~/components/icons/IconTVDb.vue';
@@ -11,6 +12,7 @@ import IconTrakt from '~/components/icons/IconTrakt.vue';
 import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
 
 const props = defineProps({
@@ -31,9 +33,17 @@ const props = defineProps({
     type: Number,
     required: false,
   },
+  alias: {
+    type: String,
+    required: false,
+  },
+  title: {
+    type: String,
+    required: false,
+  },
 });
 
-const { ids, mode, season, episode } = toRefs(props);
+const { ids, mode, season, episode, alias, title } = toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
@@ -44,6 +54,24 @@ const labelKey = computed(() => {
   return (source: string) => {
     return i18n({ key: label, substitutions: [source] }, 'common', 'tooltip');
   };
+});
+
+const { getLinks } = useLinksStore();
+
+const customLinksTemplate = getLinks(mode);
+const customLinks = computed(() => {
+  if (!customLinksTemplate.value) return;
+  return customLinksTemplate.value.map(link => ({
+    ...link,
+    url: resolveLinkUrl(link.url, {
+      ...ids?.value,
+      alias: alias?.value,
+      season: season?.value,
+      episode: episode?.value,
+      title: title?.value,
+    }),
+    icon: IconExternalLinkRounded,
+  }));
 });
 
 const links = computed(() => {
@@ -112,6 +140,7 @@ const links = computed(() => {
       },
     });
   }
+  if (customLinks.value) _links.push(...customLinks.value);
   return _links;
 });
 </script>

@@ -6,6 +6,8 @@ import { useImageStore } from '~/stores/data/image.store';
 import { useListsStore, useListStore } from '~/stores/data/list.store';
 import { useSearchStore } from '~/stores/data/search.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { initLocalI18n } from '~/utils';
 
@@ -20,6 +22,13 @@ export const initServices = async () => {
   await TraktService.importAuthentication(restoredAuth);
 
   TraktService.listen();
+
+  await Promise.all([
+    // init custom links
+    useLinksStore().initLinksStore(),
+    // init extension settings
+    useExtensionSettingsStore().initExtensionSettingsStore(),
+  ]);
 
   const { isAuthenticated } = useAuthSettingsStore();
   await useActivityStore().initActivityStore(isAuthenticated);

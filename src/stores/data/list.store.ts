@@ -383,9 +383,6 @@ export const useListStore = defineStore('data.list', () => {
         ]
           .filter(Boolean)
           .join(' '),
-        {
-          duration: 50000,
-        },
       );
     } catch (e) {
       console.error('Failed to add item to list');
