@@ -3,9 +3,11 @@ import { NFlex, NIcon, NInput, NSelect, type SelectOption } from 'naive-ui';
 
 import { type Component, computed, defineProps, h, ref } from 'vue';
 
+import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
+import { ResolveExternalLinks } from '~/settings/external.links';
 import {
   type ListEntity,
   ListType,
@@ -13,6 +15,7 @@ import {
   useListsStoreRefs,
   useListStoreRefs,
 } from '~/stores/data/list.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
@@ -22,6 +25,23 @@ const { pageSize, searchList } = useListStoreRefs();
 
 const { listsLoading, lists, activeList } = useListsStoreRefs();
 const { fetchLists, clearState, getIcon } = useListsStore();
+
+const { user } = useUserSettingsStoreRefs();
+
+const external = computed(() => {
+  switch (activeList.value.type) {
+    case ListType.Watchlist:
+      return ResolveExternalLinks.trakt.watchlist(user.value);
+    case ListType.Favorites:
+      return ResolveExternalLinks.trakt.favorites(user.value);
+    case ListType.Collection:
+      return ResolveExternalLinks.trakt.collection(user.value, activeList.value.scope);
+    case ListType.List:
+      return ResolveExternalLinks.trakt.list(user.value, activeList.value.name);
+    default:
+      return '';
+  }
+});
 
 type ListOption = SelectOption & { source: ListEntity; icon: Component };
 const listOptions = computed<ListOption[]>(() =>
@@ -109,6 +129,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
       </template>
     </NInput>
     <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <ButtonLinkExternal :href="external" :label="i18n('list', 'common', 'link')" />
   </NFlex>
 </template>
 
@@ -118,7 +139,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
   padding: 0 0.5rem;
 
   .list-select {
-    flex: 0 1 40%;
+    flex: 0 1 33%;
   }
 
   .search-input {

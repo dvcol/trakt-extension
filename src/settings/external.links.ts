@@ -21,22 +21,40 @@ export const ExternaLinks = {
 } as const;
 
 export const ResolveExternalLinks = {
-  trakt: ({
-    type,
-    slug,
-    season,
-    episode,
-    base = ExternaLinks.trakt.production,
-  }: {
-    type: 'movies' | 'shows' | 'season' | 'episode' | 'person' | 'comment' | 'list';
-    slug: string;
-    season?: number;
-    episode?: number;
-    base?: string;
-  }) => {
-    if (type === 'episode') return `${base}shows/${slug}/seasons/${season}/episodes/${episode}`;
-    if (type === 'season') return `${base}shows/${slug}/seasons/${season}`;
-    return `${base}${type}/${slug}`;
+  trakt: {
+    item: ({
+      type,
+      slug,
+      season,
+      episode,
+      base = ExternaLinks.trakt.production,
+    }: {
+      type: 'movies' | 'shows' | 'season' | 'episode' | 'person' | 'comment' | 'list';
+      slug: string;
+      season?: number;
+      episode?: number;
+      base?: string;
+    }) => {
+      if (type === 'episode') return `${base}shows/${slug}/seasons/${season}/episodes/${episode}`;
+      if (type === 'season') return `${base}shows/${slug}/seasons/${season}`;
+      return `${base}${type}/${slug}`;
+    },
+    query: (query: string) => `${ExternaLinks.trakt.production}search?query=${query}`,
+    watchlist: (user: string) => `${ExternaLinks.trakt.production}users/${user}/watchlist`,
+    favorites: (user: string) => `${ExternaLinks.trakt.production}users/${user}/favorites`,
+    list: (user: string, list: string) => `${ExternaLinks.trakt.production}users/${user}/lists/${list}`,
+    collection: (user: string, type?: 'movies' | 'shows' | 'episodes') => {
+      const url = `${ExternaLinks.trakt.production}users/${user}/collection`;
+      if (type) return `${url}/${type}`;
+      return url;
+    },
+    history: ({ user, start, end }: { user: string; start?: string; end?: string }) => {
+      let url = `${ExternaLinks.trakt.production}users/${user}/history`;
+      if (start) url += `?start_at=${start}`;
+      if (end) url += `${start ? '&' : '?'}end_at=${end}`;
+      return url;
+    },
+    calendar: (date?: string) => `${ExternaLinks.trakt.production}calendars/my/shows-movies/${date ?? ''}`,
   },
   search: ({
     id,

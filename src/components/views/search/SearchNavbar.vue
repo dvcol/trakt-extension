@@ -13,6 +13,7 @@ import { type Component, computed, defineProps, h, onActivated, ref } from 'vue'
 
 import type { TraktSearchType } from '~/models/trakt/trakt-search.model';
 
+import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconAccount from '~/components/icons/IconAccount.vue';
 import IconChevronDown from '~/components/icons/IconChevronDownSmall.vue';
@@ -23,6 +24,7 @@ import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
 import IconYoutube from '~/components/icons/IconYoutube.vue';
 
+import { ResolveExternalLinks } from '~/settings/external.links';
 import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.store';
 import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -40,6 +42,7 @@ const toggleFocus = (focus: boolean) => {
 };
 
 const debouncedSearch = useDebouncedSearch(search, 1000);
+const external = computed(() => ResolveExternalLinks.trakt.query(debouncedSearch.value));
 
 const filteredHistory = computed(() =>
   [...history.value]
@@ -217,6 +220,8 @@ onActivated(() => {
     </NTooltip>
 
     <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <ButtonLinkExternal :href="external" :label="i18n('search', 'common', 'link')" />
+
     <NSwitch
       v-if="false"
       v-model:value="query"
