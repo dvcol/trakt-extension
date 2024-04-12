@@ -6,11 +6,13 @@ import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
+import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
-import { capitalizeEachWord } from '~/utils/string.utils';
+import { capitalizeEachWord, deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
   episode: {
@@ -133,6 +135,14 @@ const ids = computed(() => {
   if (!show?.value) return;
   return show.value?.ids;
 });
+
+const title = computed(() =>
+  deCapitalise(episode?.value?.title ?? season?.value?.title ?? show?.value?.title),
+);
+
+const { getAlias } = useLinksStore();
+const showId = computed(() => show?.value?.ids?.trakt.toString());
+const alias = getAlias('show', showId);
 </script>
 
 <template>
@@ -205,6 +215,13 @@ const ids = computed(() => {
       />
     </NFlex>
 
+    <!--  Show name alias  -->
+    <PanelAlias
+      :id="show?.ids?.trakt.toString()"
+      scope="show"
+      :placeholder="show?.title"
+    />
+
     <NFlex class="lists" vertical size="large">
       <!--  Genres  -->
       <PanelDetail
@@ -220,6 +237,8 @@ const ids = computed(() => {
         :mode="mode"
         :season="episode?.season ?? season?.number"
         :episode="episode?.number"
+        :alias="alias"
+        :title="title"
       />
     </NFlex>
   </NFlex>

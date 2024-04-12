@@ -4,6 +4,7 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
+import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
@@ -113,6 +114,13 @@ const country = computed(() => {
       />
     </NFlex>
 
+    <!--  Movie name alias  -->
+    <PanelAlias
+      :id="movie?.ids?.trakt.toString()"
+      scope="movie"
+      :placeholder="movie?.title"
+    />
+
     <NFlex class="lists" vertical size="large">
       <!--  Genres  -->
       <PanelDetail
@@ -123,7 +131,7 @@ const country = computed(() => {
       />
 
       <!--  links  -->
-      <PanelLinks :ids="movie?.ids" mode="movie" />
+      <PanelLinks :ids="movie?.ids" mode="movie" :title="movie?.title" />
     </NFlex>
   </NFlex>
 </template>
@@ -136,6 +144,6 @@ const country = computed(() => {
 }
 
 .lists {
-  margin: 1.25rem 0 1rem;
+  margin: 0.25rem 0 1.25rem;
 }
 </style>
