@@ -1,0 +1,18 @@
+{
+  "common__link__calendar": {
+    "message": "Open calendar in Trakt.tv",
+    "description": "Link to open calendar in Trakt.tv"
+  },
+  "common__link__history": {
+    "message": "Open history in Trakt.tv",
+    "description": "Link to open history in Trakt.tv"
+  },
+  "common__link__list": {
+    "message": "Open list in Trakt.tv",
+    "description": "Link to open list in Trakt.tv"
+  },
+  "common__link__search": {
+    "message": "Open search in Trakt.tv",
+    "description": "Link to open search in Trakt.tv"
+  }
+}

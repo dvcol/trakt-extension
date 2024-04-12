@@ -3,12 +3,15 @@ import { NDatePicker, NFlex, NIcon, NInput } from 'naive-ui';
 
 import { computed, defineProps, ref } from 'vue';
 
+import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconCalendar from '~/components/icons/IconCalendar.vue';
 import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
+import { ResolveExternalLinks } from '~/settings/external.links';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
@@ -19,6 +22,15 @@ const { searchHistory, historyEnd, historyStart, pageSize } = useHistoryStoreRef
 const { setHistoryRange } = useHistoryStore();
 
 const debouncedSearch = useDebouncedSearch(searchHistory);
+
+const { user } = useUserSettingsStoreRefs();
+const external = computed(() =>
+  ResolveExternalLinks.trakt.history({
+    user: user.value,
+    start: historyStart.value?.toISOString(),
+    end: historyEnd.value?.toISOString(),
+  }),
+);
 
 defineProps({
   parentElement: {
@@ -73,6 +85,7 @@ const open = ref(false);
       </template>
     </NInput>
     <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <ButtonLinkExternal :href="external" :label="i18n('history', 'common', 'link')" />
   </NFlex>
 </template>
 
@@ -82,7 +95,7 @@ const open = ref(false);
   padding: 0 0.5rem;
 
   .date-picker {
-    flex: 0 1 50%;
+    flex: 0 1 33%;
   }
 
   .search-input {

@@ -3,11 +3,13 @@ import { NDatePicker, NFlex, NIcon, NInput, NTooltip } from 'naive-ui';
 
 import { computed, defineProps, ref } from 'vue';
 
+import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import IconCalendar from '~/components/icons/IconCalendar.vue';
 import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 
 import IconLoop from '~/components/icons/IconLoop.vue';
 
+import { ResolveExternalLinks } from '~/settings/external.links';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useI18n } from '~/utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
@@ -31,9 +33,17 @@ const pickerValue = computed({
   set: (value: number) => {
     const newDate = value ? new Date(value) : new Date();
     if (newDate.toLocaleDateString() === center.value.toLocaleDateString()) return;
-    console.info('pickerValue', new Date(value));
     clearState(value ? new Date(value) : undefined);
   },
+});
+
+const external = computed(() => {
+  if (pickerValue.value) {
+    return ResolveExternalLinks.trakt.calendar(
+      new Date(pickerValue.value).toISOString().split('T')[0],
+    );
+  }
+  return ResolveExternalLinks.trakt.calendar();
 });
 
 const open = ref(false);
@@ -79,6 +89,7 @@ const open = ref(false);
         </NInput>
       </template>
     </NTooltip>
+    <ButtonLinkExternal :href="external" :label="i18n('calendar', 'common', 'link')" />
   </NFlex>
 </template>
 
@@ -88,11 +99,11 @@ const open = ref(false);
   padding: 0 0.5rem;
 
   .date-picker {
-    flex: 0 1 48%;
+    flex: 0 1 33%;
   }
 
   .search-input {
-    flex: 1 1 50%;
+    flex: 1 1 33%;
   }
 }
 </style>
