@@ -13,6 +13,7 @@ import type { TraktShow } from '~/models/trakt/trakt-show.model';
 import type { BaseCacheOption } from '~/services/common/base-client';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
+export type ScrollTo = Parameters<VirtualListInst['scrollTo']>[0];
 export type VirtualListProps = {
   itemSize?: number;
   visibleItemsTag?: string | ObjectConstructor;
@@ -83,6 +84,7 @@ export const ListScrollItemType = {
 export type ListScrollItem<T = Record<string, any>> = Omit<PosterItem, 'type'> & {
   id: string | number;
   index: number;
+  key: string;
 
   type?: (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
   title?: string;

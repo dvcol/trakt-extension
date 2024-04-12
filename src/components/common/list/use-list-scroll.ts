@@ -143,6 +143,7 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
       const _item: ListScrollItem = {
         ...item,
         index,
+        key: `${index}-${item.id}`,
         loading: (typeof item.id === 'number' && item.id < 0) || item.type === ListScrollItemType.loading,
       };
 
@@ -225,7 +226,9 @@ export const addLoadMore = (
     if (!pagination.value?.pageCount) return array;
     if (pagination.value.page === pagination.value.pageCount) return array;
     if (array.length && array[array.length - 1].type === ListScrollItemType.loadMore) return array;
-    const loadMore: ListScrollItem = { id: ListScrollItemType.loadMore, type: ListScrollItemType.loadMore, index: items.value.length };
+    const type = ListScrollItemType.loadMore;
+    const index = items.value.length;
+    const loadMore: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };
     return [...array, loadMore];
   });
 };
