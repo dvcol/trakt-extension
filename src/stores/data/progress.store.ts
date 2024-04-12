@@ -37,9 +37,12 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
 
   const poster = progress.fanart ?? progress.screenshot;
 
+  const id = Number(progress.episodeId ?? progress.seasonId ?? progress.showId);
+
   return {
-    id: Number(progress.episodeId ?? progress.seasonId ?? progress.showId),
+    id,
     index,
+    key: `${index}-${id}`,
     title: getTitle({ show, episode }),
     content: getContent({ show, episode }),
     poster,

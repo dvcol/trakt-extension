@@ -214,6 +214,9 @@ export const useListStore = defineStore('data.list', () => {
     pagination.value = undefined;
     searchList.value = '';
 
+    Object.assign(typeLoading, {});
+    Object.assign(typeItemLoading, {});
+
     Object.assign(listDictionary, {});
     Object.assign(listDictionaryLoading, {});
   };
@@ -257,7 +260,7 @@ export const useListStore = defineStore('data.list', () => {
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching List', list);
+    console.info('Fetching List', { list, page, limit });
 
     loading.value = true;
     typeLoading[list.type] = true;
@@ -287,7 +290,7 @@ export const useListStore = defineStore('data.list', () => {
       } else {
         throw new Error('Invalid list type');
       }
-      const newData = response.data.map((item, index) => {
+      const newData = response.data.map<AnyList>((item, index) => {
         updateDictionary(list, item as MinimalItem);
         if ('id' in item) return item;
         return { ...item, id: `${page}-${index}` };

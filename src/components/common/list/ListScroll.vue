@@ -144,7 +144,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
       }"
       :padding-top="listOptions?.paddingTop ?? 60"
       :padding-bottom="listOptions?.paddingBottom ?? 32"
-      :key-field="'id'"
+      :key-field="'key'"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >

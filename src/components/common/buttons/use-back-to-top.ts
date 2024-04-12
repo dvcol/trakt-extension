@@ -1,13 +1,13 @@
 import { ref } from 'vue';
 
-import type { VirtualListRef } from '~/models/list-scroll.model';
+import type { ScrollTo, VirtualListRef } from '~/models/list-scroll.model';
 
 export const useBackToTop = () => {
   const listRef = ref<{ list: VirtualListRef }>();
   const scrolled = ref(false);
 
-  const onClick = () => {
-    listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  const onClick = (scrollTo?: ScrollTo) => {
+    listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth', ...scrollTo });
     scrolled.value = false;
   };
 

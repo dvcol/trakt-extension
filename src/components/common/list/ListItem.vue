@@ -141,9 +141,11 @@ const onClick = () => emit('onItemClick', { item: item?.value });
     :style="{
       '--list-item-height': itemHeight,
     }"
-    :data-key="item.id"
+    :data-id="item.id"
     :data-index="item.index"
+    :data-key="item.key"
     :data-type="item.type"
+    :aria-label="item.title"
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : color"
     @click="onClick"
