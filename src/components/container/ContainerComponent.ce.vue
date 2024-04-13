@@ -139,6 +139,17 @@ const root = ref<HTMLElement>();
   }
 }
 
+.n-popover.n-popconfirm {
+  @include mixin.hover-background-only(
+    $from: var(--bg-color-80),
+    $to: var(--bg-color-90)
+  );
+}
+
+.n-popconfirm .n-popconfirm__action {
+  justify-content: space-around;
+}
+
 .n-notification-container .n-notification,
 .n-message-wrapper .n-message,
 .n-dropdown-menu,

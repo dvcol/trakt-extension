@@ -8,8 +8,9 @@ import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
-import { capitalizeEachWord } from '~/utils/string.utils';
+import { capitalizeEachWord, deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
   movie: {
@@ -68,6 +69,12 @@ const country = computed(() => {
   if (!movie?.value) return;
   return movie.value?.country || '-';
 });
+
+const { getAlias } = useLinksStore();
+const movieId = computed(() => movie?.value?.ids?.trakt.toString());
+const alias = getAlias('show', movieId);
+const movieAlias = computed(() => alias.value || movie?.value?.title);
+const movieTitle = computed(() => deCapitalise(movie?.value?.title));
 </script>
 
 <template>
@@ -111,6 +118,7 @@ const country = computed(() => {
         :label="i18n('status')"
         :value="status"
         :skeleton="{ width: '7.5rem' }"
+        grow
       />
     </NFlex>
 
@@ -118,7 +126,7 @@ const country = computed(() => {
     <PanelAlias
       :id="movie?.ids?.trakt.toString()"
       scope="movie"
-      :placeholder="movie?.title"
+      :placeholder="movieTitle"
     />
 
     <NFlex class="lists" vertical size="large">
@@ -131,7 +139,12 @@ const country = computed(() => {
       />
 
       <!--  links  -->
-      <PanelLinks :ids="movie?.ids" mode="movie" :title="movie?.title" />
+      <PanelLinks
+        :ids="movie?.ids"
+        mode="movie"
+        :title="movieTitle"
+        :alias="movieAlias"
+      />
     </NFlex>
   </NFlex>
 </template>
@@ -145,5 +158,11 @@ const country = computed(() => {
 
 .lists {
   margin: 0.25rem 0 1.25rem;
+}
+
+@media (width < 700px) {
+  .row {
+    gap: 0.75rem 0.5rem !important;
+  }
 }
 </style>

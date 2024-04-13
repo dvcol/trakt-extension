@@ -4,16 +4,28 @@
   $blur: var(--custom-bg-blur, var(--bg-blur)),
   $blur-hover: var(--custom-bg-blur-hover, var(--bg-blur-hover)),
   $transition: 0.5s var(--n-bezier),
-  $additional-transition: ""
+  $transition-prop: all
 ) {
   background: $from;
   backdrop-filter: blur($blur);
-  transition: all $transition;
+  transition: $transition-prop $transition;
   will-change: color, background, background-color, backdrop-filter, box-shadow,
     border-color, scale, opacity, backdrop-filter;
 
   &:hover {
     background: $to;
     backdrop-filter: blur($blur-hover);
+  }
+}
+
+
+@mixin hover-background-only(
+  $from: var(--custom-bg-color, var(--bg-color)),
+  $to: var(--custom-bg-color-hover, var(--bg-color-hover)),
+) {
+  background: $from;
+
+  &:hover {
+    background: $to;
   }
 }

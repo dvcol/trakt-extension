@@ -34,6 +34,13 @@
     var(--bg-color-60) 5%,
     var(--bg-color-90)
   );
+  --bg-black-soft: rgb(24 24 24);
+  --bg-black-soft-90: rgb(24 24 24 / 90%);
+  --bg-black-softer: rgb(34 34 34);
+  --bg-black-softer-50: rgba(34 34 34 / 50%);
+  --bg-black-softer-55: rgba(34 34 34 / 55%);
+  --bg-black-softer-60: rgba(34 34 34 / 60%);
+  --bg-black-softest: rgb(40 40 40);
   --bg-red: rgba(255 222 223);
   --bg-red-20: rgba(255 222 223 / 20%);
   --bg-red-30: rgba(255 222 223 / 30%);

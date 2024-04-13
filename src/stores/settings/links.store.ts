@@ -6,7 +6,17 @@ import type { TagLink } from '~/models/tag.model';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 
-type CustomLinkScope = 'movie' | 'show' | 'season' | 'episode' | 'person' | 'all';
+export const CustomLinkScope = {
+  Movie: 'movie' as const,
+  Show: 'show' as const,
+  Season: 'season' as const,
+  Episode: 'episode' as const,
+  Person: 'person' as const,
+} as const;
+
+export const AllCustomLinkScopes = Object.values(CustomLinkScope);
+
+type CustomLinkScopes = (typeof CustomLinkScope)[keyof typeof CustomLinkScope];
 type CustomLinkSubstitution<T = string | number> = Partial<{
   slug: T;
   trakt: T;
@@ -18,21 +28,28 @@ type CustomLinkSubstitution<T = string | number> = Partial<{
   season: T;
   title: T;
 }>;
-type CustomLink = TagLink & {
+
+export type CustomLink = TagLink & {
+  id: number;
   url: string;
-  scope: CustomLinkScope;
+  scopes: CustomLinkScopes[];
   icon?: 'external';
 };
 
 export const resolveLinkUrl = (url: string, substitutions: CustomLinkSubstitution) => {
-  console.info('resolveUrl', { url, substitutions });
-  return url;
+  let _url = url;
+  Object.entries(substitutions).forEach(([key, value]) => {
+    if (!value) return;
+    const _value = typeof value === 'number' ? value.toString().padStart(2, '0') : value.toString();
+    _url = _url.replace(`{{${key}}}`, encodeURIComponent(_value));
+  });
+  return _url;
 };
 
 export type AliasScope = 'movie' | 'show';
 
-type CustomLinkDictionary = Record<string, CustomLink>;
-type CustomLinkScopeDictionary = Partial<Record<CustomLinkScope, CustomLinkDictionary>>;
+export type CustomLinkDictionary = Record<number, CustomLink>;
+type CustomLinkScopeDictionary = Partial<Record<CustomLinkScopes, CustomLinkDictionary>>;
 type AliasDictionary = Partial<Record<AliasScope, Record<string, string>>>;
 
 export const useLinksStore = defineStore('settings.links', () => {
@@ -52,18 +69,33 @@ export const useLinksStore = defineStore('settings.links', () => {
   const saveAlias = debounce(() => storage.sync.set('settings.links.aliases', aliasDictionary), 1000);
   const saveLinks = debounce(() => storage.sync.set('settings.links.links', linkDictionary), 1000);
 
-  const links = computed(() => Object.values(linkDictionary));
+  const addToScope = (scope: CustomLinkScopes, link: CustomLink) => {
+    if (!linkScopeDictionary[scope]) linkScopeDictionary[scope] = {};
+    linkScopeDictionary[scope]![link.id] = link;
+  };
+
+  const removeFromScope = (scope: CustomLinkScopes, id: CustomLink['id']) => {
+    if (linkScopeDictionary[scope]?.[id]) delete linkScopeDictionary[scope]![id];
+  };
 
   const addLink = (link: CustomLink) => {
-    linkDictionary[link.label] = link;
-    if (!linkScopeDictionary[link.scope]) linkScopeDictionary[link.scope] = {};
-    linkScopeDictionary[link.scope]![link.label] = link;
+    // remove old scopes if exists
+    const _was = linkDictionary[link.id];
+    if (_was && _was.scopes) Object.values(_was.scopes).forEach(scope => removeFromScope(scope, link.id));
+
+    // update link
+    linkDictionary[link.id] = link;
+
+    // add new scopes
+    if (link.scopes) Object.values(link.scopes).forEach(scope => addToScope(scope, link));
     saveLinks().catch(console.error);
   };
 
-  const removeLink = (link: CustomLink) => {
-    if (linkDictionary[link.label]) delete linkDictionary[link.label];
-    if (linkScopeDictionary[link.scope]?.[link.label]) delete linkScopeDictionary[link.scope]![link.label];
+  const removeLink = (id: CustomLink['id']) => {
+    const link = linkDictionary[id];
+    if (!link) return;
+    if (linkDictionary[link.id]) delete linkDictionary[link.id];
+    if (link.scopes) Object.values(link.scopes).forEach(scope => removeFromScope(scope, link.id));
     saveLinks().catch(console.error);
   };
 
@@ -74,21 +106,23 @@ export const useLinksStore = defineStore('settings.links', () => {
       storage.sync.get<CustomLinkDictionary>('settings.links.links'),
     ]);
 
-    console.info('restoredState', restoredState);
     if (restoredState.enabled !== undefined) enabled.value = restoredState.enabled;
     if (restoredAliases) Object.assign(aliasDictionary, restoredAliases);
-    if (restoredLinks) Object.values(restoredLinks).forEach(addLink);
+    if (restoredLinks) {
+      Object.values(restoredLinks)
+        .map(l => ({ ...l, scopes: Object.values(l.scopes) }))
+        .forEach(addLink);
+    }
   };
 
   const initLinksStore = async () => {
     await restoreState();
   };
 
-  const getLinks = (scope: Ref<CustomLinkScope>) =>
+  const getLinks = (scope: Ref<CustomLinkScopes>) =>
     computed(() => {
       const _links = linkScopeDictionary[scope.value] ?? {};
-      const _allLinks = linkScopeDictionary.all ?? {};
-      return Object.values({ ..._links, ..._allLinks });
+      return Object.values(_links);
     });
 
   const getAlias = (type: AliasScope, id: Ref<string | undefined>) =>
@@ -110,7 +144,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     },
   });
 
-  return { initLinksStore, clearState, linkDictionary, links, addLink, removeLink, getLinks, getAlias, aliasEnabled };
+  return { initLinksStore, clearState, linkDictionary, addLink, removeLink, getLinks, getAlias, aliasEnabled };
 });
 
 export const useLinksStoreRefs = () => storeToRefs(useLinksStore());

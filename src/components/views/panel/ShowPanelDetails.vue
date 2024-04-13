@@ -136,13 +136,14 @@ const ids = computed(() => {
   return show.value?.ids;
 });
 
-const title = computed(() =>
-  deCapitalise(episode?.value?.title ?? season?.value?.title ?? show?.value?.title),
-);
-
 const { getAlias } = useLinksStore();
 const showId = computed(() => show?.value?.ids?.trakt.toString());
 const alias = getAlias('show', showId);
+const showAlias = computed(() => alias.value || show?.value?.title);
+const showTitle = computed(() => deCapitalise(show?.value?.title));
+const title = computed(() =>
+  deCapitalise(episode?.value?.title ?? season?.value?.title ?? show?.value?.title),
+);
 </script>
 
 <template>
@@ -186,6 +187,7 @@ const alias = getAlias('show', showId);
       <PanelDetail
         :label="i18n('status')"
         :value="status"
+        grow
         :skeleton="{ width: '7.5rem' }"
       />
     </NFlex>
@@ -211,16 +213,13 @@ const alias = getAlias('show', showId);
         v-if="mode === 'episode'"
         :label="i18n('type')"
         :value="episodeType"
+        grow
         :skeleton="{ width: '6.25rem' }"
       />
     </NFlex>
 
     <!--  Show name alias  -->
-    <PanelAlias
-      :id="show?.ids?.trakt.toString()"
-      scope="show"
-      :placeholder="show?.title"
-    />
+    <PanelAlias :id="showId" scope="show" :placeholder="showTitle" />
 
     <NFlex class="lists" vertical size="large">
       <!--  Genres  -->
@@ -237,7 +236,7 @@ const alias = getAlias('show', showId);
         :mode="mode"
         :season="episode?.season ?? season?.number"
         :episode="episode?.number"
-        :alias="alias"
+        :alias="showAlias"
         :title="title"
       />
     </NFlex>
@@ -253,5 +252,11 @@ const alias = getAlias('show', showId);
 
 .lists {
   margin: 0.25rem 0 0.5rem;
+}
+
+@media (width < 700px) {
+  .row {
+    gap: 0.75rem 0.5rem !important;
+  }
 }
 </style>

@@ -18,5 +18,9 @@
   "common__media__type__person": {
     "message": "Person",
     "description": "Media type for people"
+  },
+  "common__media__type__all": {
+    "message": "All",
+    "description": "Media type for all"
   }
 }

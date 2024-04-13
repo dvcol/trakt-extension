@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { NAnchor, NAnchorLink, NCard, NLayout, NLayoutSider } from 'naive-ui';
 
-import { onDeactivated, type Ref, ref } from 'vue';
+import { type Component, onDeactivated, type Ref, ref } from 'vue';
+
+import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 
 import { useI18n } from '~/utils';
 
@@ -10,14 +12,15 @@ const i18n = useI18n('settings');
 type Section = {
   title: string;
   reference: Ref<[InstanceType<typeof NCard>] | undefined>;
+  component?: Component;
 };
 
 const sections: Section[] = [
   { title: 'menu__account', reference: ref() },
-  { title: 'menu__cache', reference: ref() },
   { title: 'menu__tabs', reference: ref() },
+  { title: 'menu__links', reference: ref(), component: SettingsLinks },
+  { title: 'menu__cache', reference: ref() },
   { title: 'menu__logs', reference: ref() },
-  { title: 'menu__links', reference: ref() },
 ];
 
 const focus = ref();
@@ -78,17 +81,18 @@ onDeactivated(() => {
       }"
     >
       <NCard
-        v-for="section in sections"
+        v-for="(section, index) in sections"
         :id="section.title"
         :ref="section.reference"
         :key="section.title"
         class="card"
         :class="{ target: focus?.title === section.title }"
+        :style="{ '--index': sections.length - index }"
         :title="i18n(section.title)"
         @mouseenter="onEnter(section)"
         @mouseleave="onLeave(section)"
       >
-        card Content
+        <component :is="section.component" />
       </NCard>
     </NLayout>
   </NLayout>
@@ -107,6 +111,7 @@ onDeactivated(() => {
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
 
+    z-index: var(--index);
     min-height: 20rem;
 
     &:not(:last-child) {
