@@ -4,6 +4,7 @@ import { computed, reactive, ref, type Ref } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { createTab } from '~/utils/browser/browser.utils';
 import { debounce } from '~/utils/debounce.utils';
 
 export const CustomLinkScope = {
@@ -52,8 +53,14 @@ export type CustomLinkDictionary = Record<number, CustomLink>;
 type CustomLinkScopeDictionary = Partial<Record<CustomLinkScopes, CustomLinkDictionary>>;
 type AliasDictionary = Partial<Record<AliasScope, Record<string, string>>>;
 
+type LinksStoreState = {
+  enabled: boolean;
+  backgroundLink: boolean;
+};
+
 export const useLinksStore = defineStore('settings.links', () => {
   const enabled = ref(false);
+  const backgroundLink = ref(false);
   const aliasDictionary = reactive<AliasDictionary>({});
 
   const linkDictionary = reactive<CustomLinkDictionary>({});
@@ -65,7 +72,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     Object.assign(linkScopeDictionary, {});
   };
 
-  const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value }), 1000);
+  const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value, backgroundLink: backgroundLink.value }), 1000);
   const saveAlias = debounce(() => storage.sync.set('settings.links.aliases', aliasDictionary), 1000);
   const saveLinks = debounce(() => storage.sync.set('settings.links.links', linkDictionary), 1000);
 
@@ -88,7 +95,7 @@ export const useLinksStore = defineStore('settings.links', () => {
 
     // add new scopes
     if (link.scopes) Object.values(link.scopes).forEach(scope => addToScope(scope, link));
-    saveLinks().catch(console.error);
+    saveLinks().catch(err => console.error('Failed to save link', { link, err }));
   };
 
   const removeLink = (id: CustomLink['id']) => {
@@ -96,17 +103,18 @@ export const useLinksStore = defineStore('settings.links', () => {
     if (!link) return;
     if (linkDictionary[link.id]) delete linkDictionary[link.id];
     if (link.scopes) Object.values(link.scopes).forEach(scope => removeFromScope(scope, link.id));
-    saveLinks().catch(console.error);
+    saveLinks().catch(err => console.error('Failed to save link', { id, err }));
   };
 
   const restoreState = async () => {
-    const [restoredState, restoredAliases, restoredLinks] = await Promise.all([
-      storage.sync.get<{ enabled: boolean }>('settings.links'),
+    const [restoredState, restoredAliases, restoredLinks]: [LinksStoreState, AliasDictionary, CustomLinkDictionary] = await Promise.all([
+      storage.sync.get<LinksStoreState>('settings.links'),
       storage.sync.get<AliasDictionary>('settings.links.aliases'),
       storage.sync.get<CustomLinkDictionary>('settings.links.links'),
     ]);
 
-    if (restoredState.enabled !== undefined) enabled.value = restoredState.enabled;
+    if (restoredState?.enabled !== undefined) enabled.value = restoredState.enabled;
+    if (restoredState?.backgroundLink !== undefined) backgroundLink.value = restoredState.backgroundLink;
     if (restoredAliases) Object.assign(aliasDictionary, restoredAliases);
     if (restoredLinks) {
       Object.values(restoredLinks)
@@ -140,11 +148,25 @@ export const useLinksStore = defineStore('settings.links', () => {
     get: () => enabled.value,
     set: (value: boolean) => {
       enabled.value = value;
-      saveState().catch(err => console.error('Failed to save state', { value, err }));
+      saveState().catch(err => console.error('Failed to save link settings', { value, err }));
     },
   });
 
-  return { initLinksStore, clearState, linkDictionary, addLink, removeLink, getLinks, getAlias, aliasEnabled };
+  const openLinkInBackground = computed({
+    get: () => backgroundLink.value,
+    set: (value: boolean) => {
+      backgroundLink.value = value;
+      console.info('Open links in new tab', value);
+      saveState().catch(err => console.error('Failed to save link settings.', { value, err }));
+    },
+  });
+
+  const openTab = (url?: string) => {
+    if (!url) return;
+    createTab({ url, active: !openLinkInBackground.value });
+  };
+
+  return { initLinksStore, clearState, linkDictionary, addLink, removeLink, getLinks, getAlias, aliasEnabled, openLinkInBackground, openTab };
 });
 
 export const useLinksStoreRefs = () => storeToRefs(useLinksStore());

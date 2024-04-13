@@ -5,7 +5,7 @@ import type { PropType } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 
 import TagLinkComponent from '~/components/common/buttons/TagLink.vue';
-import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useLinksStore } from '~/stores/settings/links.store';
 
 defineProps({
   label: {
@@ -34,7 +34,7 @@ defineProps({
   },
 });
 
-const { openTab } = useExtensionSettingsStore();
+const { openTab } = useLinksStore();
 </script>
 
 <template>

@@ -22,7 +22,7 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
-import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
@@ -191,7 +191,7 @@ const titleUrl = computed(() => {
   });
 });
 
-const { openTab } = useExtensionSettingsStore();
+const { openTab } = useLinksStore();
 </script>
 
 <template>

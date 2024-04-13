@@ -26,5 +26,9 @@
   "settings__links__confirm_remove": {
     "message": "Remove this custom link?",
     "description": "Confirmation message for removing a custom link"
+  },
+  "settings__links__label_open_in_background": {
+    "message": "Open links in background (popup stay active)",
+    "description": "Label for the open in new tab checkbox"
   }
 }

@@ -34,5 +34,13 @@
   "common__button__evict": {
     "message": "Evict cache data",
     "description": "Button to evict an item from cache."
+  },
+  "common__button__on": {
+    "message": "On",
+    "description": "Button to turn on an item."
+  },
+  "common__button__off": {
+    "message": "Off",
+    "description": "Button to turn off an item."
   }
 }

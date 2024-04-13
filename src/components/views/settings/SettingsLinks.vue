@@ -30,7 +30,7 @@ import { useI18n } from '~/utils';
 
 const i18n = useI18n('settings', 'links');
 
-const { linkDictionary, aliasEnabled } = useLinksStoreRefs();
+const { linkDictionary, aliasEnabled, openLinkInBackground } = useLinksStoreRefs();
 const { addLink, removeLink } = useLinksStore();
 
 const form = reactive<CustomLinkDictionary>(structuredClone(toRaw(linkDictionary.value)));
@@ -111,6 +111,15 @@ const containerRef = ref<HTMLDivElement>();
       <NSwitch v-model:value="aliasEnabled" class="form-header-switch">
         <template #checked>{{ i18n('show', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('hide', 'common', 'button') }}</template>
+      </NSwitch>
+    </NFormItem>
+    <NFormItem label-placement="left" :show-feedback="false">
+      <template #label>
+        <span class="form-header">{{ i18n('label_open_in_background') }}</span>
+      </template>
+      <NSwitch v-model:value="openLinkInBackground" class="form-header-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
     </NFormItem>
 
