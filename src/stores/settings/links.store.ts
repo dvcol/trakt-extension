@@ -132,7 +132,7 @@ export const useLinksStore = defineStore('settings.links', () => {
         if (!id.value) return;
         if (!aliasDictionary[type]) aliasDictionary[type] = {};
         aliasDictionary[type]![id.value] = value;
-        saveAlias().catch(console.error);
+        saveAlias().catch(err => console.error('Failed to save alias', { id, type, err }));
       },
     });
 
@@ -140,7 +140,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     get: () => enabled.value,
     set: (value: boolean) => {
       enabled.value = value;
-      saveState().catch(console.error);
+      saveState().catch(err => console.error('Failed to save state', { value, err }));
     },
   });
 

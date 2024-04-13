@@ -281,7 +281,11 @@ const containerRef = ref<HTMLDivElement>();
 }
 
 .form-button {
-  margin-left: 12px;
+  margin-left: 0.25rem;
+
+  i {
+    margin-left: calc(0% - var(--n-icon-margin));
+  }
 }
 
 .footer {

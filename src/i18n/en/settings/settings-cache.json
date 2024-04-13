@@ -1,0 +1,62 @@
+{
+  "settings__cache__label_retention_trakt": {
+    "message": "Cache retention for Trakt data",
+    "description": "Label for the cache retention setting for Trakt data"
+  },
+  "settings__cache__label_retention_images": {
+    "message": "Cache retention for images",
+    "description": "Label for the cache retention setting for images"
+  },
+  "settings__cache__evict_images": {
+    "message": "Evict images from cache",
+    "description": "Label for the evict images button"
+  },
+  "settings__cache__evict_progress": {
+    "message": "Evict progress data from cache",
+    "description": "Label for the evict progress data button"
+  },
+  "settings__cache__evict_calendar": {
+    "message": "Evict calendar data from cache",
+    "description": "Label for the evict calendar data button"
+  },
+  "settings__cache__evict_history": {
+    "message": "Evict history data from cache",
+    "description": "Label for the evict history data button"
+  },
+  "settings__cache__evict_lists": {
+    "message": "Evict lists data from cache (watchlist, lists and collections)",
+    "description": "Label for the evict lists data button"
+  },
+  "settings__cache__evict_search": {
+    "message": "Evict search data from cache",
+    "description": "Label for the evict search data button"
+  },
+  "settings__cache__evict_shows": {
+    "message": "Evict shows data from cache",
+    "description": "Label for the evict shows data button"
+  },
+  "settings__cache__evict_seasons": {
+    "message": "Evict seasons data from cache",
+    "description": "Label for the evict seasons data button"
+  },
+  "settings__cache__evict_episodes": {
+    "message": "Evict episodes data from cache",
+    "description": "Label for the evict episodes data button"
+  },
+  "settings__cache__evict_movies": {
+    "message": "Evict movies data from cache",
+    "description": "Label for the evict movies data button"
+  },
+  "settings__cache__evict_people": {
+    "message": "Evict people data from cache",
+    "description": "Label for the evict people data button"
+  },
+  "settings__cache__evict_success": {
+    "message": "Cache evicted successfully",
+    "description": "Message displayed when cache is evicted successfully"
+  },
+  "settings__cache__evict_failure": {
+    "message": "Failed to evict cache.",
+    "description": "Message displayed when cache evict fails"
+  }
+}
