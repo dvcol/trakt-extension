@@ -9,6 +9,7 @@ import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-sc
 import { type ProgressItem } from '~/models/progress.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { CacheRetention } from '~/utils/cache.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
@@ -88,12 +89,12 @@ export const useProgressStore = defineStore('data.progress', () => {
 
   const fetchProgress = async () => {
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching list');
+      logger.warn('Already fetching list');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching progress');
+    logger.debug('Fetching progress');
     loading.value = true;
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
@@ -104,12 +105,12 @@ export const useProgressStore = defineStore('data.progress', () => {
       loading.value = false;
 
       if (error instanceof Response && error.status === 401) {
-        console.warn('User is not logged in', error);
+        logger.warn('User is not logged in', error);
         loggedOut.value = true;
         return;
       }
 
-      console.error(error);
+      logger.error(error);
       NotificationService.error('Failed to fetch progress', error);
       throw error;
     } finally {

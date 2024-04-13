@@ -71,5 +71,5 @@ export async function writeManifest() {
   fs.writeJSONSync(resolveParent('dist/manifest.json'), manifest, {
     spaces: 2,
   });
-  console.log(`Writing manifest.json to '${getDirName()}/dist/manifest.json'`);
+  console.info(`Writing manifest.json to '${getDirName()}/dist/manifest.json'`);
 }

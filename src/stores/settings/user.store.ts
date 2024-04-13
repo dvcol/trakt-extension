@@ -5,6 +5,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import type { UserSetting } from '~/models/trakt-service.model';
 
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 type UserSettings = Record<string, UserSetting>;
@@ -25,7 +26,6 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
   const syncSetUser = (_settings: UserSetting = userSetting.value, account: string = _settings?.user?.username ?? user.value) => {
     const _lastUser = storage.sync.set(`settings.last-user`, account);
     const _setting = storage.sync.set(`settings.user.${encodeURIComponent(account)}`, _settings);
-    console.info('user-store', 'Saving user', account, JSON.parse(JSON.stringify(_settings)));
     return Promise.all([_lastUser, _setting]);
   };
 
@@ -39,7 +39,6 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
    * @param account
    */
   const syncClearUser = (account?: string) => {
-    console.info('user-store', 'Clearing user', account);
     return storage.sync.remove(`settings.user${account ? `.${encodeURIComponent(account)}` : ''}`);
   };
 
@@ -51,7 +50,6 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     if (account === defaultUser) account = await storage.sync.get<string>(`settings.last-user`);
     if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser) ?? defaultUser;
     user.value = account;
-    console.info('user-store', 'Restoring user', account);
     const _setting = await storage.sync.get<UserSetting>(`settings.user.${encodeURIComponent(account)}`);
     if (!userSettings[account]) userSettings[account] = {};
     if (_setting) Object.assign(userSettings[account], _setting);
@@ -72,7 +70,6 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
 
     if (!userSettings[account]) userSettings[account] = {};
     Object.assign(userSettings[account], _settings);
-    console.info('user-store', 'User changed', account, JSON.parse(JSON.stringify(userSettings[account])));
     user.value = account;
     return syncSetUser(userSettings[account], account);
   };
@@ -98,8 +95,6 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
    * @param account
    */
   const setCurrentUser = (account?: string) => {
-    console.info('user-store', 'Setting current user', JSON.parse(JSON.stringify(userSettings)));
-
     if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser);
     if (!account) return;
 
@@ -109,7 +104,7 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
 
   // Propagate user change to http service
   watch(user, _user => {
-    console.info('user changed', _user);
+    logger.info('User changed', { user: _user });
     TraktService.changeUser(_user);
   });
 

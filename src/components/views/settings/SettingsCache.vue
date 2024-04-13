@@ -7,6 +7,7 @@ import IconRestore from '~/components/icons/IconRestore.vue';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
+import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils';
 import { CacheRetention } from '~/utils/cache.utils';
 
@@ -28,7 +29,7 @@ const onClick = async (fn: () => unknown, index: number) => {
     await fn();
     NotificationService.message.success(i18n('evict_success'));
   } catch (error) {
-    console.error('Failed to evict cache.', error);
+    logger.error('Failed to evict cache.', error);
     NotificationService.error(i18n('evict_failure'), error);
   } finally {
     loading[index] = false;

@@ -6,6 +6,7 @@ import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { asyncRefGetter } from '~/utils/vue.utils';
 
 type PersonDictionary = Record<string, TraktPersonExtended>;
@@ -22,18 +23,18 @@ export const usePersonStore = defineStore('data.person', () => {
 
   const fetchPerson = async (id: string | number) => {
     if (loading[id]) {
-      console.warn('Already fetching person', id);
+      logger.warn('Already fetching person', id);
       return;
     }
 
-    console.info('Fetching person', id);
+    logger.debug('Fetching person', id);
 
     loading[id] = true;
 
     try {
       people[id] = await TraktService.person(id);
     } catch (error) {
-      console.error('Failed to fetch person', id);
+      logger.error('Failed to fetch person', id);
       NotificationService.error(`Failed to fetch person '${id}'.`, error);
       throw error;
     } finally {

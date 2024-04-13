@@ -3,6 +3,7 @@ import { computed, reactive, ref, type Ref } from 'vue';
 
 import type { TagLink } from '~/models/tag.model';
 
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { createTab } from '~/utils/browser/browser.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -95,7 +96,7 @@ export const useLinksStore = defineStore('settings.links', () => {
 
     // add new scopes
     if (link.scopes) Object.values(link.scopes).forEach(scope => addToScope(scope, link));
-    saveLinks().catch(err => console.error('Failed to save link', { link, err }));
+    saveLinks().catch(err => logger.error('Failed to save link', { link, err }));
   };
 
   const removeLink = (id: CustomLink['id']) => {
@@ -103,7 +104,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     if (!link) return;
     if (linkDictionary[link.id]) delete linkDictionary[link.id];
     if (link.scopes) Object.values(link.scopes).forEach(scope => removeFromScope(scope, link.id));
-    saveLinks().catch(err => console.error('Failed to save link', { id, err }));
+    saveLinks().catch(err => logger.error('Failed to save link', { id, err }));
   };
 
   const restoreState = async () => {
@@ -140,7 +141,7 @@ export const useLinksStore = defineStore('settings.links', () => {
         if (!id.value) return;
         if (!aliasDictionary[type]) aliasDictionary[type] = {};
         aliasDictionary[type]![id.value] = value;
-        saveAlias().catch(err => console.error('Failed to save alias', { id, type, err }));
+        saveAlias().catch(err => logger.error('Failed to save alias', { id, type, err }));
       },
     });
 
@@ -148,7 +149,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     get: () => enabled.value,
     set: (value: boolean) => {
       enabled.value = value;
-      saveState().catch(err => console.error('Failed to save link settings', { value, err }));
+      saveState().catch(err => logger.error('Failed to save link settings', { value, err }));
     },
   });
 
@@ -156,8 +157,7 @@ export const useLinksStore = defineStore('settings.links', () => {
     get: () => backgroundLink.value,
     set: (value: boolean) => {
       backgroundLink.value = value;
-      console.info('Open links in new tab', value);
-      saveState().catch(err => console.error('Failed to save link settings.', { value, err }));
+      saveState().catch(err => logger.error('Failed to save link settings.', { value, err }));
     },
   });
 

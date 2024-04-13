@@ -7,6 +7,7 @@ import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from 
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
 import { useSearchFilter } from '~/utils/store.utils';
@@ -127,11 +128,11 @@ export const useCalendarStore = defineStore('data.calendar', () => {
 
   const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching calendar');
+      logger.warn('Already fetching calendar');
       return;
     }
     if (filter.value) {
-      console.warn('Filtering calendar, fetch is disabled');
+      logger.warn('Filtering calendar, fetch is disabled');
       return;
     }
 
@@ -148,7 +149,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
 
     if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
 
-    console.info('Fetching calendar', { mode, start_date, end_date, days: days.value });
+    logger.debug('Fetching calendar', { mode, start_date, end_date, days: days.value });
 
     const timeout = setTimeout(() => {
       if (mode === 'reload') calendar.value = getEmptyWeeks(startDate, true);
@@ -183,7 +184,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
         calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
     } catch (e) {
-      console.error('Failed to fetch calendar');
+      logger.error('Failed to fetch calendar');
       NotificationService.error('Failed to fetch calendar', e);
       calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
       throw e;

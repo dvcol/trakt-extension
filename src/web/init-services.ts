@@ -8,10 +8,13 @@ import { useSearchStore } from '~/stores/data/search.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
+import { useLogStore } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { initLocalI18n } from '~/utils';
 
 export const initServices = async () => {
+  await useLogStore().initLogStore();
+
   const { setAppReady } = useAppStateStore();
   const { syncRestoreAuth } = useAuthSettingsStore();
   const { syncRestoreUser, syncRestoreAllUsers } = useUserSettingsStore();

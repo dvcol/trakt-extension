@@ -6,6 +6,7 @@ import { computed, defineProps, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { DropdownProps } from 'naive-ui';
+
 import type { Component } from 'vue';
 
 import type { ArrayElement } from '~/utils/typescript.utils';
@@ -21,6 +22,7 @@ import { Route } from '~/router';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
+import { logger } from '~/stores/settings/log.store';
 import {
   defaultUser,
   useUserSettingsStore,
@@ -42,7 +44,7 @@ const username = computed(() => userSetting.value?.user?.username);
 
 const fallback = ref<boolean>(!chromeRuntimeId);
 const onAvatarError = (event: Event) => {
-  console.error('Failed to fetch avatar', event);
+  logger.error('Failed to fetch avatar', event);
   fallback.value = true;
 };
 
@@ -130,7 +132,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       if (typeof label === 'string' && key.startsWith('user-')) {
         return loadUser(label);
       }
-      console.error('Unknown key:', key);
+      logger.error('Unknown key:', key);
   }
 };
 </script>

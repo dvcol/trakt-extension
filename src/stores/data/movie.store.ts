@@ -6,6 +6,7 @@ import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 
 type MovieDictionary = Record<string, TraktMovieExtended>;
 type MovieWatchedDictionary = Record<string, boolean>;
@@ -34,18 +35,18 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovie = async (id: string | number) => {
     if (loading[id]) {
-      console.warn('Already fetching movie', id);
+      logger.warn('Already fetching movie', id);
       return;
     }
 
-    console.info('Fetching movie', id);
+    logger.debug('Fetching movie', id);
 
     loading[id] = true;
 
     try {
       movies[id] = await TraktService.movie(id);
     } catch (error) {
-      console.error('Failed to fetch movie', id);
+      logger.error('Failed to fetch movie', id);
       NotificationService.error(`Failed to fetch movie '${id}'.`, error);
       throw error;
     } finally {
@@ -58,11 +59,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovieWatched = async () => {
     if (loadingWatched.value) {
-      console.warn('Already fetching watched movies');
+      logger.warn('Already fetching watched movies');
       return;
     }
 
-    console.info('Fetching watched movies');
+    logger.debug('Fetching watched movies');
 
     loadingWatched.value = true;
     try {
@@ -73,7 +74,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       }, {} as MovieWatchedDictionary);
       Object.assign(moviesWatched, dictionary);
     } catch (error) {
-      console.error('Failed to fetch watched movies');
+      logger.error('Failed to fetch watched movies');
       NotificationService.error('Failed to fetch watched movies', error);
       throw error;
     } finally {
@@ -88,11 +89,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovieCollected = async () => {
     if (loadingCollected.value) {
-      console.warn('Already fetching collected movies');
+      logger.warn('Already fetching collected movies');
       return;
     }
 
-    console.info('Fetching collected movies');
+    logger.debug('Fetching collected movies');
 
     loadingCollected.value = true;
     try {
@@ -103,7 +104,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       }, {} as MovieCollectedDictionary);
       Object.assign(moviesCollected, dictionary);
     } catch (error) {
-      console.error('Failed to fetch collected movies');
+      logger.error('Failed to fetch collected movies');
       NotificationService.error('Failed to fetch collected movies', error);
       throw error;
     } finally {

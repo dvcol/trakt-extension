@@ -6,6 +6,7 @@ import type { TraktHistory } from '~/models/trakt/trakt-history.model';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
@@ -61,12 +62,12 @@ export const useHistoryStore = defineStore('data.history', () => {
     end = historyEnd.value,
   }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching history');
+      logger.warn('Already fetching history');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching History', { page, limit, start, end });
+    logger.debug('Fetching History', { page, limit, start, end });
     loading.value = true;
     const timeout = debounceLoading(history, loadingPlaceholder, !page);
     try {
@@ -81,7 +82,7 @@ export const useHistoryStore = defineStore('data.history', () => {
       pagination.value = response.pagination;
       history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
     } catch (e) {
-      console.error('Failed to fetch history');
+      logger.error('Failed to fetch history');
       NotificationService.error('Failed to fetch history', e);
       history.value = history.value.filter(h => h.id >= 0);
       throw e;
