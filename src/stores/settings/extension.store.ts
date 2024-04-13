@@ -2,6 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { CacheRetention } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -30,13 +31,11 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
   const restoreRoute = ref(true);
   const progressTab = ref(false);
   // todo: use each store value instead in settings page
-  const logLevel = ref('info');
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
     restoreRoute.value = true;
     progressTab.value = false;
-    logLevel.value = 'info';
   };
 
   const saveState = debounce(
@@ -45,7 +44,6 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
         cacheRetention: toRaw(cacheRetention),
         restoreRoute: restoreRoute.value,
         progressTab: progressTab.value,
-        logLevel: logLevel.value,
       }),
     1000,
   );
@@ -55,7 +53,7 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     if (retention.tmdb !== undefined) cacheRetention.tmdb = retention.tmdb;
     if (retention.tvdb !== undefined) cacheRetention.tvdb = retention.tvdb;
     TraktService.changeRetention(cacheRetention);
-    if (persist) saveState().catch(err => console.error('Failed to save extension settings', { retention, err }));
+    if (persist) saveState().catch(err => logger.error('Failed to save extension settings', { retention, err }));
   };
 
   const restoreState = async () => {
@@ -64,7 +62,6 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     if (restored?.cacheRetention !== undefined) setRetention(restored.cacheRetention, false);
     if (restored?.restoreRoute !== undefined) restoreRoute.value = restored.restoreRoute;
     if (restored?.progressTab !== undefined) progressTab.value = restored.progressTab;
-    if (restored?.logLevel) logLevel.value = restored.logLevel;
   };
 
   const initExtensionSettingsStore = async () => {
@@ -77,7 +74,6 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     clearState,
     restoreRoute,
     progressTab,
-    logLevel,
     traktCacheRetention: computed({
       get: () => cacheRetention.trakt,
       set: (value: number) => setRetention({ trakt: value }),

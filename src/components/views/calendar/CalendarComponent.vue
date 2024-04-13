@@ -53,7 +53,6 @@ const scrollTo = (
 };
 
 const reload = async () => {
-  console.info('reload', center.value);
   const promise = fetchCalendar();
   // watch for loading changes and recenter
   const unsub = watch(list, async () => scrollTo());

@@ -17,6 +17,7 @@ import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
@@ -106,12 +107,12 @@ export const useListsStore = defineStore('data.lists', () => {
 
   const fetchLists = async () => {
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching lists');
+      logger.warn('Already fetching lists');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching Lists');
+    logger.debug('Fetching Lists');
     loading.value = true;
     try {
       const [personals, collaborations] = await Promise.all([TraktService.lists(user.value), TraktService.lists(user.value, true)]);
@@ -137,11 +138,11 @@ export const useListsStore = defineStore('data.lists', () => {
         ),
       ];
       if (activeList.value?.id && !lists.value.some(l => activeList.value.id === l?.id)) {
-        console.warn('Active List not found, falling back to default', activeList.value);
+        logger.warn('Active List not found, falling back to default', activeList.value);
         activeList.value = DefaultLists.Watchlist;
       }
     } catch (e) {
-      console.error('Failed to fetch lists');
+      logger.error('Failed to fetch lists');
       NotificationService.error('Failed to fetch lists', e);
       throw e;
     } finally {
@@ -255,12 +256,12 @@ export const useListStore = defineStore('data.list', () => {
     list = activeList.value,
   }: { page?: number; limit?: number; list?: ListEntity } = {}) => {
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching list');
+      logger.warn('Already fetching list');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetching List', { list, page, limit });
+    logger.debug('Fetching List', { list, page, limit });
 
     loading.value = true;
     typeLoading[list.type] = true;
@@ -298,7 +299,7 @@ export const useListStore = defineStore('data.list', () => {
       pagination.value = response.pagination;
       listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
     } catch (e) {
-      console.error('Failed to fetch list');
+      logger.error('Failed to fetch list');
       NotificationService.error(`Failed to fetch list '${list}'`, e);
       listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.loading);
       throw e;
@@ -336,11 +337,9 @@ export const useListStore = defineStore('data.list', () => {
     }
 
     if (typeItemLoading[listType]?.[itemType]?.[itemIds.trakt.toString()]) {
-      console.warn('Already adding item to list');
+      logger.warn('Already adding item to list');
       return;
     }
-
-    console.info(`${remove ? 'Removing' : 'Adding'} item to list`, listId, itemType, itemIds);
 
     if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
     if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};
@@ -361,7 +360,6 @@ export const useListStore = defineStore('data.list', () => {
       } else if (listType === 'favorites') {
         await TraktService[remove ? 'remove' : 'add'].favorites({ [`${itemType}s`]: [{ ids: itemIds }] });
       } else if (listType === ListType.Collection) {
-        console.info(`${remove ? 'Removing' : 'adding'} item to/form collection`, { [`${itemType}s`]: [{ ids: itemIds }] });
         if (remove) {
           await TraktService.remove.collection({ [`${itemType}s`]: [{ ids: itemIds }] });
         } else {
@@ -372,7 +370,7 @@ export const useListStore = defineStore('data.list', () => {
         await TraktService[remove ? 'remove' : 'add'].list({ id: userId!, list_id: listId, [`${itemType}s`]: [{ ids: itemIds }] });
         updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
       } else {
-        console.error(`Unknown list type ${listType}.`);
+        logger.error(`Unknown list type ${listType}.`);
       }
       NotificationService.message.success(
         [
@@ -385,7 +383,7 @@ export const useListStore = defineStore('data.list', () => {
           .join(' '),
       );
     } catch (e) {
-      console.error('Failed to add item to list');
+      logger.error('Failed to add item to list');
       NotificationService.error(`Failed to add item to list '${list.name}'`, e);
       throw e;
     } finally {

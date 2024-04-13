@@ -7,6 +7,7 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
 
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { logger } from '~/stores/settings/log.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
@@ -39,8 +40,8 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
       try {
         await TraktService.login(query.code);
       } catch (error) {
-        console.error('Failed to login with Trakt.tv');
-        console.error(error);
+        logger.error('Failed to login with Trakt.tv');
+        logger.error(error);
       }
     }
 

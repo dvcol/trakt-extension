@@ -12,6 +12,7 @@ import type { BaseCacheOption } from '~/services/common/base-client';
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
 
@@ -94,17 +95,17 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShow = async (id: string) => {
     if (showsLoading[id]) {
-      console.warn('Already fetching show', id);
+      logger.warn('Already fetching show', id);
       return;
     }
 
-    console.info('Fetching Show', id);
+    logger.debug('Fetching Show', id);
 
     showsLoading[id] = true;
     try {
       shows[id] = await TraktService.show.summary(id);
     } catch (e) {
-      console.error('Failed to fetch show', id);
+      logger.error('Failed to fetch show', id);
       NotificationService.error(`Failed to fetch show '${id}'.`, e);
       throw e;
     } finally {
@@ -114,17 +115,17 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShowProgress = async (id: string, cacheOption?: BaseCacheOption) => {
     if (showWatchedProgressLoading[id]) {
-      console.warn('Already fetching show progress', id);
+      logger.warn('Already fetching show progress', id);
       return;
     }
 
-    console.info('Fetching Show Progress', id);
+    logger.debug('Fetching Show Progress', id);
 
     showWatchedProgressLoading[id] = true;
     try {
       showsWatchedProgress[id] = await TraktService.progress.show.watched(id, cacheOption);
     } catch (e) {
-      console.error('Failed to fetch show progress', id);
+      logger.error('Failed to fetch show progress', id);
       throw e;
     } finally {
       showWatchedProgressLoading[id] = false;
@@ -133,17 +134,17 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShowCollectionProgress = async (id: string, cacheOption?: BaseCacheOption) => {
     if (showCollectionProgressLoading[id]) {
-      console.warn('Already fetching show collection progress', id);
+      logger.warn('Already fetching show collection progress', id);
       return;
     }
 
-    console.info('Fetching Show Collection Progress', id);
+    logger.debug('Fetching Show Collection Progress', id);
 
     showCollectionProgressLoading[id] = true;
     try {
       showsCollectionProgress[id] = await TraktService.progress.show.collection(id, cacheOption);
     } catch (e) {
-      console.error('Failed to fetch show collection progress', id);
+      logger.error('Failed to fetch show collection progress', id);
       throw e;
     } finally {
       showCollectionProgressLoading[id] = false;
@@ -152,11 +153,11 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShowSeasons = async (id: string) => {
     if (showsSeasonsLoading[id]) {
-      console.warn('Already fetching show seasons', id);
+      logger.warn('Already fetching show seasons', id);
       return;
     }
 
-    console.info('Fetching Show Seasons', id);
+    logger.debug('Fetching Show Seasons', id);
 
     showsSeasonsLoading[id] = true;
     try {
@@ -166,7 +167,7 @@ export const useShowStore = defineStore('data.show', () => {
         return acc;
       }, {});
     } catch (e) {
-      console.error('Failed to fetch show seasons', id);
+      logger.error('Failed to fetch show seasons', id);
       NotificationService.error(`Failed to fetch show seasons '${id}'.`, e);
       throw e;
     } finally {
@@ -176,11 +177,11 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShowSeasonEpisodes = async (id: string, season: number) => {
     if (showsSeasonEpisodesLoading[id]?.[season]) {
-      console.warn('Already fetching show season episodes', id, season);
+      logger.warn('Already fetching show season episodes', id, season);
       return;
     }
 
-    console.info('Fetching Show Season Episodes', id, season);
+    logger.debug('Fetching Show Season Episodes', id, season);
 
     if (!showsSeasonEpisodesLoading[id]) showsSeasonEpisodesLoading[id] = {};
     showsSeasonEpisodesLoading[id][season] = true;
@@ -189,7 +190,7 @@ export const useShowStore = defineStore('data.show', () => {
       if (!showsSeasonEpisodes[id]) showsSeasonEpisodes[id] = {};
       showsSeasonEpisodes[id][season] = episodes;
     } catch (e) {
-      console.error('Failed to fetch show season episodes', id, season);
+      logger.error('Failed to fetch show season episodes', id, season);
       NotificationService.error(`Failed to fetch show season episodes '${id}', season '${season}'.`, e);
       throw e;
     } finally {
@@ -199,11 +200,11 @@ export const useShowStore = defineStore('data.show', () => {
 
   const fetchShowEpisode = async (id: string, season: number, episode: number) => {
     if (showsEpisodesLoading[id]?.[season]?.[episode]) {
-      console.warn('Already fetching show episodes', id, season, episode);
+      logger.warn('Already fetching show episodes', id, season, episode);
       return;
     }
 
-    console.info('Fetching Show Episodes', id, season, episode);
+    logger.debug('Fetching Show Episodes', id, season, episode);
 
     if (!showsEpisodesLoading[id]) showsEpisodesLoading[id] = {};
     if (!showsEpisodesLoading[id][season]) showsEpisodesLoading[id][season] = {};
@@ -213,7 +214,7 @@ export const useShowStore = defineStore('data.show', () => {
       if (!showsEpisodes[id][season]) showsEpisodes[id][season] = {};
       showsEpisodes[id][season][episode] = await TraktService.show.episode({ id, season, episode });
     } catch (e) {
-      console.error('Failed to fetch show episodes', id, season, episode);
+      logger.error('Failed to fetch show episodes', id, season, episode);
       NotificationService.error(`Failed to fetch show episodes '${id}', season '${season}', episode '${episode}'.`, e);
       throw e;
     } finally {
@@ -253,7 +254,7 @@ export const useShowStore = defineStore('data.show', () => {
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
   const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption) => {
     if (!showsWatchedProgress[id.toString()] && !showWatchedProgressLoading[id.toString()]) {
-      fetchShowProgress(id.toString(), cacheOptions).catch(console.error);
+      fetchShowProgress(id.toString(), cacheOptions).catch(logger.error);
     }
     return computed(() => {
       const progress = showsWatchedProgress[id.toString()];
@@ -265,7 +266,7 @@ export const useShowStore = defineStore('data.show', () => {
   const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
   const getShowCollectionProgress = (id: number | string) => {
     if (!showsCollectionProgress[id.toString()] && !showCollectionProgressLoading[id.toString()])
-      fetchShowCollectionProgress(id.toString()).catch(console.error);
+      fetchShowCollectionProgress(id.toString()).catch(logger.error);
     return computed(() => {
       const progress = showsCollectionProgress[id.toString()];
       if (!progress) return undefined;

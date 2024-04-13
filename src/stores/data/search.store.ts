@@ -9,6 +9,7 @@ import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.mo
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
@@ -103,12 +104,12 @@ export const useSearchStore = defineStore('data.search', () => {
       return;
     }
     if (!firstLoad.value && loading.value) {
-      console.warn('Already fetching history');
+      logger.warn('Already fetching history');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    console.info('Fetch search results', { types: types.value, query: query.value, search: search.value });
+    logger.debug('Fetching search results', { types: types.value, query: query.value, search: search.value });
 
     loading.value = true;
     const timeout = debounceLoading(searchResults, loadingPlaceholder, !page);
@@ -131,7 +132,7 @@ export const useSearchStore = defineStore('data.search', () => {
       pagination.value = response.pagination;
       searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.loading), ...data] : data;
     } catch (e) {
-      console.error('Failed to fetch search query');
+      logger.error('Failed to fetch search query');
       NotificationService.error('Failed to fetch search query', e);
       searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.loading);
       throw e;
@@ -146,7 +147,7 @@ export const useSearchStore = defineStore('data.search', () => {
 
     watch(search, async () => {
       await fetchSearchResults();
-      await addToHistory().catch(e => console.error('Failed to save search history', e));
+      await addToHistory().catch(e => logger.error('Failed to save search history', e));
     });
 
     watch(pageSize, async () => {

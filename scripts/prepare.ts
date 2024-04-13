@@ -19,7 +19,7 @@ const copyIndexHtml = async (view: string) => {
     <script type="module" src="http://localhost:3303/views/popup/main.ts"></script>`,
   );
   fs.writeFileSync(resolveParent(`dist/views/${view}/index.html`), data, 'utf-8');
-  console.log(`Stubbing '${view}' to '${getDirName()}/dist/views/${view}/index.html'`);
+  console.info(`Stubbing '${view}' to '${getDirName()}/dist/views/${view}/index.html'`);
 };
 
 /**
@@ -54,7 +54,7 @@ const prepare = async (hmr = isDev) => {
   }).catch((e: Error) => console.error('Failed to merge jsons', e));
 
   if (hmr) {
-    console.log('Watching changes ...');
+    console.info('Watching changes ...');
 
     copyViews().catch(e => console.error('Failed to copy html', e));
     watch(resolveParent('src/**/*.html')).on('change', () => {

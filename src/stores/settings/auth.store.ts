@@ -37,22 +37,18 @@ export const useAuthSettingsStore = defineStore('settings.auth', () => {
       delete authenticated.tvdb;
       delete authenticated.tmdb;
     }
-    console.info('auth-store', 'authentication changed', authenticated);
     return authenticated;
   };
 
   const syncSetAuth = (_auth: SettingsAuth = auth.value, account: string = user.value) => {
-    console.info('auth-store', 'Saving auth', account, JSON.parse(JSON.stringify(_auth)));
     return storage.sync.set(`settings.auth.${encodeURIComponent(account)}`, _auth);
   };
 
   const syncClearAuth = (account?: string) => {
-    console.info('auth-store', 'Clearing auth', account);
     return storage.sync.remove(`settings.auth${account ? `.${encodeURIComponent(account)}` : ''}`);
   };
 
   const syncRestoreAuth = async (account: string = user.value) => {
-    console.info('auth-store', 'Restoring auth', account);
     const _auth = await storage.sync.get<SettingsAuth>(`settings.auth.${encodeURIComponent(account)}`);
     if (!auths[account]) auths[account] = {};
     if (_auth) Object.assign(auths[account], _auth);
@@ -71,8 +67,6 @@ export const useAuthSettingsStore = defineStore('settings.auth', () => {
     if (_auth.trakt) auths[account].trakt = _auth.trakt;
     if (_auth.tvdb) auths[account].tvdb = _auth.tvdb;
     if (_auth.tmdb) auths[account].tmdb = _auth.tmdb;
-
-    console.info('auth-store', 'Auth changed', account, JSON.parse(JSON.stringify(auths[account])));
 
     setAuthenticated();
     return syncSetAuth(auths[account], account);

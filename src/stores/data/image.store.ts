@@ -7,6 +7,7 @@ import type { TmdbConfiguration } from '~/models/tmdb/tmdb-configuration.model';
 import type { TmdbImage } from '~/models/tmdb/tmdb-image.model';
 
 import { TraktService } from '~/services/trakt.service';
+import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { arrayMax, findClosestMatch } from '~/utils/math.utils';
@@ -98,8 +99,6 @@ export const useImageStore = defineStore('data.image', () => {
     if (season) Object.assign(images.season, season);
     if (episode) Object.assign(images.episode, episode);
     if (person) Object.assign(images.person, person);
-
-    console.info('Restored Image Store', images);
   };
 
   const initImageStore = async (config?: TmdbConfiguration) => {
@@ -143,7 +142,7 @@ export const useImageStore = defineStore('data.image', () => {
     } else if (type === 'show') {
       payload = await queueRequest(key, () => TraktService.posters.show(id));
     } else {
-      console.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
+      logger.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
       throw new Error('Unsupported type or missing parameters for fetchImageUrl');
     }
 
@@ -163,7 +162,7 @@ export const useImageStore = defineStore('data.image', () => {
       if (!image.poster && !image.backdrop) return;
       images[type][key] = image;
 
-      saveState().catch(err => console.error('Failed to save image store', err));
+      saveState().catch(err => logger.error('Failed to save image store', err));
       return { image, key, type };
     }
 
@@ -178,7 +177,7 @@ export const useImageStore = defineStore('data.image', () => {
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
-    saveState().catch(err => console.error('Failed to save image store', err));
+    saveState().catch(err => logger.error('Failed to save image store', err));
     return { image, key, type };
   };
 
