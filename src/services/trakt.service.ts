@@ -108,8 +108,10 @@ export class TraktService {
     this.caches.tvdb.prefix = `tvdb-cache-${user}`;
   }
 
-  static changeRetention(retention: number) {
-    this.caches.trakt.retention = retention;
+  static changeRetention({ trakt, tvdb, tmdb }: { trakt?: number; tvdb?: number; tmdb?: number }) {
+    if (trakt !== undefined) this.caches.trakt.retention = trakt;
+    if (tvdb !== undefined) this.caches.tvdb.retention = tvdb;
+    if (tmdb !== undefined) this.caches.tmdb.retention = tmdb;
   }
 
   private static async saveAuth(
@@ -505,6 +507,7 @@ export class TraktService {
     shows: TraktService.traktClient.shows.summary.cached.evict,
     seasons: () => Promise.all([TraktService.traktClient.seasons.summary.cached.evict(), TraktService.traktClient.seasons.season.cached.evict()]),
     episodes: TraktService.traktClient.episodes.summary.cached.evict,
+    search: TraktService.traktClient.search.text.cached.evict,
     list: TraktService.traktClient.users.list.items.get.cached.evict,
     lists: () =>
       Promise.all([

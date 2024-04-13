@@ -3,7 +3,11 @@ import { NAnchor, NAnchorLink, NCard, NLayout, NLayoutSider } from 'naive-ui';
 
 import { type Component, onDeactivated, type Ref, ref } from 'vue';
 
+import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
+import SettingsCache from '~/components/views/settings/SettingsCache.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
+import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
+import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
 
 import { useI18n } from '~/utils';
 
@@ -16,11 +20,11 @@ type Section = {
 };
 
 const sections: Section[] = [
-  { title: 'menu__account', reference: ref() },
-  { title: 'menu__tabs', reference: ref() },
+  { title: 'menu__account', reference: ref(), component: SettingsAccount },
+  { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
   { title: 'menu__links', reference: ref(), component: SettingsLinks },
-  { title: 'menu__cache', reference: ref() },
-  { title: 'menu__logs', reference: ref() },
+  { title: 'menu__cache', reference: ref(), component: SettingsCache },
+  { title: 'menu__logs', reference: ref(), component: SettingsLogs },
 ];
 
 const focus = ref();
