@@ -1,0 +1,30 @@
+{
+  "settings__links__new_custom_link": {
+    "message": "Add new custom link",
+    "description": "Label for the button that adds a new custom link"
+  },
+  "settings__links__label_scopes": {
+    "message": "Scopes",
+    "description": "Label for the scopes section"
+  },
+  "settings__links__label_label": {
+    "message": "Label",
+    "description": "Label for the label field"
+  },
+  "settings__links__label_template": {
+    "message": "Template",
+    "description": "Label for the template field"
+  },
+  "settings__links__label_name": {
+    "message": "Name",
+    "description": "Label for the name field"
+  },
+  "settings__links__label_show_hide": {
+    "message": "Show / Hide custom links in panels",
+    "description": "Label for the show/hide button"
+  },
+  "settings__links__confirm_remove": {
+    "message": "Remove this custom link?",
+    "description": "Confirmation message for removing a custom link"
+  }
+}

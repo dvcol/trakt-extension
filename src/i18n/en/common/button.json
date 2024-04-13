@@ -10,5 +10,25 @@
   "common__button__today": {
     "message": "Today",
     "description": "Button to recenter the timeline on today."
+  },
+  "common__button__remove": {
+    "message": "Remove",
+    "description": "Button to remove an item."
+  },
+  "common__button__save": {
+    "message": "Save",
+    "description": "Button to save an item."
+  },
+  "common__button__restore": {
+    "message": "Restore",
+    "description": "Button to restore an item."
+  },
+  "common__button__show": {
+    "message": "Show",
+    "description": "Button to show an item."
+  },
+  "common__button__hide": {
+    "message": "Hide",
+    "description": "Button to hide an item."
   }
 }

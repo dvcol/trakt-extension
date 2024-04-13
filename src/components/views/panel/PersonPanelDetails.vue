@@ -128,6 +128,7 @@ const socials = computed(() => {
         :label="i18n('death')"
         :value="death"
         :skeleton="{ width: '5.125rem' }"
+        grow
       />
     </NFlex>
 
@@ -168,5 +169,11 @@ const socials = computed(() => {
 
 .lists {
   margin: 1.5rem 0 0.5rem;
+}
+
+@media (width < 700px) {
+  .row {
+    gap: 0.75rem 0.5rem !important;
+  }
 }
 </style>

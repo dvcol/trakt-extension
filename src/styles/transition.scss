@@ -31,3 +31,22 @@
     opacity: $opacity;
   }
 }
+
+
+@mixin height(
+  $height: 20rem,
+  $opacity: 0,
+  $transition: 0.25s ease
+) {
+  .scale-enter-active,
+  .scale-leave-active {
+    transition: all $transition;
+    will-change: transform, opacity;
+  }
+
+  .scale-enter-from,
+  .scale-leave-to {
+    max-height: $height;
+    opacity: $opacity;
+  }
+}

@@ -28,7 +28,7 @@ const onClick = (e: MouseEvent) => {
 <template>
   <a
     :href="tag?.url"
-    :title="tag?.title"
+    :title="tag?.title ?? tag?.url"
     :data-tag="JSON.stringify(tag)"
     @click="onClick"
   >
