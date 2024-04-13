@@ -19,9 +19,9 @@ const cacheOptions = Object.entries(CacheRetention).map(([key, value]) => ({
   value,
 }));
 
-const loading = reactive({});
+const loading = reactive<Record<string | number, boolean>>({});
 
-const onClick = async (fn: () => Promise<void>, index: number) => {
+const onClick = async (fn: () => unknown, index: number) => {
   loading[index] = true;
 
   try {
@@ -41,10 +41,10 @@ const evictScopes = [
     label: i18n('evict_progress'),
     click: () =>
       Promise.all([
-        TraktService.evict.progress.movies(),
-        TraktService.evict.progress.shows(),
-        TraktService.evict.collection.movies(),
-        TraktService.evict.collection.shows(),
+        TraktService.evict.progress.movie(),
+        TraktService.evict.progress.show(),
+        TraktService.evict.collection.movie(),
+        TraktService.evict.collection.show(),
       ]),
   },
   { label: i18n('evict_calendar'), click: TraktService.evict.calendar },
@@ -57,8 +57,8 @@ const evictScopes = [
         TraktService.evict.favorites(),
         TraktService.evict.list(),
         TraktService.evict.lists(),
-        TraktService.evict.collection.movies(),
-        TraktService.evict.collection.shows(),
+        TraktService.evict.collection.movie(),
+        TraktService.evict.collection.show(),
       ]),
   },
   { label: i18n('evict_search'), click: TraktService.evict.search },
@@ -95,6 +95,7 @@ const container = ref();
     >
       <NSelect
         v-model:value="tmdbCacheRetention"
+        class="form-select"
         :to="container"
         :options="cacheOptions"
       />

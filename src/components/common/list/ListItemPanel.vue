@@ -16,7 +16,7 @@ import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { useShowStore } from '~/stores/data/show.store';
-import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
 import { deCapitalise } from '~/utils/string.utils';
 
@@ -92,7 +92,7 @@ const tooltipOptions = computed<PopoverProps>(() => ({
   delay: 500,
 }));
 
-const { openTab } = useExtensionSettingsStore();
+const { openTab } = useLinksStore();
 const onTagClick = (url?: string) => {
   if (!url) return;
   openTab(url);

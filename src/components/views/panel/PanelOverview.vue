@@ -2,7 +2,7 @@
 import { NFlex, NH4, NSkeleton } from 'naive-ui';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
-import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { useLinksStore } from '~/stores/settings/links.store';
 
 defineProps({
   title: {
@@ -23,7 +23,7 @@ defineProps({
   },
 });
 
-const { openTab } = useExtensionSettingsStore();
+const { openTab } = useLinksStore();
 </script>
 
 <template>
