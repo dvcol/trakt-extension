@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { NFormItem, NSelect } from 'naive-ui';
+import { NSelect } from 'naive-ui';
 
 import { ref } from 'vue';
 
+import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { LogLevel, useLogStore } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils';
 
@@ -22,17 +23,14 @@ const container = ref();
 
 <template>
   <div ref="container" class="logs-container">
-    <NFormItem class="form-row" :show-feedback="false" label-placement="left">
-      <template #label>
-        <span class="from-label">{{ i18n('label_log_level') }}</span>
-      </template>
+    <SettingsFormItem :label="i18n('label_log_level')">
       <NSelect
         v-model:value="logLevel"
         class="form-select"
         :to="container"
         :options="options"
       />
-    </NFormItem>
+    </SettingsFormItem>
   </div>
 </template>
 
@@ -45,25 +43,5 @@ const container = ref();
 
 .form-select {
   min-width: 10rem;
-}
-
-.from-label {
-  color: var(--white-70);
-  font-weight: 600;
-  font-size: 1rem;
-  transition: color 0.3s var(--n-bezier);
-}
-
-.form-row {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  &:hover {
-    .from-label {
-      color: var(--white-mute);
-    }
-  }
 }
 </style>

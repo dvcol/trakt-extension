@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { NButton, NFormItem, NIcon, NSelect } from 'naive-ui';
+import { NButton, NIcon, NSelect } from 'naive-ui';
 
 import { reactive, ref } from 'vue';
 
 import IconRestore from '~/components/icons/IconRestore.vue';
+import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
+
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -75,39 +77,31 @@ const container = ref();
 
 <template>
   <div ref="container" class="cache-container">
-    <NFormItem class="form-row" :show-feedback="false" label-placement="left">
-      <template #label>
-        <span class="from-label">{{ i18n('label_retention_trakt') }}</span>
-      </template>
+    <!--  Retention  -->
+    <SettingsFormItem :label="i18n('label_retention_trakt')">
       <NSelect
         v-model:value="traktCacheRetention"
         class="form-select"
         :to="container"
         :options="cacheOptions"
       />
-    </NFormItem>
-    <NFormItem class="form-row" :show-feedback="false" label-placement="left">
-      <template #label>
-        <span class="from-label">{{ i18n('label_retention_images') }}</span>
-      </template>
+    </SettingsFormItem>
+
+    <SettingsFormItem :label="i18n('label_retention_images')">
       <NSelect
         v-model:value="tmdbCacheRetention"
         class="form-select"
         :to="container"
         :options="cacheOptions"
       />
-    </NFormItem>
+    </SettingsFormItem>
 
-    <NFormItem
+    <!--  Cache evict  -->
+    <SettingsFormItem
       v-for="({ label, click }, index) in evictScopes"
       :key="index"
-      class="form-row"
-      :show-feedback="false"
-      label-placement="left"
+      :label="label"
     >
-      <template #label>
-        <span class="from-label">{{ label }}</span>
-      </template>
       <NButton
         class="evict-button"
         type="warning"
@@ -120,7 +114,7 @@ const container = ref();
           <NIcon :component="IconRestore" />
         </template>
       </NButton>
-    </NFormItem>
+    </SettingsFormItem>
   </div>
 </template>
 
@@ -139,25 +133,5 @@ const container = ref();
 
 .form-select {
   min-width: 10rem;
-}
-
-.from-label {
-  color: var(--white-70);
-  font-weight: 600;
-  font-size: 1rem;
-  transition: color 0.3s var(--n-bezier);
-}
-
-.form-row {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  &:hover {
-    .from-label {
-      color: var(--white-mute);
-    }
-  }
 }
 </style>
