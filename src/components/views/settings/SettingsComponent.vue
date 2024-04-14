@@ -8,7 +8,6 @@ import SettingsCache from '~/components/views/settings/SettingsCache.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
-
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('settings');
@@ -33,9 +32,11 @@ const target = ref();
 const scrollTo = (section: Section) => {
   target.value = section;
   focus.value = section;
-  section.reference?.value?.[0]?.$el?.scrollIntoView({
+
+  const element: HTMLDivElement = section.reference?.value?.[0]?.$el;
+  element?.scrollIntoView({
     behavior: 'smooth',
-    block: 'center',
+    block: 'start',
   });
 };
 
@@ -116,6 +117,7 @@ onDeactivated(() => {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
 
     z-index: var(--index);
+    scroll-margin-top: calc(#{layout.$header-navbar-height} + 1rem);
 
     &:not(:last-child) {
       margin-bottom: 1rem;
