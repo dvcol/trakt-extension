@@ -19,6 +19,7 @@ import IconClose from '~/components/icons/IconClose.vue';
 import IconConfirm from '~/components/icons/IconConfirm.vue';
 import IconPlus from '~/components/icons/IconPlus.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
+import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import {
   AllCustomLinkScopes,
   type CustomLink,
@@ -104,24 +105,18 @@ const containerRef = ref<HTMLDivElement>();
 <template>
   <div ref="containerRef" class="links-container">
     <!--  Header  -->
-    <NFormItem class="form-header-row" label-placement="left" :show-feedback="false">
-      <template #label>
-        <span class="form-header">{{ i18n('label_show_hide') }}</span>
-      </template>
-      <NSwitch v-model:value="aliasEnabled" class="form-header-switch">
+    <SettingsFormItem :label="i18n('label_show_hide')">
+      <NSwitch v-model:value="aliasEnabled" class="form-switch">
         <template #checked>{{ i18n('show', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('hide', 'common', 'button') }}</template>
       </NSwitch>
-    </NFormItem>
-    <NFormItem class="form-header-row" label-placement="left" :show-feedback="false">
-      <template #label>
-        <span class="form-header">{{ i18n('label_open_in_background') }}</span>
-      </template>
-      <NSwitch v-model:value="openLinkInBackground" class="form-header-switch">
+    </SettingsFormItem>
+    <SettingsFormItem :label="i18n('label_open_in_background')">
+      <NSwitch v-model:value="openLinkInBackground" class="form-switch">
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
-    </NFormItem>
+    </SettingsFormItem>
 
     <!--  Content  -->
     <NForm ref="formRef" :model="form">
@@ -271,32 +266,13 @@ const containerRef = ref<HTMLDivElement>();
   }
 }
 
-.form-header {
-  color: var(--white-70);
-  font-weight: 600;
-  font-size: 1rem;
-  transition: color 0.3s var(--n-bezier);
-
-  &-row {
-    &:hover {
-      .form-header {
-        color: var(--white-mute);
-      }
-    }
-
-    @media (width < 400px) {
-      max-width: 70%;
-    }
-  }
-
-  &-switch {
-    display: flex;
-    flex: 1 1 auto;
-    justify-content: flex-end;
-    min-width: 4rem;
-    padding: 0 0.5rem;
-    font-size: 0.75rem;
-  }
+.form-switch {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 4rem;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
 }
 
 .form-row {
