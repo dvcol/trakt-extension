@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NIcon, NSelect, NTooltip, type SelectOption } from 'naive-ui';
+import { NIcon, NSelect, NTooltip } from 'naive-ui';
 
 import { computed, defineProps, onMounted, ref, toRefs, watch } from 'vue';
 
@@ -7,6 +7,7 @@ import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import IconPage from '~/components/icons/IconPage.vue';
 import IconPageDouble from '~/components/icons/IconPageDouble.vue';
 
+import { pageSizeOptions } from '~/models/page-size.model';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('navbar');
@@ -29,14 +30,6 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: 'update:pageSize', value: number): void;
 }>();
-
-const pageSizeOptions: SelectOption[] = [
-  { label: '50', value: 50 },
-  { label: '100', value: 100 },
-  { label: '200', value: 200 },
-  { label: '500', value: 500 },
-  { label: '1000', value: 1000 },
-];
 
 const { pageSize } = toRefs(props);
 const innerValue = ref(pageSize.value);

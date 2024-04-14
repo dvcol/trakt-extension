@@ -7,6 +7,7 @@ import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDop
 
 import { Route } from '~/router';
 import { NavbarService } from '~/services/navbar.service';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
 
 const props = defineProps({
@@ -28,22 +29,16 @@ const navigate = (to: Route) => {
   router.push({ name: to });
 };
 
-const routes = [
-  Route.Progress,
-  Route.Calendar,
-  Route.History,
-  Route.Watchlist,
-  Route.Search,
-];
+const { enabledRoutes } = useExtensionSettingsStoreRefs();
 
-const activableRoutes = [...routes, Route.Settings];
+const activableRoutes = computed(() => [...enabledRoutes.value, Route.Settings]);
 
 const activeRoute = computed(() => {
   const _name = route.name?.toString();
   if (!_name) return;
   return (
-    activableRoutes.find(r => r === _name) ??
-    routes.find(r => _name.startsWith(r)) ??
+    activableRoutes.value.find(r => r === _name) ??
+    enabledRoutes.value.find(r => _name.startsWith(r)) ??
     Route.Settings
   );
 });
@@ -75,6 +70,7 @@ const navElement = ref<HTMLElement>();
     @focusout="isFocus = false"
   >
     <NTabs
+      :key="enabledRoutes.join('-')"
       :value="activeRoute"
       class="tabs"
       type="segment"
@@ -88,7 +84,7 @@ const navElement = ref<HTMLElement>();
         '--n-color-segment': 'inherit',
       }"
     >
-      <template v-for="_route in routes" :key="_route">
+      <template v-for="_route in enabledRoutes" :key="_route">
         <NTab
           :style="
             _route === activeRoute

@@ -1,0 +1,42 @@
+{
+  "settings__tabs__label_restore_tab": {
+    "message": "Restore active tab on startup",
+    "description": "Label for the 'Restore active tab on startup' setting"
+  },
+  "settings__tabs__label_route_progress": {
+    "message": "Enable the progress tab",
+    "description": "Label for the 'Enable the progress tab' setting"
+  },
+  "settings__tabs__label_route_progress_warning": {
+    "message": "This tab is experimental and may not work as expected.",
+    "description": "Warning message for the 'Enable the progress tab' setting"
+  },
+  "settings__tabs__label_route_calendar": {
+    "message": "Enable the calendar tab",
+    "description": "Label for the 'Enable the calendar tab' setting"
+  },
+  "settings__tabs__label_route_history": {
+    "message": "Enable the history tab",
+    "description": "Label for the 'Enable the history tab' setting"
+  },
+  "settings__tabs__label_route_watchlist": {
+    "message": "Enable the list tab",
+    "description": "Label for the 'Enable the list tab' setting"
+  },
+  "settings__tabs__label_route_search": {
+    "message": "Enable the search tab",
+    "description": "Label for the 'Enable the search tab' setting"
+  },
+  "settings__tabs__label_history_page_size": {
+    "message": "History page size",
+    "description": "Label for the 'History page size' setting"
+  },
+  "settings__tabs__label_list_page_size": {
+    "message": "List page size",
+    "description": "Label for the 'List page size' setting"
+  },
+  "settings__tabs__label_search_page_size": {
+    "message": "Search page size",
+    "description": "Label for the 'Search page size' setting"
+  }
+}
