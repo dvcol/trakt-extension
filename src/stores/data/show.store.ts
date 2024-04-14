@@ -38,14 +38,13 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktColle
     date: new Date('last_watched_at' in progress ? progress.last_watched_at : progress.last_collected_at),
     seasons: progress.seasons.map(season => {
       if (season.number > 0) {
-        completed += season.completed;
-        aired += season.aired;
+        if (season.completed) completed += season.completed;
+        if (season.aired) aired += season.aired;
       }
-
       return {
         ...season,
-        percentage: (season.completed / season.aired) * 100,
-        finished: season.completed === season.aired,
+        percentage: season.aired ? ((season.completed ?? 0) / season.aired) * 100 : 0,
+        finished: !!season.aired && season.completed === season.aired,
         episodes: season.episodes.map(episode => ({
           ...episode,
           date: new Date('last_watched_at' in episode ? episode.last_watched_at : episode.collected_at),
@@ -57,8 +56,8 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktColle
     ...result,
     completed,
     aired,
-    percentage: (completed / aired) * 100,
-    finished: completed === aired,
+    percentage: aired ? ((completed ?? 0) / aired) * 100 : 0,
+    finished: !!aired && completed === aired,
   };
 };
 

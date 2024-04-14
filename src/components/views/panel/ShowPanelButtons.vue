@@ -112,6 +112,16 @@ const watchedPercentage = computed(() => {
   return watched.value ? 100 : 0;
 });
 
+const hadAiredWatched = computed(() => {
+  const _progress = watchedProgress?.value;
+  if (!_progress) return false;
+  return 'aired' in _progress && _progress.aired > 0;
+});
+
+const disableWatchedTooltip = computed(() => {
+  return !['show', 'season'].includes(mode.value) || !hadAiredWatched.value;
+});
+
 const collected = computed(() => {
   const _progress = collectionProgress?.value;
   if (_progress === undefined) return;
@@ -123,6 +133,16 @@ const collectionPercentage = computed(() => {
   if (!_progress) return 0;
   if ('percentage' in _progress) return _progress.percentage;
   return collected.value ? 100 : 0;
+});
+
+const hadAiredCollection = computed(() => {
+  const _progress = collectionProgress?.value;
+  if (!_progress) return false;
+  return 'aired' in _progress && _progress.aired > 0;
+});
+
+const disableCollectionTooltip = computed(() => {
+  return !['show', 'season'].includes(mode.value) || !hadAiredCollection.value;
 });
 
 const i18n = useI18n('panel', 'buttons');
@@ -222,7 +242,7 @@ onMounted(() => {
           options: collectionOptions,
         }"
         :tooltip="{
-          disabled: !['show', 'season'].includes(mode),
+          disabled: disableCollectionTooltip,
           type: 'collection',
         }"
         :icon="collected ? IconGrid : IconGridEmpty"
@@ -244,7 +264,7 @@ onMounted(() => {
           options: watchedOptions,
         }"
         :tooltip="{
-          disabled: !['show', 'season'].includes(mode),
+          disabled: disableWatchedTooltip,
         }"
         :icon="watched ? IconPlayFilled : IconPlay"
         :progress="watchedProgress"
