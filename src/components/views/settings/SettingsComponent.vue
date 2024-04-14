@@ -116,7 +116,6 @@ onDeactivated(() => {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
 
     z-index: var(--index);
-    min-height: 20rem;
 
     &:not(:last-child) {
       margin-bottom: 1rem;

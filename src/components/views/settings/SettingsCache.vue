@@ -75,12 +75,10 @@ const container = ref();
 
 <template>
   <div ref="container" class="cache-container">
-    <NFormItem
-      class="form-row"
-      :label="i18n('label_retention_trakt')"
-      :show-feedback="false"
-      label-placement="left"
-    >
+    <NFormItem class="form-row" :show-feedback="false" label-placement="left">
+      <template #label>
+        <span class="from-label">{{ i18n('label_retention_trakt') }}</span>
+      </template>
       <NSelect
         v-model:value="traktCacheRetention"
         class="form-select"
@@ -88,12 +86,10 @@ const container = ref();
         :options="cacheOptions"
       />
     </NFormItem>
-    <NFormItem
-      class="form-row"
-      :label="i18n('label_retention_images')"
-      :show-feedback="false"
-      label-placement="left"
-    >
+    <NFormItem class="form-row" :show-feedback="false" label-placement="left">
+      <template #label>
+        <span class="from-label">{{ i18n('label_retention_images') }}</span>
+      </template>
       <NSelect
         v-model:value="tmdbCacheRetention"
         class="form-select"
@@ -155,6 +151,7 @@ const container = ref();
 .form-row {
   display: flex;
   flex: 1 1 auto;
+  flex-wrap: wrap;
   justify-content: space-between;
 
   &:hover {

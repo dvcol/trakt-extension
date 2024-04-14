@@ -1,0 +1,6 @@
+{
+  "settings__logs__label_log_level": {
+    "message": "Log verbosity in the console",
+    "description": "Label for the log verbosity in the settings."
+  }
+}

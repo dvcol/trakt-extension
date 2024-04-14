@@ -24,7 +24,7 @@
     "description": "Label for the evict history data button"
   },
   "settings__cache__evict_lists": {
-    "message": "Evict lists data from cache (watchlist, lists and collections)",
+    "message": "Evict lists data from cache",
     "description": "Label for the evict lists data button"
   },
   "settings__cache__evict_search": {
