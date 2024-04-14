@@ -18,7 +18,8 @@ import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar');
 
-const { searchHistory, historyEnd, historyStart, pageSize } = useHistoryStoreRefs();
+const { searchHistory, historyEnd, historyStart, pageSize, loading } =
+  useHistoryStoreRefs();
 const { setHistoryRange } = useHistoryStore();
 
 const debouncedSearch = useDebouncedSearch(searchHistory);
@@ -66,6 +67,7 @@ const open = ref(false);
       close-on-select
       clearable
       :value="pickerValues"
+      :disabled="loading"
       :on-clear="onDateChange"
       :on-confirm="onDateChange"
     >
@@ -84,7 +86,11 @@ const open = ref(false);
         <NIcon :component="IconLoop" />
       </template>
     </NInput>
-    <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <NavbarPageSizeSelect
+      v-model:page-size="pageSize"
+      :parent-element="parentElement"
+      :disabled="loading"
+    />
     <ButtonLinkExternal :href="external" :label="i18n('history', 'common', 'link')" />
   </NFlex>
 </template>

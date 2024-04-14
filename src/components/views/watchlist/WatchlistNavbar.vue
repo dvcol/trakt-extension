@@ -21,7 +21,7 @@ import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'list');
 
-const { pageSize, searchList } = useListStoreRefs();
+const { pageSize, searchList, listLoading } = useListStoreRefs();
 
 const { listsLoading, lists, activeList } = useListsStoreRefs();
 const { fetchLists, clearState, getIcon } = useListsStore();
@@ -54,6 +54,7 @@ const listOptions = computed<ListOption[]>(() =>
     value: list.id,
     source: list,
     icon: getIcon(list),
+    disabled: listLoading.value || listLoading.value,
   })),
 );
 
@@ -128,7 +129,11 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
         <NIcon :component="IconLoop" />
       </template>
     </NInput>
-    <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <NavbarPageSizeSelect
+      v-model:page-size="pageSize"
+      :parent-element="parentElement"
+      :disabled="listLoading"
+    />
     <ButtonLinkExternal :href="external" :label="i18n('list', 'common', 'link')" />
   </NFlex>
 </template>
