@@ -4,7 +4,7 @@ import { computed, ref } from 'vue';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 
-const enum LogLevel {
+export enum LogLevel {
   Error,
   Warn,
   Info,

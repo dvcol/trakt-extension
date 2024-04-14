@@ -104,7 +104,7 @@ const containerRef = ref<HTMLDivElement>();
 <template>
   <div ref="containerRef" class="links-container">
     <!--  Header  -->
-    <NFormItem label-placement="left" :show-feedback="false">
+    <NFormItem class="form-header-row" label-placement="left" :show-feedback="false">
       <template #label>
         <span class="form-header">{{ i18n('label_show_hide') }}</span>
       </template>
@@ -113,7 +113,7 @@ const containerRef = ref<HTMLDivElement>();
         <template #unchecked>{{ i18n('hide', 'common', 'button') }}</template>
       </NSwitch>
     </NFormItem>
-    <NFormItem label-placement="left" :show-feedback="false">
+    <NFormItem class="form-header-row" label-placement="left" :show-feedback="false">
       <template #label>
         <span class="form-header">{{ i18n('label_open_in_background') }}</span>
       </template>
@@ -275,11 +275,25 @@ const containerRef = ref<HTMLDivElement>();
   color: var(--white-70);
   font-weight: 600;
   font-size: 1rem;
+  transition: color 0.3s var(--n-bezier);
+
+  &-row {
+    &:hover {
+      .form-header {
+        color: var(--white-mute);
+      }
+    }
+
+    @media (width < 400px) {
+      max-width: 70%;
+    }
+  }
 
   &-switch {
     display: flex;
     flex: 1 1 auto;
     justify-content: flex-end;
+    min-width: 4rem;
     padding: 0 0.5rem;
     font-size: 0.75rem;
   }
