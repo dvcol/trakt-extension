@@ -97,7 +97,9 @@ const searchOptions = computed<SearchOption[]>(() =>
     label: i18n(type, 'navbar', 'search', 'type'),
     value: type,
     icon: getIcon(type),
-    disabled: selectedValues.value.length <= 1 && selectedValues.value.includes(type),
+    disabled:
+      loading.value ||
+      (selectedValues.value.length <= 1 && selectedValues.value.includes(type)),
   })),
 );
 
@@ -219,7 +221,11 @@ onActivated(() => {
       </template>
     </NTooltip>
 
-    <NavbarPageSizeSelect v-model:page-size="pageSize" :parent-element="parentElement" />
+    <NavbarPageSizeSelect
+      v-model:page-size="pageSize"
+      :parent-element="parentElement"
+      :disabled="loading"
+    />
     <ButtonLinkExternal :href="external" :label="i18n('search', 'common', 'link')" />
 
     <NSwitch

@@ -20,6 +20,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -64,6 +68,7 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
         class="page-select"
         :options="pageSizeOptions"
         :to="parentElement"
+        :disabled="disabled"
       >
         <template #arrow>
           <NIcon :component="open ? IconChevron : pageIcon" />

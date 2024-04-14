@@ -23,7 +23,7 @@ defineProps({
 
 const i18n = useI18n('navbar', 'calendar');
 
-const { filter, center } = useCalendarStoreRefs();
+const { filter, center, loading } = useCalendarStoreRefs();
 const { clearState } = useCalendarStore();
 
 const debouncedSearch = useDebouncedSearch(filter);
@@ -57,6 +57,7 @@ const open = ref(false);
       class="date-picker"
       type="date"
       :to="parentElement"
+      :disabled="loading"
       placement="bottom"
       update-value-on-close
       close-on-select
