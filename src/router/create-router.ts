@@ -24,7 +24,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     routes: [
       {
         path: `${baseName}/:pathMatch(.*)`,
-        redirect: { name: Route.Progress },
+        redirect: { name: Route.Calendar },
       },
       ..._routes,
     ],
@@ -63,7 +63,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   });
 
   restoreLastRoute().then(async _route => {
-    await router.push(_route?.name !== Route.Login ? _route : { name: Route.Progress });
+    await router.push(_route?.name !== Route.Login ? _route : { name: Route.Calendar });
   });
 
   return router;

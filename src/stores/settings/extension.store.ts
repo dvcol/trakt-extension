@@ -92,7 +92,7 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     restoreRoute,
     toggleTab,
     routeDictionary,
-    enabledTabs: computed(() => Object.entries(routeDictionary) as [Route, boolean][]),
+    enabledTabs: computed(() => Object.entries(routeDictionary).filter(([r]) => r !== Route.Calendar) as [Route, boolean][]),
     enabledRoutes: computed(() =>
       Object.entries(routeDictionary)
         .filter(([, value]) => value)

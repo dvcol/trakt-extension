@@ -51,7 +51,7 @@ const panelRoutes = (base: Route): RouteRecordRaw[] => [
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: { name: Route.Progress },
+    redirect: { name: Route.Calendar },
   },
   {
     path: `/${Route.Login}`,
