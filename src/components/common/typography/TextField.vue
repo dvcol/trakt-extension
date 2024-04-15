@@ -24,7 +24,7 @@ defineProps({
   flex: {
     type: String,
     required: false,
-    default: 'flex: 0 1 31.5%',
+    default: '0 1 31.5%',
   },
   values: {
     type: Array as PropType<TagLink[]>,
