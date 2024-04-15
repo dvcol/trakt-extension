@@ -4,7 +4,9 @@ import { useActivityStore } from '~/stores/data/activity.store';
 import { useHistoryStore } from '~/stores/data/history.store';
 import { useImageStore } from '~/stores/data/image.store';
 import { useListsStore, useListStore } from '~/stores/data/list.store';
+import { useMovieStore } from '~/stores/data/movie.store';
 import { useSearchStore } from '~/stores/data/search.store';
+import { useShowStore } from '~/stores/data/show.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -44,6 +46,8 @@ export const initServices = async () => {
     useListStore().initListStore(),
     useHistoryStore().initHistoryStore(),
     useSearchStore().initSearchStore(),
+    useShowStore().initShowStore(),
+    useMovieStore().initMovieStore(),
   ]);
 
   setAppReady(true);

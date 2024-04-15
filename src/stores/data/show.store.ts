@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
@@ -13,6 +13,8 @@ import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model'
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { clearProxy } from '~/utils/vue.utils';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
 
@@ -76,20 +78,25 @@ export const useShowStore = defineStore('data.show', () => {
   const showWatchedProgressLoading = reactive<LoadingDictionary>({});
   const showCollectionProgressLoading = reactive<LoadingDictionary>({});
 
-  const clearState = () => {
-    Object.assign(shows, {});
-    Object.assign(showsSeasons, {});
-    Object.assign(showsSeasonEpisodes, {});
-    Object.assign(showsEpisodes, {});
-    Object.assign(showsWatchedProgress, {});
-    Object.assign(showsCollectionProgress, {});
+  const clearProgressState = () => {
+    clearProxy(showsWatchedProgress);
+    clearProxy(showsCollectionProgress);
 
-    Object.assign(showsLoading, {});
-    Object.assign(showsSeasonsLoading, {});
-    Object.assign(showsSeasonEpisodesLoading, {});
-    Object.assign(showsEpisodesLoading, {});
-    Object.assign(showWatchedProgressLoading, {});
-    Object.assign(showCollectionProgressLoading, {});
+    clearProxy(showWatchedProgressLoading);
+    clearProxy(showCollectionProgressLoading);
+  };
+
+  const clearState = () => {
+    clearProxy(shows);
+    clearProxy(showsSeasons);
+    clearProxy(showsSeasonEpisodes);
+    clearProxy(showsEpisodes);
+
+    clearProxy(showsLoading);
+    clearProxy(showsSeasonsLoading);
+    clearProxy(showsSeasonEpisodesLoading);
+    clearProxy(showsEpisodesLoading);
+    clearProgressState();
   };
 
   const fetchShow = async (id: string) => {
@@ -273,8 +280,18 @@ export const useShowStore = defineStore('data.show', () => {
     });
   };
 
+  const { user } = useUserSettingsStoreRefs();
+  const initShowStore = () => {
+    watch(user, () => {
+      clearProgressState();
+      console.info('user change, clearing state', user.value, showsWatchedProgress);
+    });
+  };
+
   return {
+    initShowStore,
     clearState,
+    clearProgressState,
     getShow,
     fetchShow,
     fetchShowProgress,

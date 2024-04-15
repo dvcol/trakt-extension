@@ -7,6 +7,7 @@ import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { createTab } from '~/utils/browser/browser.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 export const CustomLinkScope = {
   Movie: 'movie' as const,
@@ -68,9 +69,9 @@ export const useLinksStore = defineStore('settings.links', () => {
   const linkScopeDictionary = reactive<CustomLinkScopeDictionary>({});
 
   const clearState = () => {
-    Object.assign(aliasDictionary, {});
-    Object.assign(linkDictionary, {});
-    Object.assign(linkScopeDictionary, {});
+    clearProxy(aliasDictionary);
+    clearProxy(linkDictionary);
+    clearProxy(linkScopeDictionary);
   };
 
   const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value, backgroundLink: backgroundLink.value }), 1000);

@@ -92,7 +92,7 @@ onDeactivated(() => {
         :key="section.title"
         class="card"
         :class="{ target: focus?.title === section.title }"
-        :style="{ '--index': sections.length - index }"
+        :style="{ '--length': sections.length, '--index': index }"
         :title="i18n(section.title)"
         @mouseenter="onEnter(section)"
         @mouseleave="onLeave(section)"
@@ -116,10 +116,11 @@ onDeactivated(() => {
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
 
-    z-index: var(--index);
+    z-index: var(--length);
     scroll-margin-top: calc(#{layout.$header-navbar-height} + 1rem);
 
     &:not(:last-child) {
+      z-index: calc(var(--length) - var(--index));
       margin-bottom: 1rem;
     }
 

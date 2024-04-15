@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NFlex } from 'naive-ui';
-import { onActivated, onMounted, toRefs, Transition, watch } from 'vue';
+import { onMounted, toRefs, Transition, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
@@ -11,6 +11,7 @@ import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ExternaLinks } from '~/settings/external.links';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useI18n } from '~/utils';
+import { watchUserChange } from '~/utils/store.utils';
 
 const props = defineProps({
   panel: {
@@ -24,10 +25,11 @@ const { panel } = toRefs(props);
 const i18n = useI18n('progress');
 
 const { progress, loading, loggedOut } = useProgressStoreRefs();
-const { fetchProgress } = useProgressStore();
+const { fetchProgress, clearState } = useProgressStore();
 
-onActivated(async () => {
-  await fetchProgress();
+watchUserChange({
+  fetch: fetchProgress,
+  clear: clearState,
 });
 
 onMounted(() => {

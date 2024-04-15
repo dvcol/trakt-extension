@@ -1,12 +1,14 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { clearProxy } from '~/utils/vue.utils';
 
 type MovieDictionary = Record<string, TraktMovieExtended>;
 type MovieWatchedDictionary = Record<string, boolean>;
@@ -23,14 +25,18 @@ export const useMovieStore = defineStore('data.movie', () => {
   const loadingWatched = ref(false);
   const loadingCollected = ref(false);
 
-  const clearState = () => {
-    Object.assign(movies, {});
-    Object.assign(moviesWatched, {});
-    Object.assign(moviesCollected, {});
+  const clearProgressState = () => {
+    clearProxy(moviesWatched);
+    clearProxy(moviesCollected);
 
-    Object.assign(loading, {});
     loadingWatched.value = false;
     loadingCollected.value = false;
+  };
+
+  const clearState = () => {
+    clearProxy(movies);
+    clearProxy(loading);
+    clearProgressState();
   };
 
   const fetchMovie = async (id: string | number) => {
@@ -117,8 +123,17 @@ export const useMovieStore = defineStore('data.movie', () => {
     moviesCollected[id.toString()] = !remove;
   };
 
+  const { user } = useUserSettingsStoreRefs();
+  const initMovieStore = () => {
+    watch(user, () => {
+      clearProgressState();
+    });
+  };
+
   return {
+    initMovieStore,
     clearState,
+    clearProgressState,
     fetchMovie,
     getMovie,
     getMovieLoading,
