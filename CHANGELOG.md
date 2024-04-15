@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/dvcol/trakt-extension/compare/v1.4.0...v1.4.1) (2024-04-15)
+
+
+### Bug Fixes
+
+* **cache:** evict calendar cache on collection and watchlist ([6b611da](https://github.com/dvcol/trakt-extension/commit/6b611da85b79d21f625cadd978d7b694a45507d0))
+
 ## [1.4.0](https://github.com/dvcol/trakt-extension/compare/v1.3.0...v1.4.0) (2024-04-15)
 
 
