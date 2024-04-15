@@ -29,12 +29,11 @@ import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
 import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
-import { tmdbApi } from '~/services/tmdb-client/api/tmdb-api.endpoints';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
-import { traktApi } from '~/services/trakt-client/api/trakt-api.endpoints';
+import { tmdbUsedApi } from '~/services/tmdb.used.api';
 import { isResponseOk } from '~/services/trakt-client/clients/base-trakt-client';
 import { TraktClient } from '~/services/trakt-client/clients/trakt-client';
-import { tvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoints';
+import { traktUsedApi } from '~/services/trakt-used.api';
 import { TvdbClient } from '~/services/tvdb-client/clients/tvdb-client';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
@@ -99,9 +98,9 @@ export class TraktService {
       }),
     };
 
-    this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktApi);
-    this.tvdbClient = new TvdbClient({ ...tvdbClientSettings, cacheStore: this.caches.tvdb }, {}, tvdbApi);
-    this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbApi);
+    this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktUsedApi);
+    this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbUsedApi);
+    this.tvdbClient = new TvdbClient({ ...tvdbClientSettings, cacheStore: this.caches.tvdb });
   }
 
   static changeUser(user: string) {
