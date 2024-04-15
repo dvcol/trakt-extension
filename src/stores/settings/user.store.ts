@@ -16,6 +16,8 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
   const userSettings = reactive<UserSettings>({});
   const user = ref<string>(defaultUser);
 
+  const loading = reactive<Record<string, boolean>>({});
+
   const userSetting = computed(() => userSettings[user.value]);
 
   /**
@@ -102,13 +104,31 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
     return setUserSetting(userSettings[account], account);
   };
 
+  const refreshUserSettings = async () => {
+    if (loading[user.value]) {
+      logger.warn('User settings are already loading', { user: user.value });
+      return;
+    }
+
+    logger.debug('Refreshing user settings', { user: user.value });
+
+    loading[user.value] = true;
+    try {
+      await setUserSetting(await TraktService.getUserSettings());
+    } catch (err) {
+      logger.error('Failed to refresh user settings', { user: user.value, err });
+    } finally {
+      loading[user.value] = false;
+    }
+  };
+
   // Propagate user change to http service
   watch(user, _user => {
     logger.info('User changed', { user: _user });
     TraktService.changeUser(_user);
   });
 
-  return { user, userSettings, userSetting, setUserSetting, syncSetUser, syncRestoreUser, syncRestoreAllUsers, setCurrentUser };
+  return { user, userSettings, userSetting, setUserSetting, syncSetUser, syncRestoreUser, syncRestoreAllUsers, setCurrentUser, refreshUserSettings };
 });
 
 export const useUserSettingsStoreRefs = () => storeToRefs(useUserSettingsStore());

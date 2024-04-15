@@ -4,12 +4,12 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 
+import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconIMDb from '~/components/icons/IconIMDb.vue';
 import IconTMDb from '~/components/icons/IconTMDb.vue';
 import IconTVDb from '~/components/icons/IconTVDb.vue';
 import IconTrakt from '~/components/icons/IconTrakt.vue';
-import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
@@ -146,10 +146,5 @@ const links = computed(() => {
 </script>
 
 <template>
-  <PanelDetail
-    :label="i18n('links')"
-    :values="links"
-    :skeleton="{ width: '3rem' }"
-    array
-  />
+  <TextField :label="i18n('links')" :values="links" :skeleton="{ width: '3rem' }" array />
 </template>

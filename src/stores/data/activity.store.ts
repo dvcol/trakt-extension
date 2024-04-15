@@ -7,6 +7,7 @@ import type { TraktSyncActivities } from '~/models/trakt/trakt-sync.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
+import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { compareDateObject, toDateObject } from '~/utils/date.utils';
 
@@ -39,6 +40,8 @@ export const useActivityStore = defineStore('data.activity', () => {
       loading.value = false;
     }
   };
+
+  const { refreshUserSettings } = useUserSettingsStore();
 
   const initActivityStore = async (fetch?: boolean) => {
     await restoreState();
@@ -85,6 +88,10 @@ export const useActivityStore = defineStore('data.activity', () => {
       if (changed?.favorites?.updated_at) {
         TraktService.evict.favorites();
         logger.info('Evicted favorites');
+      }
+      if (changed?.account?.settings_at) {
+        refreshUserSettings();
+        logger.info('Evicted account');
       }
     });
 

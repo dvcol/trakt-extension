@@ -35,6 +35,8 @@
     var(--bg-color-90)
   );
   --bg-black-soft: rgb(24 24 24);
+  --bg-black-soft-70: rgb(24 24 24 / 70%);
+  --bg-black-soft-80: rgb(24 24 24 / 80%);
   --bg-black-soft-90: rgb(24 24 24 / 90%);
   --bg-black-softer: rgb(34 34 34);
   --bg-black-softer-50: rgba(34 34 34 / 50%);
@@ -63,6 +65,8 @@
   --white: rgb(255 255 255);
   --white-soft: #f8f8f8;
   --white-mute: #f2f2f2;
+  --white-10: rgb(255 255 255 / 10%);
+  --white-15: rgb(255 255 255 / 15%);
   --white-50: rgb(255 255 255 / 50%);
   --white-70: rgb(255 255 255 / 70%);
   --black: #181818;
@@ -94,6 +98,7 @@
 
   /* Bow shadows */
   --image-box-shadow: 0 0 20px 9px rgb(255 255 255 / 10%);
+  --card-box-shadow: 0 1px 2px -2px rgb(0 0 0 / 24%), 0 3px 6px 0 rgb(0 0 0 / 18%), 0 5px 12px 4px rgb(0 0 0 / 12%);
 
   /* semantic color variables for this project */
   --section-gap: 160px;

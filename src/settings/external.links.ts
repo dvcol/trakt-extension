@@ -55,6 +55,7 @@ export const ResolveExternalLinks = {
       return url;
     },
     calendar: (date?: string) => `${ExternaLinks.trakt.production}calendars/my/shows-movies/${date ?? ''}`,
+    account: (user: string) => `${ExternaLinks.trakt.production}users/${user}`,
   },
   search: ({
     id,
