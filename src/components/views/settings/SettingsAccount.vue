@@ -8,9 +8,11 @@ import type { UserSetting } from '~/models/trakt-service.model';
 import TextField from '~/components/common/typography/TextField.vue';
 import IconAccount from '~/components/icons/IconAccount.vue';
 
+import IconLogOut from '~/components/icons/IconLogOut.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { logger } from '~/stores/settings/log.store';
+import { useLogout } from '~/stores/settings/use-logout';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { chromeRuntimeId } from '~/utils/browser/browser.utils';
@@ -18,6 +20,7 @@ import { chromeRuntimeId } from '~/utils/browser/browser.utils';
 const i18n = useI18n('settings', 'account');
 
 const { userSetting } = useUserSettingsStoreRefs();
+const { logout } = useLogout();
 
 const fallback = ref<boolean>(!chromeRuntimeId);
 const avatar = computed(() => {
@@ -149,6 +152,16 @@ const onClick = () => {
       </NFlex>
     </NCard>
   </NFlex>
+
+  <!--   Footer   -->
+  <NFlex class="footer" align="center" justify="center">
+    <NButton secondary type="error" @click="logout()">
+      <span>{{ i18n('logout', 'common', 'button') }}</span>
+      <template #icon>
+        <NIcon :component="IconLogOut" />
+      </template>
+    </NButton>
+  </NFlex>
 </template>
 
 <style lang="scss" scoped>
@@ -157,14 +170,11 @@ const onClick = () => {
 .account-card {
   --border-color: var(--white-10);
 
+  margin-bottom: 1.5rem;
   background: var(--bg-black-soft);
 
   &:hover {
     --border-color: var(--white-15);
-  }
-
-  &:not(:last-child) {
-    margin-bottom: 1.5rem;
   }
 
   .avatar {
@@ -201,5 +211,10 @@ const onClick = () => {
   :deep(.detail) {
     min-width: 31%;
   }
+}
+
+.footer {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
 }
 </style>

@@ -6,7 +6,6 @@ import { computed, defineProps, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { DropdownProps } from 'naive-ui';
-
 import type { Component } from 'vue';
 
 import type { ArrayElement } from '~/utils/typescript.utils';
@@ -21,13 +20,9 @@ import IconLogOut from '~/components/icons/IconLogOut.vue';
 import { Route } from '~/router';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
-import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
-import {
-  defaultUser,
-  useUserSettingsStore,
-  useUserSettingsStoreRefs,
-} from '~/stores/settings/user.store';
+import { useLogout } from '~/stores/settings/use-logout';
+import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 
 import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
@@ -36,8 +31,6 @@ const i18n = useI18n('navbar', 'settings');
 const router = useRouter();
 
 const { user, userSetting, userSettings } = useUserSettingsStoreRefs();
-const { setCurrentUser } = useUserSettingsStore();
-const { syncRestoreAuth } = useAuthSettingsStore();
 
 const avatar = computed(() => userSetting.value?.user?.images?.avatar?.full);
 const username = computed(() => userSetting.value?.user?.username);
@@ -106,10 +99,7 @@ const options = computed<DropdownProps['options']>(() => {
   return baseOptions;
 });
 
-const loadUser = async (account: string) => {
-  const auth = await syncRestoreAuth(account);
-  return TraktService.importAuthentication(auth);
-};
+const { loadUser, logout } = useLogout();
 
 const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
   switch (key) {
@@ -124,10 +114,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     case 'login':
       return TraktService.approve({ prompt: true });
     case 'logout':
-      await TraktService.logout();
-      await setCurrentUser();
-      if (user.value !== defaultUser) return loadUser(user.value);
-      return router.push(Route.Login);
+      return logout();
     default:
       if (typeof label === 'string' && key.startsWith('user-')) {
         return loadUser(label);

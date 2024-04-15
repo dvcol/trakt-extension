@@ -42,5 +42,9 @@
   "common__button__off": {
     "message": "Off",
     "description": "Button to turn off an item."
+  },
+  "common__button__logout": {
+    "message": "Logout",
+    "description": "Button to logout."
   }
 }
