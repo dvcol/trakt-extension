@@ -17,10 +17,12 @@ import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { debounce } from '~/utils/debounce.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -314,6 +316,10 @@ export const useListStore = defineStore('data.list', () => {
 
   const i18n = useI18n('common', 'notification');
 
+  const { fetchActivity } = useActivityStore();
+
+  const updateActivity = debounce(fetchActivity, 1000);
+
   const addToOrRemoveFromList = async ({
     list,
     itemType,
@@ -390,6 +396,7 @@ export const useListStore = defineStore('data.list', () => {
     } finally {
       typeItemLoading[listType]![itemType]![itemIds.trakt.toString()] = false;
       typeLoading[listType] = false;
+      updateActivity();
     }
   };
 

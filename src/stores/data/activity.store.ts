@@ -71,6 +71,7 @@ export const useActivityStore = defineStore('data.activity', () => {
         changed?.movies?.watchlisted_at
       ) {
         TraktService.evict.watchlist();
+        TraktService.evict.calendar();
         logger.info('Evicted watchlist');
       }
       if (changed?.collaborations?.updated_at || changed?.lists?.updated_at) {
@@ -79,10 +80,12 @@ export const useActivityStore = defineStore('data.activity', () => {
       }
       if (changed?.episodes?.collected_at) {
         TraktService.evict.collection.show();
+        TraktService.evict.calendar();
         logger.info('Evicted show collection');
       }
       if (changed?.movies?.collected_at) {
         TraktService.evict.collection.movie();
+        TraktService.evict.calendar();
         logger.info('Evicted movie collection');
       }
       if (changed?.favorites?.updated_at) {
