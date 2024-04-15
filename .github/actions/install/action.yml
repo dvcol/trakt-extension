@@ -12,21 +12,20 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup pnpm ${{ inputs.pnpm_version }}
+    - name: 🏗️ Setup pnpm ${{ inputs.pnpm_version }}
       uses: pnpm/action-setup@v2
       with:
         version: ${{ inputs.pnpm_version }}
 
-    - name: Setup Node.js ${{ inputs.node_version }}
+    - name: 🏗️ Setup Node.js ${{ inputs.node_version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node_version }}
         registry-url: 'https://registry.npmjs.org'
         cache: pnpm
 
-    - name: Install dependencies
+    - name: 🧱 Install dependencies
       shell: bash
       run: |
-        # ================= Install =================
-
+        # ================= 🧱 Install =================
         pnpm install

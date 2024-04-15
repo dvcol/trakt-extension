@@ -18,28 +18,28 @@ env:
 
 jobs:
   build-extension:
-    name: Build Extension
+    name: 🔌 Build Extension
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: 🚧 Build
         uses: ./.github/actions/build
         with:
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
   build-web:
-    name: Build Web
+    name: ☁️ Build Web
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: 🚧 Build
         uses: ./.github/actions/build
         with:
           script: 'build:web'
@@ -47,23 +47,22 @@ jobs:
           pnpm_version: ${{ env.pnpm_version }}
 
   test:
-    name: Unit Test
+    name: 🧪 Unit Test
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
 
-      - name: Install
+      - name: 🧱 Install
         uses: ./.github/actions/install
         with:
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
-      - name: Test
+      - name: 🧪 Unit tests
         run: |
-          # =================  Test  =================
-
+          # ================= 🧪 Unit tests =================
           pnpm run test:unit
 
   lint:
@@ -71,30 +70,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
 
-      - name: Install
+      - name: 🧱 Install
         uses: ./.github/actions/install
         with:
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
-      - name: Install dependencies
-        shell: bash
+      - name: 🧹 Eslint
         run: |
-          # ================= Install =================
-          
-          pnpm install
-
-      - name: Eslint
-        run: |
-          # =================  Eslint  =================
-
+          # =================  🧹 Eslint  =================
           pnpm run lint
 
-      - name: Stylelint
+      - name: 🪄 Stylelint
         run: |
-          # =================  Stylelint  =================
-
+          # =================  🪄 Stylelint  =================
           pnpm run style

@@ -16,15 +16,14 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install
+    - name: 🧱 Install
       uses: ./.github/actions/install
       with:
         node_version: ${{ inputs.node_version }}
         pnpm_version: ${{ inputs.pnpm_version }}
 
-    - name: Build sources
+    - name: 🚧 Build sources
       shell: bash
       run: |
-        # =================  Build  =================
-
+        # =================  🚧 Build  =================
         pnpm run ${{ inputs.script }}

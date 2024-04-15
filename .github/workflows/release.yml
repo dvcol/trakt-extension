@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Release - Tag, Release, Publish and Deploy
+name: 📦 Release - Tag, Release, Publish and Deploy
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,7 +25,7 @@ env:
 
 jobs:
   release:
-    name: Tag and release commit
+    name: 📦 Tag and release commit
     runs-on: ubuntu-latest
 
     outputs:
@@ -33,33 +33,21 @@ jobs:
       commit-hash: ${{ steps.push-tag.outputs.commit_hash }}
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Setup pnpm ${{ env.pnpm_version }}
-        uses: pnpm/action-setup@v2
+      - name: 🧱 Install
+        uses: ./.github/actions/install
         with:
-          version: ${{ env.pnpm_version }}
+          node_version: ${{ env.node_version }}
+          pnpm_version: ${{ env.pnpm_version }}
 
-      - name: Setup Node.js ${{ env.node_version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.node_version }}
-          registry-url: 'https://registry.npmjs.org'
-          cache: pnpm
-
-      - name: install dependencies
+      - name:  🏷️ Release
         run: |
-          # ================= Install =================
-
-          pnpm install
-
-      - name: Release
-        run: |
-          # ================= Release =================
+          # =================  🏷️ Release =================
 
           # setup git credentials
           git config user.name "GitHub Release Bot"
@@ -68,10 +56,10 @@ jobs:
           # generate release
           pnpm run release
 
-      - name: Push to remote
+      - name: ⛙ Push to remote
         id: push-tag
         run: |
-          # ================= Remote =================
+          # ================= ⛙ Remote =================
 
           # Check status
           git status
@@ -90,7 +78,7 @@ jobs:
           echo "commit_hash=${commit_hash}" >> "$GITHUB_OUTPUT"
 
   publish:
-    name: Publish
+    name: ☁️ Publish
     needs: release
     uses: ./.github/workflows/publish.yml
     secrets: inherit
@@ -100,7 +88,7 @@ jobs:
       skip-npm: ${{ inputs.skip-npm }}
 
   deploy:
-    name: Deploy
+    name: 🚀 Deploy
     needs: publish
     uses: ./.github/workflows/deploy.yml
     secrets: inherit

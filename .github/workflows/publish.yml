@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Publish - npm Publish and Github Release
+name: ☁️ Publish - npm Publish and Github Release
 
 on:
   workflow_call:
@@ -25,61 +25,61 @@ env:
 
 jobs:
   publish-npm:
-    name: Npm publish
+    name: ☁️ Publish npm
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Build
+      - name: 🚧 Build
         uses: ./.github/actions/build
         with:
           script: 'build:web'
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
-      - uses: actions/cache/save@v4
+      - name: 💾 Restore build artefacts
+        uses: actions/cache/save@v4
         id: cache
         with:
           path: dist
           key: ${{ github.ref }}-${{ github.run_id }}-build
 
-      - name: Publish to npm
+      - name: ☁️ Publish to npm
         if: ${{ inputs.skip-npm != true }}
-        run: |
-          # =================  Publish  =================
-
-          pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # =================  ☁️ Publish to npm =================
+          pnpm publish
 
 
   publish-store:
-    name: Publish extension
+    name: 🚀 Publish extension
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion != 'failure' }}
 
     steps:
-      - name: Checkout branch ${{ github.ref }}
+      - name: ⛙ Checkout branch ${{ github.ref }}
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.commit-hash || 'main' }}
           fetch-depth: 0
 
-      - name: Build
+      - name: 🚧 Build
         uses: ./.github/actions/build
         with:
           script: 'build'
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
-      - name: Zip build folder
+      - name: 🗃️ Zip build folder
         run: |
-          # =================  Zipping build folder  =================
+          # =================  🗃️ Zipping build folder  =================
 
           # Zipping dist folder for artifact upload
           cd dist;
@@ -90,37 +90,37 @@ jobs:
           ls -l  trakt-extension.zip
           cd ..
 
-      - name: Generate Release changelog
+      - name: 📝 Generate Release changelog
         run: |
-          # =================  Changelog  =================
+          # =================  📝 Generate Release changelog  =================
 
           pnpm run release:changelog
 
-      - name: Fetch latest tag
+      - name: 🏷️ Fetch latest tag
         if: ${{ inputs.tag-name == '' }}
         id: latest-tag
         run: |
-          # =================  Fetch tag  =================
+          # =================  🏷️ Fetch tags  =================
 
           tag_name=$(git describe --abbrev=0 --match 'v*')
           echo "Tag found: '\e[34m$tag_name\e[0m'"
           echo "TAG_NAME=$tag_name" >> "$GITHUB_OUTPUT"
 
-      - name: Push Release to github
+      - name: 📦 Push Release to github
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag-name || steps.latest-tag.outputs.TAG_NAME }}
           body_path: RELEASE.md
           files: dist/trakt-extension.zip
 
-      - name: Publish to Chrome Webstore
+      - name: 🚀 Publish to Chrome webstore
         env:
           CHROME_WEB_STORE_EXTENSION_ID: pdodapikbijcfickiofjkjgkkmlcnbba
           CHROME_WEB_STORE_CLIENT_ID: ${{ secrets.CHROME_WEB_STORE_CLIENT_ID }}
           CHROME_WEB_STORE_CLIENT_SECRET: ${{ secrets.CHROME_WEB_STORE_CLIENT_SECRET }}
           CHROME_WEB_STORE_REFRESH_TOKEN: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
         run: |
-          # =================  Publish to Chrome store  =================
+          # =================  🚀 Publish to Chrome store  =================
 
           # Uploading zip to web store
           npx -s chrome-webstore-upload-cli upload --source dist/trakt-extension.zip --extension-id "$CHROME_WEB_STORE_EXTENSION_ID" --client-id "$CHROME_WEB_STORE_CLIENT_ID" --client-secret "$CHROME_WEB_STORE_CLIENT_SECRET" --refresh-token "$CHROME_WEB_STORE_REFRESH_TOKEN"
