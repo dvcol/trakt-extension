@@ -1,0 +1,86 @@
+{
+  "about__description_line_1": {
+    "message": "Side-trakt is a powerful Chrome extension designed to seamlessly access your trakt.tv collections and lists. With Side-trakt, you can effortlessly browse, track, and manage your favorite shows and movies directly from your web browser.",
+    "description": "First line of the description of the about page"
+  },
+  "about__description_line_2": {
+    "message": "Whether you're exploring new content, tracking your progress, or updating your history, Side-trakt allows you to consult, mark as watched, or add to your collection with just a few clicks.",
+    "description": "Second line of the description of the about page"
+  },
+  "about__contribute__description_line_1": {
+    "message": "Side-trakt is a free and open-source project developed by a single individual. Please consider making a small donation, leaving a review in the web store, contributing to the code base, or providing feedback by reporting issues or suggesting new features on GitHub.",
+    "description": "First line of the description of the contribute section in the about page"
+  },
+  "about__contribute__description_line_2": {
+    "message": "Your support, be it through donations, reviews, or feedback, is deeply appreciated and significantly aids in the maintenance of the application",
+    "description": "Second line of the description of the contribute section in the about page"
+  },
+  "about__contribute__description_line_3": {
+    "message": "Please consider supporting the development of trakt.tv and/or tmdb as well as they play vital roles in this extension's functionality.",
+    "description": "Third line of the description of the contribute section in the about page"
+  },
+  "about__button__store": {
+    "message": "Web Store",
+    "description": "Button to go to the web store"
+  },
+  "about__button__store_label": {
+    "message": "Leave a review in the web store.",
+    "description": "Label of the button to go to the web store"
+  },
+  "about__button__privacy": {
+    "message": "Privacy Policy",
+    "description": "Button to go to the privacy policy"
+  },
+  "about__button__privacy_label": {
+    "message": "Read the privacy policy.",
+    "description": "Label of the button to go to the privacy policy"
+  },
+  "about__button__support": {
+    "message": "Support",
+    "description": "Button to go to the support page"
+  },
+  "about__button__support_label": {
+    "message": "Open a support ticket.",
+    "description": "Label of the button to go to the support page"
+  },
+  "about__button__contribute": {
+    "message": "Contribute",
+    "description": "Button to go to the contribute page"
+  },
+  "about__button__contribute_label": {
+    "message": "Contribute to the project.",
+    "description": "Label of the button to go to the contribute page"
+  },
+  "about__button__donate": {
+    "message": "Donate",
+    "description": "Button to go to the donate page"
+  },
+  "about__button__donate_label": {
+    "message": "Make a donation.",
+    "description": "Label of the button to go to the donate page"
+  },
+  "about__title": {
+    "message": "About",
+    "description": "Title of the about page"
+  },
+  "about__version": {
+    "message": "Version",
+    "description": "Version of the application"
+  },
+  "about__language": {
+    "message": "Language",
+    "description": "Language of the application"
+  },
+  "about__timezone": {
+    "message": "Timezone",
+    "description": "Timezone of the application"
+  },
+  "about__contribute": {
+    "message": "Contribute",
+    "description": "Title of the contribute section in the about page"
+  },
+  "about__description": {
+    "message": "Description",
+    "description": "Title of the description section in the about page"
+  }
+}

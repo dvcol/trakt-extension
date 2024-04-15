@@ -18,9 +18,15 @@ export const ExternaLinks = {
   youtube: 'https://www.youtube.com/',
   reddit: 'https://www.reddit.com/',
   discord: 'https://discord.com/',
+  github: 'https://github.com/dvcol/trakt-extension',
+  donate: 'https://paypal.me/dvcol/5',
+  support: 'https://github.com/dvcol/trakt-extension/issues',
+  store: 'https://chrome.google.com/webstore/detail/pdodapikbijcfickiofjkjgkkmlcnbba',
+  privacy: 'https://github.com/dvcol/trakt-extension/blob/main/PRIVACY.md',
 } as const;
 
 export const ResolveExternalLinks = {
+  release: (version: string) => `${ExternaLinks.github}/releases/tag/v${version}`,
   trakt: {
     item: ({
       type,

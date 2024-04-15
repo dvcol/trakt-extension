@@ -17,6 +17,10 @@ defineProps({
     type: String,
     required: false,
   },
+  title: {
+    type: String,
+    required: false,
+  },
   icon: {
     type: Object as PropType<Component>,
     required: false,
@@ -39,8 +43,14 @@ const anchor = ref();
   >
     <span>{{ label }}</span>
     <template #trigger>
-      <a ref="anchor" class="anchor-link" :href="href">
-        <NButton tertiary class="external-link" v-bind="$attrs">
+      <a ref="anchor" class="anchor-link" :href="href" :title="title">
+        <NButton
+          tertiary
+          class="external-link"
+          :class="{ slotted: $slots.default }"
+          v-bind="$attrs"
+        >
+          <slot />
           <template #icon>
             <NIcon :component="icon" />
           </template>
@@ -58,8 +68,14 @@ const anchor = ref();
   color: inherit;
   text-decoration: none;
 
-  .external-link {
+  .external-link:not(.slotted) {
     width: 2.25rem;
+  }
+
+  .slotted {
+    i {
+      margin-left: calc(0% - var(--n-icon-margin));
+    }
   }
 }
 </style>
