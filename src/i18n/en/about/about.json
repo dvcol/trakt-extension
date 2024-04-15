@@ -16,7 +16,7 @@
     "description": "Second line of the description of the contribute section in the about page"
   },
   "about__contribute__description_line_3": {
-    "message": "Please consider supporting the development of trakt.tv and/or tmdb as well as they play vital roles in this extension's functionality.",
+    "message": "Please consider supporting the development of trakt.tv and/or tmdb  as they are integral to this extension's functionality.",
     "description": "Third line of the description of the contribute section in the about page"
   },
   "about__button__store": {

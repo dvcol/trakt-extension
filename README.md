@@ -17,11 +17,14 @@
   </a>
 </p>
 
-> Preface HERE
+> Side-trakt is a powerful Chrome extension designed to seamlessly access your trakt.tv collections and lists. With Side-trakt, you can effortlessly browse, track, and manage your favorite shows and movies directly from your web browser.
 
+>Whether you're exploring new content, tracking your progress, or updating your history, Side-trakt allows you to consult, mark as watched, or add to your collection with just a few clicks.
+
+> Please consider supporting the development of [trakt.tv](https://trakt.tv/vip) and/or [tmdb](https://www.themoviedb.org/) as they are integral to this extension's functionality.
 ## Prerequisites
 
-- pnpm >=7.10.0
+- pnpm >=7.0.0
 - node >=17.0.0
 
 ## Install
@@ -32,12 +35,16 @@ pnpm install
 
 ## Usage
 
+```sh
+pnpm dev
+```
+
 See [package.json](https://github.com/dvcol/synology-download/blob/main/package.json) for other useful scripts.
 
 ## Run tests
 
 ```sh
-pnpm run test
+pnpm test:unit
 ```
 
 ## Author
