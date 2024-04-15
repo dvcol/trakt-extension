@@ -19,16 +19,13 @@ body:
         - General UI
         - General Options/Settings
         - Connection (login/fetching)
-        - Polling (task refresh)
-        - Task list
-        - Notification
+        - Progress list (experimental)
+        - History
+        - Calendar
+        - List (watchlist, collection, personal lists)
+        - Search
         - Pop-up
-        - Quick menus (dropdown click)
-        - Context menu (right click on links)
-        - Overlay (modal)
-        - Local Downloads
-        - Content script (inside the page)
-        - Background script (background extension process)
+        - Details Panel (show, movie, season, episode, person)
         - Other (none of the above)
     validations:
       required: true
@@ -68,4 +65,4 @@ body:
 
   - type: markdown
     attributes:
-      value: If you are enjoying the extension, please leave a review in the extension [store](https://chrome.google.com/webstore/detail/ebbdkledlkjpgbbmmopgbnnjmklnkcef) !
+      value: If you are enjoying the extension, please leave a review in the extension [store](https://chrome.google.com/webstore/detail/pdodapikbijcfickiofjkjgkkmlcnbba) !

@@ -37,17 +37,8 @@ body:
     id: version-extension
     attributes:
       label: Extension version
-      description: The version of synology-download (visible in the manage extension page in your browser).
+      description: The version of extension (visible in the manage extension page in your browser or the about page).
       placeholder: ex. 2.0.2
-    validations:
-      required: true
-
-  - type: input
-    id: version-dsm
-    attributes:
-      label: DSM version
-      description: The version of your nas (DSM > Control Panel > Info Center > General > DSM version).
-      placeholder: ex. DSM 7.1
     validations:
       required: true
 
@@ -68,7 +59,7 @@ body:
       placeholder: |
         Describe what happens:
 
-        Everytime I add a new torrent, the extension crashes ...
+        Everytime I mark a show as watched, the extension crashes ...
     validations:
       required: true
 
@@ -103,27 +94,14 @@ body:
       label: Failure Logs
       description: |
         If possible open the console by right clicking the extension's icon, left clicking on 'Inspect Popup-up' and then copy pasting any error log you can find.
-        You can also enable higher logging levels in extension settings > advanced > logging. 
+        You can also enable higher logging levels in extension settings > logs. 
         We recommend reproducing the issue with debug logging enabled everywhere to facilitate debugging.
       placeholder: |
         Paste your logs here :
 
-        [2023-03-18T11:14:43.789Z - popup] Logger service initialized
-        [2023-03-18T11:14:43.791Z - popup] Download service initialized Object
-        [2023-03-18T11:14:43.791Z - popup] Query service initialized Object
-        2023-03-18T11:14:43.791Z - popup] Notification service initialized Object
+        Web Component defined
+        user.store.ts:127 User changed
+        activity.store.ts:29 Fetching activity
         ...
-    validations:
-      required: false
-
-  - type: textarea
-    id: snapshots
-    attributes:
-      render: json
-      label: Store snapshots
-      description: |
-        If possible generate an export of your store and/or storage state to help debug the issue (extension settings > advanced > storage/redux > export snapshot).
-        Note that those snapshot may contain identifiable information you might want to redact before submitting (like credentials or external ip addresses)
-      placeholder: Paste your snapshot here.
     validations:
       required: false
