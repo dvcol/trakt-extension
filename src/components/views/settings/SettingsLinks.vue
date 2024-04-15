@@ -126,7 +126,12 @@ const containerRef = ref<HTMLDivElement>();
         class="transition-container"
         :style="{ '--length': links?.length }"
       >
-        <NCard v-for="(link, index) in links" :key="index" class="link-card">
+        <NCard
+          v-for="(link, index) in links"
+          :key="index"
+          class="link-card"
+          :style="{ '--n-border-color': 'var(--border-color)' }"
+        >
           <NFormItem
             :label="i18n('label_name')"
             :path="`[${ index }].label`"
@@ -256,10 +261,13 @@ const containerRef = ref<HTMLDivElement>();
 }
 
 .link-card {
-  @include mixin.hover-background(
-    $from: var(--bg-black-soft-90),
-    $to: var(--bg-black-soft)
-  );
+  --border-color: var(--white-10);
+
+  background: var(--bg-black-soft);
+
+  &:hover {
+    --border-color: var(--white-15);
+  }
 
   &:not(:last-child) {
     margin-bottom: 1.5rem;
@@ -269,8 +277,8 @@ const containerRef = ref<HTMLDivElement>();
 .form-switch {
   display: flex;
   flex: 1 1 auto;
-  justify-content: flex-end;
-  min-width: 4rem;
+  justify-content: center;
+  min-width: 5rem;
   padding: 0 0.5rem;
   font-size: 0.75rem;
 }

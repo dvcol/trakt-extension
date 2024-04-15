@@ -1,0 +1,58 @@
+{
+  "settings__account__username": {
+    "message": "Username",
+    "description": "Username label in account settings tab."
+  },
+  "settings__account__display": {
+    "message": "Display",
+    "description": "Display name label in account settings tab."
+  },
+  "settings__account__joined": {
+    "message": "Joined",
+    "description": "Joined date label in account settings tab."
+  },
+  "settings__account__gender": {
+    "message": "Gender",
+    "description": "Gender label in account settings tab."
+  },
+  "settings__account__age": {
+    "message": "Age",
+    "description": "Age label in account settings tab."
+  },
+  "settings__account__private": {
+    "message": "Private",
+    "description": "Private label in account settings tab."
+  },
+  "settings__account__vip": {
+    "message": "VIP",
+    "description": "VIP label in account settings tab."
+  },
+  "settings__account__location": {
+    "message": "Location",
+    "description": "Location label in account settings tab."
+  },
+  "settings__account__about": {
+    "message": "About",
+    "description": "About label in account settings tab."
+  },
+  "settings__account__watchlist_max": {
+    "message": "Watchlist max",
+    "description": "Watchlist max items label in account settings tab."
+  },
+  "settings__account__favorites_max": {
+    "message": "Favorites max",
+    "description": "Favorites max items label in account settings tab."
+  },
+  "settings__account__recommendations_max": {
+    "message": "Recommendations max",
+    "description": "Recommendations max items label in account settings tab."
+  },
+  "settings__account__user_lists_maximum": {
+    "message": "User lists maximum",
+    "description": "User lists maximum label in account settings tab."
+  },
+  "settings__account__user_lists_max_items": {
+    "message": "User lists max items",
+    "description": "User lists max items label in account settings tab."
+  }
+}

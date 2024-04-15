@@ -12,9 +12,19 @@ defineProps({
     type: String,
     required: true,
   },
+  labelWidth: {
+    type: String,
+    required: false,
+    default: '2.5rem',
+  },
   value: {
     type: [String, Number, Boolean],
     required: false,
+  },
+  flex: {
+    type: String,
+    required: false,
+    default: 'flex: 0 1 31.5%',
   },
   values: {
     type: Array as PropType<TagLink[]>,
@@ -28,6 +38,10 @@ defineProps({
     type: Boolean,
     required: false,
   },
+  pre: {
+    type: Boolean,
+    required: false,
+  },
   skeleton: {
     type: Object as PropType<SkeletonProps>,
     required: false,
@@ -38,10 +52,16 @@ const { openTab } = useLinksStore();
 </script>
 
 <template>
-  <NFlex class="detail" :class="{ grow, array }" align="center">
+  <NFlex
+    class="detail"
+    :class="{ grow, array }"
+    :style="{ '--prefix-min-width': labelWidth, '--text-flex': flex }"
+    align="baseline"
+    :wrap="false"
+  >
     <span class="prefix">{{ label }}</span>
-    <template v-if="array">
-      <template v-if="values">
+    <NFlex v-if="array" class="value">
+      <template v-if="values !== undefined">
         <TagLinkComponent
           v-for="(tag, i) of values"
           :key="i"
@@ -54,24 +74,30 @@ const { openTab } = useLinksStore();
         <NSkeleton round v-bind="skeleton" />
         <NSkeleton round v-bind="skeleton" />
       </template>
-    </template>
+    </NFlex>
     <template v-else>
-      <span v-if="value">{{ value }}</span>
-      <NSkeleton v-else round v-bind="skeleton" />
+      <span v-if="value !== undefined" class="value" :class="{ pre }">{{ value }}</span>
+      <NSkeleton v-else :repeat="pre ? 3 : 0" round v-bind="skeleton" />
     </template>
   </NFlex>
 </template>
 
 <style lang="scss" scoped>
 .prefix {
-  min-width: 2.5rem;
+  flex: 0 0 auto;
+  min-width: var(--prefix-min-width);
   color: var(--white-50);
   font-weight: 600;
   transition: color 0.3s var(--n-bezier);
 }
 
+.value {
+  flex: 1 1 auto;
+}
+
 .detail {
-  flex: 0 1 31.5%;
+  flex: var(--text-flex);
+  align-items: baseline;
 
   &:hover .prefix {
     color: var(--white-70);
@@ -84,6 +110,10 @@ const { openTab } = useLinksStore();
   &.array {
     flex: 1 1 auto;
     width: 100%;
+  }
+
+  .pre {
+    white-space: pre-wrap;
   }
 }
 </style>

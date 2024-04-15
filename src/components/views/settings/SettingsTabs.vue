@@ -96,8 +96,8 @@ const container = ref();
   .form-switch {
     display: flex;
     flex: 1 1 auto;
-    justify-content: flex-end;
-    min-width: 4rem;
+    justify-content: center;
+    min-width: 5rem;
     padding: 0 0.5rem;
     font-size: 0.75rem;
   }

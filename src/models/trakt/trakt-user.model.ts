@@ -80,6 +80,9 @@ export type TraktUserLimits = {
   favorites: {
     item_count: number;
   };
+  recommendations: {
+    item_count: number;
+  };
 };
 
 export type TraktUserSettings = {

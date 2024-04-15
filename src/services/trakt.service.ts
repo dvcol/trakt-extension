@@ -109,6 +109,11 @@ export class TraktService {
     this.caches.tvdb.prefix = `tvdb-cache-${user}`;
   }
 
+  static async getUserSettings() {
+    const response = await this.traktClient.users.settings();
+    return response.json();
+  }
+
   static changeRetention({ trakt, tvdb, tmdb }: { trakt?: number; tvdb?: number; tmdb?: number }) {
     if (trakt !== undefined) this.caches.trakt.retention = trakt;
     if (tvdb !== undefined) this.caches.tvdb.retention = tvdb;

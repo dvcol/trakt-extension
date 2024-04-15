@@ -5,12 +5,12 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 
+import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconFacebook from '~/components/icons/IconFacebook.vue';
 import IconInstagram from '~/components/icons/IconInstagram.vue';
 import IconTwitter from '~/components/icons/IconTwitter.vue';
 import IconWikipedia from '~/components/icons/IconWikipedia.vue';
-import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
@@ -110,21 +110,21 @@ const socials = computed(() => {
   <NFlex size="large" class="container" vertical>
     <NFlex class="row" size="large">
       <!--  Known For  -->
-      <PanelDetail
+      <TextField
         :label="i18n('known_for')"
         :value="knownFor"
         :skeleton="{ width: '5rem' }"
       />
 
       <!--  Birthday  -->
-      <PanelDetail
+      <TextField
         :label="i18n('birthday')"
         :value="birthday"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Death  -->
-      <PanelDetail
+      <TextField
         :label="i18n('death')"
         :value="death"
         :skeleton="{ width: '5.125rem' }"
@@ -134,10 +134,10 @@ const socials = computed(() => {
 
     <NFlex class="row" size="large">
       <!--  Age  -->
-      <PanelDetail :label="i18n('age')" :value="age" :skeleton="{ width: '3ch' }" />
+      <TextField :label="i18n('age')" :value="age" :skeleton="{ width: '3ch' }" />
 
       <!--  Birth place  -->
-      <PanelDetail
+      <TextField
         :label="i18n('birthplace')"
         :value="birthplace"
         :skeleton="{ width: '12rem' }"
@@ -147,7 +147,7 @@ const socials = computed(() => {
 
     <NFlex class="lists" vertical size="large">
       <!--  socials  -->
-      <PanelDetail
+      <TextField
         :label="i18n('socials')"
         :values="socials"
         :skeleton="{ width: '3rem' }"

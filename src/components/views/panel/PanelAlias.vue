@@ -4,7 +4,8 @@ import { computed, nextTick, type PropType, ref, toRefs } from 'vue';
 
 import type { InputInst } from 'naive-ui';
 
-import PanelDetail from '~/components/views/panel/PanelDetail.vue';
+import TextField from '~/components/common/typography/TextField.vue';
+
 import {
   type AliasScope,
   useLinksStore,
@@ -81,7 +82,7 @@ const i18n = useI18n('panel', 'alias');
     </NInput>
 
     <!--  Alias  -->
-    <PanelDetail
+    <TextField
       v-else
       class="alias-detail"
       :label="i18n('label')"

@@ -6,8 +6,8 @@ import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
 
+import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
-import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -150,17 +150,13 @@ const title = computed(() =>
   <NFlex size="large" class="container" vertical>
     <NFlex class="row" size="large">
       <!--  Show Year  -->
-      <PanelDetail :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
+      <TextField :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
 
       <!--  Show Country  -->
-      <PanelDetail
-        :label="i18n('country')"
-        :value="country"
-        :skeleton="{ width: '2ch' }"
-      />
+      <TextField :label="i18n('country')" :value="country" :skeleton="{ width: '2ch' }" />
 
       <!--  Show Network  -->
-      <PanelDetail
+      <TextField
         :label="i18n('network')"
         :value="network"
         grow
@@ -170,21 +166,21 @@ const title = computed(() =>
 
     <NFlex class="row" size="large">
       <!--  Air date  -->
-      <PanelDetail
+      <TextField
         :label="i18n('aired')"
         :value="airedDate"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Runtime  -->
-      <PanelDetail
+      <TextField
         :label="i18n('runtime')"
         :value="runtime"
         :skeleton="{ width: '3.75rem' }"
       />
 
       <!--  Show Status  -->
-      <PanelDetail
+      <TextField
         :label="i18n('status')"
         :value="status"
         grow
@@ -194,14 +190,14 @@ const title = computed(() =>
 
     <NFlex class="row" size="large">
       <!--  Air Time  -->
-      <PanelDetail
+      <TextField
         :label="i18n('aired_time')"
         :value="airedTime"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Season aired episodes  -->
-      <PanelDetail
+      <TextField
         v-if="mode !== 'show'"
         :label="i18n('aired_episodes')"
         :value="airedEpisodes"
@@ -209,7 +205,7 @@ const title = computed(() =>
       />
 
       <!--  Episode Type  -->
-      <PanelDetail
+      <TextField
         v-if="mode === 'episode'"
         :label="i18n('type')"
         :value="episodeType"
@@ -223,7 +219,7 @@ const title = computed(() =>
 
     <NFlex class="lists" vertical size="large">
       <!--  Genres  -->
-      <PanelDetail
+      <TextField
         :label="i18n('genres')"
         :values="genres"
         :skeleton="{ width: '3rem' }"

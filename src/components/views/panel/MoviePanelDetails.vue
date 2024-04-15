@@ -4,8 +4,8 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
 
+import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
-import PanelDetail from '~/components/views/panel/PanelDetail.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -81,40 +81,36 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
   <NFlex size="large" class="container" vertical>
     <NFlex class="row" size="large">
       <!--  Release date  -->
-      <PanelDetail
+      <TextField
         :label="i18n('released')"
         :value="releasedDate"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Year  -->
-      <PanelDetail :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
+      <TextField :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
 
       <!--  Country  -->
-      <PanelDetail
-        :label="i18n('country')"
-        :value="country"
-        :skeleton="{ width: '2ch' }"
-      />
+      <TextField :label="i18n('country')" :value="country" :skeleton="{ width: '2ch' }" />
     </NFlex>
 
     <NFlex class="row" size="large">
       <!--  Release Time  -->
-      <PanelDetail
+      <TextField
         :label="i18n('released_time')"
         :value="releasedTime"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Runtime  -->
-      <PanelDetail
+      <TextField
         :label="i18n('runtime')"
         :value="runtime"
         :skeleton="{ width: '3.75rem' }"
       />
 
       <!--  Status  -->
-      <PanelDetail
+      <TextField
         :label="i18n('status')"
         :value="status"
         :skeleton="{ width: '7.5rem' }"
@@ -131,7 +127,7 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
 
     <NFlex class="lists" vertical size="large">
       <!--  Genres  -->
-      <PanelDetail
+      <TextField
         :label="i18n('genres')"
         :values="genres"
         :skeleton="{ width: '3rem' }"
