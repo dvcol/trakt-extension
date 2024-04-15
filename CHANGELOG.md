@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/dvcol/trakt-extension/compare/v1.3.0...v1.4.0) (2024-04-15)
+
+
+### Features
+
+* **about:** adds about page buttons ([d314aea](https://github.com/dvcol/trakt-extension/commit/d314aea24c9c5ce0240438ea4bc31aa45b6a543a))
+* **logout:** adds logout button to the settings page ([17a11ba](https://github.com/dvcol/trakt-extension/commit/17a11ba703adb872213e3b4a4702c4734ba7d3ee))
+
 ## [1.3.0](https://github.com/dvcol/trakt-extension/compare/v1.2.0...v1.3.0) (2024-04-15)
 
 
