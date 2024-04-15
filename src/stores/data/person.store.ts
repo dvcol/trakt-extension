@@ -7,7 +7,7 @@ import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
-import { asyncRefGetter } from '~/utils/vue.utils';
+import { asyncRefGetter, clearProxy } from '~/utils/vue.utils';
 
 type PersonDictionary = Record<string, TraktPersonExtended>;
 type LoadingDictionary = Record<string, boolean>;
@@ -17,8 +17,8 @@ export const usePersonStore = defineStore('data.person', () => {
   const loading = reactive<LoadingDictionary>({});
 
   const clearState = () => {
-    Object.assign(people, {});
-    Object.assign(loading, {});
+    clearProxy(people);
+    clearProxy(loading);
   };
 
   const fetchPerson = async (id: string | number) => {

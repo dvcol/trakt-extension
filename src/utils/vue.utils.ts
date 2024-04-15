@@ -27,3 +27,10 @@ export const asyncRefGetter = <T>(fn: () => Promise<T>, loading: Ref<boolean>, r
     },
   };
 };
+
+export const clearProxy = (proxy: Record<string, unknown>) => {
+  // Reassign the proxy object to a new empty object
+  Object.keys(proxy).forEach(key => {
+    delete proxy[key];
+  });
+};

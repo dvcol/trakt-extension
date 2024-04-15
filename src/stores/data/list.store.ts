@@ -22,6 +22,7 @@ import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 export type AnyList =
   | TraktListItem
@@ -215,11 +216,11 @@ export const useListStore = defineStore('data.list', () => {
     pagination.value = undefined;
     searchList.value = '';
 
-    Object.assign(typeLoading, {});
-    Object.assign(typeItemLoading, {});
+    clearProxy(typeLoading);
+    clearProxy(typeItemLoading);
 
-    Object.assign(listDictionary, {});
-    Object.assign(listDictionaryLoading, {});
+    clearProxy(listDictionary);
+    clearProxy(listDictionaryLoading);
   };
 
   const updateDictionary = (list: ListEntity, item: MinimalItem, remove?: boolean) => {
