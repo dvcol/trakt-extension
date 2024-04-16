@@ -9,6 +9,7 @@ import IconEye from '~/components/icons/IconEye.vue';
 import IconGithub from '~/components/icons/IconGithub.vue';
 import IconStar from '~/components/icons/IconStar.vue';
 import { ExternaLinks, ResolveExternalLinks } from '~/settings/external.links';
+import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils';
 
 const i18n = useI18n('about');
@@ -16,6 +17,13 @@ const i18n = useI18n('about');
 const version = import.meta.env.PKG_VERSION;
 const language = navigator?.language;
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const { openTab } = useLinksStore();
+
+const openRelease = (url?: string) => {
+  if (!url) return;
+  openTab(url, true);
+};
 </script>
 
 <template>
@@ -38,6 +46,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             title: 'See release on Github.',
             label: `${ i18n('version').toLowerCase() } - v${ version }`,
           }"
+          @on-click="openRelease"
         />
         <TagLink
           class="link"
@@ -69,7 +78,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       <NFlex justify="space-around">
         <ButtonLinkExternal
-          :url="ExternaLinks.store"
+          :href="ExternaLinks.store"
           :title="i18n('button__store_label')"
           :icon="IconStar"
           type="success"
@@ -77,7 +86,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           {{ i18n('button__store') }}
         </ButtonLinkExternal>
         <ButtonLinkExternal
-          :url="ExternaLinks.privacy"
+          :href="ExternaLinks.privacy"
           :title="i18n('button__privacy_label')"
           :icon="IconEye"
           type="warning"
@@ -85,7 +94,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           {{ i18n('button__privacy') }}
         </ButtonLinkExternal>
         <ButtonLinkExternal
-          :url="ExternaLinks.support"
+          :href="ExternaLinks.support"
           :title="i18n('button__support_label')"
           :icon="IconAccountAlert"
           type="error"
@@ -93,14 +102,14 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           {{ i18n('button__support') }}
         </ButtonLinkExternal>
         <ButtonLinkExternal
-          :url="ExternaLinks.github"
+          :href="ExternaLinks.github"
           :title="i18n('button__contribute_label')"
           :icon="IconGithub"
         >
           {{ i18n('button__contribute') }}
         </ButtonLinkExternal>
         <ButtonLinkExternal
-          :url="ExternaLinks.donate"
+          :href="ExternaLinks.donate"
           :title="i18n('button__donate_label')"
           :icon="IconCoffe"
           type="info"

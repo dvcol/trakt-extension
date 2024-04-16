@@ -162,9 +162,9 @@ export const useLinksStore = defineStore('settings.links', () => {
     },
   });
 
-  const openTab = (url?: string) => {
+  const openTab = (url?: string, active?: boolean) => {
     if (!url) return;
-    createTab({ url, active: !openLinkInBackground.value });
+    createTab({ url, active: active ?? !openLinkInBackground.value });
   };
 
   return { initLinksStore, clearState, linkDictionary, addLink, removeLink, getLinks, getAlias, aliasEnabled, openLinkInBackground, openTab };
