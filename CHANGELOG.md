@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/dvcol/trakt-extension/compare/v1.4.1...v1.4.2) (2024-04-16)
+
+
+### Bug Fixes
+
+* **routing:** switch to Calendar as default route ([6d3f663](https://github.com/dvcol/trakt-extension/commit/6d3f66342b9d7048d2a0abd3ad782c3b31a8eb7d))
+* **text:** fix default spacing ([c4f12aa](https://github.com/dvcol/trakt-extension/commit/c4f12aabf94853b521c7ebdbfccbe3f9ae4072fb))
+
 ### [1.4.1](https://github.com/dvcol/trakt-extension/compare/v1.4.0...v1.4.1) (2024-04-15)
 
 
