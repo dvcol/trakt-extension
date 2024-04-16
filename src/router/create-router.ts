@@ -18,16 +18,17 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   setBaseUrl(baseUrl);
 
   const _routes = routes.map(r => ({ ...r, path: `${baseName}${r.path}` }));
+  const _routesWithBase = [
+    {
+      path: `${baseName}/:pathMatch(.*)`,
+      redirect: { name: Route.Calendar },
+    },
+    ..._routes,
+  ];
 
   const router = createVueRouter({
     history: createWebHashHistory(baseUrl),
-    routes: [
-      {
-        path: `${baseName}/:pathMatch(.*)`,
-        redirect: { name: Route.Calendar },
-      },
-      ..._routes,
-    ],
+    routes: _routesWithBase,
   });
 
   const { waitAppReady } = useAppStateStoreRefs();
@@ -63,7 +64,8 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   });
 
   restoreLastRoute().then(async _route => {
-    await router.push(_route?.name !== Route.Login ? _route : { name: Route.Calendar });
+    const isNotLogin = _route?.name && _route?.name !== Route.Login;
+    await router.push(isNotLogin ? _route : { name: Route.Calendar });
   });
 
   return router;

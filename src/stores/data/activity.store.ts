@@ -4,6 +4,8 @@ import { ref, watch } from 'vue';
 
 import type { TraktSyncActivities } from '~/models/trakt/trakt-sync.model';
 
+import type { RecursiveType } from '~/utils/typescript.utils';
+
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -47,7 +49,8 @@ export const useActivityStore = defineStore('data.activity', () => {
     await restoreState();
 
     watch(activity, (next, prev) => {
-      const changed = compareDateObject(toDateObject(prev), toDateObject(next));
+      if (!prev) return;
+      const changed: RecursiveType<RecursiveType<TraktSyncActivities, Date>, boolean> = compareDateObject(toDateObject(prev), toDateObject(next));
 
       if (changed?.episodes?.watched_at || changed?.shows?.hidden_at || changed?.seasons?.hidden_at) {
         TraktService.evict.progress.show();
