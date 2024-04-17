@@ -8,9 +8,13 @@ import {
   NFormItem,
   NIcon,
   NInput,
+  NLi,
+  NP,
   NPopconfirm,
   NSelect,
   NSwitch,
+  NText,
+  NUl,
 } from 'naive-ui';
 
 import { computed, onActivated, reactive, ref, toRaw } from 'vue';
@@ -98,6 +102,8 @@ const getType = (link: CustomLink) => {
   return 'success';
 };
 
+const keywords = ['trakt', 'imdb', 'tmdb', 'tvdb', 'season', 'episode', 'title', 'alias'];
+
 const formRef = ref<FormInst>();
 const containerRef = ref<HTMLDivElement>();
 </script>
@@ -117,6 +123,30 @@ const containerRef = ref<HTMLDivElement>();
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
     </SettingsFormItem>
+
+    <NP class="template-description">
+      <NText>{{ i18n('template_description') }}</NText>
+
+      <div class="keywords-header">{{ i18n('template_keywords_header') }}</div>
+
+      <NUl class="keywords-list">
+        <NLi v-for="keyword of keywords" :key="keyword" class="item">
+          <span class="keyword">{{ i18n(`template_keywords_${keyword}`) }}</span> -
+          <span>{{ i18n(`template_keywords_${keyword}_description`) }}</span>
+        </NLi>
+      </NUl>
+
+      <NP class="keywords-example">
+        <NText class="header">{{ i18n('template_example_line_1') }}</NText>
+        <code class="code">
+          <span>{{ i18n('template_example_template') }}</span>
+        </code>
+        <NText class="header">{{ i18n('template_example_line_2') }}</NText>
+        <code class="code">
+          <span>{{ i18n('template_example_result') }}</span>
+        </code>
+      </NP>
+    </NP>
 
     <!--  Content  -->
     <NForm ref="formRef" :model="form">
@@ -271,6 +301,46 @@ const containerRef = ref<HTMLDivElement>();
 
   &:not(:last-child) {
     margin-bottom: 1.5rem;
+  }
+}
+
+.template-description {
+  margin: 0;
+  font-size: 1rem;
+  white-space: pre-wrap;
+
+  .keywords {
+    &-header {
+      margin-top: 1rem;
+    }
+
+    &-list {
+      margin: 1rem;
+
+      .keyword {
+        color: var(--white-mute);
+        font-weight: 600;
+        transition: color 0.3s var(--n-bezier);
+      }
+    }
+
+    &-example {
+      margin: 1.5rem 0;
+
+      .code {
+        display: flex;
+        justify-content: center;
+        margin: 1rem;
+        color: var(--white);
+        font-weight: 400;
+
+        span {
+          padding: 0.25ch 1ch;
+          background: var(--code-grey);
+          border-radius: 4px;
+        }
+      }
+    }
   }
 }
 

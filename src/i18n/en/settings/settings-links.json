@@ -30,5 +30,93 @@
   "settings__links__label_open_in_background": {
     "message": "Open links in background (popup stay active)",
     "description": "Label for the open in new tab checkbox"
+  },
+  "settings__links__template_description": {
+    "message": "When using keywords enclosed in double accolades, some specific data can be dynamically inserted into a template URL. Media information will be interpolated conditionally on the context where the link appear. For example, if the link is in a movie context, the season and episode keywords will be empty.",
+    "description": "Description for the template interpolation feature"
+  },
+  "settings__links__template_keywords_header": {
+    "message": "The following keywords are supported",
+    "description": "Header for the keywords section"
+  },
+  "settings__links__template_keywords_trakt": {
+    "message": "trakt (string)",
+    "description": "Label for the trakt keyword"
+  },
+  "settings__links__template_keywords_trakt_description": {
+    "message": "The trakt ID",
+    "description": "Description for the trakt keyword"
+  },
+  "settings__links__template_keywords_imdb": {
+    "message": "imdb (string)",
+    "description": "Label for the imdb keyword"
+  },
+  "settings__links__template_keywords_imdb_description": {
+    "message": "The imdb ID",
+    "description": "Description for the imdb keyword"
+  },
+  "settings__links__template_keywords_tmdb": {
+    "message": "tmdb (string)",
+    "description": "Label for the tmdb keyword"
+  },
+  "settings__links__template_keywords_tmdb_description": {
+    "message": "The tmdb ID",
+    "description": "Description for the tmdb keyword"
+  },
+  "settings__links__template_keywords_tvdb": {
+    "message": "tvdb (string)",
+    "description": "Label for the tvdb keyword"
+  },
+  "settings__links__template_keywords_tvdb_description": {
+    "message": "The tvdb ID",
+    "description": "Description for the tvdb keyword"
+  },
+  "settings__links__template_keywords_season": {
+    "message": "season (number)",
+    "description": "Label for the season keyword"
+  },
+  "settings__links__template_keywords_season_description": {
+    "message": "The season number, if applicable",
+    "description": "Description for the season keyword"
+  },
+  "settings__links__template_keywords_episode": {
+    "message": "episode (number)",
+    "description": "Label for the episode keyword"
+  },
+  "settings__links__template_keywords_episode_description": {
+    "message": "The episode number, if applicable",
+    "description": "Description for the episode keyword"
+  },
+  "settings__links__template_keywords_title": {
+    "message": "title (string)",
+    "description": "Label for the title keyword"
+  },
+  "settings__links__template_keywords_title_description": {
+    "message": "The title of the media",
+    "description": "Description for the title keyword"
+  },
+  "settings__links__template_keywords_alias": {
+    "message": "alias (string)",
+    "description": "Label for the alias keyword"
+  },
+  "settings__links__template_keywords_alias_description": {
+    "message": "An optional alias for a show or movie (defaults to title if none exist)",
+    "description": "Description for the alias keyword"
+  },
+  "settings__links__template_example_line_1": {
+    "message": "For example",
+    "description": "Line 1 for the Example for the trakt keyword"
+  },
+  "settings__links__template_example_line_2": {
+    "message": "Interpolates to",
+    "description": "Line2 for the Example for the trakt keyword"
+  },
+  "settings__links__template_example_template": {
+    "message": "https://www.my-url.com/search/s{{season}}e{{episode}}+{{alias}}",
+    "description": "Example template for the trakt keyword"
+  },
+  "settings__links__template_example_result": {
+    "message": "https://www.my-url.com/search/s01e05+my-alias",
+    "description": "Result for the example template for the trakt keyword"
   }
 }
