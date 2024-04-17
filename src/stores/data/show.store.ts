@@ -284,7 +284,6 @@ export const useShowStore = defineStore('data.show', () => {
   const initShowStore = () => {
     watch(user, () => {
       clearProgressState();
-      console.info('user change, clearing state', user.value, showsWatchedProgress);
     });
   };
 

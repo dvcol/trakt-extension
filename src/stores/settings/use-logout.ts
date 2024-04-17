@@ -12,7 +12,6 @@ export const useLogout = () => {
   const { syncRestoreAuth } = useAuthSettingsStore();
 
   const loadUser = async (account: string) => {
-    console.info('loadUser', account);
     const auth = await syncRestoreAuth(account);
     return TraktService.importAuthentication(auth);
   };
