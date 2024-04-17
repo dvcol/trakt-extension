@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.3](https://github.com/dvcol/trakt-extension/compare/v1.4.2...v1.4.3) (2024-04-17)
+
+
+### Bug Fixes
+
+* **about:** fix external links in about page ([dc4496a](https://github.com/dvcol/trakt-extension/commit/dc4496afa9858bd6bca2838ac1d40ba347257cb9))
+* **login:** fix hardocded extension id in redirection url ([3d35a79](https://github.com/dvcol/trakt-extension/commit/3d35a7967711afd81a60e681072d5e48799215df))
+* **web:** ensure only one instance of globals are used & fix router ([1efd934](https://github.com/dvcol/trakt-extension/commit/1efd9348c28290c0c0726d3b5a5c8b389aeb7ae7))
+
 ### [1.4.2](https://github.com/dvcol/trakt-extension/compare/v1.4.1...v1.4.2) (2024-04-16)
 
 
