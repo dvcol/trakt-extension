@@ -131,6 +131,8 @@ header {
 
   &.open > :first-child {
     background: var(--bg-gradient-60-90);
+    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+    -webkit-backdrop-filter: blur(var(--bg-blur-20));
     backdrop-filter: blur(var(--bg-blur-20));
   }
 }

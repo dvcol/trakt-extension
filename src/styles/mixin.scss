@@ -7,6 +7,8 @@
   $transition-prop: all
 ) {
   background: $from;
+  // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+  -webkit-backdrop-filter: blur($blur);
   backdrop-filter: blur($blur);
   transition: $transition-prop $transition;
   will-change: color, background, background-color, backdrop-filter, box-shadow,
@@ -14,6 +16,8 @@
 
   &:hover {
     background: $to;
+    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+    -webkit-backdrop-filter: blur($blur-hover);
     backdrop-filter: blur($blur-hover);
   }
 }

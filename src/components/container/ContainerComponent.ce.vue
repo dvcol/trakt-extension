@@ -192,6 +192,8 @@ const root = ref<HTMLElement>();
 
 .n-drawer-mask {
   background: var(--bg-gradient-60-90);
+  // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+  -webkit-backdrop-filter: blur(var(--bg-blur-20));
   backdrop-filter: blur(var(--bg-blur-20));
 }
 
@@ -202,10 +204,14 @@ const root = ref<HTMLElement>();
 .n-tooltip.n-tooltip,
 .n-popover-arrow.n-popover-arrow.n-popover-arrow {
   background: var(--custom-bg-color, var(--bg-color-60));
+  // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+  -webkit-backdrop-filter: blur(var(--bg-blur));
   backdrop-filter: blur(var(--bg-blur));
 
   &:hover {
     background: var(--custom-bg-color-hover, var(--bg-black-90));
+    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+    -webkit-backdrop-filter: var(--custom-bg-blur-hover, var(--bg-blur-hover));
     backdrop-filter: var(--custom-bg-blur-hover, var(--bg-blur-hover));
   }
 
