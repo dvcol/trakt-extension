@@ -113,6 +113,7 @@ const getPlugins = (): PluginOption[] => [
 
 export default defineConfig(() => ({
   root: resolveParent('src'),
+  envDir: resolveParent('env'),
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),

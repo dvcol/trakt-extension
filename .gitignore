@@ -114,3 +114,6 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+#env files
+.env.local

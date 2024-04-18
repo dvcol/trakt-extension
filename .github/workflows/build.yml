@@ -33,6 +33,17 @@ jobs:
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
 
+          trakt_production_id: ${{ secrets.VITE_TRAKT_PRODUCTION_ID }}
+          trakt_production_secret: ${{ secrets.VITE_TRAKT_PRODUCTION_SECRET }}
+
+          trakt_staging_id: ${{ secrets.VITE_TRAKT_STAGING_ID }}
+          trakt_staging_secret: ${{ secrets.VITE_TRAKT_STAGING_SECRET }}
+
+          tmdb_api_key: ${{ secrets.VITE_TMDB_API_KEY }}
+          tmdb_read_token: ${{ secrets.VITE_TMDB_READ_TOKEN }}
+
+          tvdb_api_key: ${{ secrets.VITE_TVDB_API_KEY }}
+
   build-web:
     name: ☁️ Build Web
     runs-on: ubuntu-latest
@@ -47,6 +58,17 @@ jobs:
           script: 'build:web'
           node_version: ${{ env.node_version }}
           pnpm_version: ${{ env.pnpm_version }}
+
+          trakt_production_id: ${{ secrets.VITE_TRAKT_PRODUCTION_ID }}
+          trakt_production_secret: ${{ secrets.VITE_TRAKT_PRODUCTION_SECRET }}
+
+          trakt_staging_id: ${{ secrets.VITE_TRAKT_STAGING_ID }}
+          trakt_staging_secret: ${{ secrets.VITE_TRAKT_STAGING_SECRET }}
+
+          tmdb_api_key: ${{ secrets.VITE_TMDB_API_KEY }}
+          tmdb_read_token: ${{ secrets.VITE_TMDB_READ_TOKEN }}
+
+          tvdb_api_key: ${{ secrets.VITE_TVDB_API_KEY }}
 
   test:
     name: 🧪 Unit Test
