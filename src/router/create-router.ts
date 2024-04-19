@@ -1,7 +1,8 @@
 import { createRouter as createVueRouter, createWebHashHistory, type LocationQueryRaw } from 'vue-router';
 
 import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
-import { Route, routes } from '~/router/routes';
+import { Route } from '~/models/router.model';
+import { routes } from '~/router/routes';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';

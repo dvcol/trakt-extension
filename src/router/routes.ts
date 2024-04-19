@@ -1,15 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-export enum Route {
-  Calendar = 'calendar',
-  History = 'history',
-  Watchlist = 'watchlist',
-  Progress = 'progress',
-  Search = 'search',
-  Settings = 'settings',
-  About = 'about',
-  Login = 'login',
-}
+import { Route } from '~/models/router.model';
 
 const panelRoute = (base: Route, partial: Partial<RouteRecordRaw> = {}): RouteRecordRaw =>
   ({

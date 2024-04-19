@@ -11,6 +11,8 @@ import {
 
 import { type Component, computed, defineProps, h, onActivated, ref } from 'vue';
 
+import { useRoute } from 'vue-router';
+
 import type { TraktSearchType } from '~/models/trakt/trakt-search.model';
 
 import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
@@ -156,8 +158,11 @@ const hideTooltip = () => {
 
 const inputRef = ref();
 
+const route = useRoute();
+
 onActivated(() => {
   if (!search.value) inputRef.value?.focus();
+  if (typeof route?.query?.search === 'string') search.value = route.query.search;
 });
 </script>
 

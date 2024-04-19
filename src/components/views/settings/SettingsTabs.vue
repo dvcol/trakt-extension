@@ -5,7 +5,7 @@ import { ref } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions } from '~/models/page-size.model';
-import { Route } from '~/router';
+import { Route } from '~/models/router.model';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useListStoreRefs } from '~/stores/data/list.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';

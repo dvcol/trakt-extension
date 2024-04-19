@@ -6,6 +6,7 @@ import { computed, defineProps, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { DropdownProps } from 'naive-ui';
+
 import type { Component } from 'vue';
 
 import type { ArrayElement } from '~/utils/typescript.utils';
@@ -17,7 +18,7 @@ import IconExternalLink from '~/components/icons/IconExternalLink.vue';
 import IconLightBulb from '~/components/icons/IconLightBulb.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 
-import { Route } from '~/router';
+import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { logger } from '~/stores/settings/log.store';
