@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/dvcol/trakt-extension/compare/v1.4.4...v1.5.0) (2024-04-19)
+
+
+### Features
+
+* **context:** adds open in context menu ([8f164b9](https://github.com/dvcol/trakt-extension/commit/8f164b955c55f8cf7f4c87d3ae6996cbea63b256))
+
+
+### Bug Fixes
+
+* **date:** fix date to be based on locale and not navigator ([24a094e](https://github.com/dvcol/trakt-extension/commit/24a094e6153d9f0b952bcf0a0665540c8b3c82e8))
+* **loading:** adds loading bar to progress page too ([38cd65c](https://github.com/dvcol/trakt-extension/commit/38cd65c2bd411715415f9a3a826ac43e1d3ebb6e))
+* **security:** obscur secrets with env variables ([b8a69fc](https://github.com/dvcol/trakt-extension/commit/b8a69fc5e77be53c149e197a00c23e891fd5a920))
+* **test:** increases retention to prevent flakiness ([447a139](https://github.com/dvcol/trakt-extension/commit/447a139ad4281fdaaa732f2b43bb5c15a236b88c))
+* **tests:** adds env variable for testing purposes ([54dec62](https://github.com/dvcol/trakt-extension/commit/54dec62802ffdcb95654f136940ed420f831bfdc))
+
 ### [1.4.4](https://github.com/dvcol/trakt-extension/compare/v1.4.3...v1.4.4) (2024-04-17)
 
 
