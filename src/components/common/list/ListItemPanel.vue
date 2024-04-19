@@ -59,7 +59,7 @@ const content = computed(() => deCapitalise(item.value.content));
 
 const date = computed(() => {
   if (hideDate.value) return;
-  return item.value.date?.current?.toLocaleTimeString(navigator.language, {
+  return item.value.date?.current?.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
   });

@@ -9,6 +9,7 @@ import type { TmdbImage } from '~/models/tmdb/tmdb-image.model';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { getShortLocale } from '~/utils/browser/browser.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { arrayMax, findClosestMatch } from '~/utils/math.utils';
 
@@ -56,7 +57,7 @@ const localArrayMax = (
   prop: keyof TmdbImage = 'vote_average',
   filter: (item: TmdbImage) => boolean = i => !!i.file_path,
 ) => {
-  const lang = navigator?.language?.split('-')?.at(0) ?? 'en';
+  const lang = getShortLocale();
 
   const localArray = array.filter(i => i.iso_639_1 === lang);
   if (localArray.length) return arrayMax(localArray, prop, filter);

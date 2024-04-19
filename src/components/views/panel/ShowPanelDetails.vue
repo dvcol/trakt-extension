@@ -63,7 +63,7 @@ const airedDate = computed(() => {
 const airedTime = computed(() => {
   if (!aired.value) return;
   if (typeof aired.value === 'string') return '-';
-  return aired.value.toLocaleTimeString(navigator.language, {
+  return aired.value.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
   });
