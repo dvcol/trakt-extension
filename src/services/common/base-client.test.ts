@@ -408,7 +408,7 @@ describe('base-client.ts', () => {
         expect.assertions(2);
 
         const _cacheStore: CacheStore<Response> = new Map();
-        _cacheStore.retention = 15;
+        _cacheStore.retention = 50;
         const _client = new TestableBaseClient({ endpoint: 'http://my-endpoint', cacheStore: _cacheStore });
 
         await _client.endpointWithCache.cached();
@@ -416,7 +416,7 @@ describe('base-client.ts', () => {
 
         // Wait for cache to expire
         await new Promise(resolve => {
-          setTimeout(resolve, 15);
+          setTimeout(resolve, 50);
         });
 
         await _client.endpointWithCache.cached();
