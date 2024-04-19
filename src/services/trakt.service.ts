@@ -26,6 +26,7 @@ import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
+import type { CancellablePromise } from '~/utils/fetch.utils';
 
 import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
@@ -169,6 +170,18 @@ export class TraktService {
     await useUserSettingsStore().setUserSetting(undefined, account);
   }
 
+  static async loadingBar<T>(query: Promise<T> | CancellablePromise<T>) {
+    const timeout = setTimeout(() => LoadingBarService.start(), 500);
+    try {
+      await query;
+      LoadingBarService.finish();
+    } catch (error) {
+      LoadingBarService.error();
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   static listen() {
     this.traktClient.onAuthChange(async _auth => {
       logger.debug('TraktClient.onAuthChange', { ..._auth });
@@ -176,17 +189,7 @@ export class TraktService {
 
     this.traktClient.onCall(async call => {
       logger.debug('TraktClient.onCall', call);
-
-      const timeout = setTimeout(() => LoadingBarService.start(), 500);
-      try {
-        await call.query;
-        LoadingBarService.finish();
-      } catch (error) {
-        LoadingBarService.error();
-        throw error;
-      } finally {
-        clearTimeout(timeout);
-      }
+      await this.loadingBar(call.query);
     });
 
     this.tvdbClient.onAuthChange(async _auth => {
@@ -345,7 +348,9 @@ export class TraktService {
 
   static progress = {
     async onDeck() {
-      const response = await TraktService.cachedProgress();
+      const call = TraktService.cachedProgress();
+      TraktService.loadingBar(call).catch(); // ignore loading error
+      const response = await call;
       if (!response.ok) throw response;
       return response.json();
     },
