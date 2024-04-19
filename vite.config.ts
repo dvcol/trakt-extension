@@ -1,5 +1,5 @@
-import { readdir, readFile } from 'fs/promises';
-import { dirname, relative } from 'path';
+import { readdir, readFile, writeFile } from 'fs/promises';
+import { dirname, join, relative } from 'path';
 import { fileURLToPath, URL } from 'url';
 
 import vue from '@vitejs/plugin-vue';
@@ -108,6 +108,17 @@ const getPlugins = (): PluginOption[] => [
     enforce: 'post',
     apply: 'build',
     transformIndexHtml: (html, { path }) => html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets').replace(/\\/g, '/')}/`),
+  },
+
+  {
+    name: 'write-to-disk',
+    apply: 'serve',
+    handleHotUpdate: async ({ file, server: { config } }) => {
+      const srcDir = dirname(file);
+      if (!srcDir?.endsWith('src/scripts/background')) return;
+      const outPath = `${join(config.build.outDir, 'scripts/background')}.js`;
+      await writeFile(outPath, `import 'http://localhost:3303/scripts/background/index.ts';`);
+    },
   },
 ];
 
