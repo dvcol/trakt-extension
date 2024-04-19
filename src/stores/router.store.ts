@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 import type { RouteLocationNormalized } from 'vue-router';
 
+import { RouterStorageKey } from '~/models/router.model';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 const parseQuery = (location: Location) => {
@@ -28,11 +29,11 @@ export const useRouterStore = defineStore('router', () => {
     if (lastRoute.value?.name === _route.name) return;
     lastRoute.value = _route;
     const { matched, ...jsonSafeRoute } = _route;
-    return storage.local.set('app.state.last-route', jsonSafeRoute);
+    return storage.local.set(RouterStorageKey.LastRoute, jsonSafeRoute);
   };
 
   const restoreLastRoute = async () => {
-    const _route = await storage.local.get<RouteLocationNormalized>('app.state.last-route');
+    const _route = await storage.local.get<RouteLocationNormalized>(RouterStorageKey.LastRoute);
     if (_route) lastRoute.value = _route;
     return _route;
   };

@@ -42,8 +42,9 @@ export const manifest: Manifest.WebExtensionManifest = {
   },
   background: {
     service_worker: 'scripts/background.js',
+    type: 'module',
   },
-  permissions: ['storage', 'tabs'],
+  permissions: ['storage', 'tabs', 'contextMenus'],
   web_accessible_resources: [
     {
       resources: ['/views/options/index.html'],

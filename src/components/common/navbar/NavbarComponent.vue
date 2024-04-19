@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
 
-import { Route } from '~/router';
+import { Route } from '~/models/router.model';
 import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils';
