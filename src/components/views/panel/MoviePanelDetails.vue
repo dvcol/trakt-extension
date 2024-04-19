@@ -38,7 +38,7 @@ const releasedDate = computed(() => {
 const releasedTime = computed(() => {
   if (!released.value) return;
   if (typeof released.value === 'string') return released.value;
-  return released.value.toLocaleTimeString(navigator.language, {
+  return released.value.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
   });
