@@ -74,9 +74,9 @@ export const useLinksStore = defineStore('settings.links', () => {
     clearProxy(linkScopeDictionary);
   };
 
-  const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value, backgroundLink: backgroundLink.value }), 1000);
-  const saveAlias = debounce(() => storage.sync.set('settings.links.aliases', aliasDictionary), 1000);
-  const saveLinks = debounce(() => storage.sync.set('settings.links.links', linkDictionary), 1000);
+  const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value, backgroundLink: backgroundLink.value }), 500);
+  const saveAlias = debounce(() => storage.sync.set('settings.links.aliases', aliasDictionary), 500);
+  const saveLinks = debounce(() => storage.sync.set('settings.links.links', linkDictionary), 500);
 
   const addToScope = (scope: CustomLinkScopes, link: CustomLink) => {
     if (!linkScopeDictionary[scope]) linkScopeDictionary[scope] = {};

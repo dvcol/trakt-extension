@@ -1,7 +1,15 @@
 {
+  "settings__tabs__label_default_tab": {
+    "message": "Default tab",
+    "description": "Label for the 'Default tab' setting"
+  },
   "settings__tabs__label_restore_tab": {
     "message": "Restore active tab on startup",
     "description": "Label for the 'Restore active tab on startup' setting"
+  },
+  "settings__tabs__label_restore_panel": {
+    "message": "Restore active panel on startup",
+    "description": "Label for the 'Restore active panel on startup' setting"
   },
   "settings__tabs__label_route_progress": {
     "message": "Enable the progress tab",
