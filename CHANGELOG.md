@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/dvcol/trakt-extension/compare/v1.6.0...v1.6.1) (2024-04-20)
+
+
+### Bug Fixes
+
+* **context:** fix null pointer in open in extension context menu ([df868c1](https://github.com/dvcol/trakt-extension/commit/df868c10b388cc36ba63f1ba50fe455bcebebb03))
+
 ## [1.6.0](https://github.com/dvcol/trakt-extension/compare/v1.5.0...v1.6.0) (2024-04-20)
 
 
