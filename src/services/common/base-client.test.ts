@@ -344,7 +344,7 @@ describe('base-client.ts', () => {
 
         // Wait for cache to expire
         await new Promise(resolve => {
-          setTimeout(resolve, 20);
+          setTimeout(resolve, 50);
         });
 
         await client.endpointWitCacheRetention.cached();
@@ -356,18 +356,18 @@ describe('base-client.ts', () => {
       it('should ignore cache if cache expired using endpoint retention with object', async () => {
         expect.assertions(2);
 
-        await client.endpointWitCacheRetention.cached();
-        await client.endpointWitCacheRetention.cached();
+        await client.endpointWitCacheObject.cached();
+        await client.endpointWitCacheObject.cached();
 
         // Wait for cache to expire
         await new Promise(resolve => {
-          setTimeout(resolve, 20);
+          setTimeout(resolve, 50);
         });
 
-        await client.endpointWitCacheRetention.cached();
+        await client.endpointWitCacheObject.cached();
 
         expect(fetch).toHaveBeenCalledTimes(2);
-        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-retention', mockEndpoint).toString(), payload);
+        expect(fetch).toHaveBeenCalledWith(new URL('/endpoint-with-cache-object', mockEndpoint).toString(), payload);
       });
 
       it('should ignore cache if cache expired using param force', async () => {
