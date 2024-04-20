@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/dvcol/trakt-extension/compare/v1.5.0...v1.6.0) (2024-04-20)
+
+
+### Features
+
+* **router:** adds base path to history when restoring last route ([e2a2e9d](https://github.com/dvcol/trakt-extension/commit/e2a2e9dc7a047ded649869b9d3d756b3fb63bdd1))
+* **router:** adds default tab selector and fix restore toggles ([b711fb2](https://github.com/dvcol/trakt-extension/commit/b711fb20cff0291274c37a6e7e5cbd1bde08e4d6))
+
+
+### Bug Fixes
+
+* **test:** adjust cache flakyness and fix object tests ([ec0bf9b](https://github.com/dvcol/trakt-extension/commit/ec0bf9bb605ffdc3e29f7a239f71be1972f57353))
+
 ## [1.5.0](https://github.com/dvcol/trakt-extension/compare/v1.4.4...v1.5.0) (2024-04-19)
 
 
