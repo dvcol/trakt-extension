@@ -66,7 +66,11 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
 
   restoreLastRoute().then(async _route => {
     const isNotLogin = _route?.name && _route?.name !== Route.Login;
-    await router.push(isNotLogin ? _route : { name: Route.Calendar });
+    if (!isNotLogin) await router.push({ name: Route.Calendar });
+    else {
+      if (_route.meta.base) await router.push(_route.meta.base);
+      await router.push(_route);
+    }
   });
 
   return router;
