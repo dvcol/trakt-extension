@@ -90,7 +90,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
     if (!isNotLogin || !restoreRoute.value) {
       await router.push({ name: defaultTab.value });
     } else {
-      if (_route.meta.base) {
+      if (_route?.meta?.base) {
         await router.push(_route.meta.base);
         if (!restorePanel.value) return;
       }
