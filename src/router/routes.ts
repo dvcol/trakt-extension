@@ -41,10 +41,6 @@ const panelRoutes = (base: Route): RouteRecordRaw[] => [
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    redirect: { name: Route.Calendar },
-  },
-  {
     path: `/${Route.Login}`,
     name: Route.Login,
     component: () => import('../components/views/login/LoginComponent.vue'),

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NSelect, NSwitch } from 'naive-ui';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions } from '~/models/page-size.model';
@@ -17,21 +17,52 @@ import { useI18n } from '~/utils';
 
 const i18n = useI18n('settings', 'tabs');
 
-const { enabledTabs, restoreRoute, routeDictionary } = useExtensionSettingsStoreRefs();
+const { enabledTabs, restoreRoute, routeDictionary, restorePanel, defaultTab } =
+  useExtensionSettingsStoreRefs();
 const { toggleTab } = useExtensionSettingsStore();
 
 const { pageSize: historyPageSize } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();
 const { pageSize: searchPageSize } = useSearchStoreRefs();
 
+const tabsOptions = computed(() =>
+  enabledTabs.value.map(([route, state]) => ({
+    label: i18n(route, 'route'),
+    value: route,
+    disabled: !state,
+  })),
+);
+
+const disabled = computed(
+  () => enabledTabs.value.filter(([_, state]) => state).length <= 1,
+);
+
 const container = ref();
 </script>
 
 <template>
   <div ref="container" class="tabs-container">
+    <!--  Default tab  -->
+    <SettingsFormItem :label="i18n('label_default_tab')">
+      <NSelect
+        v-model:value="defaultTab"
+        class="default-tab"
+        :to="container"
+        :options="tabsOptions"
+      />
+    </SettingsFormItem>
+
     <!--  Restore tab  -->
     <SettingsFormItem :label="i18n('label_restore_tab')">
       <NSwitch v-model:value="restoreRoute" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+      </NSwitch>
+    </SettingsFormItem>
+
+    <!--  Restore panel  -->
+    <SettingsFormItem :label="i18n('label_restore_panel')">
+      <NSwitch v-model:value="restorePanel" class="form-switch">
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
@@ -48,7 +79,12 @@ const container = ref();
           : undefined
       "
     >
-      <NSwitch :value="state" class="form-switch" @click="toggleTab(route)">
+      <NSwitch
+        :value="state"
+        class="form-switch"
+        :disabled="state && disabled"
+        @update:value="toggleTab(route)"
+      >
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
@@ -105,5 +141,9 @@ const container = ref();
 
 .form-select {
   min-width: 5.5rem;
+}
+
+.default-tab {
+  min-width: 7rem;
 }
 </style>

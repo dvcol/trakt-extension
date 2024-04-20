@@ -1,3 +1,4 @@
+import { watch } from 'vue';
 import { createRouter as createVueRouter, createWebHashHistory, type LocationQueryRaw } from 'vue-router';
 
 import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
@@ -8,10 +9,14 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
 
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { useExtensionSettingsStore, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { logger } from '~/stores/settings/log.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
+  const { restoreRoute, restorePanel, defaultTab } = useExtensionSettingsStoreRefs();
+  const { initExtensionSettingsStore } = useExtensionSettingsStore();
+
   const { setBaseName, setBaseUrl, setRouteParam } = useRouterStore();
   const { routeParam } = useRouterStoreRefs();
 
@@ -19,17 +24,32 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   setBaseUrl(baseUrl);
 
   const _routes = routes.map(r => ({ ...r, path: `${baseName}${r.path}` }));
-  const _routesWithBase = [
+  const _redirects = [
     {
-      path: `${baseName}/:pathMatch(.*)`,
-      redirect: { name: Route.Calendar },
+      name: 'root',
+      path: `${baseName}/`,
+      redirect: { name: defaultTab.value },
     },
-    ..._routes,
+    {
+      name: 'root-eager',
+      path: `${baseName}/:pathMatch(.*)`,
+      redirect: { name: defaultTab.value },
+    },
   ];
 
   const router = createVueRouter({
     history: createWebHashHistory(baseUrl),
-    routes: _routesWithBase,
+    routes: [..._redirects, ..._routes],
+  });
+
+  watch(defaultTab, _default => {
+    _redirects.forEach(r => {
+      router.removeRoute(r.name);
+      router.addRoute({
+        ...r,
+        redirect: { name: _default },
+      });
+    });
   });
 
   const { waitAppReady } = useAppStateStoreRefs();
@@ -66,9 +86,14 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
 
   restoreLastRoute().then(async _route => {
     const isNotLogin = _route?.name && _route?.name !== Route.Login;
-    if (!isNotLogin) await router.push({ name: Route.Calendar });
-    else {
-      if (_route.meta.base) await router.push(_route.meta.base);
+    await initExtensionSettingsStore();
+    if (!isNotLogin || !restoreRoute.value) {
+      await router.push({ name: defaultTab.value });
+    } else {
+      if (_route.meta.base) {
+        await router.push(_route.meta.base);
+        if (!restorePanel.value) return;
+      }
       await router.push(_route);
     }
   });

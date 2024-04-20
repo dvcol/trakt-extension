@@ -22,7 +22,7 @@ export const useLogStore = defineStore('settings.logs', () => {
     logLevel.value = LogLevel.Warn;
   };
 
-  const saveState = debounce(() => storage.sync.set('settings.logs', { logLevel: logLevel.value }), 1000);
+  const saveState = debounce(() => storage.sync.set('settings.logs', { logLevel: logLevel.value }), 500);
 
   const restoreState = async () => {
     const restored = await storage.sync.get<LogSettings>('settings.logs');

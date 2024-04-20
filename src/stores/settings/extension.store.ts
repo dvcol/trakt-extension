@@ -34,15 +34,16 @@ type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
   restoreRoute: boolean;
-  progressTab: boolean;
-  logLevel: string;
+  restorePanel: boolean;
 };
 
 export const useExtensionSettingsStore = defineStore('settings.extension', () => {
   const cacheRetention = reactive<CacheRetentionState>(DefaultCacheRetention);
   const routeDictionary = reactive<RouteDictionary>(DefaultRoutes);
   const restoreRoute = ref(true);
-  // todo: use each store value instead in settings page
+  const restorePanel = ref(false);
+  const defaultTab = ref(Route.Calendar);
+  const initialized = ref<Promise<boolean>>();
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -56,8 +57,9 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
         cacheRetention: toRaw(cacheRetention),
         enabledRoutes: toRaw(routeDictionary),
         restoreRoute: restoreRoute.value,
+        restorePanel: restorePanel.value,
       }),
-    1000,
+    500,
   );
 
   const setRetention = (retention: Partial<CacheRetentionState>, persist = true) => {
@@ -74,25 +76,61 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     if (restored?.cacheRetention !== undefined) setRetention(restored.cacheRetention, false);
     if (restored?.enabledRoutes !== undefined) Object.assign(routeDictionary, restored.enabledRoutes);
     if (restored?.restoreRoute !== undefined) restoreRoute.value = restored.restoreRoute;
+    if (restored?.restorePanel !== undefined) restorePanel.value = restored.restorePanel;
+  };
+
+  const saveDefaultTab = debounce(() => storage.sync.set('settings.extension.default-tab', defaultTab.value), 500);
+
+  const restoreDefaultTab = async () => {
+    const restored = await storage.sync.get<Route>('settings.extension.default-tab');
+    if (restored) defaultTab.value = restored;
   };
 
   const initExtensionSettingsStore = async () => {
-    await restoreState();
+    if (!initialized.value) initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => true);
+    return initialized.value;
+  };
+
+  const setDefaultTab = (value?: Route) => {
+    if (!value) return;
+    defaultTab.value = value;
+    saveDefaultTab().catch(err => logger.error('Failed to save default tab in extension settings', { value, err }));
   };
 
   const toggleTab = (tab: Route) => {
     routeDictionary[tab] = !routeDictionary[tab];
-    saveState().catch(err => logger.error('Failed to save extension settings', { tab, err }));
+    if (defaultTab.value === tab && !routeDictionary[tab]) {
+      setDefaultTab((Object.keys(routeDictionary) as Route[]).find(key => routeDictionary[key]));
+    }
+    saveState().catch(err => logger.error('Failed to save enabled tab extension settings', { tab, err }));
   };
 
   return {
     initExtensionSettingsStore,
+    restoreDefaultTab,
     saveState,
     clearState,
-    restoreRoute,
+    restoreRoute: computed({
+      get: () => restoreRoute.value,
+      set: (value: boolean) => {
+        restoreRoute.value = value;
+        saveState().catch(err => logger.error('Failed to save restore route extension settings', { value, err }));
+      },
+    }),
+    restorePanel: computed({
+      get: () => restorePanel.value,
+      set: (value: boolean) => {
+        restorePanel.value = value;
+        saveState().catch(err => logger.error('Failed to save restore panel extension settings', { value, err }));
+      },
+    }),
     toggleTab,
     routeDictionary,
-    enabledTabs: computed(() => Object.entries(routeDictionary).filter(([r]) => r !== Route.Calendar) as [Route, boolean][]),
+    defaultTab: computed({
+      get: () => defaultTab.value,
+      set: setDefaultTab,
+    }),
+    enabledTabs: computed(() => Object.entries(routeDictionary) as [Route, boolean][]),
     enabledRoutes: computed(() =>
       Object.entries(routeDictionary)
         .filter(([, value]) => value)
