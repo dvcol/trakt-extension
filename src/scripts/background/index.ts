@@ -18,13 +18,14 @@ runtime?.onInstalled.addListener(async () => {
 
   context.onClicked.addListener(async info => {
     if (!context || !runtime) return;
-    if (info.menuItemId !== ContextMenuId.OpenInSideTrakt) return;
     if (!info?.selectionText) return;
 
     await storage.local.set(RouterStorageKey.LastRoute, {
       name: Route.Search,
       query: { search: info.selectionText },
     } satisfies Partial<RouteLocationNormalized>);
+
+    if (info.menuItemId !== ContextMenuId.OpenInSideTrakt) return;
 
     if (action?.openPopup) {
       await action.openPopup();
