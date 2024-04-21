@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/dvcol/trakt-extension/compare/v1.6.1...v1.7.0) (2024-04-21)
+
+
+### Features
+
+* **context:** adds a context menu to add to search history only ([292ad18](https://github.com/dvcol/trakt-extension/commit/292ad18cf1378f46676cdc678b8a5420525dcb58))
+
 ### [1.6.1](https://github.com/dvcol/trakt-extension/compare/v1.6.0...v1.6.1) (2024-04-20)
 
 
