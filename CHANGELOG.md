@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/dvcol/trakt-extension/compare/v1.7.0...v1.7.1) (2024-04-22)
+
+
+### Bug Fixes
+
+* **logs:** adds debug logs in background script ([76c8b3d](https://github.com/dvcol/trakt-extension/commit/76c8b3d01d40b72b63a9d34101c3330eaf3043f2))
+
 ## [1.7.0](https://github.com/dvcol/trakt-extension/compare/v1.6.1...v1.7.0) (2024-04-21)
 
 
