@@ -13,13 +13,16 @@ export {};
 console.debug('Background script started');
 
 runtime?.onInstalled.addListener(async () => {
+  console.debug('Extension installed');
   if (!context) return;
   await Promise.all(Object.values(ContextMenus).map(m => context!.create(m)));
 
+  console.debug('Context menus created');
+
   context.onClicked.addListener(async info => {
+    console.debug('Context menu event', info);
     if (!context || !runtime) return;
     if (!info?.selectionText) return;
-
     await storage.local.set(RouterStorageKey.LastRoute, {
       name: Route.Search,
       query: { search: info.selectionText },
