@@ -15,17 +15,21 @@ type LogSettings = {
   logLevel: LogLevel;
 };
 
-export const useLogStore = defineStore('settings.logs', () => {
+const LogStoreConstants = {
+  Store: 'settings.logs',
+} as const;
+
+export const useLogStore = defineStore(LogStoreConstants.Store, () => {
   const logLevel = ref<LogLevel>(LogLevel.Warn);
 
   const clearState = () => {
     logLevel.value = LogLevel.Warn;
   };
 
-  const saveState = debounce(() => storage.sync.set('settings.logs', { logLevel: logLevel.value }), 500);
+  const saveState = debounce(() => storage.sync.set(LogStoreConstants.Store, { logLevel: logLevel.value }), 500);
 
   const restoreState = async () => {
-    const restored = await storage.sync.get<LogSettings>('settings.logs');
+    const restored = await storage.sync.get<LogSettings>(LogStoreConstants.Store);
     if (restored?.logLevel !== undefined) logLevel.value = restored.logLevel;
   };
 

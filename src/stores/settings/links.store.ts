@@ -60,7 +60,13 @@ type LinksStoreState = {
   backgroundLink: boolean;
 };
 
-export const useLinksStore = defineStore('settings.links', () => {
+const LinksStoreConstants = {
+  Store: 'settings.links',
+  SyncAliases: 'settings.links.aliases',
+  SyncLinks: 'settings.links.links',
+} as const;
+
+export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
   const enabled = ref(false);
   const backgroundLink = ref(false);
   const aliasDictionary = reactive<AliasDictionary>({});
@@ -74,9 +80,12 @@ export const useLinksStore = defineStore('settings.links', () => {
     clearProxy(linkScopeDictionary);
   };
 
-  const saveState = debounce(() => storage.sync.set('settings.links', { enabled: enabled.value, backgroundLink: backgroundLink.value }), 500);
-  const saveAlias = debounce(() => storage.sync.set('settings.links.aliases', aliasDictionary), 500);
-  const saveLinks = debounce(() => storage.sync.set('settings.links.links', linkDictionary), 500);
+  const saveState = debounce(
+    () => storage.sync.set(LinksStoreConstants.Store, { enabled: enabled.value, backgroundLink: backgroundLink.value }),
+    500,
+  );
+  const saveAlias = debounce(() => storage.sync.set(LinksStoreConstants.SyncAliases, aliasDictionary), 500);
+  const saveLinks = debounce(() => storage.sync.set(LinksStoreConstants.SyncLinks, linkDictionary), 500);
 
   const addToScope = (scope: CustomLinkScopes, link: CustomLink) => {
     if (!linkScopeDictionary[scope]) linkScopeDictionary[scope] = {};
