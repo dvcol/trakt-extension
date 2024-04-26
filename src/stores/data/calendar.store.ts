@@ -37,7 +37,11 @@ export const getEmptyWeeks = (fromDate: Date, loading?: boolean) => {
     });
 };
 
-export const useCalendarStore = defineStore('data.calendar', () => {
+const CalendarStoreConstants = {
+  Store: 'data.calendar',
+} as const;
+
+export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const calendar = ref<CalendarItem[]>([]);
@@ -59,7 +63,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
   };
 
   const saveState = async () =>
-    storage.local.set('data.calendar', {
+    storage.local.set(CalendarStoreConstants.Store, {
       pageSize: weeks.value,
       startCalendar: startCalendar.value.getTime(),
       endCalendar: endCalendar.value.getTime(),
@@ -70,7 +74,7 @@ export const useCalendarStore = defineStore('data.calendar', () => {
       pageSize: number;
       startCalendar: number;
       endCalendar: number;
-    }>('data.calendar');
+    }>(CalendarStoreConstants.Store);
 
     if (restored?.pageSize) weeks.value = restored.pageSize;
     if (restored?.startCalendar) startCalendar.value = new Date(restored.startCalendar);

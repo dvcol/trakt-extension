@@ -78,7 +78,11 @@ export const DefaultLists = {
 
 const DefaultList: ListEntity[] = Object.values(DefaultLists);
 
-export const useListsStore = defineStore('data.lists', () => {
+const ListsStoreConstants = {
+  Store: 'data.lists',
+} as const;
+
+export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
 
@@ -86,7 +90,7 @@ export const useListsStore = defineStore('data.lists', () => {
   const activeList = ref<ListEntity>(DefaultLists.Watchlist);
 
   const saveState = async () =>
-    storage.local.set('data.lists', {
+    storage.local.set(ListsStoreConstants.Store, {
       lists: [...lists.value],
       activeList: activeList.value,
     });
@@ -95,7 +99,7 @@ export const useListsStore = defineStore('data.lists', () => {
     const restored = await storage.local.get<{
       lists: ListEntity[];
       activeList: ListEntity;
-    }>('data.lists');
+    }>(ListsStoreConstants.Store);
     if (restored?.lists) lists.value = restored.lists;
     if (restored?.activeList === activeList.value) return;
     if (restored?.activeList) activeList.value = restored.activeList;
@@ -190,7 +194,12 @@ type ListDictionaryLoading = Record<string, boolean>;
 type ListTypeLoading = Partial<Record<ListTypes, boolean>>;
 type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListItemTypes, Record<string, boolean>>>>>;
 
-export const useListStore = defineStore('data.list', () => {
+const ListStoreConstants = {
+  Store: 'data.list',
+  LocalPageSize: 'data.list.page-size',
+} as const;
+
+export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
@@ -206,9 +215,9 @@ export const useListStore = defineStore('data.list', () => {
   const listDictionary = reactive<ListDictionary>({});
   const listDictionaryLoading = reactive<ListDictionaryLoading>({});
 
-  const saveState = async () => storage.local.set('data.list.page-size', pageSize.value);
+  const saveState = async () => storage.local.set(ListStoreConstants.LocalPageSize, pageSize.value);
   const restoreState = async () => {
-    const restored = await storage.local.get<number>('data.list.page-size');
+    const restored = await storage.local.get<number>(ListStoreConstants.LocalPageSize);
     if (restored === pageSize.value) return;
     if (restored) pageSize.value = restored;
   };

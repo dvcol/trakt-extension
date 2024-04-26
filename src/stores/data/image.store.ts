@@ -26,6 +26,15 @@ type ImageStore = {
   person: Record<string, string>;
 };
 
+const ImageStoreConstants = {
+  Store: 'data.image',
+  LocalMovie: `data.image-store.movie`,
+  LocalShow: `data.image-store.show`,
+  LocalSeason: `data.image-store.season`,
+  LocalEpisode: `data.image-store.episode`,
+  LocalPerson: `data.image-store.person`,
+} as const;
+
 export type ImageStoreTypes = keyof ImageStore;
 
 export type ImageStoreMedias = ImageStoreMedia | string;
@@ -70,29 +79,29 @@ const localArrayMax = (
   return arrayMax(array, prop, filter);
 };
 
-export const useImageStore = defineStore('data.image', () => {
+export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const tmdbConfig = ref<TmdbConfiguration>();
   const images = reactive<ImageStore>(EmptyImageStore);
 
   const saveState = debounce(
     (_images = images) =>
       Promise.all([
-        storage.local.set(`data.image-store.movie`, _images.movie),
-        storage.local.set(`data.image-store.show`, _images.show),
-        storage.local.set(`data.image-store.season`, _images.season),
-        storage.local.set(`data.image-store.episode`, _images.episode),
-        storage.local.set(`data.image-store.person`, _images.person),
+        storage.local.set(ImageStoreConstants.LocalMovie, _images.movie),
+        storage.local.set(ImageStoreConstants.LocalShow, _images.show),
+        storage.local.set(ImageStoreConstants.LocalSeason, _images.season),
+        storage.local.set(ImageStoreConstants.LocalEpisode, _images.episode),
+        storage.local.set(ImageStoreConstants.LocalPerson, _images.person),
       ]),
     1000,
   );
 
   const restoreState = async (seed?: Partial<ImageStore>) => {
     const [movie, show, season, episode, person] = await Promise.all([
-      storage.local.get<Record<string, string>>(`data.image-store.movie`),
-      storage.local.get<Record<string, string>>(`data.image-store.show`),
-      storage.local.get<Record<string, string>>(`data.image-store.season`),
-      storage.local.get<Record<string, string>>(`data.image-store.episode`),
-      storage.local.get<Record<string, string>>(`data.image-store.person`),
+      storage.local.get<Record<string, string>>(ImageStoreConstants.LocalMovie),
+      storage.local.get<Record<string, string>>(ImageStoreConstants.LocalShow),
+      storage.local.get<Record<string, string>>(ImageStoreConstants.LocalSeason),
+      storage.local.get<Record<string, string>>(ImageStoreConstants.LocalEpisode),
+      storage.local.get<Record<string, string>>(ImageStoreConstants.LocalPerson),
     ]);
     if (seed) Object.assign(images, seed);
     if (movie) Object.assign(images.movie, movie);

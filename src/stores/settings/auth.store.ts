@@ -15,7 +15,11 @@ type SettingsAuthenticated = {
 
 type SettingsAuths = Record<string, SettingsAuth>;
 
-export const useAuthSettingsStore = defineStore('settings.auth', () => {
+const AuthStoreConstants = {
+  Store: 'settings.auth',
+} as const;
+
+export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => {
   const { user } = useUserSettingsStoreRefs();
 
   const auths = reactive<SettingsAuths>({});
@@ -41,15 +45,15 @@ export const useAuthSettingsStore = defineStore('settings.auth', () => {
   };
 
   const syncSetAuth = (_auth: SettingsAuth = auth.value, account: string = user.value) => {
-    return storage.sync.set(`settings.auth.${encodeURIComponent(account)}`, _auth);
+    return storage.sync.set(`${AuthStoreConstants.Store}.${encodeURIComponent(account)}`, _auth);
   };
 
   const syncClearAuth = (account?: string) => {
-    return storage.sync.remove(`settings.auth${account ? `.${encodeURIComponent(account)}` : ''}`);
+    return storage.sync.remove(`${AuthStoreConstants.Store}${account ? `.${encodeURIComponent(account)}` : ''}`);
   };
 
   const syncRestoreAuth = async (account: string = user.value) => {
-    const _auth = await storage.sync.get<SettingsAuth>(`settings.auth.${encodeURIComponent(account)}`);
+    const _auth = await storage.sync.get<SettingsAuth>(`${AuthStoreConstants.Store}.${encodeURIComponent(account)}`);
     if (!auths[account]) auths[account] = {};
     if (_auth) Object.assign(auths[account], _auth);
     setAuthenticated();

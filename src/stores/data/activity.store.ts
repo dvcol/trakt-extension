@@ -13,7 +13,11 @@ import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { compareDateObject, toDateObject } from '~/utils/date.utils';
 
-export const useActivityStore = defineStore('data.activity', () => {
+const ActivityStoreConstants = {
+  Store: 'data.activity',
+} as const;
+
+export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => {
   const activity = ref<TraktSyncActivities>();
   const loading = ref(false);
 
@@ -21,9 +25,9 @@ export const useActivityStore = defineStore('data.activity', () => {
     activity.value = undefined;
   };
 
-  const saveState = async () => storage.local.set('data.activity', activity.value);
+  const saveState = async () => storage.local.set(ActivityStoreConstants.Store, activity.value);
   const restoreState = async () => {
-    const state = await storage.local.get<TraktSyncActivities>('data.activity');
+    const state = await storage.local.get<TraktSyncActivities>(ActivityStoreConstants.Store);
     if (state) activity.value = state;
   };
 

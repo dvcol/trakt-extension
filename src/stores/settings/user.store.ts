@@ -12,7 +12,12 @@ type UserSettings = Record<string, UserSetting>;
 
 export const defaultUser = 'default';
 
-export const useUserSettingsStore = defineStore('settings.user', () => {
+const UserStoreConstants = {
+  Store: 'settings.user',
+  SyncLastUser: 'settings.last-user',
+};
+
+export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => {
   const userSettings = reactive<UserSettings>({});
   const user = ref<string>(defaultUser);
 
@@ -26,22 +31,22 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
    * @param account
    */
   const syncSetUser = (_settings: UserSetting = userSetting.value, account: string = _settings?.user?.username ?? user.value) => {
-    const _lastUser = storage.sync.set(`settings.last-user`, account);
-    const _setting = storage.sync.set(`settings.user.${encodeURIComponent(account)}`, _settings);
+    const _lastUser = storage.sync.set(UserStoreConstants.SyncLastUser, account);
+    const _setting = storage.sync.set(`${UserStoreConstants.Store}.${encodeURIComponent(account)}`, _settings);
     return Promise.all([_lastUser, _setting]);
   };
 
   /**
    * Clear the last user from chrome storage
    */
-  const syncClearLastUser = () => storage.sync.remove(`settings.last-user`);
+  const syncClearLastUser = () => storage.sync.remove(UserStoreConstants.SyncLastUser);
 
   /**
    * Clear a specific user from chrome storage
    * @param account
    */
   const syncClearUser = (account?: string) => {
-    return storage.sync.remove(`settings.user${account ? `.${encodeURIComponent(account)}` : ''}`);
+    return storage.sync.remove(`${UserStoreConstants.Store}${account ? `.${encodeURIComponent(account)}` : ''}`);
   };
 
   /**
@@ -49,10 +54,10 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
    * @param account
    */
   const syncRestoreUser = async (account: string = user.value) => {
-    if (account === defaultUser) account = await storage.sync.get<string>(`settings.last-user`);
+    if (account === defaultUser) account = await storage.sync.get<string>(UserStoreConstants.SyncLastUser);
     if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser) ?? defaultUser;
     user.value = account;
-    const _setting = await storage.sync.get<UserSetting>(`settings.user.${encodeURIComponent(account)}`);
+    const _setting = await storage.sync.get<UserSetting>(`${UserStoreConstants.Store}.${encodeURIComponent(account)}`);
     if (!userSettings[account]) userSettings[account] = {};
     if (_setting) Object.assign(userSettings[account], _setting);
     return _setting;
@@ -80,10 +85,10 @@ export const useUserSettingsStore = defineStore('settings.user', () => {
    * Restore all users from chrome storage
    */
   const syncRestoreAllUsers = async () => {
-    const restored = await storage.sync.getAll<UserSettings>('settings.user.');
+    const restored = await storage.sync.getAll<UserSettings>(`${UserStoreConstants.Store}r.`);
 
     Object.entries(restored).forEach(([account, settings]) => {
-      const _account = decodeURIComponent(account.replace('settings.user.', ''));
+      const _account = decodeURIComponent(account.replace(`${UserStoreConstants.Store}.`, ''));
       if (_account === defaultUser) return;
       if (userSettings[_account]) return;
       if (!settings) return;

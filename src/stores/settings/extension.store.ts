@@ -37,7 +37,12 @@ type ExtensionSettings = {
   restorePanel: boolean;
 };
 
-export const useExtensionSettingsStore = defineStore('settings.extension', () => {
+const ExtensionSettingsConstants = {
+  Store: 'settings.extension',
+  LocalDefaultTab: 'settings.extension.default-tab',
+} as const;
+
+export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.Store, () => {
   const cacheRetention = reactive<CacheRetentionState>(DefaultCacheRetention);
   const routeDictionary = reactive<RouteDictionary>(DefaultRoutes);
   const restoreRoute = ref(true);
@@ -53,7 +58,7 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
 
   const saveState = debounce(
     () =>
-      storage.sync.set('settings.extension', {
+      storage.sync.set(ExtensionSettingsConstants.Store, {
         cacheRetention: toRaw(cacheRetention),
         enabledRoutes: toRaw(routeDictionary),
         restoreRoute: restoreRoute.value,
@@ -71,7 +76,7 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
   };
 
   const restoreState = async () => {
-    const restored = await storage.sync.get<ExtensionSettings>('settings.extension');
+    const restored = await storage.sync.get<ExtensionSettings>(ExtensionSettingsConstants.Store);
 
     if (restored?.cacheRetention !== undefined) setRetention(restored.cacheRetention, false);
     if (restored?.enabledRoutes !== undefined) Object.assign(routeDictionary, restored.enabledRoutes);
@@ -79,10 +84,10 @@ export const useExtensionSettingsStore = defineStore('settings.extension', () =>
     if (restored?.restorePanel !== undefined) restorePanel.value = restored.restorePanel;
   };
 
-  const saveDefaultTab = debounce(() => storage.sync.set('settings.extension.default-tab', defaultTab.value), 500);
+  const saveDefaultTab = debounce(() => storage.sync.set(ExtensionSettingsConstants.LocalDefaultTab, defaultTab.value), 500);
 
   const restoreDefaultTab = async () => {
-    const restored = await storage.sync.get<Route>('settings.extension.default-tab');
+    const restored = await storage.sync.get<Route>(ExtensionSettingsConstants.LocalDefaultTab);
     if (restored) defaultTab.value = restored;
   };
 

@@ -10,7 +10,11 @@ import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 
-export const useHistoryStore = defineStore('data.history', () => {
+const HistoryStoreConstants = {
+  Store: 'data.history',
+} as const;
+
+export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
@@ -25,7 +29,7 @@ export const useHistoryStore = defineStore('data.history', () => {
   const threshold = ref(10);
 
   const saveState = async () =>
-    storage.local.set('data.history', {
+    storage.local.set(HistoryStoreConstants.Store, {
       pageSize: pageSize.value,
       historyStart: historyStart.value?.getTime(),
       historyEnd: historyEnd.value?.getTime(),
@@ -36,7 +40,7 @@ export const useHistoryStore = defineStore('data.history', () => {
       pageSize: number;
       historyStart: Date | undefined;
       historyEnd: Date | undefined;
-    }>('data.history');
+    }>(HistoryStoreConstants.Store);
 
     if (restored?.pageSize) pageSize.value = restored.pageSize;
     if (restored?.historyStart) historyStart.value = new Date(restored.historyStart);

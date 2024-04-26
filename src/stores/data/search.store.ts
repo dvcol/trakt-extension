@@ -22,7 +22,13 @@ export type SearchResult = Omit<TraktSearchResult, 'type'> & {
 export const SupportedSearchType: TraktSearchType[] = ['episode', 'show', 'movie', 'person'];
 export const DefaultSearchType: TraktSearchType[] = ['show', 'movie'];
 
-export const useSearchStore = defineStore('data.search', () => {
+const SearchStoreConstants = {
+  Store: 'data.search',
+  LocalHistory: 'data.search.history',
+  LocalLast: 'data.search.last',
+} as const;
+
+export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const types = ref<TraktSearchType[]>(DefaultSearchType);
   const query = ref(false);
   const search = ref('');
@@ -37,8 +43,8 @@ export const useSearchStore = defineStore('data.search', () => {
 
   const history = ref<Set<string>>(new Set());
 
-  const saveHistory = debounce(() => storage.local.set('data.search.history', [...history.value]), 1000);
-  const saveSearch = debounce(() => storage.local.set('data.search.last', { value: search.value, date: Date.now() }), 1000);
+  const saveHistory = debounce(() => storage.local.set(SearchStoreConstants.LocalHistory, [...history.value]), 1000);
+  const saveSearch = debounce(() => storage.local.set(SearchStoreConstants.LocalLast, { value: search.value, date: Date.now() }), 1000);
 
   const addToHistory = (value: string = search.value) => {
     const newArray = [...history.value, value].filter(Boolean);
@@ -60,7 +66,7 @@ export const useSearchStore = defineStore('data.search', () => {
   };
 
   const saveState = async () =>
-    storage.local.set('data.search', {
+    storage.local.set(SearchStoreConstants.Store, {
       types: [...types.value],
       query: query.value,
       pageSize: pageSize.value,
@@ -76,12 +82,12 @@ export const useSearchStore = defineStore('data.search', () => {
         types: TraktSearchType[];
         query: boolean;
         pageSize: number;
-      }>('data.search'),
-      storage.local.get<string[]>('data.search.history'),
+      }>(SearchStoreConstants.Store),
+      storage.local.get<string[]>(SearchStoreConstants.LocalHistory),
       storage.local.get<{
         value: string;
         date: Date;
-      }>('data.search.last'),
+      }>(SearchStoreConstants.LocalLast),
     ]);
 
     if (_state?.types) types.value = _state.types;
