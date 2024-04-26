@@ -1,0 +1,10 @@
+{
+  "settings__menus__label_menu__open_in_side_trakt": {
+    "message": "Open selection in Side Trakt",
+    "description": "Label to toggle the 'Open selection in Side Trakt' menu item"
+  },
+  "settings__menus__label_menu__add_to_search_history": {
+    "message": "Add selection to search history",
+    "description": "Label to toggle the 'Add selection to search history' menu item"
+  }
+}

@@ -1,9 +1,12 @@
 export const ContextMenuId = {
-  OpenInSideTrakt: 'open-in-side-trakt',
-  AddToSearchHistory: 'add-to-search-history',
+  OpenInSideTrakt: 'open_in_side_trakt',
+  AddToSearchHistory: 'add_to_search_history',
 } as const;
 
 export type ContextMenuIds = (typeof ContextMenuId)[keyof typeof ContextMenuId];
+
+const contextMenuIdValues = new Set<string>(Object.values(ContextMenuId));
+export const isContextMenuId = (id: unknown): id is ContextMenuIds => typeof id === 'string' && contextMenuIdValues.has(id);
 
 export type ContextMenu = {
   id: ContextMenuIds;
@@ -23,3 +26,8 @@ export const ContextMenus: Record<ContextMenuIds, ContextMenu> = {
     contexts: ['selection'],
   },
 } as const;
+
+export const ContextMenuConstants = {
+  Store: 'settings.context-menu',
+  LocalEnabled: 'settings.context-menu.enabled',
+};

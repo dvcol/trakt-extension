@@ -8,6 +8,7 @@ import { useMovieStore } from '~/stores/data/movie.store';
 import { useSearchStore } from '~/stores/data/search.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
+import { useContextMenuStore } from '~/stores/settings/context-menu.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogStore } from '~/stores/settings/log.store';
@@ -48,6 +49,7 @@ export const initServices = async () => {
     useSearchStore().initSearchStore(),
     useShowStore().initShowStore(),
     useMovieStore().initMovieStore(),
+    useContextMenuStore().initContextMenuStore(),
   ]);
 
   setAppReady(true);
