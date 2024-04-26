@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/dvcol/trakt-extension/compare/v1.7.2...v1.8.0) (2024-04-26)
+
+
+### Features
+
+* **settings:** rework context menu and add toggle settings ([6d7b9be](https://github.com/dvcol/trakt-extension/commit/6d7b9bec331bcaaeb83923614e7351c9807fdffc))
+
 ### [1.7.2](https://github.com/dvcol/trakt-extension/compare/v1.7.1...v1.7.2) (2024-04-26)
 
 
