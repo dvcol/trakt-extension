@@ -7,6 +7,7 @@ import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
 import SettingsCache from '~/components/views/settings/SettingsCache.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
+import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
 import { useI18n } from '~/utils';
 
@@ -22,6 +23,7 @@ const sections: Section[] = [
   { title: 'menu__account', reference: ref(), component: SettingsAccount },
   { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
   { title: 'menu__links', reference: ref(), component: SettingsLinks },
+  { title: 'menu__menus', reference: ref(), component: SettingsMenus },
   { title: 'menu__cache', reference: ref(), component: SettingsCache },
   { title: 'menu__logs', reference: ref(), component: SettingsLogs },
 ];
