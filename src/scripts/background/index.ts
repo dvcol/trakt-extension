@@ -8,8 +8,6 @@ import { runtime } from '~/utils/browser/browser-runtime.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { createTab } from '~/utils/browser/browser.utils';
 
-export {};
-
 console.debug('Background script started');
 
 runtime?.onInstalled.addListener(async () => {
@@ -18,24 +16,24 @@ runtime?.onInstalled.addListener(async () => {
   await Promise.all(Object.values(ContextMenus).map(m => context!.create(m)));
 
   console.debug('Context menus created');
+});
 
-  context.onClicked.addListener(async info => {
-    console.debug('Context menu event', info);
-    if (!context || !runtime) return;
-    if (!info?.selectionText) return;
-    await storage.local.set(RouterStorageKey.LastRoute, {
-      name: Route.Search,
-      query: { search: info.selectionText },
-    } satisfies Partial<RouteLocationNormalized>);
+context?.onClicked.addListener(async info => {
+  console.debug('Context menu event', info);
 
-    if (info.menuItemId !== ContextMenuId.OpenInSideTrakt) return;
+  if (!info?.selectionText) return;
+  await storage.local.set(RouterStorageKey.LastRoute, {
+    name: Route.Search,
+    query: { search: info.selectionText },
+  } satisfies Partial<RouteLocationNormalized>);
 
-    if (action?.openPopup) {
-      await action.openPopup();
-    } else {
-      await createTab({
-        url: runtime.getURL('views/options/index.html'),
-      });
-    }
-  });
+  if (info.menuItemId !== ContextMenuId.OpenInSideTrakt) return;
+
+  if (action?.openPopup) {
+    await action.openPopup();
+  } else if (runtime) {
+    await createTab({
+      url: runtime.getURL('views/options/index.html'),
+    });
+  }
 });
