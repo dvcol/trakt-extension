@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/dvcol/trakt-extension/compare/v1.7.1...v1.7.2) (2024-04-26)
+
+
+### Bug Fixes
+
+* **background:** refresh onClicked outside of onInstalled ([8bea70f](https://github.com/dvcol/trakt-extension/commit/8bea70f3d3b056074290cab1548c8c4ebfbee98d))
+
 ### [1.7.1](https://github.com/dvcol/trakt-extension/compare/v1.7.0...v1.7.1) (2024-04-22)
 
 
