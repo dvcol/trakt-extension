@@ -1,10 +1,8 @@
+import { BaseApiHeaders, BaseHeaderContentType } from '@dvcol/base-http-client';
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
 import { describe } from 'vitest';
 
 import { tmdbClientSettings } from '../../../settings/tmdb.api';
-
-import { HttpMethod } from '../../../utils/http.utils';
-
-import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client';
 
 import { BaseTmdbClient, parsePageResponse, parseResponse } from './base-tmdb-client';
 
@@ -18,7 +16,7 @@ import type {
   TmdbClientAuthentication,
   TmdbClientSettings,
 } from '../../../models/tmdb/tmdb-client.model';
-import type { BaseInit } from '../../common/base-client';
+import type { BaseInit } from '@dvcol/base-http-client';
 
 class TestableTmdbClient extends BaseTmdbClient {
   publicParseHeaders<T extends TmdbApiParam = TmdbApiParam>(template: TmdbApiTemplate<T>): HeadersInit {

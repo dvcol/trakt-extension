@@ -1,3 +1,5 @@
+import { type BaseBody, BaseClient, BaseHeaderContentType, injectCorsProxyPrefix, parseBody, parseUrl } from '@dvcol/base-http-client';
+
 import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
 import type {
   ITraktApi,
@@ -14,7 +16,6 @@ import type { Primitive } from '~/utils/typescript.utils';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
 
-import { type BaseBody, BaseClient, BaseHeaderContentType, injectCorsProxyPrefix, parseBody, parseUrl } from '~/services/common/base-client';
 import { isFilter, TraktApiFilterValidator } from '~/services/trakt-client/api/trakt-api.filters';
 
 /**

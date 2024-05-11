@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbAccountSeasonStatus } from '~/models/tmdb/tmdb-account.model';
 import type { TmdbChanges } from '~/models/tmdb/tmdb-change.model';
 import type { TmdbAggregateCredits, TmdbShowCredits } from '~/models/tmdb/tmdb-credit.model';
@@ -9,7 +11,6 @@ import type { TmdbSeasonExtended } from '~/models/tmdb/tmdb-season.model';
 import type { TmdbTranslations } from '~/models/tmdb/tmdb-translation.model';
 
 import { TmdbClientEndpoint, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Season v3 endpoints.

@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktScrobble, TraktScrobbleRequest } from '~/models/trakt/trakt-scrobble.model';
 
 import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Scrobbling is an automatic way to track what a user is watching in a media center.

@@ -1,25 +1,9 @@
-import type { ResponseOrTypedResponse, TypedResponse } from '~/services/common/base-client';
+import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+
+import type { ResponseOrTypedResponse, TypedResponse } from '@dvcol/base-http-client';
+import type { CacheStore, CacheStoreEntity } from '@dvcol/base-http-client/utils/cache';
 
 import { storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
-
-export type CacheStoreEntity<V = unknown, T = string> = {
-  key: string;
-  value: V;
-  type?: T;
-  cachedAt: number;
-  accessedAt?: number;
-};
-
-export type CacheStore<T = unknown> = {
-  get(key: string): CacheStoreEntity<T> | Promise<CacheStoreEntity<T>> | undefined;
-  set(key: string, value: CacheStoreEntity<T>): CacheStore<T> | Promise<CacheStore<T>>;
-  delete(key: string): boolean | Promise<boolean>;
-  clear(regex?: string): void | Promise<void>;
-  /** the duration in milliseconds after which the cache will be cleared */
-  retention?: number;
-  /** if true, the cache will be deleted if an error occurs */
-  evictOnError?: boolean;
-};
 
 type FlatResponse<T extends Response = ResponseOrTypedResponse> = Record<keyof T, unknown>;
 
@@ -49,19 +33,6 @@ const parseFlatResponse = <T = unknown>(flat: FlatResponse): TypedResponse<T> =>
 
   return res;
 };
-
-export const CacheRetention = {
-  /** 1 hour */
-  Hour: 60 * 60 * 1000,
-  /** 1 day */
-  Day: 24 * 60 * 60 * 1000,
-  /** 1 week */
-  Week: 7 * 24 * 60 * 60 * 1000,
-  /** 1 month */
-  Month: 31 * 24 * 60 * 60 * 1000,
-  /** 1 year */
-  Year: 365 * 24 * 60 * 60 * 1000,
-} as const;
 
 export class ChromeCacheStore<T> implements CacheStore<T> {
   evictOnError?: boolean;

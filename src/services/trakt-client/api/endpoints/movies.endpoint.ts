@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktComment } from '~/models/trakt/trakt-comment.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type {
@@ -33,7 +35,6 @@ import {
   validateStartDate,
 } from '~/models/trakt/trakt-entity.model';
 import { type TraktApiMovieFilters, TraktApiMovieFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
-import { HttpMethod } from '~/utils/http.utils';
 
 type BaseMovieParams = TraktApiParamsPagination & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsFilter<TraktApiMovieFilters>;
 

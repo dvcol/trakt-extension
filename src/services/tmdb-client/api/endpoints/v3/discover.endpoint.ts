@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbDiscoverMovieQuery, TmdbDiscoverTvQuery } from '~/models/tmdb/tmdb-discover.model';
 
 import type { TmdbMovieShort } from '~/models/tmdb/tmdb-movie.model';
@@ -5,7 +7,6 @@ import type { TmdbMovieShort } from '~/models/tmdb/tmdb-movie.model';
 import type { TmdbShowShort } from '~/models/tmdb/tmdb-show.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Discover v3 API endpoints.

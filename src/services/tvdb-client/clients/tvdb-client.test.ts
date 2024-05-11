@@ -1,12 +1,11 @@
+import { BaseApiHeaders, BaseHeaderContentType } from '@dvcol/base-http-client';
+import { CancellableFetch } from '@dvcol/base-http-client/utils/fetch';
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+import { hasOwnProperty } from '@dvcol/base-http-client/utils/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { tvdbClientSettings } from '../../../settings/tvdb.api';
 
-import { CancellableFetch } from '../../../utils/fetch.utils';
-import { HttpMethod } from '../../../utils/http.utils';
-import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client';
-
-import { hasOwnProperty } from '../../common/test.utils';
 import { tvdbApi } from '../api/tvdb-api.endpoints';
 
 import { minimalTvdbApi } from '../api/tvdb-minimal-api.endpoints';

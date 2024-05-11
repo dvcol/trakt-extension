@@ -1,10 +1,11 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbEpisodeRating } from '~/models/tmdb/tmdb-episode.model';
 import type { TmdbMovieGuestRating } from '~/models/tmdb/tmdb-movie.model';
 
 import type { TmdbShowGuestRating } from '~/models/tmdb/tmdb-show.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Guest v3 endpoints.

@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbCertification } from '~/models/tmdb/tmdb-entity.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Certifications v3 endpoints/

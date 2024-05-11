@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktComment } from '~/models/trakt/trakt-comment.model';
 import type { TraktRating, TraktTranslation } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
@@ -7,7 +9,6 @@ import type { TraktSeason, TraktSeasonCast, TraktSeasonStats } from '~/models/tr
 import type { TraktUser } from '~/models/trakt/trakt-user.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 export const seasons = {
   /**

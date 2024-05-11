@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktCalendarMovie, TraktCalendarQuery, TraktCalendarShow } from '~/models/trakt/trakt-calendar.model';
 import type { TraktApiTemplate, TraktApiTemplateOptions } from '~/models/trakt/trakt-client.model';
 
@@ -6,7 +8,6 @@ import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-clie
 import { getDateTransform, getDateValidate } from '~/models/trakt/trakt-entity.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 
-import { HttpMethod } from '~/utils/http.utils';
 import { DateISO8601Short } from '~/utils/regex.utils';
 
 const opts: TraktApiTemplateOptions = {

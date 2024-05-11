@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktCollection } from '~/models/trakt/trakt-collection.model';
 import type { TraktComment, TraktCommentItem } from '~/models/trakt/trakt-comment.model';
 import type { TraktFavoriteItem } from '~/models/trakt/trakt-favorite.model';
@@ -36,7 +38,6 @@ import type { TraktWatched, TraktWatching } from '~/models/trakt/trakt-watched.m
 import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * User's with public data will return info with all GET methods.

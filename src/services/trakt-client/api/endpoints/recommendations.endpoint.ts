@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktRecommendation } from '~/models/trakt/trakt-recommendation.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Trakt social recommendations use all the Favorites lists from the users you follow.

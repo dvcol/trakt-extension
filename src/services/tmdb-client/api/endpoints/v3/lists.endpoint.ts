@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbListV3 } from '~/models/tmdb/tmdb-list.model';
 
 import type { TmdbMovieShort } from '~/models/tmdb/tmdb-movie.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Lists v3 endpoints.

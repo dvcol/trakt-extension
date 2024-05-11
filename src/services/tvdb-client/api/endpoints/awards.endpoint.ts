@@ -1,8 +1,9 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbAward, TvdbAwardCategoryExtended, TvdbAwardCategoryShort } from '~/models/tvdb/tvdb-award.model';
 import type { Entity } from '~/models/tvdb/tvdb-entity.model';
 
 import { TvdbClientEndpoint } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Award endpoints

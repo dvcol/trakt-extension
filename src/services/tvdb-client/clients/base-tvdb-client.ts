@@ -1,3 +1,13 @@
+import {
+  BaseApiHeaders,
+  type BaseBody,
+  BaseClient,
+  BaseHeaderContentType,
+  injectCorsProxyPrefix,
+  parseBody,
+  parseUrl,
+} from '@dvcol/base-http-client';
+
 import type {
   ITvdbApi,
   TvdbApiParam,
@@ -13,15 +23,6 @@ import type {
 import type { TvdbApi } from '~/services/tvdb-client/api/tvdb-api.endpoints';
 
 import { TraktApiHeaders } from '~/models/trakt/trakt-client.model';
-import {
-  BaseApiHeaders,
-  type BaseBody,
-  BaseClient,
-  BaseHeaderContentType,
-  injectCorsProxyPrefix,
-  parseBody,
-  parseUrl,
-} from '~/services/common/base-client';
 
 /** Needed to type Object assignment */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging  -- To allow type extension

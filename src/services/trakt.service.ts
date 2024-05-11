@@ -1,3 +1,8 @@
+import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
+
+import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+
+import type { CancellablePromise } from '@dvcol/base-http-client/utils/fetch';
 import type { ProgressItem } from '~/models/progress.model';
 import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
 import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
@@ -26,9 +31,7 @@ import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
 import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
-import type { CancellablePromise } from '~/utils/fetch.utils';
 
-import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '~/services/common/base-client';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
@@ -43,7 +46,7 @@ import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
-import { CacheRetention, ChromeCacheStore } from '~/utils/cache.utils';
+import { ChromeCacheStore } from '~/utils/cache.utils';
 
 export const shouldEvict = (date?: string | number | Date, cache?: CacheResponse<unknown>): boolean => {
   // no cache skip

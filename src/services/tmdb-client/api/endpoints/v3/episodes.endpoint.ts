@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbAccountStatus } from '~/models/tmdb/tmdb-account.model';
 import type { TmdbChanges } from '~/models/tmdb/tmdb-change.model';
 import type { TmdbEpisodeCredits } from '~/models/tmdb/tmdb-credit.model';
@@ -10,7 +12,6 @@ import type { TmdbTranslations } from '~/models/tmdb/tmdb-translation.model';
 import type { RecursiveRecord } from '~/utils/typescript.utils';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Episodes v3 endpoints.

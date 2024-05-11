@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbReviewExtended } from '~/models/tmdb/tmdb-review.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Review v3 endpoints.

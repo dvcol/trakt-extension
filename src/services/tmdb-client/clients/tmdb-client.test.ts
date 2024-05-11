@@ -1,11 +1,11 @@
+import { BaseApiHeaders, BaseHeaderContentType } from '@dvcol/base-http-client';
+import { CancellableFetch } from '@dvcol/base-http-client/utils/fetch';
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+import { hasOwnProperty } from '@dvcol/base-http-client/utils/test';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { Config, tmdbClientSettings } from '../../../settings/tmdb.api';
 
-import { CancellableFetch } from '../../../utils/fetch.utils';
-import { HttpMethod } from '../../../utils/http.utils';
-import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client';
-import { hasOwnProperty } from '../../common/test.utils';
 import { tmdbApi } from '../api/tmdb-api.endpoints';
 
 import { minimalTmdbApi } from '../api/tmdb-minimal-api.endpoints';

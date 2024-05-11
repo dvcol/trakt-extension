@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbListV4 } from '~/models/tmdb/tmdb-list.model';
 
 import type { TmdbMovieShort } from '~/models/tmdb/tmdb-movie.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 type TmdbListItem = { media_type: 'movie' | 'tv'; media_id: number; comment?: string };
 type TmdbListItemResponse = TmdbListItem & { success: boolean };

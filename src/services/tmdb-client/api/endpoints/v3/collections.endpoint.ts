@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbCollection, TmdbCollectionImages } from '~/models/tmdb/tmdb-collection.model';
 
 import type { TmdbTranslations } from '~/models/tmdb/tmdb-translation.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Collections v3 endpoints.

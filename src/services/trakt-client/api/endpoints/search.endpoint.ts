@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktIdLookup, TraktSearch, TraktSearchResult } from '~/models/trakt/trakt-search.model';
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { TraktApiCommonFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
 import { TraktApiTransforms } from '~/services/trakt-client/api/trakt-api.transforms';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Searches can use queries or ID lookups. Queries will search text fields like the title and overview.

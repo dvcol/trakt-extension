@@ -1,14 +1,13 @@
+import { BaseHeaderContentType } from '@dvcol/base-http-client';
+import { CancellableFetch } from '@dvcol/base-http-client/utils/fetch';
+
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+import { hasOwnProperty } from '@dvcol/base-http-client/utils/test';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
-
 import { traktClientSettings } from '../../../settings/traktv.api';
 import { tvdbClientSettings } from '../../../settings/tvdb.api';
-import { CancellableFetch } from '../../../utils/fetch.utils';
-
-import { HttpMethod } from '../../../utils/http.utils';
-import { BaseHeaderContentType } from '../../common/base-client';
-import { hasOwnProperty } from '../../common/test.utils';
 import { minimalTvdbApi } from '../../tvdb-client/api/tvdb-minimal-api.endpoints';
 import { TvdbClient } from '../../tvdb-client/clients/tvdb-client';
 import { traktApi } from '../api/trakt-api.endpoints';
@@ -17,7 +16,7 @@ import { TraktClient } from './trakt-client';
 
 import type { TraktAuthentication, TraktDeviceAuthentication } from '../../../models/trakt/trakt-authentication.model';
 import type { TraktApiResponse } from '../../../models/trakt/trakt-client.model';
-import type { CacheStore } from '../../../utils/cache.utils';
+import type { CacheStore } from '@dvcol/base-http-client/utils/cache';
 
 describe('trakt-client.ts', () => {
   const traktClient = new TraktClient(traktClientSettings, {}, traktApi);

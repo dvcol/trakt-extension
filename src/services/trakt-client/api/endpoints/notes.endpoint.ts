@@ -1,8 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktNote, TraktNoteItem, TraktNoteRequest } from '~/models/trakt/trakt-note.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Notes (500 maximum characters) attached to any movie, show, season, episode, or person and are only visible to the user who created them.

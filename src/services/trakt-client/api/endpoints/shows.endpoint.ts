@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktComment } from '~/models/trakt/trakt-comment.model';
 import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
 import type { TraktList } from '~/models/trakt/trakt-list.model';
@@ -34,7 +36,6 @@ import {
   validateStartDate,
 } from '~/models/trakt/trakt-entity.model';
 import { type TraktApiShowFilters, TraktApiShowFilterValues } from '~/services/trakt-client/api/trakt-api.filters';
-import { HttpMethod } from '~/utils/http.utils';
 
 type BaseShowParams = TraktApiParamsPagination & TraktApiParamsExtended<typeof TraktApiExtended.Full> & TraktApiParamsFilter<TraktApiShowFilters>;
 

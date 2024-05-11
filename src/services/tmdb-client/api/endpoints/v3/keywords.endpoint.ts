@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbKeyword } from '~/models/tmdb/tmdb-entity.model';
 
 import type { TmdbMovieShort } from '~/models/tmdb/tmdb-movie.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Keywords v3 endpoints.

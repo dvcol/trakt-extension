@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type {
   TmdbConfiguration,
   TmdbConfigurationCounty,
@@ -8,7 +10,6 @@ import type {
 import type { TmdbLanguage } from '~/models/tmdb/tmdb-entity.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Configuration v3 endpoints.

@@ -1,5 +1,3 @@
-import type { RecursiveRecord } from '~/utils/typescript.utils';
-
 import {
   type BaseOptions,
   type BaseQuery,
@@ -9,7 +7,9 @@ import {
   type BaseTemplateOptions,
   ClientEndpoint,
   type ResponseOrTypedResponse,
-} from '~/services/common/base-client';
+} from '@dvcol/base-http-client';
+
+import type { RecursiveRecord } from '~/utils/typescript.utils';
 
 /**
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}

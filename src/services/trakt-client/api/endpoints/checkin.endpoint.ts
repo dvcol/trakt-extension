@@ -1,8 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktCheckin, TraktCheckinRequest } from '~/models/trakt/trakt-checkin.model';
 
 import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Checking in is a manual action used by mobile apps allowing the user to indicate what they are watching right now. While not as effortless as scrobbling, checkins help fill in the gaps.

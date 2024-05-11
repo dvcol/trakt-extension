@@ -2,12 +2,11 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, watch } from 'vue';
 
+import type { BaseCacheOption } from '@dvcol/base-http-client';
 import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
 import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
 import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
-
-import type { BaseCacheOption } from '~/services/common/base-client';
 
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';

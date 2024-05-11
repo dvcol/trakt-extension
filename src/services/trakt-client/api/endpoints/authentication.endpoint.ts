@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type {
   TraktAuthentication,
   TraktAuthenticationAuthorizeRequest,
@@ -8,7 +10,6 @@ import type {
 } from '~/models/trakt/trakt-authentication.model';
 
 import { TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 export const authentication = {
   /**

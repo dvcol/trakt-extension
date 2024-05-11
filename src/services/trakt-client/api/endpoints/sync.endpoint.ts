@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 import type {
   TraktCollection,
@@ -34,7 +36,6 @@ import type {
 } from '~/models/trakt/trakt-watchlist.model';
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Syncing with trakt opens up quite a few cool features.

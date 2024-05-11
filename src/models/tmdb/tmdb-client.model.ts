@@ -1,3 +1,5 @@
+import { ClientEndpoint } from '@dvcol/base-http-client';
+
 import type {
   BaseOptions,
   BaseQuery,
@@ -6,11 +8,9 @@ import type {
   BaseTemplate,
   BaseTemplateOptions,
   ResponseOrTypedResponse,
-} from '~/services/common/base-client';
+} from '@dvcol/base-http-client';
 
 import type { RecursiveRecord } from '~/utils/typescript.utils';
-
-import { ClientEndpoint } from '~/services/common/base-client';
 
 export type TmdbClientSettings = BaseSettings<{
   /** The consumer client identifier */

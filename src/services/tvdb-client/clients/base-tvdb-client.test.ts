@@ -1,12 +1,10 @@
+import { BaseApiHeaders, BaseHeaderContentType } from '@dvcol/base-http-client';
+import { CancellableFetch } from '@dvcol/base-http-client/utils/fetch';
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
 import { describe, expect, it } from 'vitest';
 
 import { TraktApiHeaders } from '../../../models/trakt/trakt-client.model';
 import { tvdbClientSettings } from '../../../settings/tvdb.api';
-import { CancellableFetch } from '../../../utils/fetch.utils';
-
-import { HttpMethod } from '../../../utils/http.utils';
-
-import { BaseApiHeaders, BaseHeaderContentType } from '../../common/base-client';
 
 import { BaseTvdbClient } from './base-tvdb-client';
 
@@ -17,8 +15,9 @@ import type {
   TvdbApiTemplate,
   TvdbClientAuthentication,
 } from '../../../models/tvdb/tvdb-client.model';
-import type { Updater } from '../../../utils/observable.utils';
-import type { BaseInit } from '../../common/base-client';
+import type { BaseInit } from '@dvcol/base-http-client';
+
+import type { Updater } from '@dvcol/base-http-client/utils/observable';
 
 class TestableTvdbClient extends BaseTvdbClient {
   publicUpdateAuth(auth: Updater<TvdbClientAuthentication> = {}) {

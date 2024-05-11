@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbFavorite, TvdbFavorites } from '~/models/tvdb/tvdb-favorite.model';
 
 import { TvdbClientEndpoint } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Favorites API endpoints.

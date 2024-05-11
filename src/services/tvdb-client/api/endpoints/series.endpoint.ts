@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbStatus } from '~/models/tvdb/tvdb-entity.model';
 import type { TvdbEpisode } from '~/models/tvdb/tvdb-episode.model';
 import type { TvdbSeries, TvdbSeriesExtended, TvdbSeriesQuery, TvdbSeriesShort } from '~/models/tvdb/tvdb-series.model';
@@ -5,7 +7,6 @@ import type { TvdbSeries, TvdbSeriesExtended, TvdbSeriesQuery, TvdbSeriesShort }
 import type { TvdbTranslation } from '~/models/tvdb/tvdb-translation.model';
 
 import { TvdbClientEndpoint, type TvdbPaginatedData, type TvdbParamPagination } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Endpoints for series

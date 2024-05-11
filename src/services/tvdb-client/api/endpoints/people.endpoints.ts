@@ -1,10 +1,11 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { Entity } from '~/models/tvdb/tvdb-entity.model';
 import type { TvdbPersonExtended, TvdbPersonShort } from '~/models/tvdb/tvdb-person.model';
 
 import type { TvdbTranslation } from '~/models/tvdb/tvdb-translation.model';
 
 import { TvdbClientEndpoint, type TvdbPaginatedData, type TvdbParamPagination } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * People endpoints

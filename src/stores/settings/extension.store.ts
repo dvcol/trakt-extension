@@ -1,3 +1,4 @@
+import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
@@ -5,7 +6,6 @@ import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { CacheRetention } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
 
 type CacheRetentionState = {

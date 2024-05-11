@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbChanges } from '~/models/tmdb/tmdb-change.model';
 import type { TmdbCombinedCredit, TmdbPersonMovieCredits, TmdbPersonShowCredits } from '~/models/tmdb/tmdb-credit.model';
 import type { TmdbImage, TmdbTaggedImage } from '~/models/tmdb/tmdb-image.model';
@@ -6,7 +8,6 @@ import type { TmdbPersonExtended, TmdbPersonKnownFor } from '~/models/tmdb/tmdb-
 import type { TmdbTranslations } from '~/models/tmdb/tmdb-translation.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * People v3 endpoints.

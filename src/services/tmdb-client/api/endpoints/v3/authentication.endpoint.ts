@@ -1,5 +1,6 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Authentication v3 endpoints.

@@ -1,5 +1,6 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import { TvdbClientEndpoint } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Create an auth token. The token has one month validation length.

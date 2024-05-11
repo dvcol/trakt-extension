@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbCompany } from '~/models/tmdb/tmdb-company.model';
 import type { TmdbAlternativeNames } from '~/models/tmdb/tmdb-entity.model';
 import type { TmdbImages } from '~/models/tmdb/tmdb-image.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Companies v3 endpoints.

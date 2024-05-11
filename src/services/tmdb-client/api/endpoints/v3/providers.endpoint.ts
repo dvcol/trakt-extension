@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbConfigurationCounty } from '~/models/tmdb/tmdb-configuration.model';
 
 import type { TmdbProviderExtended } from '~/models/tmdb/tmdb-provider.model';
 
 import { TmdbClientEndpoint } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Providers v3 endpoints.

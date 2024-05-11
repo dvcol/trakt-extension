@@ -1,7 +1,8 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbUser } from '~/models/tvdb/tvdb-user.model';
 
 import { TvdbClientEndpoint } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * User endpoints

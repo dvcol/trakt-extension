@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktMovieCast } from '~/models/trakt/trakt-movie.model';
 import type { TraktPerson, TraktPersonUpdate } from '~/models/trakt/trakt-people.model';
@@ -6,7 +8,6 @@ import type { TraktShowCast } from '~/models/trakt/trakt-show.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
 import { type StartDateParam, transformStartDate, validateStartDate } from '~/models/trakt/trakt-entity.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 export const people = {
   /**

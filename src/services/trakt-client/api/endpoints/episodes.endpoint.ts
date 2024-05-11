@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktComment } from '~/models/trakt/trakt-comment.model';
 import type { TraktRating, TraktTranslation } from '~/models/trakt/trakt-entity.model';
 import type { TraktEpisode, TraktEpisodeCast, TraktShowStats } from '~/models/trakt/trakt-episode.model';
@@ -7,7 +9,6 @@ import type { TraktList } from '~/models/trakt/trakt-list.model';
 import type { TraktUser } from '~/models/trakt/trakt-user.model';
 
 import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 type BaseEpisodeParam = {
   /** Trakt ID, Trakt slug, or IMDB ID */

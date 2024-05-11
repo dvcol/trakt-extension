@@ -1,11 +1,11 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 
 import type { TraktComment, TraktCommentItem, TraktCommentMedia, TraktCommentRequest } from '~/models/trakt/trakt-comment.model';
 import type { TraktLike } from '~/models/trakt/trakt-like.model';
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Comments are attached to any movie, show, season, episode, or list and can be a quick shout or a more detailed review.

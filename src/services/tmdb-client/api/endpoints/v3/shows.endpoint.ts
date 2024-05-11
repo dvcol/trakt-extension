@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbAccountStatus } from '~/models/tmdb/tmdb-account.model';
 import type { TmdbChanges } from '~/models/tmdb/tmdb-change.model';
 import type { TmdbAggregateCredits, TmdbShowCredits } from '~/models/tmdb/tmdb-credit.model';
@@ -10,7 +12,6 @@ import type { TmdbScreenedShow, TmdbShowExtended, TmdbShowImages, TmdbShowShort 
 import type { TmdbTranslations } from '~/models/tmdb/tmdb-translation.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Shows v3 endpoint

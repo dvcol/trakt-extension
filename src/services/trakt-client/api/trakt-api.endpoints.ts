@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 
 import type { TraktCertification, TraktCountry, TraktGenre, TraktLanguage, TraktNetwork } from '~/models/trakt/trakt-entity.model';
@@ -20,7 +22,6 @@ import { seasons } from '~/services/trakt-client/api/endpoints/seasons.endpoint'
 import { shows } from '~/services/trakt-client/api/endpoints/shows.endpoint';
 import { sync } from '~/services/trakt-client/api/endpoints/sync.endpoint';
 import { users } from '~/services/trakt-client/api/endpoints/users.endpoint';
-import { HttpMethod } from '~/utils/http.utils';
 
 export const traktApi = {
   authentication,

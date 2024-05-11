@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbCharacter } from '~/models/tvdb/tvdb-character.model';
 
 import type { TvdbCountry } from '~/models/tvdb/tvdb-country.model';
@@ -25,7 +27,6 @@ import { search } from '~/services/tvdb-client/api/endpoints/search.endpoint';
 import { seasons } from '~/services/tvdb-client/api/endpoints/seasons.endpoint';
 import { series } from '~/services/tvdb-client/api/endpoints/series.endpoint';
 import { user } from '~/services/tvdb-client/api/endpoints/user.endpoint';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login}

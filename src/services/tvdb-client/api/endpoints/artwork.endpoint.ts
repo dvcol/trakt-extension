@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbArtwork, TvdbArtworkExtended, TvdbArtworkType } from '~/models/tvdb/tvdb-artwork.model';
 
 import type { Any, Entity } from '~/models/tvdb/tvdb-entity.model';
 
 import { TvdbClientEndpoint } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Artwork endpoints

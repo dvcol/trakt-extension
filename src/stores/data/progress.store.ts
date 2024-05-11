@@ -1,3 +1,4 @@
+import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
@@ -10,7 +11,6 @@ import { type ProgressItem } from '~/models/progress.model';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
-import { CacheRetention } from '~/utils/cache.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 type ProgressListItem = Omit<ListScrollItem, 'posterRef' | 'progressRef'>;

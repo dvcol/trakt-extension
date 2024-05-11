@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TraktApiParamsExtended, TraktApiParamsPagination } from '~/models/trakt/trakt-client.model';
 
 import type { TraktComment } from '~/models/trakt/trakt-comment.model';
@@ -5,8 +7,6 @@ import type { TraktLike } from '~/models/trakt/trakt-like.model';
 import type { TraktList, TraktListItem, TraktListList } from '~/models/trakt/trakt-list.model';
 
 import { TraktApiExtended, TraktClientEndpoint } from '~/models/trakt/trakt-client.model';
-
-import { HttpMethod } from '~/utils/http.utils';
 
 export const lists = {
   /**

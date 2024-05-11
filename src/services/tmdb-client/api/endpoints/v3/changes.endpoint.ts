@@ -1,5 +1,6 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Changes v3 endpoints.

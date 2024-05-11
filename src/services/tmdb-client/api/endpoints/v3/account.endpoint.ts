@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbAccount } from '~/models/tmdb/tmdb-account.model';
 
 import type { TmdbEpisodeRating } from '~/models/tmdb/tmdb-episode.model';
@@ -7,7 +9,6 @@ import type { TmdbMovieRating, TmdbMovieShort } from '~/models/tmdb/tmdb-movie.m
 import type { TmdbShowRating, TmdbShowShort } from '~/models/tmdb/tmdb-show.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  *  Account v3 Endpoint

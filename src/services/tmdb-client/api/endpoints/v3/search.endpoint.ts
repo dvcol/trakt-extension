@@ -1,3 +1,5 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TmdbSearchCollection } from '~/models/tmdb/tmdb-collection.model';
 
 import type { TmdbCompanyShort } from '~/models/tmdb/tmdb-company.model';
@@ -7,7 +9,6 @@ import type { TmdbPersonKnownFor } from '~/models/tmdb/tmdb-person.model';
 import type { TmdbShowShort } from '~/models/tmdb/tmdb-show.model';
 
 import { TmdbClientEndpoint, type TmdbPaginatedData, type TmdbParamPagination } from '~/models/tmdb/tmdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Search v3 endpoints.

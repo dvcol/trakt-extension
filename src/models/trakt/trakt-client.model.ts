@@ -1,3 +1,5 @@
+import { BaseApiHeaders, ClientEndpoint } from '@dvcol/base-http-client';
+
 import type {
   BaseCacheOption,
   BaseInit,
@@ -8,13 +10,11 @@ import type {
   BaseTemplate,
   BaseTemplateOptions,
   ResponseOrTypedResponse,
-} from '~/services/common/base-client';
+} from '@dvcol/base-http-client';
 
 import type { TraktApiFilters } from '~/services/trakt-client/api/trakt-api.filters';
 
 import type { Primitive, RecursiveRecord } from '~/utils/typescript.utils';
-
-import { BaseApiHeaders, ClientEndpoint } from '~/services/common/base-client';
 
 /**
  * Pagination data parsed from {@link TraktApiResponse} headers.

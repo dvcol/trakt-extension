@@ -1,9 +1,10 @@
+import { HttpMethod } from '@dvcol/base-http-client/utils/http';
+
 import type { TvdbStatus } from '~/models/tvdb/tvdb-entity.model';
 import type { TvdbLanguage } from '~/models/tvdb/tvdb-language.model';
 import type { TvdbMovieExtended, TvdbMovieShort } from '~/models/tvdb/tvdb-movie.model';
 
 import { TvdbClientEndpoint, type TvdbPaginatedData, type TvdbParamPagination } from '~/models/tvdb/tvdb-client.model';
-import { HttpMethod } from '~/utils/http.utils';
 
 /**
  * Movies Endpoint
