@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, type PropType, toRefs } from 'vue';
 
+import type { TraktApiIds } from '@dvcol/trakt-http-client/models';
 import type { TagLink } from '~/models/tag.model';
-import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';

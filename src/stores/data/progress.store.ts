@@ -2,8 +2,7 @@ import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
-import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
-import type { TraktShow } from '~/models/trakt/trakt-show.model';
+import type { TraktEpisode, TraktShow } from '@dvcol/trakt-http-client/models';
 
 import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
 import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-scroll.model';

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
-
-import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
-
-import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+import type {
+  TraktEpisodeExtended,
+  TraktSeasonExtended,
+  TraktShowExtended,
+} from '@dvcol/trakt-http-client/models';
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';

@@ -2,9 +2,11 @@
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktEpisodeExtended } from '~/models/trakt/trakt-episode.model';
-import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
-import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
+import type {
+  TraktEpisodeExtended,
+  TraktSeasonExtended,
+  TraktShowExtended,
+} from '@dvcol/trakt-http-client/models';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';

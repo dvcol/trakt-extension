@@ -1,16 +1,20 @@
 import type { BaseCacheOption } from '@dvcol/base-http-client';
-import type { NVirtualList, VirtualListInst } from 'naive-ui';
 
+import type {
+  TraktEpisode,
+  TraktList,
+  TraktMovie,
+  TraktPerson,
+  BaseTraktProgress,
+  BaseTraktProgressEpisode,
+  BaseTraktProgressSeason,
+  TraktSeason,
+  TraktShow,
+} from '@dvcol/trakt-http-client/models';
+import type { NVirtualList, VirtualListInst } from 'naive-ui';
 import type { Ref } from 'vue';
 import type { PosterItem } from '~/models/poster.model';
 import type { TagLink } from '~/models/tag.model';
-import type { TraktEpisode } from '~/models/trakt/trakt-episode.model';
-import type { TraktList } from '~/models/trakt/trakt-list.model';
-import type { TraktMovie } from '~/models/trakt/trakt-movie.model';
-import type { TraktPerson } from '~/models/trakt/trakt-people.model';
-import type { BaseTraktProgress, BaseTraktProgressEpisode, BaseTraktProgressSeason } from '~/models/trakt/trakt-progress.model';
-import type { TraktSeason } from '~/models/trakt/trakt-season.model';
-import type { TraktShow } from '~/models/trakt/trakt-show.model';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
 export type ScrollTo = Parameters<VirtualListInst['scrollTo']>[0];

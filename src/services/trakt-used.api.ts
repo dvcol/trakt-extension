@@ -1,13 +1,13 @@
-import { calendars } from '~/services/trakt-client/api/endpoints/calendar.endpoint';
-import { episodes } from '~/services/trakt-client/api/endpoints/episodes.endpoint';
-import { movies } from '~/services/trakt-client/api/endpoints/movies.endpoint';
-import { people } from '~/services/trakt-client/api/endpoints/people.endpoint';
-import { search } from '~/services/trakt-client/api/endpoints/search.endpoint';
-import { seasons } from '~/services/trakt-client/api/endpoints/seasons.endpoint';
-import { shows } from '~/services/trakt-client/api/endpoints/shows.endpoint';
-import { sync } from '~/services/trakt-client/api/endpoints/sync.endpoint';
-import { users } from '~/services/trakt-client/api/endpoints/users.endpoint';
-import { minimalTraktApi } from '~/services/trakt-client/api/trakt-api-minimal.endpoints';
+import { calendars } from '@dvcol/trakt-http-client/api/calendar';
+import { episodes } from '@dvcol/trakt-http-client/api/episodes';
+import { minimalTraktApi } from '@dvcol/trakt-http-client/api/minimal';
+import { movies } from '@dvcol/trakt-http-client/api/movies';
+import { people } from '@dvcol/trakt-http-client/api/people';
+import { search } from '@dvcol/trakt-http-client/api/search';
+import { seasons } from '@dvcol/trakt-http-client/api/seasons';
+import { shows } from '@dvcol/trakt-http-client/api/shows';
+import { sync } from '@dvcol/trakt-http-client/api/sync';
+import { users } from '@dvcol/trakt-http-client/api/users';
 
 export const traktUsedApi = {
   ...minimalTraktApi,

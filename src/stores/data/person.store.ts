@@ -2,7 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref } from 'vue';
 
-import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
+import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';

@@ -3,9 +3,8 @@ import { NFlex, NTimeline, NVirtualList } from 'naive-ui';
 
 import { ref, toRefs } from 'vue';
 
+import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { PropType, Ref, Transition } from 'vue';
-
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';

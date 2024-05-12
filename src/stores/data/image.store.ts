@@ -2,9 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, type Ref, ref } from 'vue';
 
-import type { TmdbConfiguration } from '~/models/tmdb/tmdb-configuration.model';
-
-import type { TmdbImage } from '~/models/tmdb/tmdb-image.model';
+import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/models';
 
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';

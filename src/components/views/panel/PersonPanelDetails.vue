@@ -2,8 +2,8 @@
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
+import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 import type { TagLink } from '~/models/tag.model';
-import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';

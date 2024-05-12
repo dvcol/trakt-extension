@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
+import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
 

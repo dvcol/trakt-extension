@@ -13,7 +13,7 @@ import { type Component, computed, defineProps, h, onActivated, ref } from 'vue'
 
 import { useRoute } from 'vue-router';
 
-import type { TraktSearchType } from '~/models/trakt/trakt-search.model';
+import type { TraktSearchType } from '@dvcol/trakt-http-client/models';
 
 import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';

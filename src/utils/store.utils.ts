@@ -1,7 +1,7 @@
 import { computed, onActivated, onDeactivated, onMounted, ref, type Ref, watch } from 'vue';
 
+import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { ListScrollSourceItemWithDate } from '~/components/common/list/use-list-scroll';
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';

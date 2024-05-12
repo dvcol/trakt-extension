@@ -1,8 +1,7 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
-import type { TraktHistory } from '~/models/trakt/trakt-history.model';
+import type { TraktClientPagination, TraktHistory } from '@dvcol/trakt-http-client/models';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';

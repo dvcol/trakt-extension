@@ -1,7 +1,6 @@
-import type { TmdbClientAuthentication } from '~/models/tmdb/tmdb-client.model';
-import type { TraktClientAuthentication } from '~/models/trakt/trakt-authentication.model';
-import type { TraktUserSettings } from '~/models/trakt/trakt-user.model';
-import type { TvdbClientAuthentication } from '~/models/tvdb/tvdb-client.model';
+import type { TmdbClientAuthentication } from '@dvcol/tmdb-http-client/models';
+import type { TraktClientAuthentication, TraktUserSettings } from '@dvcol/trakt-http-client/models';
+import type { TvdbClientAuthentication } from '@dvcol/tvdb-http-client/models';
 
 export type SettingsAuth = {
   trakt?: TraktClientAuthentication;

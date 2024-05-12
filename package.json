@@ -51,7 +51,10 @@
     "release:changelog": "extract-changelog-release > RELEASE.md"
   },
   "dependencies": {
-    "@dvcol/base-http-client": "^1.1.0",
+    "@dvcol/base-http-client": "^1.1.2",
+    "@dvcol/tmdb-http-client": "^1.1.1",
+    "@dvcol/trakt-http-client": "^1.2.0",
+    "@dvcol/tvdb-http-client": "^1.1.1",
     "@dvcol/web-extension-utils": "^2.3.4",
     "@vue/devtools": "^7.0.15",
     "naive-ui": "^2.38.1",

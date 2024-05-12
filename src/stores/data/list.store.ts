@@ -1,14 +1,15 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
 
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
-
-import type { TraktCollection } from '~/models/trakt/trakt-collection.model';
-import type { TraktFavoriteItem } from '~/models/trakt/trakt-favorite.model';
-import type { TraktApiIds } from '~/models/trakt/trakt-id.model';
-import type { TraktListItem } from '~/models/trakt/trakt-list.model';
-import type { TraktUser } from '~/models/trakt/trakt-user.model';
-import type { TraktWatchlist } from '~/models/trakt/trakt-watchlist.model';
+import type {
+  TraktClientPagination,
+  TraktCollection,
+  TraktFavoriteItem,
+  TraktApiIds,
+  TraktListItem,
+  TraktUser,
+  TraktWatchlist,
+} from '@dvcol/trakt-http-client/models';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';

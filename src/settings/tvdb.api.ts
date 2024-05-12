@@ -1,12 +1,14 @@
-import type { TvdbClientSettings } from '~/models/tvdb/tvdb-client.model';
+import { Config as TvdbConfig } from '@dvcol/tvdb-http-client/config';
+
+import type { TvdbClientSettings } from '@dvcol/tvdb-http-client/models';
 
 export const Config = {
   UserAgent: `${import.meta.env.PKG_NAME}/${import.meta.env.PKG_VERSION}`,
-  endpoint: 'https://api4.thetvdb.com',
+  endpoint: TvdbConfig.endpoint,
   version: 'v4',
   apiKey: import.meta.env.VITE_TVDB_API_KEY,
   /** token time-to-live (28 days) @see [documentation]{@link https://thetvdb.github.io/v4-api/#/Login/post_login} */
-  tokenTTL: 28 * 24 * 60 * 60 * 1000,
+  tokenTTL: TvdbConfig.tokenTTL,
 } as const;
 
 export const tvdbClientSettings: TvdbClientSettings = {

@@ -5,8 +5,8 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import { RouterLink, useRoute } from 'vue-router';
 
+import type { TraktEpisodeShort } from '@dvcol/trakt-http-client/models';
 import type { ShowProgress } from '~/models/list-scroll.model';
-import type { TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
 import type { ShowSeasons } from '~/stores/data/show.store';
 
 import ButtonLink from '~/components/common/buttons/ButtonLink.vue';

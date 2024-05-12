@@ -1,7 +1,7 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { TraktCalendarMovie, TraktCalendarShow } from '~/models/trakt/trakt-calendar.model';
+import type { TraktCalendarMovie, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 
 import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
 

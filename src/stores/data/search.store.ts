@@ -2,8 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { ref, watch } from 'vue';
 
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
-import type { TraktSearchResult, TraktSearchType } from '~/models/trakt/trakt-search.model';
+import type { TraktClientPagination, TraktSearchResult, TraktSearchType } from '@dvcol/trakt-http-client/models';
 
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 

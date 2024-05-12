@@ -2,43 +2,49 @@ import { type BaseCacheOption, type CacheResponse, getCachedFunction, type Typed
 
 import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
 
-import type { CancellablePromise } from '@dvcol/base-http-client/utils/fetch';
-import type { ProgressItem } from '~/models/progress.model';
-import type { TmdbApiResponse } from '~/models/tmdb/tmdb-client.model';
-import type { TraktAuthenticationApprove } from '~/models/trakt/trakt-authentication.model';
-import type { TraktCalendarQuery } from '~/models/trakt/trakt-calendar.model';
-import type { TraktApiResponse } from '~/models/trakt/trakt-client.model';
-import type { TraktCollection, TraktCollectionGetQuery, TraktCollectionRequest } from '~/models/trakt/trakt-collection.model';
-import type { TraktEpisodeExtended, TraktEpisodeShort } from '~/models/trakt/trakt-episode.model';
-import type { TraktFavoriteGetQuery, TraktFavoriteRequest } from '~/models/trakt/trakt-favorite.model';
-import type { TraktHistoryGetQuery, TraktHistoryRemovedRequest, TraktHistoryRequest } from '~/models/trakt/trakt-history.model';
+import { TmdbClient } from '@dvcol/tmdb-http-client';
+import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
+import { TvdbClient } from '@dvcol/tvdb-http-client';
 
+import type { CancellablePromise } from '@dvcol/base-http-client/utils/fetch';
+import type { TmdbApiResponse } from '@dvcol/tmdb-http-client/models';
 import type {
+  TraktApiResponse,
+  TraktAuthenticationApprove,
+  TraktCalendarQuery,
+  TraktCollection,
+  TraktCollectionGetQuery,
+  TraktCollectionProgress,
+  TraktCollectionRequest,
+  TraktEpisodeExtended,
+  TraktEpisodeShort,
+  TraktFavoriteGetQuery,
+  TraktFavoriteRequest,
+  TraktHistoryGetQuery,
+  TraktHistoryRemovedRequest,
+  TraktHistoryRequest,
   TraktList,
   TraktListItemsGetQuery,
+  TraktMovieExtended,
+  TraktPersonExtended,
+  TraktSearch,
+  TraktSeasonExtended,
+  TraktShowExtended,
+  TraktSyncRequest,
   TraktUserListItemAddedRequest,
   TraktUserListItemRemoveRequest,
-} from '~/models/trakt/trakt-list.model';
+  TraktWatched,
+  TraktWatchedProgress,
+  TraktWatchlistGetQuery,
+} from '@dvcol/trakt-http-client/models';
 
-import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
-import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
-import type { TraktCollectionProgress, TraktWatchedProgress } from '~/models/trakt/trakt-progress.model';
-import type { TraktSearch } from '~/models/trakt/trakt-search.model';
-import type { TraktSeasonExtended } from '~/models/trakt/trakt-season.model';
-import type { TraktShowExtended } from '~/models/trakt/trakt-show.model';
-import type { TraktSyncRequest } from '~/models/trakt/trakt-sync.model';
-import type { TraktWatched } from '~/models/trakt/trakt-watched.model';
-import type { TraktWatchlistGetQuery } from '~/models/trakt/trakt-watchlist.model';
+import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
+import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
-import type { TvdbApiResponse } from '~/models/tvdb/tvdb-client.model';
 
 import { LoadingBarService } from '~/services/loading-bar.service';
-import { TmdbClient } from '~/services/tmdb-client/clients/tmdb-client';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
-import { isResponseOk } from '~/services/trakt-client/clients/base-trakt-client';
-import { TraktClient } from '~/services/trakt-client/clients/trakt-client';
 import { traktUsedApi } from '~/services/trakt-used.api';
-import { TvdbClient } from '~/services/tvdb-client/clients/tvdb-client';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
 import { tvdbClientSettings } from '~/settings/tvdb.api';

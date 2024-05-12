@@ -1,13 +1,13 @@
+import { TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
 import { computed, ref } from 'vue';
 
-import type { Ref } from 'vue';
+import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 
-import type { TraktClientPagination } from '~/models/trakt/trakt-client.model';
+import type { Ref } from 'vue';
 
 import type { ImageQuery } from '~/stores/data/image.store';
 
 import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
-import { TraktEpisodeType, type TraktEpisodeTypes } from '~/models/trakt/trakt-episode.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils';
 

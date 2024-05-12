@@ -1,4 +1,6 @@
-import type { TraktClientSettings } from '~/models/trakt/trakt-client.model';
+import { Config as TraktConfig } from '@dvcol/trakt-http-client/config';
+
+import type { TraktClientSettings } from '@dvcol/trakt-http-client/models';
 
 import { WebConfig } from '~/settings/web.config';
 import { chromeRuntimeId } from '~/utils/browser/browser.utils';
@@ -10,14 +12,14 @@ export const Config = {
 export const Production = {
   ID: import.meta.env.VITE_TRAKT_PRODUCTION_ID,
   Secret: import.meta.env.VITE_TRAKT_PRODUCTION_SECRET,
-  TraktEndpoint: 'https://api.trakt.tv',
+  TraktEndpoint: TraktConfig.endpoint.Production,
   RedirectionUrl: `chrome-extension://${chromeRuntimeId}/views/options/index.html`,
 } as const;
 
 export const Staging = {
   ID: import.meta.env.VITE_TRAKT_STAGING_ID,
   Secret: import.meta.env.VITE_TRAKT_STAGING_SECRET,
-  TraktEndpoint: 'https://api-staging.trakt.tv',
+  TraktEndpoint: TraktConfig.endpoint.Staging,
   RedirectionUrl: `chrome-extension://${chromeRuntimeId}/views/options/index.html`,
 } as const;
 

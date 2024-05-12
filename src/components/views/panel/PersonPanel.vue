@@ -2,7 +2,7 @@
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 
-import type { TraktPersonExtended } from '~/models/trakt/trakt-people.model';
+import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';

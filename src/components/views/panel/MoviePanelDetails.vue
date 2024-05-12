@@ -2,7 +2,7 @@
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktMovieExtended } from '~/models/trakt/trakt-movie.model';
+import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';

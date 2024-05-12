@@ -1,10 +1,10 @@
-import { configuration } from '~/services/tmdb-client/api/endpoints/v3/configuration.endpoint';
-import { episodes } from '~/services/tmdb-client/api/endpoints/v3/episodes.endpoint';
-import { movies } from '~/services/tmdb-client/api/endpoints/v3/movies.endpoint';
-import { people } from '~/services/tmdb-client/api/endpoints/v3/people.endpoint';
-import { seasons } from '~/services/tmdb-client/api/endpoints/v3/sesons.endpoint';
-import { shows } from '~/services/tmdb-client/api/endpoints/v3/shows.endpoint';
-import { minimalTmdbApi } from '~/services/tmdb-client/api/tmdb-minimal-api.endpoints';
+import { minimalTmdbApi } from '@dvcol/tmdb-http-client/api/minimal';
+import { configuration } from '@dvcol/tmdb-http-client/api/v3/configuration';
+import { episodes } from '@dvcol/tmdb-http-client/api/v3/episodes';
+import { movies } from '@dvcol/tmdb-http-client/api/v3/movies';
+import { people } from '@dvcol/tmdb-http-client/api/v3/people';
+import { seasons } from '@dvcol/tmdb-http-client/api/v3/seasons';
+import { shows } from '@dvcol/tmdb-http-client/api/v3/shows';
 
 export const tmdbUsedApi = {
   ...minimalTmdbApi,
