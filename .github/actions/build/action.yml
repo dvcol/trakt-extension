@@ -6,13 +6,6 @@ inputs:
     description: Build script
     default: 'build'
 
-  node_version:
-    description: Pnpm version to use
-    required: true
-  pnpm_version:
-    description: Node version to use
-    required: true
-
   trakt_production_id:
     description: Trakt production ID
     required: true
@@ -44,9 +37,6 @@ runs:
   steps:
     - name: 🧱 Install
       uses: ./.github/actions/install
-      with:
-        node_version: ${{ inputs.node_version }}
-        pnpm_version: ${{ inputs.pnpm_version }}
 
     - name: 🚧 Build sources
       shell: bash

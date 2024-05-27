@@ -3,10 +3,11 @@ description: Install and build the repo
 
 inputs:
   node_version:
-    description: Pnpm version to use
-    required: true
-  pnpm_version:
     description: Node version to use
+    required: false
+    default: 22.x
+  pnpm_version:
+    description: Pnpm version to use
     required: true
 
 runs:
