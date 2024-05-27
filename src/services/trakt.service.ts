@@ -52,7 +52,7 @@ import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
-import { ChromeCacheStore } from '~/utils/cache.utils';
+import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
 
 export const shouldEvict = (date?: string | number | Date, cache?: CacheResponse<unknown>): boolean => {
   // no cache skip
@@ -95,15 +95,15 @@ export class TraktService {
   static {
     this.caches = {
       trakt: new ChromeCacheStore<TraktApiResponse>({
-        prefix: 'trakt-cache',
+        prefix: CachePrefix.Trakt,
         retention: CacheRetention.Week,
       }),
       tvdb: new ChromeCacheStore<TvdbApiResponse>({
-        prefix: 'tvdb-cache',
+        prefix: CachePrefix.Tvdb,
         retention: CacheRetention.Year,
       }),
       tmdb: new ChromeCacheStore<TmdbApiResponse>({
-        prefix: 'tmdb-cache',
+        prefix: CachePrefix.Tmdb,
         retention: CacheRetention.Year,
       }),
     };

@@ -22,6 +22,14 @@ const reverseFilterObject = (object: Record<string, unknown>, regex: string | Re
   Object.fromEntries(Object.entries(object).filter(([key]) => !(typeof regex === 'string' ? new RegExp(regex) : regex).test(key)));
 
 /**
+ * This function is used to get the total size of the local storage.
+ * @param storage The storage area to get the size of.
+ */
+const getLocalStorageSize = (storage = window.localStorage) => {
+  return Object.entries(storage).reduce((acc, [key, value]) => acc + key.length + value.length, 0);
+};
+
+/**
  * This function is used to wrap the storage areas to provide type inference and a more convenient interface.
  * @param area The storage area to wrap.
  * @param name The name of the storage area.
@@ -53,6 +61,7 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string) =
 
     window.trakt = { ...window.trakt, [name]: storage };
     return {
+      getBytesInUse: async (): Promise<number> => getLocalStorageSize(window.localStorage),
       getAll: async <T>(regex?: string | RegExp): Promise<T> => (regex ? filterObject(storage.values, regex) : storage.values) as T,
       get: async <T>(key: string): Promise<T> => storage.values[key] as T,
       set: async <T>(key: string, value: T): Promise<void> => storage.setItem(key, value),
@@ -64,6 +73,7 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string) =
     };
   }
   return {
+    getBytesInUse: (): Promise<number> => area.getBytesInUse(),
     getAll: <T>(regex?: string | RegExp): Promise<T> => area.get().then(data => (regex ? filterObject(data, regex) : data) as T),
     get: <T>(key: string): Promise<T> => area.get(key).then(({ [key]: value }) => value),
     set: <T>(key: string, value: T): Promise<void> => area.set({ [key]: value }),
@@ -91,4 +101,31 @@ export const storage = {
   sync: storageWrapper(syncStorage, 'sync'),
   local: storageWrapper(localStorage, 'local'),
   session: storageWrapper(sessionStorage, 'session'),
+};
+
+export const defaultMaxLocalStorageSize = 10485760;
+
+export const localCache: <T>(key: string, value: T, regex?: string | RegExp) => Promise<void> = async (key, value, regex) => {
+  let inUse = await storage.local.getBytesInUse();
+  const max = globalThis?.chrome?.storage?.local.QUOTA_BYTES ?? defaultMaxLocalStorageSize;
+  const payload = JSON.stringify(value).length;
+
+  if (payload > max) {
+    console.warn('Payload is too large to store in local storage.', { payload, max, inUse });
+    return Promise.resolve();
+  }
+
+  if (inUse + payload >= max) {
+    console.warn('Local storage is full, clearing cache.', { payload, max, inUse });
+    if (regex) await storage.local.removeAll(regex);
+    else await storage.local.clear();
+  }
+
+  inUse = await storage.local.getBytesInUse();
+  if (inUse + payload >= max) {
+    console.warn('Local storage is still full, skipping cache.', { payload, max, inUse });
+    return Promise.resolve();
+  }
+
+  return storage.local.set(key, value);
 };

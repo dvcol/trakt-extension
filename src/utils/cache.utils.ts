@@ -3,7 +3,7 @@ import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
 import type { ResponseOrTypedResponse, TypedResponse } from '@dvcol/base-http-client';
 import type { CacheStore, CacheStoreEntity } from '@dvcol/base-http-client/utils/cache';
 
-import { storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
+import { localCache, storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
 
 type FlatResponse<T extends Response = ResponseOrTypedResponse> = Record<keyof T, unknown>;
 
@@ -53,7 +53,10 @@ export class ChromeCacheStore<T> implements CacheStore<T> {
   }) {
     this.evictOnError = evictOnError;
     this.retention = retention;
-    this.store = store;
+    this.store = {
+      ...store,
+      set: <V>(key: string, value: V) => localCache(key, value, this.prefix),
+    };
     this.prefix = prefix;
   }
 
@@ -83,3 +86,9 @@ export class ChromeCacheStore<T> implements CacheStore<T> {
     return this.store.removeAll(`^${this.prefix}:${regex}`);
   }
 }
+
+export const CachePrefix = {
+  Trakt: 'trakt-cache' as const,
+  Tmdb: 'tmdb-cache' as const,
+  Tvdb: 'tvdb-cache' as const,
+} as const;

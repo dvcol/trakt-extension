@@ -6,8 +6,9 @@ import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/model
 
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
-import { storage } from '~/utils/browser/browser-storage.utils';
+import { localCache, storage } from '~/utils/browser/browser-storage.utils';
 import { getShortLocale } from '~/utils/browser/browser.utils';
+import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { arrayMax, findClosestMatch } from '~/utils/math.utils';
 
@@ -84,11 +85,11 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const saveState = debounce(
     (_images = images) =>
       Promise.all([
-        storage.local.set(ImageStoreConstants.LocalMovie, _images.movie),
-        storage.local.set(ImageStoreConstants.LocalShow, _images.show),
-        storage.local.set(ImageStoreConstants.LocalSeason, _images.season),
-        storage.local.set(ImageStoreConstants.LocalEpisode, _images.episode),
-        storage.local.set(ImageStoreConstants.LocalPerson, _images.person),
+        localCache(ImageStoreConstants.LocalMovie, _images.movie, CachePrefix.Tmdb),
+        localCache(ImageStoreConstants.LocalShow, _images.show, CachePrefix.Tmdb),
+        localCache(ImageStoreConstants.LocalSeason, _images.season, CachePrefix.Tmdb),
+        localCache(ImageStoreConstants.LocalEpisode, _images.episode, CachePrefix.Tmdb),
+        localCache(ImageStoreConstants.LocalPerson, _images.person, CachePrefix.Tmdb),
       ]),
     1000,
   );
