@@ -16,7 +16,7 @@ const copyIndexHtml = async (view: string) => {
   const data = fs.readFileSync(resolveParent(`src/views/${view}/index.html`), 'utf-8').replace(
     '<script type="module" src="./main.ts"></script>',
     `<script type="module" src="http://localhost:3303/@vite/client"></script>
-    <script type="module" src="http://localhost:3303/views/popup/main.ts"></script>`,
+    <script type="module" src="http://localhost:3303/views/${view}/main.ts"></script>`,
   );
   fs.writeFileSync(resolveParent(`dist/views/${view}/index.html`), data, 'utf-8');
   console.info(`Stubbing '${view}' to '${getDirName()}/dist/views/${view}/index.html'`);
