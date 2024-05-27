@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/dvcol/trakt-extension/compare/v1.8.0...v1.9.0) (2024-05-27)
+
+
+### Features
+
+* **cache:** adds cache eviction when nearing capacity ([79585f6](https://github.com/dvcol/trakt-extension/commit/79585f6a5169eeb7e06627a02d53718bb1a68e14))
+* **deps:** extract client to dedicated libs ([499db06](https://github.com/dvcol/trakt-extension/commit/499db06a835f99a91895fee9ac1365d3442f77f4))
+
+
+### Bug Fixes
+
+* **scripts:** fix typo in prepare script ([2eea1ff](https://github.com/dvcol/trakt-extension/commit/2eea1ff3477f57cf99e1f93d5fdfee4314109fb6))
+
 ## [1.8.0](https://github.com/dvcol/trakt-extension/compare/v1.7.2...v1.8.0) (2024-04-26)
 
 
