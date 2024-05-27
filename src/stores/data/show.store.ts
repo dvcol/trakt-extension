@@ -4,12 +4,12 @@ import { computed, reactive, watch } from 'vue';
 
 import type { BaseCacheOption } from '@dvcol/base-http-client';
 import type {
+  TraktCollectionProgress,
   TraktEpisodeExtended,
   TraktEpisodeShort,
-  TraktCollectionProgress,
-  TraktWatchedProgress,
   TraktSeasonExtended,
   TraktShowExtended,
+  TraktWatchedProgress,
 } from '@dvcol/trakt-http-client/models';
 
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
@@ -31,6 +31,26 @@ type ShowCollectionProgressDictionary = Record<string, TraktCollectionProgress>;
 type LoadingDictionary = Record<string, boolean>;
 type SeasonEpisodesLoadingDictionary = Record<string, Record<number, boolean>>;
 type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boolean>>>;
+
+type ErrorCount = { last: Date; count: number };
+type ErrorDictionary = Record<string, ErrorCount>;
+type SeasonEpisodesErrorDictionary = Record<string, Record<number, ErrorCount>>;
+type EpisodeErrorDictionary = Record<string, Record<number, Record<number, ErrorCount>>>;
+
+const shouldRetry = (
+  errorCount?: ErrorCount,
+  { retryCount = 2, retryTime = 10 * 1000, error }: { retryCount?: number; retryTime?: number; error?: unknown } = {},
+) => {
+  if (!errorCount) return true;
+  if (errorCount.count < retryCount || Date.now() > errorCount.last.getTime() + retryTime) return true;
+  NotificationService.error(`Error threshold exceeded, throttling requests.`, {
+    count: errorCount.count,
+    threshold: retryCount,
+    last: errorCount.last.toLocaleString(),
+    error,
+  });
+  throw new Error('Error threshold exceeded, throttling requests.');
+};
 
 const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
   let completed = 0;
@@ -81,12 +101,22 @@ export const useShowStore = defineStore('data.show', () => {
   const showWatchedProgressLoading = reactive<LoadingDictionary>({});
   const showCollectionProgressLoading = reactive<LoadingDictionary>({});
 
+  const showsError = reactive<ErrorDictionary>({});
+  const showsSeasonsError = reactive<ErrorDictionary>({});
+  const showsSeasonEpisodesError = reactive<SeasonEpisodesErrorDictionary>({});
+  const showsEpisodesError = reactive<EpisodeErrorDictionary>({});
+  const showWatchedProgressError = reactive<ErrorDictionary>({});
+  const showCollectionProgressError = reactive<ErrorDictionary>({});
+
   const clearProgressState = () => {
     clearProxy(showsWatchedProgress);
     clearProxy(showsCollectionProgress);
 
     clearProxy(showWatchedProgressLoading);
     clearProxy(showCollectionProgressLoading);
+
+    clearProxy(showWatchedProgressError);
+    clearProxy(showCollectionProgressError);
   };
 
   const clearState = () => {
@@ -99,6 +129,12 @@ export const useShowStore = defineStore('data.show', () => {
     clearProxy(showsSeasonsLoading);
     clearProxy(showsSeasonEpisodesLoading);
     clearProxy(showsEpisodesLoading);
+
+    clearProxy(showsError);
+    clearProxy(showsSeasonsError);
+    clearProxy(showsSeasonEpisodesError);
+    clearProxy(showsEpisodesError);
+
     clearProgressState();
   };
 
@@ -113,9 +149,11 @@ export const useShowStore = defineStore('data.show', () => {
     showsLoading[id] = true;
     try {
       shows[id] = await TraktService.show.summary(id);
+      delete showsError[id];
     } catch (e) {
       logger.error('Failed to fetch show', id);
       NotificationService.error(`Failed to fetch show '${id}'.`, e);
+      showsError[id] = { last: new Date(), count: (showsError[id]?.count ?? 0) + 1 };
       throw e;
     } finally {
       showsLoading[id] = false;
@@ -133,8 +171,10 @@ export const useShowStore = defineStore('data.show', () => {
     showWatchedProgressLoading[id] = true;
     try {
       showsWatchedProgress[id] = await TraktService.progress.show.watched(id, cacheOption);
+      delete showWatchedProgressError[id];
     } catch (e) {
       logger.error('Failed to fetch show progress', id);
+      showWatchedProgressError[id] = { last: new Date(), count: (showWatchedProgressError[id]?.count ?? 0) + 1 };
       throw e;
     } finally {
       showWatchedProgressLoading[id] = false;
@@ -152,8 +192,10 @@ export const useShowStore = defineStore('data.show', () => {
     showCollectionProgressLoading[id] = true;
     try {
       showsCollectionProgress[id] = await TraktService.progress.show.collection(id, cacheOption);
+      delete showCollectionProgressError[id];
     } catch (e) {
       logger.error('Failed to fetch show collection progress', id);
+      showCollectionProgressError[id] = { last: new Date(), count: (showCollectionProgressError[id]?.count ?? 0) + 1 };
       throw e;
     } finally {
       showCollectionProgressLoading[id] = false;
@@ -175,9 +217,11 @@ export const useShowStore = defineStore('data.show', () => {
         acc[season.number] = season;
         return acc;
       }, {});
+      delete showsSeasonsError[id];
     } catch (e) {
       logger.error('Failed to fetch show seasons', id);
       NotificationService.error(`Failed to fetch show seasons '${id}'.`, e);
+      showsSeasonsError[id] = { last: new Date(), count: (showsSeasonsError[id]?.count ?? 0) + 1 };
       throw e;
     } finally {
       showsSeasonsLoading[id] = false;
@@ -198,9 +242,14 @@ export const useShowStore = defineStore('data.show', () => {
       const episodes = await TraktService.show.season(id, season);
       if (!showsSeasonEpisodes[id]) showsSeasonEpisodes[id] = {};
       showsSeasonEpisodes[id][season] = episodes;
+      delete showsSeasonEpisodesError[id]?.[season];
     } catch (e) {
       logger.error('Failed to fetch show season episodes', id, season);
       NotificationService.error(`Failed to fetch show season episodes '${id}', season '${season}'.`, e);
+      showsSeasonEpisodesError[id] = {
+        ...showsSeasonEpisodesError[id],
+        [season]: { last: new Date(), count: (showsSeasonEpisodesError[id]?.[season]?.count ?? 0) + 1 },
+      };
       throw e;
     } finally {
       showsSeasonEpisodesLoading[id][season] = false;
@@ -222,9 +271,17 @@ export const useShowStore = defineStore('data.show', () => {
       if (!showsEpisodes[id]) showsEpisodes[id] = {};
       if (!showsEpisodes[id][season]) showsEpisodes[id][season] = {};
       showsEpisodes[id][season][episode] = await TraktService.show.episode({ id, season, episode });
+      delete showsEpisodesError[id]?.[season]?.[episode];
     } catch (e) {
       logger.error('Failed to fetch show episodes', id, season, episode);
       NotificationService.error(`Failed to fetch show episodes '${id}', season '${season}', episode '${episode}'.`, e);
+      showsEpisodesError[id] = {
+        ...showsEpisodesError[id],
+        [season]: {
+          ...showsEpisodesError[id]?.[season],
+          [episode]: { last: new Date(), count: (showsEpisodesError[id]?.[season]?.[episode]?.count ?? 0) + 1 },
+        },
+      };
       throw e;
     } finally {
       showsEpisodesLoading[id][season][episode] = false;
@@ -262,7 +319,11 @@ export const useShowStore = defineStore('data.show', () => {
 
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
   const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption) => {
-    if (!showsWatchedProgress[id.toString()] && !showWatchedProgressLoading[id.toString()]) {
+    if (
+      !showsWatchedProgress[id.toString()] &&
+      !showWatchedProgressLoading[id.toString()] &&
+      shouldRetry(showWatchedProgressError[id.toString()], { error: `Watched Progress for ${id.toString()}` })
+    ) {
       fetchShowProgress(id.toString(), cacheOptions).catch(logger.error);
     }
     return computed(() => {
@@ -274,8 +335,13 @@ export const useShowStore = defineStore('data.show', () => {
 
   const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
   const getShowCollectionProgress = (id: number | string) => {
-    if (!showsCollectionProgress[id.toString()] && !showCollectionProgressLoading[id.toString()])
+    if (
+      !showsCollectionProgress[id.toString()] &&
+      !showCollectionProgressLoading[id.toString()] &&
+      shouldRetry(showCollectionProgressError[id.toString()], { error: `Collection Progress for ${id.toString()}` })
+    ) {
       fetchShowCollectionProgress(id.toString()).catch(logger.error);
+    }
     return computed(() => {
       const progress = showsCollectionProgress[id.toString()];
       if (!progress) return undefined;
