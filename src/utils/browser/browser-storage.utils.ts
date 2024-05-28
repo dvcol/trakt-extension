@@ -24,9 +24,10 @@ const reverseFilterObject = (object: Record<string, unknown>, regex: string | Re
 /**
  * This function is used to get the total size of the local storage.
  * @param storage The storage area to get the size of.
+ * @param encoder The encoder to use to get the size of the keys and values.
  */
-const getLocalStorageSize = (storage = window.localStorage) => {
-  return Object.entries(storage).reduce((acc, [key, value]) => acc + key.length + value.length, 0);
+const getLocalStorageSize = (storage = window.localStorage, encoder = new TextEncoder()) => {
+  return Object.entries(storage).reduce((acc, [key, value]) => acc + encoder.encode(key).length + encoder.encode(value).length, 0);
 };
 
 /**
@@ -107,8 +108,11 @@ export const defaultMaxLocalStorageSize = 10485760;
 
 export const localCache: <T>(key: string, value: T, regex?: string | RegExp) => Promise<void> = async (key, value, regex) => {
   let inUse = await storage.local.getBytesInUse();
+
   const max = globalThis?.chrome?.storage?.local.QUOTA_BYTES ?? defaultMaxLocalStorageSize;
-  const payload = JSON.stringify(value).length;
+
+  const encoder = new TextEncoder();
+  const payload = encoder.encode(JSON.stringify(value)).length;
 
   if (payload > max) {
     console.warn('Payload is too large to store in local storage.', { payload, max, inUse });
