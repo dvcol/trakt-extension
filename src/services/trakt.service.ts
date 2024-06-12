@@ -325,7 +325,8 @@ export class TraktService {
   }
 
   private static cachedProgress = getCachedFunction(
-    async () => {
+    // @ts-expect-error -- CancellablePromise extends promise
+    async (): CancellablePromise<TypedResponse<ProgressItem[]>> => {
       const response = await fetch('https://trakt.tv/dashboard/on_deck', {
         credentials: 'include',
       });
