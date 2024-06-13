@@ -13,7 +13,7 @@ import {
   useExtensionSettingsStore,
   useExtensionSettingsStoreRefs,
 } from '~/stores/settings/extension.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'tabs');
 

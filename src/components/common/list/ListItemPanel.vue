@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { deCapitalise } from '@dvcol/common-utils/common/string';
 import {
   NEllipsis,
   NFlex,
@@ -17,8 +18,7 @@ import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.mod
 
 import { useShowStore } from '~/stores/data/show.store';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { useI18n } from '~/utils';
-import { deCapitalise } from '~/utils/string.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('list', 'item', 'panel');
 

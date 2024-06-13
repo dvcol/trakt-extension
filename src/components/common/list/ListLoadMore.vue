@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NButton } from 'naive-ui';
 
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('list', 'more');
 

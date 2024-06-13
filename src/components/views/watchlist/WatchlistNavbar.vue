@@ -16,7 +16,7 @@ import {
   useListStoreRefs,
 } from '~/stores/data/list.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'list');

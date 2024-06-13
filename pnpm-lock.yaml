@@ -9,20 +9,23 @@ importers:
   .:
     dependencies:
       '@dvcol/base-http-client':
-        specifier: ^1.4.2
-        version: 1.4.2
+        specifier: ^1.5.1
+        version: 1.5.1
+      '@dvcol/common-utils':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@dvcol/tmdb-http-client':
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.3
+        version: 1.1.3
       '@dvcol/trakt-http-client':
-        specifier: ^1.3.3
-        version: 1.3.3
+        specifier: ^1.3.5
+        version: 1.3.5
       '@dvcol/tvdb-http-client':
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.3
+        version: 1.1.3
       '@dvcol/web-extension-utils':
-        specifier: ^2.3.4
-        version: 2.3.4
+        specifier: ^3.0.1
+        version: 3.0.1
       '@vue/devtools':
         specifier: ^7.0.15
         version: 7.0.15(rollup@4.8.0)(vite@5.0.10(@types/node@20.5.3)(sass@1.66.1)(sugarss@2.0.0))(vue@3.4.14(typescript@5.4.2))
@@ -47,7 +50,7 @@ importers:
         version: 19.0.0
       '@dvcol/eslint-plugin-presets':
         specifier: ^1.3.10
-        version: 1.3.10(@typescript-eslint/eslint-plugin@7.0.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2))(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(@vue/eslint-config-prettier@9.0.0(eslint@8.56.0)(prettier@3.1.1))(@vue/eslint-config-typescript@12.0.0(eslint-plugin-vue@9.19.2(eslint@8.56.0))(eslint@8.56.0)(typescript@5.4.2))(eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.28.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0))(eslint@8.56.0))(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint-plugin-eslint-comments@3.2.0(eslint@8.56.0))(eslint-plugin-html@8.0.0)(eslint-plugin-import@2.28.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0))(eslint-plugin-jsonc@2.9.0(eslint@8.56.0))(eslint-plugin-markdown@3.0.1(eslint@8.56.0))(eslint-plugin-prettier@5.1.2(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint@8.56.0)(prettier@3.1.1))(eslint-plugin-vitest@0.4.0(@typescript-eslint/eslint-plugin@7.0.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2)(vitest@1.1.0(@types/node@20.5.3)(jsdom@24.0.0)(sass@1.66.1)(sugarss@2.0.0)))(eslint-plugin-vue@9.19.2(eslint@8.56.0))(eslint-plugin-vuejs-accessibility@2.2.0(eslint@8.56.0))(eslint-plugin-yml@1.5.0(eslint@8.56.0))(eslint@8.56.0)(jsonc-eslint-parser@2.2.0)(vue@3.4.14(typescript@5.4.2))(yaml-eslint-parser@1.2.0)
+        version: 1.3.10(h5hhktwfy3k6uh2elkfpzzc7w4)
       '@dvcol/stylelint-plugin-presets':
         specifier: ^2.1.2
         version: 2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.4.2))
@@ -455,8 +458,12 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@dvcol/base-http-client@1.4.2':
-    resolution: {integrity: sha512-RAohA6jys5iG0uyMJTgMoXhwir3dTwgDH6iu2N4NaKRAKAiIFDDsz71rLlpXb1I0039eKrPdCqTXhKhzWfSxlg==}
+  '@dvcol/base-http-client@1.5.1':
+    resolution: {integrity: sha512-N/BEP3WVUDzZt4v/wpSfzyl9VRfXxw/WDYXb63/aXd1stkLWvnnmVJ+BeCfiW9foyBMZNOPiCs+syTguaRNWbw==}
+    engines: {node: '>=20', pnpm: '>= 8'}
+
+  '@dvcol/common-utils@1.2.2':
+    resolution: {integrity: sha512-7fDxYpYlEfLuwMoDv1/RW33k4aa7CYmJ/TgfW9qgNrgPH9qYoQ8zj9zWyhiQ9Ra6LC3kjRpUXSVgbgzN+isIdA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/eslint-plugin-presets@1.3.10':
@@ -555,20 +562,20 @@ packages:
       postcss-scss:
         optional: true
 
-  '@dvcol/tmdb-http-client@1.1.2':
-    resolution: {integrity: sha512-0gj9L5W3y8NsOxnSDxFhu+BGQQwXCR6zsuMM1xxmmhOBJQoXvHvq/UZuC4x8idwMy2bogHez+FPoWvLuPj1BnQ==}
+  '@dvcol/tmdb-http-client@1.1.3':
+    resolution: {integrity: sha512-e5JAwWoPhYBhS1cFALwqmZsJ5u14pievgh9dwz8Vw6tmnXUgIfiVyLPlgmXRklNLoYsSKaP0fWCqQHG68MeEiA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/trakt-http-client@1.3.3':
-    resolution: {integrity: sha512-tHHNBYoJxUAyaAiNkFhfzRfR6WIxy+rbtPhsEbmzM7gqbgfoFcoaBH7I55+f/Xxag/e75Jj4wCKJ+dAgdFJggA==}
+  '@dvcol/trakt-http-client@1.3.5':
+    resolution: {integrity: sha512-eLQ5WodQqqWlWKaibPLHBgKoAA+azOvdxJn1dDCWutjNoWbPv8m/uV/iEUm6sITPKX4xAIb8qGj2sWjv1AY4GA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/tvdb-http-client@1.1.2':
-    resolution: {integrity: sha512-LGCCbJ03Y4Xvg2r9I80DC8tDZQseJ2wOTHqRim0WTIWp6yt5IvNXTlLE7jU9krL2i9HCBnQR2ArJE4R4fp4khQ==}
+  '@dvcol/tvdb-http-client@1.1.3':
+    resolution: {integrity: sha512-FZkZrb/VqIABRugH+aLlKBDObtWFUgNazolY4BjHy7WPAjLRdw2sv75gqA8mxP9mO3wQ8Ikk+Gs6OASDQnO/gg==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/web-extension-utils@2.3.4':
-    resolution: {integrity: sha512-u/A2szxGRhvX4JHrQ8K1hklISU1KqDD8bIjvCjhIGOVq04fSudscUccM6yzVQ3fGOa3ycFBiqLh4obJ58FL0hA==}
+  '@dvcol/web-extension-utils@3.0.1':
+    resolution: {integrity: sha512-vVff1sf+UbnA+oD9cMePyhDZjLM4Oj5SmSd3FfFPSvXy3tocCZf11QIqt9wphHdRbo3aYQ8eVhjnJmslwenPNQ==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
 
   '@electron/get@2.0.3':
@@ -4606,8 +4613,8 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
-  rxjs@7.8.0:
-    resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}
+  rxjs@7.8.1:
+    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
 
   safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
@@ -6031,10 +6038,14 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.0.15
 
-  '@dvcol/base-http-client@1.4.2': {}
+  '@dvcol/base-http-client@1.5.1':
+    dependencies:
+      '@dvcol/common-utils': 1.2.2
 
-  ? '@dvcol/eslint-plugin-presets@1.3.10(@typescript-eslint/eslint-plugin@7.0.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2))(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(@vue/eslint-config-prettier@9.0.0(eslint@8.56.0)(prettier@3.1.1))(@vue/eslint-config-typescript@12.0.0(eslint-plugin-vue@9.19.2(eslint@8.56.0))(eslint@8.56.0)(typescript@5.4.2))(eslint-config-airbnb-base@15.0.0(eslint-plugin-import@2.28.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0))(eslint@8.56.0))(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint-plugin-eslint-comments@3.2.0(eslint@8.56.0))(eslint-plugin-html@8.0.0)(eslint-plugin-import@2.28.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0))(eslint-plugin-jsonc@2.9.0(eslint@8.56.0))(eslint-plugin-markdown@3.0.1(eslint@8.56.0))(eslint-plugin-prettier@5.1.2(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint@8.56.0)(prettier@3.1.1))(eslint-plugin-vitest@0.4.0(@typescript-eslint/eslint-plugin@7.0.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2)(vitest@1.1.0(@types/node@20.5.3)(jsdom@24.0.0)(sass@1.66.1)(sugarss@2.0.0)))(eslint-plugin-vue@9.19.2(eslint@8.56.0))(eslint-plugin-vuejs-accessibility@2.2.0(eslint@8.56.0))(eslint-plugin-yml@1.5.0(eslint@8.56.0))(eslint@8.56.0)(jsonc-eslint-parser@2.2.0)(vue@3.4.14(typescript@5.4.2))(yaml-eslint-parser@1.2.0)'
-  : dependencies:
+  '@dvcol/common-utils@1.2.2': {}
+
+  '@dvcol/eslint-plugin-presets@1.3.10(h5hhktwfy3k6uh2elkfpzzc7w4)':
+    dependencies:
       chalk: 4.1.2
       dash-ast: 2.0.1
       eslint: 8.56.0
@@ -6087,23 +6098,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dvcol/tmdb-http-client@1.1.2':
+  '@dvcol/tmdb-http-client@1.1.3':
     dependencies:
-      '@dvcol/base-http-client': 1.4.2
+      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/common-utils': 1.2.2
 
-  '@dvcol/trakt-http-client@1.3.3':
+  '@dvcol/trakt-http-client@1.3.5':
     dependencies:
-      '@dvcol/base-http-client': 1.4.2
+      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/common-utils': 1.2.2
 
-  '@dvcol/tvdb-http-client@1.1.2':
+  '@dvcol/tvdb-http-client@1.1.3':
     dependencies:
-      '@dvcol/base-http-client': 1.4.2
+      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/common-utils': 1.2.2
 
-  '@dvcol/web-extension-utils@2.3.4':
+  '@dvcol/web-extension-utils@3.0.1':
     dependencies:
+      '@dvcol/common-utils': 1.2.2
       fast-glob: 3.3.2
-      fs-extra: 11.1.1
-      rxjs: 7.8.0
+      fs-extra: 11.2.0
+      rxjs: 7.8.1
 
   '@electron/get@2.0.3':
     dependencies:
@@ -10487,7 +10502,7 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  rxjs@7.8.0:
+  rxjs@7.8.1:
     dependencies:
       tslib: 2.6.2
 

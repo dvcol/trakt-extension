@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { computed, type PropType, toRefs } from 'vue';
 
 import type {
@@ -9,8 +10,7 @@ import type {
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { useI18n } from '~/utils';
-import { deCapitalise } from '~/utils/string.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   episode: {

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { capitalizeEachWord } from '@dvcol/common-utils/common/string';
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
@@ -14,8 +15,7 @@ import IconWikipedia from '~/components/icons/IconWikipedia.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { useI18n } from '~/utils';
-import { capitalizeEachWord } from '~/utils/string.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   person: {

@@ -9,7 +9,7 @@ import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
 import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings');
 

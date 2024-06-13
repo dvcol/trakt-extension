@@ -1,7 +1,7 @@
-import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+import { CacheRetention } from '@dvcol/common-utils/common/cache';
 
 import type { ResponseOrTypedResponse, TypedResponse } from '@dvcol/base-http-client';
-import type { CacheStore, CacheStoreEntity } from '@dvcol/base-http-client/utils/cache';
+import type { CacheStore, CacheStoreEntity } from '@dvcol/common-utils/common';
 
 import { localCache, storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
 

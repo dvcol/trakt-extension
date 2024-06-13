@@ -8,7 +8,7 @@ import IconPage from '~/components/icons/IconPage.vue';
 import IconPageDouble from '~/components/icons/IconPageDouble.vue';
 
 import { pageSizeOptions } from '~/models/page-size.model';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('navbar');
 

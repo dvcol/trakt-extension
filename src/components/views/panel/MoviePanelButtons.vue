@@ -20,7 +20,7 @@ import {
   useListsStore,
   useListsStoreRefs,
 } from '~/stores/data/list.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   watched: {

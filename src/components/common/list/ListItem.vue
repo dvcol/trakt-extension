@@ -17,7 +17,7 @@ import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 import { Colors } from '~/styles/colors.style';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   item: {

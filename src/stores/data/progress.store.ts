@@ -1,4 +1,4 @@
-import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { ref } from 'vue';
 

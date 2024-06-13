@@ -1,4 +1,4 @@
-import { isDarkTheme } from '@dvcol/web-extension-utils/lib/common/utils/window.utils';
+import { isDarkTheme } from '@dvcol/common-utils/common/window';
 import { onUnmounted, ref } from 'vue';
 
 export { isDarkTheme };

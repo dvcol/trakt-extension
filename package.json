@@ -51,11 +51,12 @@
     "release:changelog": "extract-changelog-release > RELEASE.md"
   },
   "dependencies": {
-    "@dvcol/base-http-client": "^1.4.2",
-    "@dvcol/tmdb-http-client": "^1.1.2",
-    "@dvcol/trakt-http-client": "^1.3.3",
-    "@dvcol/tvdb-http-client": "^1.1.2",
-    "@dvcol/web-extension-utils": "^2.3.4",
+    "@dvcol/base-http-client": "^1.5.1",
+    "@dvcol/common-utils": "^1.2.2",
+    "@dvcol/tmdb-http-client": "^1.1.3",
+    "@dvcol/trakt-http-client": "^1.3.5",
+    "@dvcol/tvdb-http-client": "^1.1.3",
+    "@dvcol/web-extension-utils": "^3.0.1",
     "@vue/devtools": "^7.0.15",
     "naive-ui": "^2.38.1",
     "pinia": "^2.1.7",

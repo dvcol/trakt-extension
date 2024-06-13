@@ -1,3 +1,4 @@
+import { arrayMax, findClosestMatch } from '@dvcol/common-utils/common/math';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, type Ref, ref } from 'vue';
@@ -10,7 +11,6 @@ import { localCache, storage } from '~/utils/browser/browser-storage.utils';
 import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
-import { arrayMax, findClosestMatch } from '~/utils/math.utils';
 
 type ImageStoreMedia = {
   poster?: string;

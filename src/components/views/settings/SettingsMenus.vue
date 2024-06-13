@@ -6,7 +6,7 @@ import {
   useContextMenuStore,
   useContextMenuStoreRefs,
 } from '~/stores/settings/context-menu.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'menus');
 

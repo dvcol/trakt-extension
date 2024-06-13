@@ -1,4 +1,4 @@
-import type { RecursiveRecord } from '~/utils/typescript.utils';
+import type { RecursiveRecord } from '@dvcol/common-utils/common';
 
 /**
  * @see [chrome.storage.sync](https://developer.chrome.com/docs/extensions/reference/storage/#type-SyncStorageArea)
