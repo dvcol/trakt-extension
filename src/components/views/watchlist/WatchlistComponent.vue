@@ -19,7 +19,7 @@ import {
   useListStore,
   useListStoreRefs,
 } from '~/stores/data/list.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
 const props = defineProps({

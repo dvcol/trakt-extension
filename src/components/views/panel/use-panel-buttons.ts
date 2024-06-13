@@ -3,7 +3,7 @@ import IconCancel from '~/components/icons/IconCancel.vue';
 import IconClose from '~/components/icons/IconClose.vue';
 import IconLocation from '~/components/icons/IconLocation.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 export const PanelButtonsOption = {
   Now: 'now',

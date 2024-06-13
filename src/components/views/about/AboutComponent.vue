@@ -10,7 +10,7 @@ import IconGithub from '~/components/icons/IconGithub.vue';
 import IconStar from '~/components/icons/IconStar.vue';
 import { ExternaLinks, ResolveExternalLinks } from '~/settings/external.links';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('about');
 

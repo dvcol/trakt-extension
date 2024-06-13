@@ -13,7 +13,7 @@ import IconTrakt from '~/components/icons/IconTrakt.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   ids: {

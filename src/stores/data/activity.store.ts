@@ -2,9 +2,8 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { ref, watch } from 'vue';
 
+import type { RecursiveType } from '@dvcol/common-utils/common';
 import type { TraktSyncActivities } from '@dvcol/trakt-http-client/models';
-
-import type { RecursiveType } from '~/utils/typescript.utils';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';

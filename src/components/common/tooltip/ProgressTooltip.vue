@@ -11,7 +11,7 @@ import {
   type ShowProgressTypes,
 } from '~/models/list-scroll.model';
 
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   progress: {

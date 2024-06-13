@@ -1,4 +1,4 @@
-import type { RecursiveRecord, RecursiveType } from '~/utils/typescript.utils';
+import type { RecursiveRecord, RecursiveType } from '@dvcol/common-utils/common';
 
 export class DateUtils {
   static clone = (date: Date) => new Date(date);

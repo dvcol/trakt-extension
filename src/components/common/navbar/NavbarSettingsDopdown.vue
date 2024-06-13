@@ -5,11 +5,9 @@ import { computed, defineProps, h, ref } from 'vue';
 
 import { useRouter } from 'vue-router';
 
+import type { ArrayElement } from '@dvcol/common-utils/common';
 import type { DropdownProps } from 'naive-ui';
-
 import type { Component } from 'vue';
-
-import type { ArrayElement } from '~/utils/typescript.utils';
 
 import IconAccount from '~/components/icons/IconAccount.vue';
 import IconAccountAdd from '~/components/icons/IconAccountAdd.vue';
@@ -24,9 +22,9 @@ import { ExternaLinks } from '~/settings/external.links';
 import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { useI18n } from '~/utils';
 
 import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('navbar', 'settings');
 const router = useRouter();

@@ -15,7 +15,7 @@ import {
   useSearchStore,
   useSearchStoreRefs,
 } from '~/stores/data/search.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('search');
 

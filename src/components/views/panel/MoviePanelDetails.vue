@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { capitalizeEachWord, deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
@@ -9,8 +10,7 @@ import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { useI18n } from '~/utils';
-import { capitalizeEachWord, deCapitalise } from '~/utils/string.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   movie: {

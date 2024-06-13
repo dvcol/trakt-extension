@@ -8,7 +8,7 @@ import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDop
 import { Route } from '~/models/router.model';
 import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   disabled: {

@@ -2,7 +2,7 @@
 import { NEmpty } from 'naive-ui';
 
 import ListLoadMore from '~/components/common/list/ListLoadMore.vue';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('list', 'empty');
 

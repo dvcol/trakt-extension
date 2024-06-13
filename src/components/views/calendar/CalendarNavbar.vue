@@ -11,7 +11,7 @@ import IconLoop from '~/components/icons/IconLoop.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
 defineProps({

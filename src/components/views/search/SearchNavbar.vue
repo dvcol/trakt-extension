@@ -28,8 +28,8 @@ import IconYoutube from '~/components/icons/IconYoutube.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.store';
-import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'search');

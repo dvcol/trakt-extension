@@ -1,12 +1,12 @@
 import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
 
-import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+import { CacheRetention } from '@dvcol/common-utils/common/cache';
 
 import { TmdbClient } from '@dvcol/tmdb-http-client';
 import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
-import type { CancellablePromise } from '@dvcol/base-http-client/utils/fetch';
+import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 import type { TmdbApiResponse } from '@dvcol/tmdb-http-client/models';
 import type {
   TraktApiResponse,

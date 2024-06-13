@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CacheRetention } from '@dvcol/base-http-client/utils/cache';
+import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { NButton, NIcon, NSelect } from 'naive-ui';
 
 import { reactive, ref } from 'vue';
@@ -11,7 +11,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { logger } from '~/stores/settings/log.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'cache');
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
-import { deCapitalise } from '~/utils/string.utils';
 
 const props = defineProps({
   movie: {

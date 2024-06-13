@@ -10,7 +10,7 @@ import LoginCard from '~/components/views/login/LoginCard.vue';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('login');
 

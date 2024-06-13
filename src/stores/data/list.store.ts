@@ -2,10 +2,10 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
 
 import type {
+  TraktApiIds,
   TraktClientPagination,
   TraktCollection,
   TraktFavoriteItem,
-  TraktApiIds,
   TraktListItem,
   TraktUser,
   TraktWatchlist,
@@ -21,9 +21,9 @@ import { TraktService } from '~/services/trakt.service';
 import { useActivityStore } from '~/stores/data/activity.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { useI18n } from '~/utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 

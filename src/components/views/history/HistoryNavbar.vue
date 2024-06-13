@@ -12,8 +12,8 @@ import IconLoop from '~/components/icons/IconLoop.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { useI18n } from '~/utils';
 import { debounce } from '~/utils/debounce.utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar');

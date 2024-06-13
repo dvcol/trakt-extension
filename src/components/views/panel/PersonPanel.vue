@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 
@@ -12,8 +13,7 @@ import PersonPanelOverview from '~/components/views/panel/PersonPanelOverview.vu
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { usePersonStore } from '~/stores/data/person.store';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { useI18n } from '~/utils';
-import { deCapitalise } from '~/utils/string.utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   personId: {

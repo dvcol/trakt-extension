@@ -10,7 +10,7 @@ import type { ShowProgress } from '~/models/list-scroll.model';
 import type { ShowSeasons } from '~/stores/data/show.store';
 
 import ButtonLink from '~/components/common/buttons/ButtonLink.vue';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   mode: {

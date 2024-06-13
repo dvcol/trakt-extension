@@ -7,7 +7,7 @@ import type { PropType } from 'vue';
 
 import Logo from '~/assets/logo.svg';
 
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('login');
 

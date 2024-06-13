@@ -1,7 +1,6 @@
-import { TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
-import { computed, ref } from 'vue';
+import { type TraktClientPagination, TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
 
-import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
+import { computed, ref } from 'vue';
 
 import type { Ref } from 'vue';
 
@@ -9,7 +8,7 @@ import type { ImageQuery } from '~/stores/data/image.store';
 
 import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
 

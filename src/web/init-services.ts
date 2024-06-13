@@ -13,7 +13,7 @@ import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogStore } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
-import { initLocalI18n } from '~/utils';
+import { initLocalI18n } from '~/utils/i18n.utils';
 
 export const initServices = async () => {
   await useLogStore().initLogStore();

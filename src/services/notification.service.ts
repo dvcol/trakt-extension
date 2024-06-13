@@ -1,5 +1,5 @@
+import type { Mutable } from '@dvcol/common-utils/common';
 import type { NotificationOptions, useMessage, useNotification } from 'naive-ui';
-import type { Mutable } from '~/utils/typescript.utils';
 
 type NotificationApi = ReturnType<typeof useNotification>;
 type MessageApi = ReturnType<typeof useMessage>;

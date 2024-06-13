@@ -14,7 +14,7 @@ import IconChevronUp from '~/components/icons/IconChevronUp.vue';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
-import { useI18n } from '~/utils';
+import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('calendar');
