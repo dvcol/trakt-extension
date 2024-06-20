@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.9.0",
   "title": "Side Trakt (companion app for Trakt.tv)",
-  "packageManager": "pnpm@9.1.0",
+  "packageManager": "pnpm@9.4.0",
   "description": "Side Trakt, a chrome extension for Trakt.tv",
   "license": "MIT",
   "author": "dvcol",

@@ -97,6 +97,7 @@ const key = computed(() => {
   position: relative;
   margin: 1.75rem 0;
   border: 1px solid var(--border-white);
+  border-radius: var(--poster-radius, 8px);
   box-shadow: var(--image-box-shadow);
 }
 </style>
