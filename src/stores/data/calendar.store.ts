@@ -1,7 +1,7 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
-import type { TraktCalendarMovie, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
+import type { TraktCalendarMovie, TraktCalendarQuery, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 
 import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
 
@@ -10,7 +10,9 @@ import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { DateUtils } from '~/utils/date.utils';
+import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { useSearchFilter } from '~/utils/store.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -55,11 +57,14 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
 
   const filter = ref('');
 
+  const calendarErrors = reactive<ErrorDictionary>({});
+
   const clearState = (date: Date = new Date()) => {
     calendar.value = [];
     center.value = date;
     startCalendar.value = DateUtils.weeks.previous(1, center.value);
     endCalendar.value = DateUtils.weeks.next(1, center.value);
+    clearProxy(calendarErrors);
   };
 
   const saveState = async () =>
@@ -160,11 +165,12 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       else if (mode === 'start') calendar.value = [getLoadingPlaceholder(DateUtils.previous(1, endDate)), ...calendar.value];
       else if (mode === 'end') calendar.value = [...calendar.value, ...getEmptyWeeks(startDate, true)];
     }, 100);
+
+    const query: TraktCalendarQuery = { start_date, days: days.value };
+
     try {
-      const [shows, movies] = await Promise.all([
-        TraktService.calendar({ start_date, days: days.value }, 'shows'),
-        TraktService.calendar({ start_date, days: days.value }, 'movies'),
-      ]);
+      const [shows, movies] = await Promise.all([TraktService.calendar(query, 'shows'), TraktService.calendar(query, 'movies')]);
+      delete calendarErrors[JSON.stringify(query)];
       const newData: CalendarItem[] = [
         ...(shows as TraktCalendarShow[]).map(show => ({
           ...show,
@@ -191,6 +197,8 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       logger.error('Failed to fetch calendar');
       NotificationService.error('Failed to fetch calendar', e);
       calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
+      const errorKey = JSON.stringify(query);
+      calendarErrors[errorKey] = ErrorCount.fromDictionary(calendarErrors, errorKey, e);
       throw e;
     } finally {
       clearTimeout(timeout);
