@@ -122,6 +122,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   width: var(--poster-width, 5.3125rem);
   height: var(--poster-height, 8rem);
+  border-radius: var(--poster-radius, 8px);
   opacity: 1;
   will-change: opacity;
 
@@ -145,6 +146,7 @@ onBeforeUnmount(() => {
   &.placeholder {
     position: absolute;
     background-color: #111;
+    border-radius: var(--poster-radius, 8px);
   }
 
   &:not(.placeholder) {
