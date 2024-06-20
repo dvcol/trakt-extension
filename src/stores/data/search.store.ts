@@ -1,8 +1,10 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
-import type { TraktClientPagination, TraktSearchResult, TraktSearchType } from '@dvcol/trakt-http-client/models';
+import type { TraktClientPagination, TraktSearch, TraktSearchResult, TraktSearchType } from '@dvcol/trakt-http-client/models';
+
+import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 
@@ -11,7 +13,9 @@ import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { ErrorCount } from '~/utils/retry.utils';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 export type SearchResult = Omit<TraktSearchResult, 'type'> & {
   id: ListScrollItem['id'];
@@ -31,6 +35,8 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const types = ref<TraktSearchType[]>(DefaultSearchType);
   const query = ref(false);
   const search = ref('');
+
+  const searchErrors = reactive<ErrorDictionary>({});
 
   const pageSize = ref(100);
   const pagination = ref<TraktClientPagination>();
@@ -62,6 +68,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     pagination.value = undefined;
     search.value = '';
     history.value = new Set();
+    clearProxy(searchErrors);
   };
 
   const saveState = async () =>
@@ -118,16 +125,15 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
 
     loading.value = true;
     const timeout = debounceLoading(searchResults, loadingPlaceholder, !page);
+    const request: TraktSearch = {
+      type: types.value,
+      escape: !query.value,
+      query: search.value,
+      pagination: { page, limit },
+    };
     try {
-      const response = await TraktService.search({
-        type: types.value,
-        escape: !query.value,
-        query: search.value,
-        pagination: {
-          page,
-          limit,
-        },
-      });
+      const response = await TraktService.search(request);
+      delete searchErrors[JSON.stringify(request)];
 
       const data = response.data.map((item, index) => ({
         ...item,
@@ -140,6 +146,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       logger.error('Failed to fetch search query');
       NotificationService.error('Failed to fetch search query', e);
       searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.loading);
+      searchErrors[JSON.stringify(request)] = ErrorCount.fromDictionary(searchErrors, JSON.stringify(request), e);
       throw e;
     } finally {
       clearTimeout(timeout);

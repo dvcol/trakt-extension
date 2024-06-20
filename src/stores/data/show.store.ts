@@ -17,6 +17,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
@@ -32,25 +33,8 @@ type LoadingDictionary = Record<string, boolean>;
 type SeasonEpisodesLoadingDictionary = Record<string, Record<number, boolean>>;
 type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boolean>>>;
 
-type ErrorCount = { last: Date; count: number };
-type ErrorDictionary = Record<string, ErrorCount>;
 type SeasonEpisodesErrorDictionary = Record<string, Record<number, ErrorCount>>;
 type EpisodeErrorDictionary = Record<string, Record<number, Record<number, ErrorCount>>>;
-
-const shouldRetry = (
-  errorCount?: ErrorCount,
-  { retryCount = 2, retryTime = 10 * 1000, error }: { retryCount?: number; retryTime?: number; error?: unknown } = {},
-) => {
-  if (!errorCount) return true;
-  if (errorCount.count < retryCount || Date.now() > errorCount.last.getTime() + retryTime) return true;
-  NotificationService.error(`Error threshold exceeded, throttling requests.`, {
-    count: errorCount.count,
-    threshold: retryCount,
-    last: errorCount.last.toLocaleString(),
-    error,
-  });
-  throw new Error('Error threshold exceeded, throttling requests.');
-};
 
 const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
   let completed = 0;
@@ -153,7 +137,7 @@ export const useShowStore = defineStore('data.show', () => {
     } catch (e) {
       logger.error('Failed to fetch show', id);
       NotificationService.error(`Failed to fetch show '${id}'.`, e);
-      showsError[id] = { last: new Date(), count: (showsError[id]?.count ?? 0) + 1 };
+      showsError[id] = ErrorCount.fromDictionary(showsError, id, e);
       throw e;
     } finally {
       showsLoading[id] = false;
@@ -174,7 +158,7 @@ export const useShowStore = defineStore('data.show', () => {
       delete showWatchedProgressError[id];
     } catch (e) {
       logger.error('Failed to fetch show progress', id);
-      showWatchedProgressError[id] = { last: new Date(), count: (showWatchedProgressError[id]?.count ?? 0) + 1 };
+      showWatchedProgressError[id] = ErrorCount.fromDictionary(showWatchedProgressError, id, e);
       throw e;
     } finally {
       showWatchedProgressLoading[id] = false;
@@ -195,7 +179,7 @@ export const useShowStore = defineStore('data.show', () => {
       delete showCollectionProgressError[id];
     } catch (e) {
       logger.error('Failed to fetch show collection progress', id);
-      showCollectionProgressError[id] = { last: new Date(), count: (showCollectionProgressError[id]?.count ?? 0) + 1 };
+      showCollectionProgressError[id] = ErrorCount.fromDictionary(showCollectionProgressError, id, e);
       throw e;
     } finally {
       showCollectionProgressLoading[id] = false;
@@ -221,7 +205,7 @@ export const useShowStore = defineStore('data.show', () => {
     } catch (e) {
       logger.error('Failed to fetch show seasons', id);
       NotificationService.error(`Failed to fetch show seasons '${id}'.`, e);
-      showsSeasonsError[id] = { last: new Date(), count: (showsSeasonsError[id]?.count ?? 0) + 1 };
+      showsSeasonsError[id] = ErrorCount.fromDictionary(showsSeasonsError, id, e);
       throw e;
     } finally {
       showsSeasonsLoading[id] = false;
@@ -248,7 +232,7 @@ export const useShowStore = defineStore('data.show', () => {
       NotificationService.error(`Failed to fetch show season episodes '${id}', season '${season}'.`, e);
       showsSeasonEpisodesError[id] = {
         ...showsSeasonEpisodesError[id],
-        [season]: { last: new Date(), count: (showsSeasonEpisodesError[id]?.[season]?.count ?? 0) + 1 },
+        [season]: ErrorCount.fromDictionary(showsSeasonEpisodesError[id], season, e),
       };
       throw e;
     } finally {
@@ -279,7 +263,7 @@ export const useShowStore = defineStore('data.show', () => {
         ...showsEpisodesError[id],
         [season]: {
           ...showsEpisodesError[id]?.[season],
-          [episode]: { last: new Date(), count: (showsEpisodesError[id]?.[season]?.[episode]?.count ?? 0) + 1 },
+          [episode]: ErrorCount.fromDictionary(showsEpisodesError[id]?.[season], episode, e),
         },
       };
       throw e;

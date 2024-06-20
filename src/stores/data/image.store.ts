@@ -11,6 +11,7 @@ import { localCache, storage } from '~/utils/browser/browser-storage.utils';
 import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 
 type ImageStoreMedia = {
   poster?: string;
@@ -23,6 +24,14 @@ type ImageStore = {
   season: Record<string, string>;
   episode: Record<string, string>;
   person: Record<string, string>;
+};
+
+type ImageStoreErrors = {
+  movie: ErrorDictionary;
+  show: ErrorDictionary;
+  season: ErrorDictionary;
+  episode: ErrorDictionary;
+  person: ErrorDictionary;
 };
 
 const ImageStoreConstants = {
@@ -52,7 +61,7 @@ type ImagePayload = {
   profiles?: TmdbImage[]; // profiles
 };
 
-const EmptyImageStore: ImageStore = {
+const EmptyImageStore = {
   movie: {},
   show: {},
   season: {},
@@ -81,6 +90,8 @@ const localArrayMax = (
 export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const tmdbConfig = ref<TmdbConfiguration>();
   const images = reactive<ImageStore>(EmptyImageStore);
+
+  const imageErrors = reactive<ImageStoreErrors>(EmptyImageStore);
 
   const saveState = debounce(
     (_images = images) =>
@@ -123,8 +134,16 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
 
   const queue: Record<string, Promise<ImagePayload>> = {};
 
-  const queueRequest = async (key: string, request: () => Promise<ImagePayload>) => {
-    if (!(key in queue)) queue[key] = request();
+  const queueRequest = async ({ key, type }: { key: string; type: ImageQuery['type'] }, request: () => Promise<ImagePayload>) => {
+    try {
+      if (!(key in queue)) queue[key] = request();
+      delete imageErrors[type][key];
+    } catch (error) {
+      logger.error('Failed to queue image request', { key, type });
+      if (!imageErrors[type]) imageErrors[type] = {};
+      imageErrors[type][key] = ErrorCount.fromDictionary(imageErrors[type], key, error);
+      throw error;
+    }
     return queue[key];
   };
 
@@ -141,15 +160,15 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   ): Promise<{ image: ImageStoreMedias; key: string; type: ImageQuery['type'] } | undefined> => {
     let payload: ImagePayload;
     if (type === 'movie') {
-      payload = await queueRequest(key, () => TraktService.posters.movie(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.movie(id));
     } else if (type === 'person') {
-      payload = await queueRequest(key, () => TraktService.posters.person(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.person(id));
     } else if (type === 'episode' && season !== undefined && episode !== undefined) {
-      payload = await queueRequest(key, () => TraktService.posters.episode(id, season, episode));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.episode(id, season, episode));
     } else if (type === 'season' && season !== undefined) {
-      payload = await queueRequest(key, () => TraktService.posters.season(id, season));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.season(id, season));
     } else if (type === 'show') {
-      payload = await queueRequest(key, () => TraktService.posters.show(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.show(id));
     } else {
       logger.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
       throw new Error('Unsupported type or missing parameters for fetchImageUrl');

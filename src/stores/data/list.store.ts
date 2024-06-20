@@ -5,10 +5,14 @@ import type {
   TraktApiIds,
   TraktClientPagination,
   TraktCollection,
+  TraktCollectionGetQuery,
+  TraktFavoriteGetQuery,
   TraktFavoriteItem,
   TraktListItem,
+  TraktListItemsGetQuery,
   TraktUser,
   TraktWatchlist,
+  TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
@@ -24,6 +28,7 @@ import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
+import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -90,6 +95,8 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
   const lists = ref<ListEntity[]>(DefaultList);
   const activeList = ref<ListEntity>(DefaultLists.Watchlist);
 
+  const listsErrors = reactive<ErrorDictionary>({});
+
   const saveState = async () =>
     storage.local.set(ListsStoreConstants.Store, {
       lists: [...lists.value],
@@ -109,6 +116,7 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
   const clearState = () => {
     lists.value = DefaultList;
     activeList.value = DefaultLists.Watchlist;
+    clearProxy(listsErrors);
   };
 
   const { user } = useUserSettingsStoreRefs();
@@ -124,6 +132,7 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     loading.value = true;
     try {
       const [personals, collaborations] = await Promise.all([TraktService.lists(user.value), TraktService.lists(user.value, true)]);
+      delete listsErrors[user.value];
       lists.value = [
         ...DefaultList,
         ...personals.map(
@@ -152,6 +161,7 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     } catch (e) {
       logger.error('Failed to fetch lists');
       NotificationService.error('Failed to fetch lists', e);
+      listsErrors[user.value] = ErrorCount.fromDictionary(listsErrors, user.value, e);
       throw e;
     } finally {
       loading.value = false;
@@ -192,6 +202,8 @@ type MinimalItem = Partial<Record<ListItemTypes, { ids: Pick<TraktApiIds, 'trakt
 type ListDictionary = Record<string, Partial<Record<ListItemTypes, Record<string, boolean>>>>;
 type ListDictionaryLoading = Record<string, boolean>;
 
+type ListErrorDictionary = Partial<Record<ListEntity['type'], ErrorDictionary>>;
+
 type ListTypeLoading = Partial<Record<ListTypes, boolean>>;
 type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListItemTypes, Record<string, boolean>>>>>;
 
@@ -215,6 +227,8 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const listDictionary = reactive<ListDictionary>({});
   const listDictionaryLoading = reactive<ListDictionaryLoading>({});
+
+  const listErrors = reactive<ListErrorDictionary>({});
 
   const saveState = async () => storage.local.set(ListStoreConstants.LocalPageSize, pageSize.value);
   const restoreState = async () => {
@@ -263,6 +277,40 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const { user } = useUserSettingsStoreRefs();
 
+  const fetchItems = async (
+    list: ListEntity,
+    query: TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery,
+  ) => {
+    let _query = { ...query };
+    let response;
+
+    try {
+      if (list.type === ListType.Watchlist) {
+        response = await TraktService.watchlist(_query as TraktWatchlistGetQuery);
+        delete listErrors[list.type]?.[JSON.stringify(_query)];
+      } else if (list.type === ListType.Favorites) {
+        response = await TraktService.favorites(_query as TraktFavoriteGetQuery);
+        delete listErrors[list.type]?.[JSON.stringify(_query)];
+      } else if (list.type === ListType.Collection && list.scope) {
+        _query.type = list.scope;
+        response = await TraktService.collection(_query as TraktCollectionGetQuery);
+        delete listErrors[list.type]?.[JSON.stringify(_query)];
+      } else if (list.id !== undefined) {
+        _query = { ..._query, id: user.value, list_id: list.id.toString() } as TraktListItemsGetQuery;
+        response = await TraktService.list(_query as TraktListItemsGetQuery);
+        delete listErrors[list.type]?.[JSON.stringify(_query)];
+      }
+    } catch (e) {
+      if (!listErrors[list.type]) listErrors[list.type] = {};
+      listErrors[list.type]![JSON.stringify(_query)] = ErrorCount.fromDictionary(listErrors[list.type]!, JSON.stringify(_query), e);
+      throw e;
+    }
+
+    if (!response) throw new Error('Invalid list type');
+
+    return response;
+  };
+
   const fetchListItems = async ({
     page,
     limit = pageSize.value,
@@ -280,30 +328,9 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     typeLoading[list.type] = true;
     listDictionaryLoading[list.id.toString()] = true;
     const timeout = debounceLoading(listItems, loadingPlaceholder, !page);
+
     try {
-      const query = {
-        pagination: {
-          page,
-          limit,
-        },
-      };
-
-      let response;
-
-      if (list.type === ListType.Watchlist) {
-        response = await TraktService.watchlist(query);
-      } else if (list.type === ListType.Favorites) {
-        response = await TraktService.favorites(query);
-      } else if (list.type === ListType.Collection && list.scope) {
-        response = await TraktService.collection({
-          ...query,
-          type: list.scope,
-        });
-      } else if (list.id !== undefined) {
-        response = await TraktService.list({ ...query, id: user.value, list_id: list.id.toString() });
-      } else {
-        throw new Error('Invalid list type');
-      }
+      const response = await fetchItems(list, { pagination: { page, limit } });
       const newData = response.data.map<AnyList>((item, index) => {
         updateDictionary(list, item as MinimalItem);
         if ('id' in item) return item;
