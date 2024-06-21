@@ -42,6 +42,7 @@ import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
 import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 
+import { ErrorService } from '~/services/error.service';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
 import { traktUsedApi } from '~/services/trakt-used.api';
@@ -186,6 +187,7 @@ export class TraktService {
       LoadingBarService.finish();
     } catch (error) {
       LoadingBarService.error();
+      ErrorService.registerError(error);
     } finally {
       clearTimeout(timeout);
     }
@@ -207,6 +209,11 @@ export class TraktService {
 
     this.tvdbClient.onCall(async call => {
       logger.debug('TvdbClient.onCall', call);
+      try {
+        await call.query;
+      } catch (error) {
+        ErrorService.registerError(error);
+      }
     });
 
     this.tmdbClient.onAuthChange(async _auth => {
@@ -215,6 +222,11 @@ export class TraktService {
 
     this.tmdbClient.onCall(async call => {
       logger.debug('TmdbClient.onCall', call);
+      try {
+        await call.query;
+      } catch (error) {
+        ErrorService.registerError(error);
+      }
     });
   }
 

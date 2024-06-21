@@ -5,6 +5,7 @@ import type { TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -31,6 +32,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const threshold = ref(10);
 
   const historyErrors = reactive<ErrorDictionary>({});
+  ErrorService.registerDictionary('history', historyErrors);
 
   const saveState = async () =>
     storage.local.set(HistoryStoreConstants.Store, {

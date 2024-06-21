@@ -6,12 +6,21 @@ export type ErrorDictionary = Record<ErrorDictionaryKey, ErrorCount>;
 export class ErrorCount {
   last: Date;
   count: number;
-  error?: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- necessary for unknown error types
+  error?: any;
 
   constructor(last: Date, count: number, error?: unknown) {
     this.last = last;
     this.count = count;
-    this.error = error;
+
+    if (error instanceof Response) {
+      this.error = { response: error.clone(), content: 'pending' };
+      this.error.response.json().then((json: unknown) => {
+        this.error.content = json;
+      });
+    } else {
+      this.error = error;
+    }
   }
 
   static fromDictionary<T extends ErrorDictionary>(dictionary: T, key: ErrorDictionaryKey, error?: unknown) {

@@ -5,6 +5,7 @@ import { RouterView, useRouter } from 'vue-router';
 
 import { NavbarComponent } from '~/components/common';
 import GridBackground from '~/components/common/background/GridBackground.vue';
+import DebugProvider from '~/components/common/debug/DebugProvider.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconClose from '~/components/icons/IconClose.vue';
@@ -105,6 +106,7 @@ const onBack = () => {
         </NDrawer>
       </RouterView>
     </aside>
+    <DebugProvider />
   </RouterView>
 </template>
 

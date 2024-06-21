@@ -5,6 +5,7 @@ import type { TraktCalendarMovie, TraktCalendarQuery, TraktCalendarShow } from '
 
 import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
 
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -58,6 +59,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
   const filter = ref('');
 
   const calendarErrors = reactive<ErrorDictionary>({});
+  ErrorService.registerDictionary('calendar', calendarErrors);
 
   const clearState = (date: Date = new Date()) => {
     calendar.value = [];
