@@ -177,9 +177,9 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'jsdom',
     coverage: {
-      reportsDirectory: '../coverage',
+      reportsDirectory: './coverage',
     },
-    setupFiles: ['../vitest.setup.ts'],
+    setupFiles: ['./vitest.setup.ts'],
   },
   optimizeDeps: {
     exclude: ['path', 'fast-glob'],
