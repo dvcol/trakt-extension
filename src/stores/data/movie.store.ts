@@ -4,6 +4,7 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -27,6 +28,7 @@ export const useMovieStore = defineStore('data.movie', () => {
   const loadingCollected = ref(false);
 
   const movieErrors = reactive<ErrorDictionary>({});
+  ErrorService.registerDictionary('movie', movieErrors);
 
   const clearProgressState = () => {
     clearProxy(moviesWatched);

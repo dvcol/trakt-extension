@@ -6,7 +6,9 @@ import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
+
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { ErrorCount } from '~/utils/retry.utils';
@@ -20,6 +22,7 @@ export const usePersonStore = defineStore('data.person', () => {
   const loading = reactive<LoadingDictionary>({});
 
   const peopleErrors = reactive<ErrorDictionary>({});
+  ErrorService.registerDictionary('person', peopleErrors);
 
   const clearState = () => {
     clearProxy(people);

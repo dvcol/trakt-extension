@@ -5,6 +5,7 @@ import { computed, reactive, type Ref, ref } from 'vue';
 
 import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/models';
 
+import { ErrorService } from '~/services/error.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { localCache, storage } from '~/utils/browser/browser-storage.utils';
@@ -61,7 +62,7 @@ type ImagePayload = {
   profiles?: TmdbImage[]; // profiles
 };
 
-const EmptyImageStore = {
+const emptyImageStore = {
   movie: {},
   show: {},
   season: {},
@@ -89,9 +90,10 @@ const localArrayMax = (
 
 export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const tmdbConfig = ref<TmdbConfiguration>();
-  const images = reactive<ImageStore>(EmptyImageStore);
+  const images = reactive<ImageStore>(emptyImageStore);
 
-  const imageErrors = reactive<ImageStoreErrors>(EmptyImageStore);
+  const imageErrors = reactive<Partial<ImageStoreErrors>>({});
+  ErrorService.registerDictionary('image', imageErrors);
 
   const saveState = debounce(
     (_images = images) =>
@@ -137,14 +139,15 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const queueRequest = async ({ key, type }: { key: string; type: ImageQuery['type'] }, request: () => Promise<ImagePayload>) => {
     try {
       if (!(key in queue)) queue[key] = request();
-      delete imageErrors[type][key];
+      const response = await queue[key];
+      delete imageErrors[type]?.[key];
+      return response;
     } catch (error) {
       logger.error('Failed to queue image request', { key, type });
       if (!imageErrors[type]) imageErrors[type] = {};
-      imageErrors[type][key] = ErrorCount.fromDictionary(imageErrors[type], key, error);
+      imageErrors[type]![key] = ErrorCount.fromDictionary(imageErrors[type]!, key, error);
       throw error;
     }
-    return queue[key];
   };
 
   const getKeyAndType = ({ id, season, episode, type }: ImageQuery): { key: string; type: ImageQuery['type'] } => {

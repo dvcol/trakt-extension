@@ -13,6 +13,7 @@ import type {
 } from '@dvcol/trakt-http-client/models';
 
 import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -91,6 +92,15 @@ export const useShowStore = defineStore('data.show', () => {
   const showsEpisodesError = reactive<EpisodeErrorDictionary>({});
   const showWatchedProgressError = reactive<ErrorDictionary>({});
   const showCollectionProgressError = reactive<ErrorDictionary>({});
+
+  ErrorService.registerDictionary('show', {
+    shows: showsError,
+    seasons: showsSeasonsError,
+    seasonEpisodes: showsSeasonEpisodesError,
+    episodes: showsEpisodesError,
+    watched: showWatchedProgressError,
+    collected: showCollectionProgressError,
+  });
 
   const clearProgressState = () => {
     clearProxy(showsWatchedProgress);

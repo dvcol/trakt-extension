@@ -20,6 +20,7 @@ import IconGrid from '~/components/icons/IconGrid.vue';
 import IconHeart from '~/components/icons/IconHeart.vue';
 import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
+import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -96,6 +97,7 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
   const activeList = ref<ListEntity>(DefaultLists.Watchlist);
 
   const listsErrors = reactive<ErrorDictionary>({});
+  ErrorService.registerDictionary('lists', listsErrors);
 
   const saveState = async () =>
     storage.local.set(ListsStoreConstants.Store, {
@@ -229,6 +231,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const listDictionaryLoading = reactive<ListDictionaryLoading>({});
 
   const listErrors = reactive<ListErrorDictionary>({});
+  ErrorService.registerDictionary('list', listErrors);
 
   const saveState = async () => storage.local.set(ListStoreConstants.LocalPageSize, pageSize.value);
   const restoreState = async () => {
