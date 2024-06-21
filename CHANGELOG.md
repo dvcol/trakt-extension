@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/dvcol/trakt-extension/compare/v1.9.0...v1.10.0) (2024-06-21)
+
+
+### Features
+
+* **client:** adds cancellable promises ([0fb8735](https://github.com/dvcol/trakt-extension/commit/0fb87351898c7cc626170da44b8fd78757a7568a))
+* **errors:** adds error management to show store ([0a0e16e](https://github.com/dvcol/trakt-extension/commit/0a0e16eb2fb121823449573425eb8d63dd616d4d))
+* **errors:** consolidate errors in service ([f3f1a4c](https://github.com/dvcol/trakt-extension/commit/f3f1a4c2493f90d6218bd80b6015dc39c1d8a5de))
+
+
+### Bug Fixes
+
+* **cache:** uses textencoder for better size estimate ([3f278a4](https://github.com/dvcol/trakt-extension/commit/3f278a4c71c1e1e1eac5adc391824eda018dbdff))
+* **poster:** adds border-radius to image layers ([23f4173](https://github.com/dvcol/trakt-extension/commit/23f4173f85a844e854bea84b74df58c4ef7422d2))
+* **test:** correct erroneous path to setup files ([5bb2692](https://github.com/dvcol/trakt-extension/commit/5bb26929fc445200239a5dc613f1ebbf98b88f96))
+
 ## [1.9.0](https://github.com/dvcol/trakt-extension/compare/v1.8.0...v1.9.0) (2024-05-27)
 
 
