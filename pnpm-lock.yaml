@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@dvcol/base-http-client':
-        specifier: ^1.5.1
-        version: 1.5.1
+        specifier: ^1.10.0
+        version: 1.10.0
       '@dvcol/common-utils':
         specifier: ^1.2.2
         version: 1.2.2
       '@dvcol/tmdb-http-client':
-        specifier: ^1.1.3
-        version: 1.1.3
+        specifier: ^1.1.4
+        version: 1.1.4
       '@dvcol/trakt-http-client':
-        specifier: ^1.3.5
-        version: 1.3.5
+        specifier: ^1.3.6
+        version: 1.3.6
       '@dvcol/tvdb-http-client':
         specifier: ^1.1.3
         version: 1.1.3
@@ -458,8 +458,8 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@dvcol/base-http-client@1.5.1':
-    resolution: {integrity: sha512-N/BEP3WVUDzZt4v/wpSfzyl9VRfXxw/WDYXb63/aXd1stkLWvnnmVJ+BeCfiW9foyBMZNOPiCs+syTguaRNWbw==}
+  '@dvcol/base-http-client@1.10.0':
+    resolution: {integrity: sha512-kNSO7IePifulnkTihfm+9YxFgJXcogtZ2AUW1NKkeLbmBxRldCsO4wVOXdTEjHxSU4jLHHUnxDfjttbw5hzuAA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/common-utils@1.2.2':
@@ -562,12 +562,12 @@ packages:
       postcss-scss:
         optional: true
 
-  '@dvcol/tmdb-http-client@1.1.3':
-    resolution: {integrity: sha512-e5JAwWoPhYBhS1cFALwqmZsJ5u14pievgh9dwz8Vw6tmnXUgIfiVyLPlgmXRklNLoYsSKaP0fWCqQHG68MeEiA==}
+  '@dvcol/tmdb-http-client@1.1.4':
+    resolution: {integrity: sha512-ZpxlxK6+Q7cECQ48IU1SpzbaW/Y+De26ieZV5/4DU/Hmwdb8wv1pQGa4HwYo411zqOL1BCDmL+wKNmwt8fpc/Q==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/trakt-http-client@1.3.5':
-    resolution: {integrity: sha512-eLQ5WodQqqWlWKaibPLHBgKoAA+azOvdxJn1dDCWutjNoWbPv8m/uV/iEUm6sITPKX4xAIb8qGj2sWjv1AY4GA==}
+  '@dvcol/trakt-http-client@1.3.6':
+    resolution: {integrity: sha512-Do8ec9UCcaHVi0ZY1CgDDCU5ciHugr3g8TxypZbZVJFcKhwEImDKRNU6RJium28ym+MTC86RNkGrPBWVCzyZUg==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/tvdb-http-client@1.1.3':
@@ -6038,7 +6038,7 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.0.15
 
-  '@dvcol/base-http-client@1.5.1':
+  '@dvcol/base-http-client@1.10.0':
     dependencies:
       '@dvcol/common-utils': 1.2.2
 
@@ -6098,19 +6098,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dvcol/tmdb-http-client@1.1.3':
+  '@dvcol/tmdb-http-client@1.1.4':
     dependencies:
-      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/base-http-client': 1.10.0
       '@dvcol/common-utils': 1.2.2
 
-  '@dvcol/trakt-http-client@1.3.5':
+  '@dvcol/trakt-http-client@1.3.6':
     dependencies:
-      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/base-http-client': 1.10.0
       '@dvcol/common-utils': 1.2.2
 
   '@dvcol/tvdb-http-client@1.1.3':
     dependencies:
-      '@dvcol/base-http-client': 1.5.1
+      '@dvcol/base-http-client': 1.10.0
       '@dvcol/common-utils': 1.2.2
 
   '@dvcol/web-extension-utils@3.0.1':
