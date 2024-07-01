@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/dvcol/trakt-extension/compare/v1.10.0...v1.11.0) (2024-07-01)
+
+
+### Features
+
+* **panels:** adds watched & collection date/time to panels ([5df3af1](https://github.com/dvcol/trakt-extension/commit/5df3af107a16dfa9f7643ecddb76ed9907b563cd))
+
 ## [1.10.0](https://github.com/dvcol/trakt-extension/compare/v1.9.0...v1.10.0) (2024-06-21)
 
 
