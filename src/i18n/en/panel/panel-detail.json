@@ -23,6 +23,30 @@
     "message": "Aired Time",
     "description": "Aired time label in the panel detail"
   },
+  "panel__detail__watched": {
+    "message": "Watched",
+    "description": "Watched label in the panel detail"
+  },
+  "panel__detail__watched_date": {
+    "message": "Watched Date",
+    "description": "Watched date label in the panel detail"
+  },
+  "panel__detail__watched_time": {
+    "message": "Watched Time",
+    "description": "Watched time label in the panel detail"
+  },
+  "panel__detail__collected": {
+    "message": "Collected",
+    "description": "Collected label in the panel detail"
+  },
+  "panel__detail__collected_date": {
+    "message": "Collected Date",
+    "description": "Collected date label in the panel detail"
+  },
+  "panel__detail__collected_time": {
+    "message": "Collected Time",
+    "description": "Collected time label in the panel detail"
+  },
   "panel__detail__status": {
     "message": "Status",
     "description": "Status label in the panel detail"

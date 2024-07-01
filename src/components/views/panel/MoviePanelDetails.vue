@@ -10,6 +10,7 @@ import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
+import { shortTime } from '~/utils/date.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -17,9 +18,17 @@ const props = defineProps({
     type: Object as PropType<TraktMovieExtended>,
     required: false,
   },
+  watchedDate: {
+    type: Date,
+    required: false,
+  },
+  collectionDate: {
+    type: Date,
+    required: false,
+  },
 });
 
-const { movie } = toRefs(props);
+const { movie, watchedDate, collectionDate } = toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
@@ -38,10 +47,17 @@ const releasedDate = computed(() => {
 const releasedTime = computed(() => {
   if (!released.value) return;
   if (typeof released.value === 'string') return released.value;
-  return released.value.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return shortTime(released.value);
+});
+
+const watchedTime = computed(() => {
+  if (!watchedDate?.value) return;
+  return shortTime(watchedDate.value);
+});
+
+const collectionTime = computed(() => {
+  if (!collectionDate?.value) return;
+  return shortTime(collectionDate.value);
 });
 
 const runtime = computed(() => {
@@ -79,6 +95,30 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
 
 <template>
   <NFlex size="large" class="container" vertical>
+    <NFlex vertical size="large">
+      <!--  Genres  -->
+      <TextField
+        :label="i18n('genres')"
+        :values="genres"
+        :skeleton="{ width: '3rem' }"
+        array
+      />
+
+      <!--  links  -->
+      <PanelLinks
+        :ids="movie?.ids"
+        mode="movie"
+        :title="movieTitle"
+        :alias="movieAlias"
+      />
+    </NFlex>
+
+    <!--  Movie name alias  -->
+    <PanelAlias
+      :id="movie?.ids?.trakt.toString()"
+      scope="movie"
+      :placeholder="movieTitle"
+    />
     <NFlex class="row" size="large">
       <!--  Release date  -->
       <TextField
@@ -118,28 +158,37 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       />
     </NFlex>
 
-    <!--  Movie name alias  -->
-    <PanelAlias
-      :id="movie?.ids?.trakt.toString()"
-      scope="movie"
-      :placeholder="movieTitle"
-    />
-
-    <NFlex class="lists" vertical size="large">
-      <!--  Genres  -->
+    <NFlex v-if="watchedDate" class="row" size="large">
+      <!--  Watched Date  -->
       <TextField
-        :label="i18n('genres')"
-        :values="genres"
-        :skeleton="{ width: '3rem' }"
-        array
+        :label="i18n('watched')"
+        :value="watchedDate.toLocaleDateString()"
+        :skeleton="{ width: '5.125rem' }"
       />
 
-      <!--  links  -->
-      <PanelLinks
-        :ids="movie?.ids"
-        mode="movie"
-        :title="movieTitle"
-        :alias="movieAlias"
+      <!--  watched time  -->
+      <TextField
+        v-if="watchedTime"
+        :label="i18n('watched_time')"
+        :value="watchedTime"
+        :skeleton="{ width: '5.125rem' }"
+      />
+    </NFlex>
+
+    <NFlex v-if="collectionDate" class="row" size="large">
+      <!--  Collection Date  -->
+      <TextField
+        :label="i18n('collected')"
+        :value="collectionDate.toLocaleDateString()"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
+      <!--  Collection time  -->
+      <TextField
+        v-if="collectionTime"
+        :label="i18n('collected_time')"
+        :value="collectionTime"
+        :skeleton="{ width: '5.125rem' }"
       />
     </NFlex>
   </NFlex>

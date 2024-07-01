@@ -336,6 +336,8 @@ const { openTab } = useLinksStore();
       :season="season"
       :episode="episode"
       :mode="panelType"
+      :watched-progress="watchedProgressEntity"
+      :collection-progress="collectionProgressEntity"
     />
 
     <ShowPanelButtons

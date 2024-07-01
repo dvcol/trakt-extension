@@ -15,6 +15,7 @@ import { clearProxy } from '~/utils/vue.utils';
 type MovieDictionary = Record<string, TraktMovieExtended>;
 type MovieWatchedDictionary = Record<string, boolean>;
 type MovieCollectedDictionary = Record<string, boolean>;
+type MovieDateDictionary = Record<string, Date>;
 
 type LoadingDictionary = Record<string, boolean>;
 
@@ -22,6 +23,9 @@ export const useMovieStore = defineStore('data.movie', () => {
   const movies = reactive<MovieDictionary>({});
   const moviesWatched = reactive<MovieWatchedDictionary>({});
   const moviesCollected = reactive<MovieCollectedDictionary>({});
+
+  const moviesWatchedDates = reactive<MovieDateDictionary>({});
+  const moviesCollectedDates = reactive<MovieDateDictionary>({});
 
   const loading = reactive<LoadingDictionary>({});
   const loadingWatched = ref(false);
@@ -33,6 +37,8 @@ export const useMovieStore = defineStore('data.movie', () => {
   const clearProgressState = () => {
     clearProxy(moviesWatched);
     clearProxy(moviesCollected);
+    clearProxy(moviesWatchedDates);
+    clearProxy(moviesCollectedDates);
 
     loadingWatched.value = false;
     loadingCollected.value = false;
@@ -85,6 +91,9 @@ export const useMovieStore = defineStore('data.movie', () => {
       delete movieErrors.watched;
       const dictionary = response.reduce<MovieWatchedDictionary>((acc, movie) => {
         acc[movie.movie.ids.trakt.toString()] = !!movie?.plays;
+        if (movie?.last_watched_at) {
+          moviesWatchedDates[movie.movie.ids.trakt.toString()] = new Date(movie.last_watched_at);
+        }
         return acc;
       }, {} as MovieWatchedDictionary);
       Object.assign(moviesWatched, dictionary);
@@ -99,8 +108,10 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
+  const getMovieWatchedDate = (id: string | number) => computed(() => moviesWatchedDates[id.toString()]);
   const changeMovieWatched = (id: string | number, remove?: boolean) => {
     moviesWatched[id.toString()] = !remove;
+    return fetchMovieWatched();
   };
 
   const fetchMovieCollected = async () => {
@@ -117,6 +128,9 @@ export const useMovieStore = defineStore('data.movie', () => {
       delete movieErrors.collected;
       const dictionary = response.reduce<MovieCollectedDictionary>((acc, movie) => {
         acc[movie.movie.ids.trakt.toString()] = true;
+        if (movie?.collected_at) {
+          moviesCollectedDates[movie.movie.ids.trakt.toString()] = new Date(movie.collected_at);
+        }
         return acc;
       }, {} as MovieCollectedDictionary);
       Object.assign(moviesCollected, dictionary);
@@ -131,8 +145,10 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
+  const getMovieCollectedDate = (id: string | number) => computed(() => moviesCollectedDates[id.toString()]);
   const changeMovieCollected = (id: string | number, remove?: boolean) => {
     moviesCollected[id.toString()] = !remove;
+    return fetchMovieCollected();
   };
 
   const { user } = useUserSettingsStoreRefs();
@@ -151,9 +167,11 @@ export const useMovieStore = defineStore('data.movie', () => {
     getMovieLoading,
     fetchMovieWatched,
     getMovieWatched,
+    getMovieWatchedDate,
     loadingWatched,
     fetchMovieCollected,
     getMovieCollected,
+    getMovieCollectedDate,
     loadingCollected,
     changeMovieWatched,
     changeMovieCollected,

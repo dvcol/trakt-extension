@@ -287,7 +287,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 0.75rem 1rem 1.25rem;
+  margin: 1rem 1rem 1.25rem;
 
   .button-container {
     i {

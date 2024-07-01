@@ -148,6 +148,7 @@ const onClick = () => {
         <TextField
           :label="i18n('user_lists_max_items')"
           :value="limits?.list?.item_count"
+          grow
         />
       </NFlex>
     </NCard>

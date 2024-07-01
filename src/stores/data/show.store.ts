@@ -5,14 +5,16 @@ import { computed, reactive, watch } from 'vue';
 import type { BaseCacheOption } from '@dvcol/base-http-client';
 import type {
   TraktCollectionProgress,
+  TraktCollectionProgressEpisode,
   TraktEpisodeExtended,
   TraktEpisodeShort,
   TraktSeasonExtended,
   TraktShowExtended,
   TraktWatchedProgress,
+  TraktWatchedProgressEpisode,
 } from '@dvcol/trakt-http-client/models';
 
-import { type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
+import { type SeasonProgress, type ShowProgress, ShowProgressType } from '~/models/list-scroll.model';
 import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
@@ -37,6 +39,15 @@ type EpisodeLoadingDictionary = Record<string, Record<number, Record<number, boo
 type SeasonEpisodesErrorDictionary = Record<string, Record<number, ErrorCount>>;
 type EpisodeErrorDictionary = Record<string, Record<number, Record<number, ErrorCount>>>;
 
+const parseProgressDate = (
+  progress: TraktWatchedProgress | TraktCollectionProgress | TraktWatchedProgressEpisode | TraktCollectionProgressEpisode,
+): Date | undefined => {
+  if ('last_watched_at' in progress && progress?.last_watched_at) return new Date(progress.last_watched_at);
+  if ('last_collected_at' in progress && progress?.last_collected_at) return new Date(progress.last_collected_at);
+  if ('collected_at' in progress && progress?.collected_at) return new Date(progress.collected_at);
+  return undefined;
+};
+
 const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
   let completed = 0;
   let aired = 0;
@@ -45,21 +56,26 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktColle
     id,
     ...progress,
     type: 'last_watched_at' in progress ? ShowProgressType.Watched : ShowProgressType.Collection,
-    date: new Date('last_watched_at' in progress ? progress.last_watched_at : progress.last_collected_at),
+    date: parseProgressDate(progress),
     seasons: progress.seasons.map(season => {
       if (season.number > 0) {
         if (season.completed) completed += season.completed;
         if (season.aired) aired += season.aired;
       }
-      return {
+
+      const _season: SeasonProgress = {
         ...season,
         percentage: season.aired ? ((season.completed ?? 0) / season.aired) * 100 : 0,
         finished: !!season.aired && season.completed === season.aired,
-        episodes: season.episodes.map(episode => ({
-          ...episode,
-          date: new Date('last_watched_at' in episode ? episode.last_watched_at : episode.collected_at),
-        })),
       };
+
+      _season.episodes = season.episodes.map(episode => {
+        const date = parseProgressDate(episode);
+        if (date && date.getTime() > (_season.date?.getTime() ?? 0)) _season.date = date;
+        return { ...episode, date };
+      });
+
+      return _season;
     }),
   };
   return {

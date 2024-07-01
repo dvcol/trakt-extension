@@ -9,11 +9,18 @@ import type {
   TraktShowExtended,
 } from '@dvcol/trakt-http-client/models';
 
+import type {
+  EpisodeProgress,
+  SeasonProgress,
+  ShowProgress,
+} from '~/models/list-scroll.model';
+
 import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
+import { shortTime } from '~/utils/date.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -34,9 +41,18 @@ const props = defineProps({
     required: false,
     default: 'episode',
   },
+  watchedProgress: {
+    type: Object as PropType<ShowProgress | SeasonProgress | EpisodeProgress>,
+    required: false,
+  },
+  collectionProgress: {
+    type: Object as PropType<ShowProgress | SeasonProgress | EpisodeProgress>,
+    required: false,
+  },
 });
 
-const { mode, episode, season, show } = toRefs(props);
+const { mode, episode, season, show, watchedProgress, collectionProgress } =
+  toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
@@ -65,10 +81,7 @@ const airedDate = computed(() => {
 const airedTime = computed(() => {
   if (!aired.value) return;
   if (typeof aired.value === 'string') return '-';
-  return aired.value.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return shortTime(aired.value);
 });
 
 const runtime = computed(() => {
@@ -80,6 +93,26 @@ const runtime = computed(() => {
   if (!show?.value) return;
   if (!show.value?.runtime) return '-';
   return `${show.value.runtime} min`;
+});
+
+const watchedDate = computed(() => {
+  if (!watchedProgress?.value?.date) return;
+  return watchedProgress.value.date;
+});
+
+const watchedTime = computed(() => {
+  if (!watchedProgress?.value?.date) return;
+  return shortTime(watchedProgress.value.date);
+});
+
+const collectionDate = computed(() => {
+  if (!collectionProgress?.value?.date) return;
+  return collectionProgress.value.date;
+});
+
+const collectionTime = computed(() => {
+  if (!collectionProgress?.value?.date) return;
+  return shortTime(collectionProgress.value.date);
 });
 
 const genres = computed(() => {
@@ -150,6 +183,29 @@ const title = computed(() =>
 
 <template>
   <NFlex size="large" class="container" vertical>
+    <NFlex vertical size="large">
+      <!--  Genres  -->
+      <TextField
+        :label="i18n('genres')"
+        :values="genres"
+        :skeleton="{ width: '3rem' }"
+        array
+      />
+
+      <!--  links  -->
+      <PanelLinks
+        :ids="ids"
+        :mode="mode"
+        :season="episode?.season ?? season?.number"
+        :episode="episode?.number"
+        :alias="showAlias"
+        :title="title"
+      />
+    </NFlex>
+
+    <!--  Show name alias  -->
+    <PanelAlias :id="showId" scope="show" :placeholder="showTitle" />
+
     <NFlex class="row" size="large">
       <!--  Show Year  -->
       <TextField :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
@@ -216,26 +272,37 @@ const title = computed(() =>
       />
     </NFlex>
 
-    <!--  Show name alias  -->
-    <PanelAlias :id="showId" scope="show" :placeholder="showTitle" />
-
-    <NFlex class="lists" vertical size="large">
-      <!--  Genres  -->
+    <NFlex v-if="watchedDate" class="row" size="large">
+      <!--  Watched Date  -->
       <TextField
-        :label="i18n('genres')"
-        :values="genres"
-        :skeleton="{ width: '3rem' }"
-        array
+        :label="i18n('watched')"
+        :value="watchedDate.toLocaleDateString()"
+        :skeleton="{ width: '5.125rem' }"
       />
 
-      <!--  links  -->
-      <PanelLinks
-        :ids="ids"
-        :mode="mode"
-        :season="episode?.season ?? season?.number"
-        :episode="episode?.number"
-        :alias="showAlias"
-        :title="title"
+      <!--  watched time  -->
+      <TextField
+        v-if="watchedTime"
+        :label="i18n('watched_time')"
+        :value="watchedTime"
+        :skeleton="{ width: '5.125rem' }"
+      />
+    </NFlex>
+
+    <NFlex v-if="collectionDate" class="row" size="large">
+      <!--  Collection Date  -->
+      <TextField
+        :label="i18n('collected')"
+        :value="collectionDate.toLocaleDateString()"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
+      <!--  Collection time  -->
+      <TextField
+        v-if="collectionTime"
+        :label="i18n('collected_time')"
+        :value="collectionTime"
+        :skeleton="{ width: '5.125rem' }"
       />
     </NFlex>
   </NFlex>
@@ -246,10 +313,6 @@ const title = computed(() =>
 .row {
   flex: 1 1 auto;
   width: 100%;
-}
-
-.lists {
-  margin: 0.25rem 0 0.5rem;
 }
 
 @media (width < 700px) {

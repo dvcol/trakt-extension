@@ -18,6 +18,7 @@ import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.mod
 
 import { useShowStore } from '~/stores/data/show.store';
 import { useLinksStore } from '~/stores/settings/links.store';
+import { shortTime } from '~/utils/date.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('list', 'item', 'panel');
@@ -59,10 +60,8 @@ const content = computed(() => deCapitalise(item.value.content));
 
 const date = computed(() => {
   if (hideDate.value) return;
-  return item.value.date?.current?.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  if (!item.value?.date?.current) return;
+  return shortTime(item.value.date.current);
 });
 
 const tags = computed(

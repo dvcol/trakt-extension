@@ -1,13 +1,13 @@
 import type { BaseCacheOption } from '@dvcol/base-http-client';
 
 import type {
+  BaseTraktProgress,
+  BaseTraktProgressEpisode,
+  BaseTraktProgressSeason,
   TraktEpisode,
   TraktList,
   TraktMovie,
   TraktPerson,
-  BaseTraktProgress,
-  BaseTraktProgressEpisode,
-  BaseTraktProgressSeason,
   TraktSeason,
   TraktShow,
 } from '@dvcol/trakt-http-client/models';
@@ -47,11 +47,12 @@ export type ListScrollItemTag = {
 } & TagLink;
 
 export type EpisodeProgress = BaseTraktProgressEpisode & {
-  date: Date;
+  date?: Date;
 };
 
 export type SeasonProgress = BaseTraktProgressSeason & {
   episodes: EpisodeProgress[];
+  date?: Date;
   percentage: number;
   finished: boolean;
 };
@@ -66,7 +67,7 @@ export type ShowProgressTypes = (typeof ShowProgressType)[keyof typeof ShowProgr
 export type ShowProgress = BaseTraktProgress & {
   id: string | number;
   type: ShowProgressTypes;
-  date: Date;
+  date?: Date;
   seasons: SeasonProgress[];
   percentage: number;
   finished: boolean;

@@ -39,7 +39,9 @@ const {
   getMovie,
   fetchMovie,
   getMovieWatched,
+  getMovieWatchedDate,
   getMovieCollected,
+  getMovieCollectedDate,
   fetchMovieWatched,
   fetchMovieCollected,
   changeMovieWatched,
@@ -58,9 +60,19 @@ const watched = computed(() => {
   return !!getMovieWatched(movieId.value)?.value;
 });
 
+const watchedDate = computed(() => {
+  if (!watched?.value) return;
+  return getMovieWatchedDate(movieId.value)?.value;
+});
+
 const collected = computed(() => {
   if (!movieId?.value) return;
   return !!getMovieCollected(movieId.value)?.value;
+});
+
+const collectedDate = computed(() => {
+  if (!collected?.value) return;
+  return getMovieCollectedDate(movieId.value)?.value;
 });
 
 onMounted(() => {
@@ -209,7 +221,11 @@ const { openTab } = useLinksStore();
 
     <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
 
-    <MoviePanelDetails :movie="movie" />
+    <MoviePanelDetails
+      :movie="movie"
+      :watched-date="watchedDate"
+      :collection-date="collectedDate"
+    />
 
     <MoviePanelButtons
       :watched="watched"

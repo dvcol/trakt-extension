@@ -47,3 +47,6 @@ export const compareDateObject = <T extends RecursiveRecord<Date>>(a?: T, b?: T)
     }),
   );
 };
+
+export const shortTime = (date?: Date, locale?: Intl.LocalesArgument, options?: Intl.DateTimeFormatOptions) =>
+  date?.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', ...options });
