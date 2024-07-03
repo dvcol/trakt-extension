@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github.com/dvcol/trakt-extension/compare/v1.11.0...v1.11.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* **images:** clear cache on empty staled request & fix cache eviction ([358caf4](https://github.com/dvcol/trakt-extension/commit/358caf4885a8ab6c9c48277602f7ff1f60c72ded))
+* **labels:** correctly detect series premier instead of season premier ([3963251](https://github.com/dvcol/trakt-extension/commit/3963251c91e12d9e12c8189b6128b1c793716b2d))
+
 ## [1.11.0](https://github.com/dvcol/trakt-extension/compare/v1.10.0...v1.11.0) (2024-07-01)
 
 
