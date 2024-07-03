@@ -9,6 +9,7 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useImageStore } from '~/stores/data/image.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils/i18n.utils';
@@ -38,8 +39,13 @@ const onClick = async (fn: () => unknown, index: number) => {
   }
 };
 
+const { clearState: clearImageStore } = useImageStore();
+
 const evictScopes = [
-  { label: i18n('evict_images'), click: TraktService.evict.tmdb },
+  {
+    label: i18n('evict_images'),
+    click: () => Promise.all([clearImageStore(), TraktService.evict.tmdb()]),
+  },
   {
     label: i18n('evict_progress'),
     click: () =>

@@ -5,6 +5,8 @@ import { computed, reactive, type Ref, ref } from 'vue';
 
 import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/models';
 
+import type { ImagePayload } from '~/models/poster.model';
+
 import { ErrorService } from '~/services/error.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
@@ -13,6 +15,7 @@ import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 type ImageStoreMedia = {
   poster?: string;
@@ -53,13 +56,6 @@ export type ImageQuery = {
   season?: number;
   episode?: number;
   type: ImageStoreTypes;
-};
-
-type ImagePayload = {
-  posters?: TmdbImage[]; // movie, show, season
-  backdrops?: TmdbImage[]; // movie or shows
-  stills?: TmdbImage[]; // episodes
-  profiles?: TmdbImage[]; // profiles
 };
 
 const emptyImageStore = {
@@ -121,6 +117,16 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     if (season) Object.assign(images.season, season);
     if (episode) Object.assign(images.episode, episode);
     if (person) Object.assign(images.person, person);
+  };
+
+  const clearState = async () => {
+    clearProxy(images.movie);
+    clearProxy(images.show);
+    clearProxy(images.season);
+    clearProxy(images.episode);
+    clearProxy(images.person);
+    clearProxy(imageErrors);
+    return saveState().catch(err => logger.error('Failed to save image store', err));
   };
 
   const initImageStore = async (config?: TmdbConfiguration) => {
@@ -249,7 +255,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     return setResponseValue({ image: result.image, baseUrl, type, size }, response);
   };
 
-  return { initImageStore, getImageUrl, imageSizes };
+  return { initImageStore, getImageUrl, imageSizes, clearState };
 });
 
 export const useImageStoreRefs = () => storeToRefs(useImageStore());
