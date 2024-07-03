@@ -104,7 +104,7 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
 
     let premiere: TraktEpisodeTypes | null = null;
     // let finale: TraktEpisodeTypes;
-    if (item.episode.season === 1 && item.episode.number === 1) premiere = TraktEpisodeType.SeasonPremiere;
+    if (item.episode.season === 1 && item.episode.number === 1) premiere = TraktEpisodeType.SeriesPremiere;
     else if (item.episode.number === 1) premiere = TraktEpisodeType.SeasonPremiere;
 
     if (premiere) {
