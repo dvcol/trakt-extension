@@ -23,6 +23,7 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -75,21 +76,21 @@ const collectedDate = computed(() => {
   return getMovieCollectedDate(movieId.value)?.value;
 });
 
-onMounted(() => {
-  watch(
-    movieId,
-    id => {
-      fetchMovie(id);
-    },
-    { immediate: true },
-  );
-  fetchMovieWatched();
-  fetchMovieCollected();
-});
+const { myLists } = useListsStoreRefs();
+const {
+  isListTypeLoading,
+  isItemInList,
+  isItemListLoading,
+  addToOrRemoveFromList,
+  fetchAll,
+} = useListStore();
 
-const { lists } = useListsStoreRefs();
-const { isListTypeLoading, isItemInList, isItemListLoading, addToOrRemoveFromList } =
-  useListStore();
+const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
+
+const shouldFetchLists = computed(() => {
+  if (!myLists.value?.length) return false;
+  return loadLists.value;
+});
 
 const listLoading = computed(
   () =>
@@ -118,7 +119,7 @@ const watchedLoading = computed(() => {
 
 const activeLists = computed(() => {
   if (movieId?.value === undefined) return;
-  return lists.value
+  return myLists.value
     ?.filter(list => isItemInList(list.id, 'movie', movieId.value).value)
     .map(list => list.id);
 });
@@ -126,7 +127,7 @@ const activeLists = computed(() => {
 const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   if (!movie.value?.ids) return;
 
-  const _list = lists.value.find(list => list.id === value);
+  const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
   await addToOrRemoveFromList({
@@ -204,6 +205,29 @@ const titleUrl = computed(() => {
 });
 
 const { openTab } = useLinksStore();
+
+onMounted(() => {
+  watch(
+    movieId,
+    id => {
+      fetchMovie(id);
+    },
+    { immediate: true },
+  );
+  fetchMovieWatched();
+  fetchMovieCollected();
+
+  if (shouldFetchLists.value) {
+    fetchAll(
+      myLists.value.filter(
+        _active => loadLists.value?.find(_list => _list.id === _active.id),
+      ),
+      {
+        limit: loadListsPageSize.value,
+      },
+    );
+  }
+});
 </script>
 
 <template>
