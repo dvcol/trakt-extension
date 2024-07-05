@@ -4,6 +4,7 @@ import { computed, reactive, ref, toRaw } from 'vue';
 
 import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
+import { type ListEntity } from '~/stores/data/list.store';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -35,6 +36,8 @@ type ExtensionSettings = {
   enabledRoutes: RouteDictionary;
   restoreRoute: boolean;
   restorePanel: boolean;
+  loadLists: ListEntity[];
+  loadListsPageSize: number;
 };
 
 const ExtensionSettingsConstants = {
@@ -43,26 +46,32 @@ const ExtensionSettingsConstants = {
 } as const;
 
 export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.Store, () => {
-  const cacheRetention = reactive<CacheRetentionState>(DefaultCacheRetention);
-  const routeDictionary = reactive<RouteDictionary>(DefaultRoutes);
-  const restoreRoute = ref(true);
-  const restorePanel = ref(false);
-  const defaultTab = ref(Route.Calendar);
+  const cacheRetention = reactive<ExtensionSettings['cacheRetention']>(DefaultCacheRetention);
+  const routeDictionary = reactive<ExtensionSettings['enabledRoutes']>(DefaultRoutes);
+  const restoreRoute = ref<ExtensionSettings['restoreRoute']>(true);
+  const restorePanel = ref<ExtensionSettings['restorePanel']>(false);
+  const loadLists = ref<ExtensionSettings['loadLists']>([]);
+  const loadListsPageSize = ref<ExtensionSettings['loadListsPageSize']>(500);
+  const defaultTab = ref<Route>(Route.Calendar);
   const initialized = ref<Promise<boolean>>();
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
     Object.assign(routeDictionary, DefaultRoutes);
     restoreRoute.value = true;
+    restorePanel.value = false;
+    loadLists.value = [];
   };
 
   const saveState = debounce(
     () =>
-      storage.sync.set(ExtensionSettingsConstants.Store, {
+      storage.sync.set<ExtensionSettings>(ExtensionSettingsConstants.Store, {
         cacheRetention: toRaw(cacheRetention),
         enabledRoutes: toRaw(routeDictionary),
         restoreRoute: restoreRoute.value,
         restorePanel: restorePanel.value,
+        loadLists: loadLists.value,
+        loadListsPageSize: loadListsPageSize.value,
       }),
     500,
   );
@@ -82,6 +91,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.enabledRoutes !== undefined) Object.assign(routeDictionary, restored.enabledRoutes);
     if (restored?.restoreRoute !== undefined) restoreRoute.value = restored.restoreRoute;
     if (restored?.restorePanel !== undefined) restorePanel.value = restored.restorePanel;
+    if (restored?.loadLists !== undefined) loadLists.value = Object.values(restored.loadLists);
+    if (restored?.loadListsPageSize !== undefined) loadListsPageSize.value = restored.loadListsPageSize;
   };
 
   const saveDefaultTab = debounce(() => storage.sync.set(ExtensionSettingsConstants.LocalDefaultTab, defaultTab.value), 500);
@@ -129,6 +140,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         saveState().catch(err => logger.error('Failed to save restore panel extension settings', { value, err }));
       },
     }),
+    loadLists: computed({
+      get: () => loadLists.value,
+      set: (value: ListEntity[]) => {
+        loadLists.value = value;
+        saveState().catch(err => logger.error('Failed to save load lists extension settings', { value, err }));
+      },
+    }),
+    loadListsPageSize,
     toggleTab,
     routeDictionary,
     defaultTab: computed({

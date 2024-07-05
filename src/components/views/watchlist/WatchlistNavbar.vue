@@ -49,12 +49,12 @@ const listOptions = computed<ListOption[]>(() =>
     label: [ListType.Collection, ListType.Watchlist, ListType.Favorites]
       .map(String)
       .includes(list.type)
-      ? i18n(list.name)
+      ? i18n(list.name, 'list')
       : list.name,
     value: list.id,
     source: list,
     icon: getIcon(list),
-    disabled: listLoading.value || listLoading.value,
+    disabled: listLoading.value,
   })),
 );
 

@@ -179,7 +179,7 @@ const collectionOptions = computed(() => {
   return _options;
 });
 
-const { lists, listsLoading } = useListsStoreRefs();
+const { myLists, listsLoading } = useListsStoreRefs();
 const { fetchLists, getIcon } = useListsStore();
 
 const listLoading = computed(() => {
@@ -187,15 +187,13 @@ const listLoading = computed(() => {
 });
 
 const listOptions = computed(() => {
-  return lists.value
-    ?.filter(list => [ListType.List, ListType.Watchlist].map(String).includes(list.type))
-    .map(list => {
-      return {
-        label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
-        value: list.id,
-        icon: getIcon(list),
-      };
-    });
+  return myLists.value?.map(list => {
+    return {
+      label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
+      value: list.id,
+      icon: getIcon(list),
+    };
+  });
 });
 
 onMounted(() => {

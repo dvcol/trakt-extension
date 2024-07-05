@@ -23,6 +23,7 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useShowStore } from '~/stores/data/show.store';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -163,9 +164,20 @@ const collectionProgressEntity = computed(() => {
   return collectionProgress.value;
 });
 
-const { lists } = useListsStoreRefs();
-const { isListTypeLoading, isItemInList, addToOrRemoveFromList, isItemListLoading } =
-  useListStore();
+const { myLists } = useListsStoreRefs();
+const {
+  isListTypeLoading,
+  isItemInList,
+  addToOrRemoveFromList,
+  isItemListLoading,
+  fetchAll,
+} = useListStore();
+const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
+
+const shouldFetchLists = computed(() => {
+  if (!myLists.value?.length) return false;
+  return loadLists.value;
+});
 
 const listLoading = computed(
   () =>
@@ -208,7 +220,7 @@ const activeLists = computed(() => {
   const _id = activeItem?.value?.ids?.trakt;
   const _type = panelType.value;
   if (_id === undefined || !_type) return;
-  return lists.value
+  return myLists.value
     ?.filter(list => isItemInList(list.id, _type, _id).value)
     .map(list => list.id);
 });
@@ -231,7 +243,7 @@ const releaseDate = computed(() => activeItem.value?.first_aired);
 
 const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   if (!panelType.value || !activeItem.value?.ids) return;
-  const _list = lists.value.find(list => list.id === value);
+  const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
   await addToOrRemoveFromList({
@@ -301,6 +313,17 @@ onMounted(() => {
         if (_seasonNb !== undefined && _episodeNb !== undefined) {
           fetchShowEpisode(_showId, _seasonNb, _episodeNb);
         }
+      }
+
+      if (shouldFetchLists.value) {
+        fetchAll(
+          myLists.value.filter(
+            _active => loadLists.value?.find(_list => _list.id === _active.id),
+          ),
+          {
+            limit: loadListsPageSize.value,
+          },
+        );
       }
     },
     { immediate: true },

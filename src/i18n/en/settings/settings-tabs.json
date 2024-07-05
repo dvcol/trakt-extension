@@ -46,5 +46,13 @@
   "settings__tabs__label_search_page_size": {
     "message": "Search page size",
     "description": "Label for the 'Search page size' setting"
+  },
+  "settings__tabs__label_load_lists": {
+    "message": "Lists to load when opening panels",
+    "description": "Label for the 'Load lists' setting"
+  },
+  "settings__tabs__label_load_lists_page_size": {
+    "message": "Page size for lists",
+    "description": "Label for the 'Page size for lists' setting"
   }
 }

@@ -185,6 +185,13 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     }
   };
 
+  /** Filter favorites and collections out  */
+  const myLists = computed(() => {
+    return lists.value?.filter(list => {
+      return [ListType.List, ListType.Watchlist].map(String).includes(list.type);
+    });
+  });
+
   const initListsStore = async () => {
     await restoreState();
 
@@ -193,7 +200,7 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     });
   };
 
-  return { listsLoading: loading, lists, activeList, fetchLists, clearState, initListsStore, getIcon };
+  return { listsLoading: loading, lists, myLists, activeList, fetchLists, clearState, initListsStore, getIcon };
 });
 
 export const useListsStoreRefs = () => storeToRefs(useListsStore());
@@ -208,6 +215,9 @@ type ListErrorDictionary = Partial<Record<ListEntity['type'], ErrorDictionary>>;
 
 type ListTypeLoading = Partial<Record<ListTypes, boolean>>;
 type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListItemTypes, Record<string, boolean>>>>>;
+
+type ListItemQuery = TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery;
+type ListQuery = { page?: number; limit?: number; list?: ListEntity };
 
 const ListStoreConstants = {
   Store: 'data.list',
@@ -280,10 +290,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const { user } = useUserSettingsStoreRefs();
 
-  const fetchItems = async (
-    list: ListEntity,
-    query: TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery,
-  ) => {
+  const fetchItems = async (list: ListEntity, query: ListItemQuery = {}) => {
     let _query = { ...query };
     let response;
 
@@ -314,12 +321,8 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     return response;
   };
 
-  const fetchListItems = async ({
-    page,
-    limit = pageSize.value,
-    list = activeList.value,
-  }: { page?: number; limit?: number; list?: ListEntity } = {}) => {
-    if (!firstLoad.value && loading.value) {
+  const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false) => {
+    if (!firstLoad.value && !parallel && loading.value) {
       logger.warn('Already fetching list');
       return;
     }
@@ -327,7 +330,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
     logger.debug('Fetching List', { list, page, limit });
 
-    loading.value = true;
+    if (!parallel) loading.value = true;
     typeLoading[list.type] = true;
     listDictionaryLoading[list.id.toString()] = true;
     const timeout = debounceLoading(listItems, loadingPlaceholder, !page);
@@ -348,10 +351,17 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       throw e;
     } finally {
       clearTimeout(timeout);
-      loading.value = false;
+      if (!parallel) loading.value = false;
       typeLoading[list.type] = false;
       listDictionaryLoading[list.id.toString()] = false;
     }
+  };
+
+  const fetchAll = async (lists: ListEntity[], query?: Omit<ListQuery, 'list'>) => {
+    if (!lists.length) return;
+    loading.value = true;
+    await Promise.all(lists.map(list => fetchListItems({ list, ...query }, true)));
+    loading.value = false;
   };
 
   const i18n = useI18n('common', 'notification');
@@ -475,6 +485,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     belowThreshold,
     loadingPlaceholder,
     fetchListItems,
+    fetchAll,
     filteredListItems,
     initListStore,
     isListLoading,

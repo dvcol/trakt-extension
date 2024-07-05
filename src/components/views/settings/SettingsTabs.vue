@@ -1,13 +1,19 @@
 <script lang="ts" setup>
-import { NSelect, NSwitch } from 'naive-ui';
+import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
 
-import { computed, ref } from 'vue';
+import { type Component, computed, h, onBeforeMount, ref } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions } from '~/models/page-size.model';
 import { Route } from '~/models/router.model';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
-import { useListStoreRefs } from '~/stores/data/list.store';
+import {
+  type ListEntity,
+  ListType,
+  useListsStore,
+  useListsStoreRefs,
+  useListStoreRefs,
+} from '~/stores/data/list.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import {
   useExtensionSettingsStore,
@@ -17,9 +23,52 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'tabs');
 
-const { enabledTabs, restoreRoute, routeDictionary, restorePanel, defaultTab } =
-  useExtensionSettingsStoreRefs();
 const { toggleTab } = useExtensionSettingsStore();
+
+const {
+  enabledTabs,
+  restoreRoute,
+  routeDictionary,
+  restorePanel,
+  defaultTab,
+  loadLists,
+  loadListsPageSize,
+} = useExtensionSettingsStoreRefs();
+
+const { getIcon, fetchLists } = useListsStore();
+const { myLists, listsLoading } = useListsStoreRefs();
+
+const selectedLists = computed({
+  get: () => loadLists.value.map(({ id }) => id),
+  set: selected => {
+    loadLists.value = myLists.value.filter(({ id }) => selected.includes(id));
+  },
+});
+
+type ListOption = SelectOption & { source: ListEntity; icon: Component };
+const listOptions = computed<ListOption[]>(() =>
+  myLists.value.map((list, i) => ({
+    label: list.type === ListType.Watchlist ? i18n(list.name, 'list') : list.name,
+    value: list.id,
+    source: list,
+    icon: getIcon(list),
+  })),
+);
+
+const renderLabel = (option: ListOption) => [
+  h(NIcon, {
+    style: {
+      verticalAlign: '-0.2em',
+      marginRight: '0.7em',
+    },
+    component: option.icon,
+  }),
+  option.label?.toString(),
+];
+
+onBeforeMount(() => {
+  fetchLists();
+});
 
 const { pageSize: historyPageSize } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();
@@ -49,6 +98,22 @@ const container = ref();
         class="default-tab"
         :to="container"
         :options="tabsOptions"
+      />
+    </SettingsFormItem>
+
+    <!--  Load lists in panel  -->
+    <SettingsFormItem :label="i18n('label_load_lists')">
+      <NSelect
+        v-model:value="selectedLists"
+        class="list-select"
+        :to="container"
+        :options="listOptions"
+        :loading="listsLoading"
+        :disabled="listsLoading"
+        :render-label="renderLabel"
+        :max-tag-count="1"
+        :ellipsis-tag-popover-props="{ disabled: true }"
+        multiple
       />
     </SettingsFormItem>
 
@@ -91,6 +156,16 @@ const container = ref();
     </SettingsFormItem>
 
     <!--  Page Size  -->
+    <SettingsFormItem :label="i18n('label_load_lists_page_size')">
+      <NSelect
+        v-model:value="loadListsPageSize"
+        :disabled="!loadLists.length"
+        class="form-select"
+        :to="container"
+        :options="pageSizeOptions"
+      />
+    </SettingsFormItem>
+
     <SettingsFormItem :label="i18n('label_history_page_size')">
       <NSelect
         v-model:value="historyPageSize"
@@ -143,7 +218,8 @@ const container = ref();
   min-width: 5.5rem;
 }
 
-.default-tab {
-  min-width: 7rem;
+.default-tab,
+.list-select {
+  width: 12.5rem;
 }
 </style>
