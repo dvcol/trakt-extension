@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/dvcol/trakt-extension/compare/v1.11.1...v1.12.0) (2024-07-05)
+
+
+### Features
+
+* **panel:** load selected lists on movie panel open ([04bf36b](https://github.com/dvcol/trakt-extension/commit/04bf36bb98c8d2b059a2187340ebbce77fc72f83))
+* **panel:** load selected lists on show panel open ([0a8f4a5](https://github.com/dvcol/trakt-extension/commit/0a8f4a5b97d62393b4102fc707021b2201aefa65))
+
 ### [1.11.1](https://github.com/dvcol/trakt-extension/compare/v1.11.0...v1.11.1) (2024-07-03)
 
 
