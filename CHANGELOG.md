@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/dvcol/trakt-extension/compare/v1.12.0...v1.13.0) (2024-07-09)
+
+
+### Features
+
+* **(panel:** fade un-aired episodes & seasons in show panel ([f3ba370](https://github.com/dvcol/trakt-extension/commit/f3ba370db252de06cd170e85bef220968fe5ab1d))
+* **progress:** allows display of progress for season instead of shows ([4b8eabb](https://github.com/dvcol/trakt-extension/commit/4b8eabb95bc17e5d489f2e64519174b925642fc1))
+
 ## [1.12.0](https://github.com/dvcol/trakt-extension/compare/v1.11.1...v1.12.0) (2024-07-05)
 
 
