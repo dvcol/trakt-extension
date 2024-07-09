@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { NFlex, NSkeleton } from 'naive-ui';
 
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, type ComputedRef, type PropType, toRefs } from 'vue';
 
-import { RouterLink, useRoute } from 'vue-router';
+import { type RouteLocationRaw, RouterLink, useRoute } from 'vue-router';
 
 import type { TraktEpisodeShort } from '@dvcol/trakt-http-client/models';
 import type { ShowProgress } from '~/models/list-scroll.model';
@@ -43,7 +43,14 @@ const { meta } = useRoute();
 const showLink = computed(() => ({ name: `${meta.base}-show` }));
 const seasonLink = computed(() => ({ name: `${meta.base}-season` }));
 
-const seasonsLinks = computed(() => {
+type SeasonLink = {
+  number: number;
+  link: RouteLocationRaw;
+  finished?: boolean;
+  collected?: boolean;
+  aired?: boolean;
+};
+const seasonsLinks: ComputedRef<SeasonLink[] | undefined> = computed(() => {
   if (!seasons?.value) return;
   return Object.entries(seasons.value).map(([_number, _season]) => {
     const number = Number(_number);
@@ -52,11 +59,21 @@ const seasonsLinks = computed(() => {
       link: { name: `${meta.base}-season`, params: { seasonNumber: _number } },
       finished: progress?.value?.seasons?.find(s => s.number === number)?.finished,
       collected: collection?.value?.seasons?.find(s => s.number === number)?.finished,
+      aired: _season?.first_aired
+        ? new Date(_season.first_aired) < new Date()
+        : undefined,
     };
   });
 });
 
-const episodeLinks = computed(() => {
+type EpisodeLink = {
+  number: number;
+  link: RouteLocationRaw;
+  finished?: boolean;
+  collected?: boolean;
+  aired?: boolean;
+};
+const episodeLinks: ComputedRef<EpisodeLink[] | undefined> = computed(() => {
   if (!episodes?.value) return;
   if (!episodes?.value?.length) return [];
   return episodes.value.map((_episode, i) => ({
@@ -71,6 +88,7 @@ const episodeLinks = computed(() => {
     collected: collection?.value?.seasons
       ?.find(s => s.number === _episode.season)
       ?.episodes?.find(e => e.number === _episode.number)?.completed,
+    aired: (seasons?.value?.[_episode.season]?.aired_episodes ?? 0) >= _episode.number,
   }));
 });
 
@@ -87,10 +105,11 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers" size="small">
         <template v-if="seasonsLinks?.length">
           <ButtonLink
-            v-for="{ link, number, finished, collected } in seasonsLinks"
+            v-for="{ link, number, finished, collected, aired } in seasonsLinks"
             :key="`season-${number}`"
             :link="{ to: link }"
             :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
+            :style="{ opacity: aired ? 1 : 0.75 }"
           >
             {{ number }}
           </ButtonLink>
@@ -108,11 +127,12 @@ const i18n = useI18n('panel', 'picker');
       <NFlex class="numbers episodes" size="small">
         <template v-if="episodeLinks?.length">
           <ButtonLink
-            v-for="{ link, number, finished, collected } in episodeLinks"
+            v-for="{ link, number, finished, collected, aired } in episodeLinks"
             :key="`episode-${ number }`"
             v-slot="{ isActive }"
             :link="{ to: link }"
             :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
+            :style="{ opacity: aired ? 1 : 0.75 }"
           >
             <span class="label" :class="{ active: isActive }">{{ number }}</span>
           </ButtonLink>

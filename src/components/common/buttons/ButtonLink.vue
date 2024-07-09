@@ -28,6 +28,7 @@ defineProps({
       :quaternary="!isActive"
       class="button-link"
       :class="$attrs.class"
+      :style="$attrs.style"
       round
       size="small"
       :href="href"
