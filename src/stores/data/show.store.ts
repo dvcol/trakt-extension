@@ -49,8 +49,9 @@ const parseProgressDate = (
 };
 
 const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktCollectionProgress, id: string | number): ShowProgress => {
-  let completed = 0;
-  let aired = 0;
+  let completed: ShowProgress['completed'] = 0;
+  let aired: ShowProgress['aired'] = 0;
+  let lastAired: ShowProgress['lastAired'];
 
   const result = {
     id,
@@ -75,6 +76,8 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktColle
         return { ...episode, date };
       });
 
+      if (_season.aired && (!lastAired || _season.number > lastAired.number)) lastAired = _season;
+
       return _season;
     }),
   };
@@ -84,6 +87,7 @@ const watchProgressToListProgress = (progress: TraktWatchedProgress | TraktColle
     aired,
     percentage: aired ? ((completed ?? 0) / aired) * 100 : 0,
     finished: !!aired && completed === aired,
+    lastAired,
   };
 };
 

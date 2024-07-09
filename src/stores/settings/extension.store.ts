@@ -2,6 +2,7 @@ import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
+import { ProgressType, type ProgressTypes } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { type ListEntity } from '~/stores/data/list.store';
@@ -38,6 +39,7 @@ type ExtensionSettings = {
   restorePanel: boolean;
   loadLists: ListEntity[];
   loadListsPageSize: number;
+  progressType: ProgressTypes;
 };
 
 const ExtensionSettingsConstants = {
@@ -54,6 +56,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const loadListsPageSize = ref<ExtensionSettings['loadListsPageSize']>(500);
   const defaultTab = ref<Route>(Route.Calendar);
   const initialized = ref<Promise<boolean>>();
+  const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -61,6 +64,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     restoreRoute.value = true;
     restorePanel.value = false;
     loadLists.value = [];
+    progressType.value = ProgressType.Show;
   };
 
   const saveState = debounce(
@@ -72,6 +76,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         restorePanel: restorePanel.value,
         loadLists: loadLists.value,
         loadListsPageSize: loadListsPageSize.value,
+        progressType: progressType.value,
       }),
     500,
   );
@@ -93,6 +98,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.restorePanel !== undefined) restorePanel.value = restored.restorePanel;
     if (restored?.loadLists !== undefined) loadLists.value = Object.values(restored.loadLists);
     if (restored?.loadListsPageSize !== undefined) loadListsPageSize.value = restored.loadListsPageSize;
+    if (restored?.progressType !== undefined) progressType.value = restored.progressType;
   };
 
   const saveDefaultTab = debounce(() => storage.sync.set(ExtensionSettingsConstants.LocalDefaultTab, defaultTab.value), 500);
@@ -167,6 +173,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     tmdbCacheRetention: computed({
       get: () => cacheRetention.tmdb,
       set: (value: number) => setRetention({ tmdb: value }),
+    }),
+    progressType: computed({
+      get: () => progressType.value,
+      set: (value: ExtensionSettings['progressType']) => {
+        progressType.value = value;
+        saveState().catch(err => logger.error('Failed to save progress type extension settings', { value, err }));
+      },
     }),
   };
 });

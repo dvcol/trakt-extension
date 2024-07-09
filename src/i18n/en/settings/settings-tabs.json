@@ -54,5 +54,9 @@
   "settings__tabs__label_load_lists_page_size": {
     "message": "Page size for lists",
     "description": "Label for the 'Page size for lists' setting"
+  },
+  "settings__tabs__label_progress_type": {
+    "message": "Progress type",
+    "description": "Label for the 'Progress type' setting"
   }
 }

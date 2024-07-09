@@ -5,6 +5,7 @@ import { type Component, computed, h, onBeforeMount, ref } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions } from '~/models/page-size.model';
+import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
 import {
@@ -33,6 +34,7 @@ const {
   defaultTab,
   loadLists,
   loadListsPageSize,
+  progressType,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -81,6 +83,11 @@ const tabsOptions = computed(() =>
     disabled: !state,
   })),
 );
+
+const progressTypeOptions = Object.values(ProgressType).map(pt => ({
+  label: i18n(`type__${pt}`, 'progress'),
+  value: pt,
+}));
 
 const disabled = computed(
   () => enabledTabs.value.filter(([_, state]) => state).length <= 1,
@@ -134,26 +141,39 @@ const container = ref();
     </SettingsFormItem>
 
     <!--  Enable tabs  -->
-    <SettingsFormItem
-      v-for="[route, state] of enabledTabs"
-      :key="route"
-      :label="i18n(`label_route_${ route }`)"
-      :warning="
-        state && route === Route.Progress
-          ? i18n(`label_route_${ route }_warning`)
-          : undefined
-      "
-    >
-      <NSwitch
-        :value="state"
-        class="form-switch"
-        :disabled="state && disabled"
-        @update:value="toggleTab(route)"
+    <template v-for="[route, state] of enabledTabs" :key="route">
+      <SettingsFormItem
+        :label="i18n(`label_route_${ route }`)"
+        :warning="
+          state && route === Route.Progress
+            ? i18n(`label_route_${ route }_warning`)
+            : undefined
+        "
       >
-        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
-        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
-      </NSwitch>
-    </SettingsFormItem>
+        <NSwitch
+          :value="state"
+          class="form-switch"
+          :disabled="state && disabled"
+          @update:value="toggleTab(route)"
+        >
+          <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+          <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+        </NSwitch>
+      </SettingsFormItem>
+
+      <!--  Progress Type  -->
+      <SettingsFormItem
+        v-if="state && route === Route.Progress"
+        :label="i18n('label_progress_type')"
+      >
+        <NSelect
+          v-model:value="progressType"
+          class="progress-type"
+          :to="container"
+          :options="progressTypeOptions"
+        />
+      </SettingsFormItem>
+    </template>
 
     <!--  Page Size  -->
     <SettingsFormItem :label="i18n('label_load_lists_page_size')">
@@ -221,5 +241,9 @@ const container = ref();
 .default-tab,
 .list-select {
   width: 12.5rem;
+}
+
+.progress-type {
+  width: 6rem;
 }
 </style>

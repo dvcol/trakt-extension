@@ -71,6 +71,7 @@ export type ShowProgress = BaseTraktProgress & {
   seasons: SeasonProgress[];
   percentage: number;
   finished: boolean;
+  lastAired?: SeasonProgress;
 };
 
 export const ListScrollItemType = {

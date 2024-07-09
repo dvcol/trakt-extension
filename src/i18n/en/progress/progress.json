@@ -6,5 +6,13 @@
   "progress__logout__trakt": {
     "message": "Please sign into trakt.tv directly.",
     "description": "Login message for trakt.tv auth sessions."
+  },
+  "progress__type__show": {
+    "message": "Show",
+    "description": "Type label for a show."
+  },
+  "progress__type__season": {
+    "message": "Season",
+    "description": "Type label for a movie."
   }
 }

@@ -16,7 +16,9 @@ import TagLink from '~/components/common/buttons/TagLink.vue';
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
+import { ProgressType } from '~/models/progress-type.model';
 import { useShowStore } from '~/stores/data/show.store';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { shortTime } from '~/utils/date.utils';
 import { useI18n } from '~/utils/i18n.utils';
@@ -84,6 +86,16 @@ const progress = computed<ShowProgress | undefined>(() => {
   return getShowWatchedProgress(id, cacheOptions).value;
 });
 
+const { progressType } = useExtensionSettingsStoreRefs();
+
+const percentage = computed(() => {
+  if (!progress.value) return;
+  if (progressType.value === ProgressType.Season) {
+    if (progress.value?.lastAired) return progress.value?.lastAired?.percentage;
+  }
+  return progress.value?.percentage;
+});
+
 const innerContainer = ref();
 const tooltipOptions = computed<PopoverProps>(() => ({
   to: innerContainer.value,
@@ -140,11 +152,11 @@ const onTagClick = (url?: string) => {
           <NProgress
             class="line"
             :data-show-id="progress?.id"
-            :data-percentage="progress?.percentage"
+            :data-percentage="percentage"
             :theme-overrides="{
               railHeight: 'var(--rail-height)',
             }"
-            :percentage="progress?.percentage ?? 0"
+            :percentage="percentage ?? 0"
             :show-indicator="false"
             color="var(--trakt-red-dark)"
           />
