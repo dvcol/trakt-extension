@@ -63,6 +63,16 @@ Give a ⭐️ if this project helped you!
     <img alt="donate" src="https://img.shields.io/badge/Donate%20€-PayPal-brightgreen.svg" />
   </a>
 
+
+## Download
+
+* [Github Releases](https://github.com/dvcol/trakt-extension/releases)
+* [Download Side Trakt (companion app for Trakt.tv)](https://chrome.google.com/webstore/detail/side-trakt-companion-app/pdodapikbijcfickiofjkjgkkmlcnbba)
+
+ <a href="https://chrome.google.com/webstore/detail/side-trakt-companion-app/pdodapikbijcfickiofjkjgkkmlcnbba" target="_blank">
+    <img alt="chrome-webstore" src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/mPGKYBIR2uCP0ApchDXE.png" />
+ </a>
+
 ## 📝 License
 
 This project is [MIT](https://github.com/dvcol/trakt-extension/blob/master/LICENSE) licensed.
