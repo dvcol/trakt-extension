@@ -22,5 +22,9 @@
   "settings__menu__menus": {
     "message": "Menus",
     "description": "Context menus menu item"
+  },
+  "settings__menu__export": {
+    "message": "Export",
+    "description": "Export trakt data menu item"
   }
 }

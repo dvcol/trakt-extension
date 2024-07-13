@@ -4,39 +4,39 @@ import { CacheRetention } from '@dvcol/common-utils/common/cache';
 
 import { TmdbClient } from '@dvcol/tmdb-http-client';
 import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
+import {
+  type TraktApiResponse,
+  type TraktAuthenticationApprove,
+  type TraktCalendarQuery,
+  type TraktCollection,
+  type TraktCollectionGetQuery,
+  type TraktCollectionProgress,
+  type TraktCollectionRequest,
+  type TraktEpisodeExtended,
+  type TraktEpisodeShort,
+  type TraktFavoriteGetQuery,
+  type TraktFavoriteRequest,
+  type TraktHistoryGetQuery,
+  type TraktHistoryRemovedRequest,
+  type TraktHistoryRequest,
+  type TraktList,
+  type TraktListItemsGetQuery,
+  type TraktMovieExtended,
+  type TraktPersonExtended,
+  type TraktSearch,
+  type TraktSeasonExtended,
+  type TraktShowExtended,
+  type TraktSyncRequest,
+  type TraktUserListItemAddedRequest,
+  type TraktUserListItemRemoveRequest,
+  type TraktWatched,
+  type TraktWatchedProgress,
+  type TraktWatchlistGetQuery,
+} from '@dvcol/trakt-http-client/models';
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 import type { TmdbApiResponse } from '@dvcol/tmdb-http-client/models';
-import type {
-  TraktApiResponse,
-  TraktAuthenticationApprove,
-  TraktCalendarQuery,
-  TraktCollection,
-  TraktCollectionGetQuery,
-  TraktCollectionProgress,
-  TraktCollectionRequest,
-  TraktEpisodeExtended,
-  TraktEpisodeShort,
-  TraktFavoriteGetQuery,
-  TraktFavoriteRequest,
-  TraktHistoryGetQuery,
-  TraktHistoryRemovedRequest,
-  TraktHistoryRequest,
-  TraktList,
-  TraktListItemsGetQuery,
-  TraktMovieExtended,
-  TraktPersonExtended,
-  TraktSearch,
-  TraktSeasonExtended,
-  TraktShowExtended,
-  TraktSyncRequest,
-  TraktUserListItemAddedRequest,
-  TraktUserListItemRemoveRequest,
-  TraktWatched,
-  TraktWatchedProgress,
-  TraktWatchlistGetQuery,
-} from '@dvcol/trakt-http-client/models';
 
 import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
 import type { ImagePayload } from '~/models/poster.model';
@@ -55,6 +55,8 @@ import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
+import { type JsonWriterOptions } from '~/utils/save.utils';
+import { cancellablePaginatedWriteJson } from '~/utils/trakt-service.utils';
 
 const shouldEvict = (cache?: CacheResponse<unknown>, date?: string | number | Date): boolean => {
   // no cache skip
@@ -598,5 +600,18 @@ export class TraktService {
         ]),
       movie: TraktService.traktClient.sync.collection.get.cached.evict,
     },
+  };
+
+  static export = {
+    history: ({ payload, writer }: { payload?: TraktHistoryGetQuery; writer?: JsonWriterOptions } = {}) =>
+      cancellablePaginatedWriteJson(TraktService.traktClient.sync.history.get, payload, writer),
+    watchlist: ({ payload, writer }: { payload?: TraktWatchlistGetQuery; writer?: JsonWriterOptions } = {}) =>
+      cancellablePaginatedWriteJson(TraktService.traktClient.sync.watchlist.get, payload, writer),
+    collection: ({ payload, writer }: { payload?: TraktCollectionGetQuery; writer?: JsonWriterOptions } = {}) =>
+      cancellablePaginatedWriteJson(TraktService.traktClient.sync.collection.get, payload, writer),
+    favorites: ({ payload, writer }: { payload?: TraktFavoriteGetQuery; writer?: JsonWriterOptions } = {}) =>
+      cancellablePaginatedWriteJson(TraktService.traktClient.sync.favorites.get, payload, writer),
+    list: ({ payload, writer }: { payload: TraktListItemsGetQuery; writer?: JsonWriterOptions }) =>
+      cancellablePaginatedWriteJson(TraktService.traktClient.users.list.items.get, payload, writer),
   };
 }

@@ -110,17 +110,18 @@ const listLoading = computed(() => {
   return listsLoading.value || activeLoading.value;
 });
 
-const listOptions = computed(() => {
-  return lists.value
-    ?.filter(list => [ListType.List, ListType.Watchlist].map(String).includes(list.type))
-    .map(list => {
-      return {
+const listOptions = computed(
+  () =>
+    lists.value
+      ?.filter(list =>
+        [ListType.List, ListType.Watchlist].map(String).includes(list.type),
+      )
+      .map(list => ({
         label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
         value: list.id,
         icon: getIcon(list),
-      };
-    });
-});
+      })),
+);
 
 onMounted(() => {
   fetchLists();

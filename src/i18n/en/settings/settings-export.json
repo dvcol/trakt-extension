@@ -1,0 +1,62 @@
+{
+  "settings__export__export_success": {
+    "message": "exported successfully.",
+    "description": "Message displayed when export is evicted successfully"
+  },
+  "settings__export__export_failure": {
+    "message": "failed to export.",
+    "description": "Message displayed when export evict fails"
+  },
+  "settings__export__export_aborted": {
+    "message": "export aborted.",
+    "description": "Message displayed when export evict fails"
+  },
+  "settings__export__export_history": {
+    "message": "Export History",
+    "description": "Label for the export history button"
+  },
+  "settings__export__export_history_name": {
+    "message": "History",
+    "description": "Label for the history export name"
+  },
+  "settings__export__export_list_name": {
+    "message": "List",
+    "description": "Label for the list export name"
+  },
+  "settings__export__export_collaboration_name": {
+    "message": "Collaboration",
+    "description": "Label for the collaboration export name"
+  },
+  "settings__export__export_collection_name": {
+    "message": "Collection",
+    "description": "Label for the collection export name"
+  },
+  "settings__export__export_list_type__collection_movie_name": {
+    "message": "Collection Movie",
+    "description": "Label for the collection export name"
+  },
+  "settings__export__export_list_type__collection_show_name": {
+    "message": "Collection Show",
+    "description": "Label for the collection export name"
+  },
+  "settings__export__export_list_type__watchlist_name": {
+    "message": "Watchlist",
+    "description": "Label for the watchlist export name"
+  },
+  "settings__export__export_list_type__favorites_name": {
+    "message": "Favorites",
+    "description": "Label for the favorites export name"
+  },
+  "settings__export__export_list": {
+    "message": "Export list",
+    "description": "Label for the export list button"
+  },
+  "settings__export__export_progress_1": {
+    "message": "Exporting page",
+    "description": "Label for the first part of the export progress message"
+  },
+  "settings__export__export_progress_2": {
+    "message": "out of",
+    "description": "Label for the first part of the export progress message"
+  }
+}

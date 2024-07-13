@@ -46,5 +46,13 @@
   "common__button__logout": {
     "message": "Logout",
     "description": "Button to logout."
+  },
+  "common__button__export": {
+    "message": "Export my data",
+    "description": "Button to export data."
+  },
+  "common__button__export_cancel": {
+    "message": "Cancel export",
+    "description": "Button to cancel export data."
   }
 }

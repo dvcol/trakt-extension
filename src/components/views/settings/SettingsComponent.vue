@@ -5,6 +5,7 @@ import { type Component, onDeactivated, type Ref, ref } from 'vue';
 
 import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
 import SettingsCache from '~/components/views/settings/SettingsCache.vue';
+import SettingsExport from '~/components/views/settings/SettingsExport.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
 import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
@@ -26,6 +27,7 @@ const sections: Section[] = [
   { title: 'menu__menus', reference: ref(), component: SettingsMenus },
   { title: 'menu__cache', reference: ref(), component: SettingsCache },
   { title: 'menu__logs', reference: ref(), component: SettingsLogs },
+  { title: 'menu__export', reference: ref(), component: SettingsExport },
 ];
 
 const focus = ref();
