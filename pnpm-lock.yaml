@@ -12,8 +12,8 @@ importers:
         specifier: ^1.10.0
         version: 1.10.0
       '@dvcol/common-utils':
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: ^1.3.0
+        version: 1.3.0
       '@dvcol/tmdb-http-client':
         specifier: ^1.1.4
         version: 1.1.4
@@ -465,8 +465,8 @@ packages:
     resolution: {integrity: sha512-kNSO7IePifulnkTihfm+9YxFgJXcogtZ2AUW1NKkeLbmBxRldCsO4wVOXdTEjHxSU4jLHHUnxDfjttbw5hzuAA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/common-utils@1.2.2':
-    resolution: {integrity: sha512-7fDxYpYlEfLuwMoDv1/RW33k4aa7CYmJ/TgfW9qgNrgPH9qYoQ8zj9zWyhiQ9Ra6LC3kjRpUXSVgbgzN+isIdA==}
+  '@dvcol/common-utils@1.3.0':
+    resolution: {integrity: sha512-YNfkeCFsgVBOwFhG7k/RjoUcHzZgoRvuojKuQzjd1et8Ph5VlPl7Tk0ndlPGC1pdrPdj8xmdciTC2NAJewOTRQ==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/eslint-plugin-presets@1.3.10':
@@ -6046,9 +6046,9 @@ snapshots:
 
   '@dvcol/base-http-client@1.10.0':
     dependencies:
-      '@dvcol/common-utils': 1.2.2
+      '@dvcol/common-utils': 1.3.0
 
-  '@dvcol/common-utils@1.2.2': {}
+  '@dvcol/common-utils@1.3.0': {}
 
   '@dvcol/eslint-plugin-presets@1.3.10(h5hhktwfy3k6uh2elkfpzzc7w4)':
     dependencies:
@@ -6107,21 +6107,21 @@ snapshots:
   '@dvcol/tmdb-http-client@1.1.4':
     dependencies:
       '@dvcol/base-http-client': 1.10.0
-      '@dvcol/common-utils': 1.2.2
+      '@dvcol/common-utils': 1.3.0
 
   '@dvcol/trakt-http-client@1.3.6':
     dependencies:
       '@dvcol/base-http-client': 1.10.0
-      '@dvcol/common-utils': 1.2.2
+      '@dvcol/common-utils': 1.3.0
 
   '@dvcol/tvdb-http-client@1.1.3':
     dependencies:
       '@dvcol/base-http-client': 1.10.0
-      '@dvcol/common-utils': 1.2.2
+      '@dvcol/common-utils': 1.3.0
 
   '@dvcol/web-extension-utils@3.0.1':
     dependencies:
-      '@dvcol/common-utils': 1.2.2
+      '@dvcol/common-utils': 1.3.0
       fast-glob: 3.3.2
       fs-extra: 11.2.0
       rxjs: 7.8.1

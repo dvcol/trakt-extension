@@ -35,6 +35,7 @@ import {
 } from '@dvcol/trakt-http-client/models';
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
+import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 import type { TmdbApiResponse } from '@dvcol/tmdb-http-client/models';
 
@@ -55,7 +56,6 @@ import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { createTab } from '~/utils/browser/browser.utils';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
-import { type JsonWriterOptions } from '~/utils/save.utils';
 import { cancellablePaginatedWriteJson } from '~/utils/trakt-service.utils';
 
 const shouldEvict = (cache?: CacheResponse<unknown>, date?: string | number | Date): boolean => {
