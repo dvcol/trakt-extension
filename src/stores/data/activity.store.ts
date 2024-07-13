@@ -1,3 +1,4 @@
+import { compareDateObject, toDateObject } from '@dvcol/common-utils/common/date';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { ref, watch } from 'vue';
@@ -10,7 +11,6 @@ import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { compareDateObject, toDateObject } from '~/utils/date.utils';
 
 const ActivityStoreConstants = {
   Store: 'data.activity',

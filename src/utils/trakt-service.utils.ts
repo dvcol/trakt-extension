@@ -1,3 +1,4 @@
+import { getJsonWriter } from '@dvcol/common-utils/common/save';
 import {
   TraktApiExtended,
   type TraktApiParamsExtended,
@@ -9,8 +10,7 @@ import {
 import { reactive, ref, type Ref } from 'vue';
 
 import type { RecursiveRecord } from '@dvcol/common-utils/common';
-
-import { getJsonWriter, type JsonWriterOptions } from '~/utils/save.utils';
+import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 
 type PaginatedQuery = TraktApiParamsExtended & TraktApiParamsPagination;
 export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(

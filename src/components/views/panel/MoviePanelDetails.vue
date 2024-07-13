@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { shortTime } from '@dvcol/common-utils/common/date';
 import { capitalizeEachWord, deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
@@ -10,7 +11,6 @@ import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { shortTime } from '~/utils/date.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
