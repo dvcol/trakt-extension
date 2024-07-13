@@ -72,6 +72,9 @@ importers:
       '@types/webextension-polyfill':
         specifier: ^0.10.2
         version: 0.10.2
+      '@types/wicg-file-system-access':
+        specifier: ^2023.10.5
+        version: 2023.10.5
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.0.0
         version: 7.0.1(@typescript-eslint/parser@7.0.1(eslint@8.56.0)(typescript@5.4.2))(eslint@8.56.0)(typescript@5.4.2)
@@ -1173,6 +1176,9 @@ packages:
 
   '@types/webextension-polyfill@0.10.2':
     resolution: {integrity: sha512-L+T72DVTi/1azY6gw7PRmL49kvobLKQQWfOmHDBRSCkAvaCV4wk222J3ZODYA9Gf/UqUvtItu8FPJgWX5ktO9g==}
+
+  '@types/wicg-file-system-access@2023.10.5':
+    resolution: {integrity: sha512-e9kZO9kCdLqT2h9Tw38oGv9UNzBBWaR1MzuAavxPcsV/7FJ3tWbU6RI3uB+yKIDPGLkGVbplS52ub0AcRLvrhA==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -6596,6 +6602,8 @@ snapshots:
       '@types/vfile-message': 2.0.0
 
   '@types/webextension-polyfill@0.10.2': {}
+
+  '@types/wicg-file-system-access@2023.10.5': {}
 
   '@types/yauzl@2.10.3':
     dependencies:

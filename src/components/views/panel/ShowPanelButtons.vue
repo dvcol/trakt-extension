@@ -186,15 +186,14 @@ const listLoading = computed(() => {
   return listsLoading.value || activeLoading.value;
 });
 
-const listOptions = computed(() => {
-  return myLists.value?.map(list => {
-    return {
+const listOptions = computed(
+  () =>
+    myLists.value?.map(list => ({
       label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
       value: list.id,
       icon: getIcon(list),
-    };
-  });
-});
+    })),
+);
 
 onMounted(() => {
   fetchLists();

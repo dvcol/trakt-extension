@@ -83,6 +83,9 @@ export const DefaultLists = {
   ShowCollection: { type: ListType.Collection, id: DefaultListId.ShowCollection, scope: 'shows', name: 'list_type__collection_show' },
 } as const satisfies Record<string, ListEntity>;
 
+export const DefaultListsTypes: ListTypes[] = Object.values(DefaultLists).map(l => l.type);
+export const isDefaultList = (list: ListEntity | ListTypes) => DefaultListsTypes.includes(typeof list === 'string' ? list : list.type);
+
 const DefaultList: ListEntity[] = Object.values(DefaultLists);
 
 const ListsStoreConstants = {
