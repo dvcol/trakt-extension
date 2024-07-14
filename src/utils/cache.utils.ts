@@ -13,12 +13,13 @@ const flattenResponse = async <T extends Response = ResponseOrTypedResponse>(res
     ...res,
     status: res.status,
     statusText: res.statusText,
-    headers: res.headers,
+    headers: Object.fromEntries(res.headers.entries()),
     url: res.url,
     redirected: res.redirected,
     type: res.type,
     ok: res.ok,
     body,
+    bodyUsed: res.bodyUsed,
   };
 };
 
@@ -26,6 +27,11 @@ const parseFlatResponse = <T = unknown>(flat: FlatResponse): TypedResponse<T> =>
   const res = new Response(JSON.stringify(flat?.body ?? ''));
 
   Object.entries(flat).forEach(([_key, value]) => {
+    if (_key === 'body') return;
+    if (_key === 'headers') {
+      Object.entries(value as Record<string, string>).forEach(([key, val]) => res.headers.append(key, val));
+      return;
+    }
     Object.defineProperty(res, _key, { value });
   });
 

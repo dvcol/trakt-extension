@@ -3,10 +3,11 @@ export const RouterStorageKey = {
 } as const;
 
 export enum Route {
+  Progress = 'progress',
   Calendar = 'calendar',
+  Releases = 'releases',
   History = 'history',
   Watchlist = 'watchlist',
-  Progress = 'progress',
   Search = 'search',
   Settings = 'settings',
   About = 'about',

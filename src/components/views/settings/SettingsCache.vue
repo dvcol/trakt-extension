@@ -57,6 +57,7 @@ const evictScopes = [
       ]),
   },
   { label: i18n('evict_calendar'), click: TraktService.evict.calendar },
+  { label: i18n('evict_releases'), click: TraktService.evict.releases },
   { label: i18n('evict_history'), click: TraktService.evict.history },
   {
     label: i18n('evict_lists'),

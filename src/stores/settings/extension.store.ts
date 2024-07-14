@@ -27,6 +27,7 @@ type RouteDictionary = Partial<Record<Route, boolean>>;
 const DefaultRoutes: RouteDictionary = {
   [Route.Progress]: false,
   [Route.Calendar]: true,
+  [Route.Releases]: false,
   [Route.History]: true,
   [Route.Watchlist]: true,
   [Route.Search]: true,

@@ -1,0 +1,26 @@
+{
+  "release_type__Premiere": {
+    "message": "Premiere",
+    "description": "Premiere release type"
+  },
+  "release_type__TheatricalLimited": {
+    "message": "Limited",
+    "description": "Theatrical (limited) release type"
+  },
+  "release_type__Theatrical": {
+    "message": "Theatrical",
+    "description": "Theatrical release type"
+  },
+  "release_type__Digital": {
+    "message": "Digital",
+    "description": "Digital release type"
+  },
+  "release_type__Physical": {
+    "message": "Physical",
+    "description": "Physical release type"
+  },
+  "release_type__TV": {
+    "message": "TV",
+    "description": "TV release type"
+  }
+}
