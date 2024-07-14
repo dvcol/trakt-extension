@@ -19,6 +19,7 @@ import IconLogOut from '~/components/icons/IconLogOut.vue';
 import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
@@ -30,6 +31,7 @@ const i18n = useI18n('navbar', 'settings');
 const router = useRouter();
 
 const { user, userSetting, userSettings } = useUserSettingsStoreRefs();
+const { enabledRoutes } = useExtensionSettingsStoreRefs();
 
 const avatar = computed(() => userSetting.value?.user?.images?.avatar?.full);
 const username = computed(() => userSetting.value?.user?.username);
@@ -131,6 +133,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     placement="bottom"
     size="small"
     class="settings-dropdown"
+    :style="{ '--tab-count': enabledRoutes.length + 1 }"
     @select="onSelect"
   >
     <NFlex justify="space-around" align="center" :wrap="false">
@@ -167,7 +170,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
 
 <style lang="scss">
 .settings-dropdown {
-  min-width: max(calc(100vw / 6), 8rem);
+  min-width: max(calc(100vw / var(--tab-count)), 8rem);
   max-width: 20rem;
   margin-top: 0.75rem;
   margin-right: -0.25rem;
