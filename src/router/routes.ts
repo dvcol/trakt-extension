@@ -62,6 +62,16 @@ export const routes: RouteRecordRaw[] = [
     children: panelRoutes(Route.Calendar),
   },
   {
+    path: `/${Route.Releases}`,
+    name: Route.Releases,
+    components: {
+      default: () => import('../components/views/releases/ReleasesComponent.vue'),
+      navbar: () => import('../components/views/releases/ReleasesNavbar.vue'),
+    },
+    meta: { navbar: true },
+    children: panelRoutes(Route.Releases),
+  },
+  {
     path: `/${Route.History}`,
     name: Route.History,
     components: {

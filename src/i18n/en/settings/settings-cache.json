@@ -19,6 +19,10 @@
     "message": "Evict calendar data from cache",
     "description": "Label for the evict calendar data button"
   },
+  "settings__cache__evict_releases": {
+    "message": "Evict releases data from cache",
+    "description": "Label for the evict releases data button"
+  },
   "settings__cache__evict_history": {
     "message": "Evict history data from cache",
     "description": "Label for the evict history data button"

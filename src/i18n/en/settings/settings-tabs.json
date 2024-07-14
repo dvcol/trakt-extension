@@ -23,6 +23,10 @@
     "message": "Enable the calendar tab",
     "description": "Label for the 'Enable the calendar tab' setting"
   },
+  "settings__tabs__label_route_releases": {
+    "message": "Enable the releases tab",
+    "description": "Label for the 'Enable the releases tab' setting"
+  },
   "settings__tabs__label_route_history": {
     "message": "Enable the history tab",
     "description": "Label for the 'Enable the history tab' setting"

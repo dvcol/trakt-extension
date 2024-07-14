@@ -3,6 +3,10 @@
     "message": "Calendar",
     "description": "Calendar route name"
   },
+  "route__releases": {
+    "message": "Releases",
+    "description": "Releases route name"
+  },
   "route__history": {
     "message": "History",
     "description": "Watch history route name"

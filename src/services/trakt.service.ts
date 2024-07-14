@@ -1,44 +1,55 @@
 import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
 
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
-
+import { DateUtils } from '@dvcol/common-utils/common/date';
 import { TmdbClient } from '@dvcol/tmdb-http-client';
+
 import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
-import {
-  type TraktApiResponse,
-  type TraktAuthenticationApprove,
-  type TraktCalendarQuery,
-  type TraktCollection,
-  type TraktCollectionGetQuery,
-  type TraktCollectionProgress,
-  type TraktCollectionRequest,
-  type TraktEpisodeExtended,
-  type TraktEpisodeShort,
-  type TraktFavoriteGetQuery,
-  type TraktFavoriteRequest,
-  type TraktHistoryGetQuery,
-  type TraktHistoryRemovedRequest,
-  type TraktHistoryRequest,
-  type TraktList,
-  type TraktListItemsGetQuery,
-  type TraktMovieExtended,
-  type TraktPersonExtended,
-  type TraktSearch,
-  type TraktSeasonExtended,
-  type TraktShowExtended,
-  type TraktSyncRequest,
-  type TraktUserListItemAddedRequest,
-  type TraktUserListItemRemoveRequest,
-  type TraktWatched,
-  type TraktWatchedProgress,
-  type TraktWatchlistGetQuery,
-} from '@dvcol/trakt-http-client/models';
+
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
-import type { TmdbApiResponse } from '@dvcol/tmdb-http-client/models';
+import type {
+  TmdbApiResponse,
+  TmdbConfigurationCounty,
+  TmdbDiscoverMovieQuery,
+  TmdbMovieReleaseTypes,
+  TmdbMovieShort,
+  TmdbPaginatedData,
+  TmdbParamPagination,
+} from '@dvcol/tmdb-http-client/models';
 
+import type {
+  TraktApiResponse,
+  TraktAuthenticationApprove,
+  TraktCalendarQuery,
+  TraktCollection,
+  TraktCollectionGetQuery,
+  TraktCollectionProgress,
+  TraktCollectionRequest,
+  TraktEpisodeExtended,
+  TraktEpisodeShort,
+  TraktFavoriteGetQuery,
+  TraktFavoriteRequest,
+  TraktHistoryGetQuery,
+  TraktHistoryRemovedRequest,
+  TraktHistoryRequest,
+  TraktIdLookup,
+  TraktList,
+  TraktListItemsGetQuery,
+  TraktMovieExtended,
+  TraktPersonExtended,
+  TraktSearch,
+  TraktSeasonExtended,
+  TraktShowExtended,
+  TraktSyncRequest,
+  TraktUserListItemAddedRequest,
+  TraktUserListItemRemoveRequest,
+  TraktWatched,
+  TraktWatchedProgress,
+  TraktWatchlistGetQuery,
+} from '@dvcol/trakt-http-client/models';
 import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
 import type { ImagePayload } from '~/models/poster.model';
 import type { ProgressItem } from '~/models/progress.model';
@@ -546,10 +557,47 @@ export class TraktService {
     },
   };
 
+  static releases = {
+    movie: async (
+      options?: { from: Date; to: Date; release: TmdbMovieReleaseTypes[]; region?: string },
+      query: TmdbDiscoverMovieQuery & TmdbParamPagination = {},
+    ): Promise<TmdbPaginatedData<TmdbMovieShort>> => {
+      query.region = options?.region ?? query.region;
+      query['release_date.gte'] = options?.from?.toISOString().split('T').at(0) ?? query['release_date.gte'];
+      if (!query['release_date.gte']) query['release_date.gte'] = DateUtils.previous(7).toISOString().split('T').at(0);
+      if (!query['release_date.gte']) throw new Error('From date is required for movie releases');
+      query['release_date.lte'] = options?.to?.toISOString().split('T').at(0) ?? query['release_date.lte'];
+      if (!query['release_date.lte']) query['release_date.lte'] = DateUtils.next(7).toISOString().split('T').at(0);
+      if (!query['release_date.lte']) throw new Error('To date is required for movie releases');
+      query.with_release_type = options?.release ?? query.with_release_type;
+      if (!query.with_release_type) throw new Error('Release type is required for movie releases');
+      const response = await TraktService.tmdbClient.v3.discover.movie.cached(query, undefined, { retention: CacheRetention.Week });
+      return response.json();
+    },
+  };
+
+  static providers = {
+    regions: async (): Promise<TmdbConfigurationCounty[]> => {
+      const response = await TraktService.tmdbClient.v3.providers.regions.cached();
+      return response.json();
+    },
+  };
+
+  static lookup = async (query: TraktIdLookup) => {
+    const response = await TraktService.traktClient.search.id.cached(query);
+    return response.json();
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
     tvdb: () => TraktService.tvdbClient.clearCache(),
+    releases: () =>
+      Promise.all([
+        TraktService.tmdbClient.v3.discover.movie.cached.evict(),
+        TraktService.tmdbClient.v3.providers.regions.cached.evict(),
+        TraktService.traktClient.search.id.cached.evict(),
+      ]),
     history: TraktService.traktClient.sync.history.get.cached.evict,
     watchlist: TraktService.traktClient.sync.watchlist.get.cached.evict,
     favorites: TraktService.traktClient.sync.favorites.get.cached.evict,

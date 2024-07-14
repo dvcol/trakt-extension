@@ -15,8 +15,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       '@dvcol/tmdb-http-client':
-        specifier: ^1.1.4
-        version: 1.1.4
+        specifier: ^1.2.3
+        version: 1.2.3
       '@dvcol/trakt-http-client':
         specifier: ^1.3.6
         version: 1.3.6
@@ -29,6 +29,9 @@ importers:
       '@vue/devtools':
         specifier: ^7.0.15
         version: 7.0.15(rollup@4.8.0)(vite@5.0.10(@types/node@20.5.3)(sass@1.66.1)(sugarss@2.0.0))(vue@3.4.14(typescript@5.4.2))
+      iso-3166-2:
+        specifier: ^1.0.0
+        version: 1.0.0
       naive-ui:
         specifier: ^2.38.1
         version: 2.38.1(vue@3.4.14(typescript@5.4.2))
@@ -49,8 +52,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0
       '@dvcol/eslint-plugin-presets':
-        specifier: ^1.3.10
-        version: 1.3.10(h5hhktwfy3k6uh2elkfpzzc7w4)
+        specifier: ^1.3.11
+        version: 1.3.11(h5hhktwfy3k6uh2elkfpzzc7w4)
       '@dvcol/stylelint-plugin-presets':
         specifier: ^2.1.2
         version: 2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.4.2))
@@ -469,8 +472,8 @@ packages:
     resolution: {integrity: sha512-YNfkeCFsgVBOwFhG7k/RjoUcHzZgoRvuojKuQzjd1et8Ph5VlPl7Tk0ndlPGC1pdrPdj8xmdciTC2NAJewOTRQ==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/eslint-plugin-presets@1.3.10':
-    resolution: {integrity: sha512-sZ0ixVySVGP17TZqLceh4ojxzhGNZzM+MrYq4qzyC/1KLrvuEPc8rMJkJbM/QREtAjq812MhIVTh26Kfh8hu9g==}
+  '@dvcol/eslint-plugin-presets@1.3.11':
+    resolution: {integrity: sha512-kZ926sQcW65hy8NCt9A5CJSdFMH4Rj1IePby5sAJ/5OzqDKx8/Zhpns+So2xDpR9fghuSQwhG0h5zYY86x5WNg==}
     engines: {node: ' >=14.13.1 || >=16', yarn: '>= 3.2.0'}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': '>= 5'
@@ -491,9 +494,9 @@ packages:
       eslint-plugin-prettier: '>= 4'
       eslint-plugin-react: ^7.32.2
       eslint-plugin-react-hooks: ^4.6.0
-      eslint-plugin-solid: ^0.13.0
+      eslint-plugin-solid: ^0.14.0
       eslint-plugin-svelte: '>= 2'
-      eslint-plugin-vitest: ^0.2.6
+      eslint-plugin-vitest: ^0.5.0
       eslint-plugin-vue: '>= 9'
       eslint-plugin-vuejs-accessibility: ^2.1.0
       eslint-plugin-yml: ^1.5.0
@@ -565,8 +568,8 @@ packages:
       postcss-scss:
         optional: true
 
-  '@dvcol/tmdb-http-client@1.1.4':
-    resolution: {integrity: sha512-ZpxlxK6+Q7cECQ48IU1SpzbaW/Y+De26ieZV5/4DU/Hmwdb8wv1pQGa4HwYo411zqOL1BCDmL+wKNmwt8fpc/Q==}
+  '@dvcol/tmdb-http-client@1.2.3':
+    resolution: {integrity: sha512-/GvGtj733FSFEdnMraHgHiKjI9ZwaGeNkW4RmH4ZLx3gcN/1IUtMPCQhbUGqvEN0oTYRzB6UgHTH5IpFIEN8Hw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/trakt-http-client@1.3.6':
@@ -3421,6 +3424,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  iso-3166-2@1.0.0:
+    resolution: {integrity: sha512-xLAazfKZzwlsg/Zz/GQGQk3jJez5/2ORrjD3TjSuqz/arMht/xTK49c0GOE3afO/gEd9tHtBVVlfBla01unUng==}
+
   isobject@2.1.0:
     resolution: {integrity: sha512-+OUdGJlgjOBZDfxnDjYYG6zp487z0JGNQq3cYQYg5f5hKR+syHMsaztzGeml/4kGG55CSpKSpWTY+jYGgsHLgA==}
     engines: {node: '>=0.10.0'}
@@ -6050,7 +6056,7 @@ snapshots:
 
   '@dvcol/common-utils@1.3.0': {}
 
-  '@dvcol/eslint-plugin-presets@1.3.10(h5hhktwfy3k6uh2elkfpzzc7w4)':
+  '@dvcol/eslint-plugin-presets@1.3.11(h5hhktwfy3k6uh2elkfpzzc7w4)':
     dependencies:
       chalk: 4.1.2
       dash-ast: 2.0.1
@@ -6104,7 +6110,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dvcol/tmdb-http-client@1.1.4':
+  '@dvcol/tmdb-http-client@1.2.3':
     dependencies:
       '@dvcol/base-http-client': 1.10.0
       '@dvcol/common-utils': 1.3.0
@@ -9244,6 +9250,8 @@ snapshots:
   isarray@1.0.0: {}
 
   isexe@2.0.0: {}
+
+  iso-3166-2@1.0.0: {}
 
   isobject@2.1.0:
     dependencies:
