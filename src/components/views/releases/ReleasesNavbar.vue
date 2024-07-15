@@ -57,6 +57,7 @@ onBeforeMount(() => fetchRegions());
       class="type-select"
       :options="typesOptions"
       :to="parentElement"
+      :disabled="loading"
     />
     <NDatePicker
       v-model:show="open"
@@ -79,7 +80,7 @@ onBeforeMount(() => fetchRegions());
       class="region-select"
       :options="regionOptions"
       :loading="regionLoading"
-      :disabled="regionLoading || !regionOptions.length"
+      :disabled="loading || regionLoading || !regionOptions.length"
       :to="parentElement"
       filterable
       clearable

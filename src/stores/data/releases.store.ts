@@ -109,14 +109,18 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     if (restored?.center) clearState(new Date(restored.center));
   };
 
+  const getLocaleRegion = () => {
+    const locale = getIntlRegion() || getNavigatorRegion();
+    if (!regions.value?.length) return;
+    if (locale) return regions.value.find(r => r.iso_3166_1 === locale) ?? regions.value[0];
+    return regions.value[0];
+  };
+
   const fetchRegions = async () => {
     regionLoading.value = true;
     try {
       regions.value = await TraktService.providers.regions();
-      if (!region.value) {
-        const locale = getIntlRegion() || getNavigatorRegion();
-        if (locale) region.value = regions.value.find(r => r.iso_3166_1 === locale);
-      }
+      if (!region.value) region.value = getLocaleRegion();
     } catch (e) {
       logger.error('Failed to fetch regions');
       NotificationService.error('Failed to fetch regions', e);
@@ -128,6 +132,11 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const fetchReleases = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
     if (!firstLoad.value && loading.value) {
       logger.warn('Already fetching releases');
+      return;
+    }
+
+    if (!region.value) {
+      logger.warn('Region not selected');
       return;
     }
 
@@ -223,7 +232,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     region: computed<string | undefined>({
       get: () => region.value?.iso_3166_1,
       set: (value?: string) => {
-        region.value = !value ? undefined : regions.value.find(r => r.iso_3166_1 === value);
+        region.value = regions.value?.find(r => r.iso_3166_1 === value) ?? getLocaleRegion();
         saveState().catch(error => logger.error('Failed to save region state', error));
         return clearState();
       },
