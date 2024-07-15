@@ -1,8 +1,17 @@
 import { DateUtils } from '@dvcol/common-utils/common/date';
+import { computed, ref, type Ref, watch } from 'vue';
 
 import type { TraktCalendarMovie, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 
-import { type ListScrollItem, type ListScrollItemTag, ListScrollItemType } from '~/models/list-scroll.model';
+import IconChevronDown from '~/components/icons/IconChevronDown.vue';
+import IconChevronUp from '~/components/icons/IconChevronUp.vue';
+import {
+  type ListScrollItem,
+  type ListScrollItemTag,
+  ListScrollItemType,
+  type VirtualListRef,
+  type VirtualListScrollToOptions,
+} from '~/models/list-scroll.model';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -76,4 +85,74 @@ export const spaceDate = (data: CalendarItem[], startDate: Date, endDate: Date):
 
   // if no data in response fill with placeholders
   return spacedData;
+};
+
+export const useCenterButton = ({ center, list }: { center: Ref<Date>; list: Ref<ListScrollItem[]> }) => {
+  const centerItem = computed(() => {
+    return list.value.find(item => item.date?.current.toLocaleDateString() === center.value.toLocaleDateString());
+  });
+
+  const centerIsToday = computed(() => {
+    return centerItem.value?.date?.current.toLocaleDateString() === new Date().toLocaleDateString();
+  });
+
+  const scrolledOut = ref(false);
+  const scrolledDown = ref(true);
+  const onScrollIntoOutOfView = (_scrolled: boolean, _itemRef?: HTMLDivElement) => {
+    scrolledOut.value = _scrolled;
+    if (!_scrolled || !_itemRef) return;
+    scrolledDown.value = _itemRef.getBoundingClientRect().top > 0;
+  };
+  const recenterIcon = computed(() => (scrolledDown.value ? IconChevronDown : IconChevronUp));
+
+  return { centerItem, centerIsToday, scrolledOut, onScrollIntoOutOfView, recenterIcon };
+};
+
+export const useCalendar = ({
+  list,
+  centerItem,
+  fetchData,
+}: {
+  list: Ref<ListScrollItem[]>;
+  centerItem: Ref<ListScrollItem | undefined>;
+  fetchData: (mode?: 'start' | 'end' | 'reload') => Promise<unknown>;
+}) => {
+  const listRef = ref<{ list: VirtualListRef }>();
+  const scrollTo = (options?: VirtualListScrollToOptions, index = centerItem.value?.index) => {
+    if (index === undefined) return;
+    if (!listRef.value?.list) return;
+
+    listRef.value?.list.scrollTo({
+      top: index * 145,
+      ...options,
+    });
+  };
+
+  const reload = async () => {
+    const promise = fetchData();
+    // watch for loading changes and recenter
+    const unsub = watch(list, async () => scrollTo());
+    console.info('Reloading calendar', {
+      list: list.value.map(item => JSON.parse(JSON.stringify(item))),
+    });
+    await promise;
+    scrollTo();
+    unsub();
+  };
+
+  const onClick = () => scrollTo({ behavior: 'smooth' });
+
+  const onScrollTop = async () => {
+    const first = list.value[0];
+    await fetchData('start');
+
+    listRef.value?.list.scrollTo({
+      top: (list.value.findIndex(item => item.id === first.id) - 1) * 145,
+    });
+  };
+
+  const onScrollBottom = async () => {
+    await fetchData('end');
+  };
+  return { onClick, onScrollTop, onScrollBottom, reload };
 };
