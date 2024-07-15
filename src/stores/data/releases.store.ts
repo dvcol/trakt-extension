@@ -13,6 +13,7 @@ import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { type CalendarItem, getEmptyWeeks, getLoadingPlaceholder, spaceDate } from '~/utils/calendar.utils';
+import { getIntlRegion, getNavigatorRegion } from '~/utils/intl.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -21,6 +22,7 @@ const ReleasesStoreConstants = {
 } as const;
 
 type ReleaseState = {
+  date?: number;
   weeks: number;
   region?: TmdbConfigurationCounty;
   types: TmdbMovieReleaseTypes[];
@@ -33,7 +35,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const loading = ref(true);
   const releases = ref<CalendarItem[]>([]);
 
-  const center = ref(new Date());
+  const center = ref<Date>(new Date());
   const startCalendar = ref<Date>(DateUtils.weeks.previous(1, center.value));
   const endCalendar = ref<Date>(DateUtils.weeks.next(1, center.value));
 
@@ -48,16 +50,9 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const releasesErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('releases', releasesErrors);
 
-  const clearState = (date: Date = new Date()) => {
-    releases.value = [];
-    center.value = date;
-    startCalendar.value = DateUtils.weeks.previous(1, center.value);
-    endCalendar.value = DateUtils.weeks.next(1, center.value);
-    clearProxy(releasesErrors);
-  };
-
-  const saveState = async () =>
+  const saveState = async (clear = false) =>
     storage.local.set<ReleaseState>(ReleasesStoreConstants.Store, {
+      date: clear ? undefined : center.value.getTime(),
       weeks: weeks.value,
       region: region.value,
       types: types.value,
@@ -65,9 +60,19 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       endCalendar: endCalendar.value.getTime(),
     });
 
+  const clearState = (date?: Date) => {
+    releases.value = [];
+    center.value = date ?? new Date();
+    startCalendar.value = DateUtils.weeks.previous(1, center.value);
+    endCalendar.value = DateUtils.weeks.next(1, center.value);
+    clearProxy(releasesErrors);
+    saveState(!date).catch(e => logger.error('Failed to save calendar state', e));
+  };
+
   const restoreState = async () => {
     const restored = await storage.local.get<ReleaseState>(ReleasesStoreConstants.Store);
 
+    if (restored?.date) center.value = new Date(restored.date);
     if (restored?.weeks) weeks.value = restored.weeks;
     if (restored?.region) region.value = restored.region;
     if (restored?.types) types.value = Object.values(restored.types);
@@ -79,6 +84,10 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     regionLoading.value = true;
     try {
       regions.value = await TraktService.providers.regions();
+      if (!region.value) {
+        const locale = getIntlRegion() || getNavigatorRegion();
+        if (locale) region.value = regions.value.find(r => r.iso_3166_1 === locale);
+      }
     } catch (e) {
       logger.error('Failed to fetch regions');
       NotificationService.error('Failed to fetch regions', e);
@@ -154,6 +163,10 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     }
   };
 
+  const initReleasesStore = async () => {
+    await restoreState();
+  };
+
   return {
     clearState,
     saveState,
@@ -181,6 +194,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
         saveState().catch(error => logger.error('Failed to save release types state', error));
       },
     }),
+    initReleasesStore,
   };
 });
 

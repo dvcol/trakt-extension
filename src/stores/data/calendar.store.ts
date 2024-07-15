@@ -21,6 +21,7 @@ const CalendarStoreConstants = {
 } as const;
 
 type CalendarState = {
+  date?: number;
   weeks: number;
   startCalendar: number;
   endCalendar: number;
@@ -31,7 +32,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
   const loading = ref(true);
   const calendar = ref<CalendarItem[]>([]);
 
-  const center = ref(new Date());
+  const center = ref<Date>(new Date());
   const startCalendar = ref<Date>(DateUtils.weeks.previous(1, center.value));
   const endCalendar = ref<Date>(DateUtils.weeks.next(1, center.value));
 
@@ -43,24 +44,27 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
   const calendarErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('calendar', calendarErrors);
 
-  const clearState = (date: Date = new Date()) => {
-    calendar.value = [];
-    center.value = date;
-    startCalendar.value = DateUtils.weeks.previous(1, center.value);
-    endCalendar.value = DateUtils.weeks.next(1, center.value);
-    clearProxy(calendarErrors);
-  };
-
-  const saveState = async () =>
+  const saveState = async (clear = false) =>
     storage.local.set<CalendarState>(CalendarStoreConstants.Store, {
+      date: clear ? undefined : center.value.getTime(),
       weeks: weeks.value,
       startCalendar: startCalendar.value.getTime(),
       endCalendar: endCalendar.value.getTime(),
     });
 
+  const clearState = (date?: Date) => {
+    calendar.value = [];
+    center.value = date ?? new Date();
+    startCalendar.value = DateUtils.weeks.previous(1, center.value);
+    endCalendar.value = DateUtils.weeks.next(1, center.value);
+    clearProxy(calendarErrors);
+    saveState(!date).catch(e => logger.error('Failed to save calendar state', e));
+  };
+
   const restoreState = async () => {
     const restored = await storage.local.get<CalendarState>(CalendarStoreConstants.Store);
 
+    if (restored?.date) center.value = new Date(restored.date);
     if (restored?.weeks) weeks.value = restored.weeks;
     if (restored?.startCalendar) startCalendar.value = new Date(restored.startCalendar);
     if (restored?.endCalendar) endCalendar.value = new Date(restored.endCalendar);
@@ -139,6 +143,10 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
 
   const filteredCalendar = useSearchFilter(calendar, filter, 'date');
 
+  const initCalendarStore = async () => {
+    await restoreState();
+  };
+
   return {
     clearState,
     saveState,
@@ -151,6 +159,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     filter,
     center,
     filteredCalendar,
+    initCalendarStore,
   };
 });
 
