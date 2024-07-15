@@ -43,6 +43,15 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hideTime: {
+    type: Boolean,
+    required: false,
+  },
+  contentHeight: {
+    type: Number,
+    required: false,
+    default: 1,
+  },
   showProgress: {
     type: Boolean,
     required: false,
@@ -131,16 +140,16 @@ const onTagClick = (url?: string) => {
       </div>
       <div class="content">
         <NSkeleton v-if="loading" text style="width: 60%" round />
-        <NEllipsis v-else :line-clamp="1" :tooltip="tooltipOptions">{{
+        <NEllipsis v-else :line-clamp="contentHeight" :tooltip="tooltipOptions">{{
           content
         }}</NEllipsis>
       </div>
-      <NFlex v-if="date || tags?.length" size="medium" class="tags">
+      <NFlex v-if="(!hideTime && date) || tags?.length" size="medium" class="tags">
         <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
           <NSkeleton v-if="loading" text style="width: 6%" />
           <TagLink :tag="tag" @on-click="onTagClick" />
         </template>
-        <template v-if="date">
+        <template v-if="!hideTime && date">
           <NSkeleton v-if="loading" text style="width: 6%" />
           <NTag v-else class="tag" size="small" type="default" :bordered="false">
             {{ date }}

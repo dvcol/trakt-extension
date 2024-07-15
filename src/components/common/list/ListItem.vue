@@ -58,6 +58,15 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hideTime: {
+    type: Boolean,
+    required: false,
+  },
+  contentHeight: {
+    type: Number,
+    required: false,
+    default: 1,
+  },
   hover: {
     type: Boolean,
     required: false,
@@ -204,6 +213,8 @@ const onClick = () => emit('onItemClick', { item: item?.value });
             :item="item"
             :loading="loading"
             :hide-date="hideDate"
+            :hide-time="hideTime"
+            :content-height="contentHeight"
             :show-progress="showProgress"
           >
             <slot :item="item" :loading="loading" />

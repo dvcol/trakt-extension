@@ -47,6 +47,15 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hideTime: {
+    type: Boolean,
+    required: false,
+  },
+  contentHeight: {
+    type: Number,
+    required: false,
+    default: 1,
+  },
   scrollIntoView: {
     type: Array as PropType<ListScrollItem['id'][]>,
     required: false,
@@ -173,6 +182,8 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :height="listOptions?.itemSize ?? 145"
           :size="items.length"
           :hide-date="hideDate"
+          :hide-time="hideTime"
+          :content-height="contentHeight"
           :backdrop="backdrop"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"

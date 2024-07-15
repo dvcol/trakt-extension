@@ -4,21 +4,21 @@ import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { DateUtils } from '@dvcol/common-utils/common/date';
 import { TmdbClient } from '@dvcol/tmdb-http-client';
 
+import {
+  type TmdbApiResponse,
+  type TmdbConfigurationCounty,
+  type TmdbDiscoverMovieQuery,
+  type TmdbMovieReleaseTypes,
+  type TmdbMovieShort,
+  type TmdbPaginatedData,
+  type TmdbParamPagination,
+} from '@dvcol/tmdb-http-client/models';
 import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
 
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
-import type {
-  TmdbApiResponse,
-  TmdbConfigurationCounty,
-  TmdbDiscoverMovieQuery,
-  TmdbMovieReleaseTypes,
-  TmdbMovieShort,
-  TmdbPaginatedData,
-  TmdbParamPagination,
-} from '@dvcol/tmdb-http-client/models';
 
 import type {
   TraktApiResponse,
@@ -563,12 +563,12 @@ export class TraktService {
       query: TmdbDiscoverMovieQuery & TmdbParamPagination = {},
     ): Promise<TmdbPaginatedData<TmdbMovieShort>> => {
       query.region = options?.region ?? query.region;
-      query['release_date.gte'] = options?.from?.toISOString().split('T').at(0) ?? query['release_date.gte'];
-      if (!query['release_date.gte']) query['release_date.gte'] = DateUtils.previous(7).toISOString().split('T').at(0);
-      if (!query['release_date.gte']) throw new Error('From date is required for movie releases');
-      query['release_date.lte'] = options?.to?.toISOString().split('T').at(0) ?? query['release_date.lte'];
-      if (!query['release_date.lte']) query['release_date.lte'] = DateUtils.next(7).toISOString().split('T').at(0);
-      if (!query['release_date.lte']) throw new Error('To date is required for movie releases');
+      query[`release_date.gte`] = options?.from?.toISOString().split('T').at(0) ?? query[`release_date.gte`];
+      if (!query[`release_date.gte`]) query[`release_date.gte`] = DateUtils.previous(7).toISOString().split('T').at(0);
+      if (!query[`release_date.gte`]) throw new Error('From date is required for movie releases');
+      query[`release_date.lte`] = options?.to?.toISOString().split('T').at(0) ?? query[`release_date.lte`];
+      if (!query[`release_date.lte`]) query[`release_date.lte`] = DateUtils.next(7).toISOString().split('T').at(0);
+      if (!query[`release_date.lte`]) throw new Error('To date is required for movie releases');
       query.with_release_type = options?.release ?? query.with_release_type;
       if (!query.with_release_type) throw new Error('Release type is required for movie releases');
       const response = await TraktService.tmdbClient.v3.discover.movie.cached(query, undefined, { retention: CacheRetention.Week });

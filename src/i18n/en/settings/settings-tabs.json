@@ -27,6 +27,10 @@
     "message": "Enable the releases tab",
     "description": "Label for the 'Enable the releases tab' setting"
   },
+  "settings__tabs__label_route_releases_warning": {
+    "message": "Regional data is sourced from TMDb and may be incomplete or inaccurate.",
+    "description": "Warning message for the 'Enable the releases tab' setting"
+  },
   "settings__tabs__label_route_history": {
     "message": "Enable the history tab",
     "description": "Label for the 'Enable the history tab' setting"

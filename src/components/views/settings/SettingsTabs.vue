@@ -145,7 +145,7 @@ const container = ref();
       <SettingsFormItem
         :label="i18n(`label_route_${ route }`)"
         :warning="
-          state && route === Route.Progress
+          state && [Route.Progress, Route.Releases].includes(route)
             ? i18n(`label_route_${ route }_warning`)
             : undefined
         "
