@@ -18,7 +18,8 @@ defineProps({
 
 const i18n = useI18n('navbar', 'releases');
 
-const { center, loading, region, regions, regionLoading, types } = useReleasesStoreRefs();
+const { center, loading, region, regions, regionLoading, releaseType } =
+  useReleasesStoreRefs();
 const { clearState, fetchRegions } = useReleasesStore();
 
 const pickerValue = computed({
@@ -52,13 +53,10 @@ onBeforeMount(() => fetchRegions());
 <template>
   <NFlex class="row" align="center" justify="space-evenly" :vertical="false">
     <NSelect
-      v-model:value="types"
+      v-model:value="releaseType"
       class="type-select"
       :options="typesOptions"
       :to="parentElement"
-      :max-tag-count="1"
-      :ellipsis-tag-popover-props="{ disabled: true }"
-      multiple
     />
     <NDatePicker
       v-model:show="open"
@@ -95,19 +93,15 @@ onBeforeMount(() => fetchRegions());
   padding: 0 0.5rem;
 
   .type-select {
-    flex: 0 0 12rem;
+    flex: 0 0 10rem;
   }
 
   .region-select {
-    flex: 0 0 12rem;
+    flex: 1 0 10rem;
   }
 
   .date-picker {
-    flex: 1 1 33%;
-  }
-
-  .search-input {
-    flex: 1 1 33%;
+    flex: 2 1 48%;
   }
 }
 </style>

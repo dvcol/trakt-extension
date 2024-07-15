@@ -132,9 +132,6 @@ export const useCalendar = ({
     const promise = fetchData();
     // watch for loading changes and recenter
     const unsub = watch(list, async () => scrollTo());
-    console.info('Reloading calendar', {
-      list: list.value.map(item => JSON.parse(JSON.stringify(item))),
-    });
     await promise;
     scrollTo();
     unsub();
@@ -154,5 +151,5 @@ export const useCalendar = ({
   const onScrollBottom = async () => {
     await fetchData('end');
   };
-  return { onClick, onScrollTop, onScrollBottom, reload };
+  return { listRef, onClick, onScrollTop, onScrollBottom, reload };
 };

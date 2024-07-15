@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import { watch } from 'vue';
 
+import type { TraktSearchResult } from '@dvcol/trakt-http-client/models';
+import type { ListScrollItem } from '~/models/list-scroll.model';
+
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { TraktService } from '~/services/trakt.service';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
@@ -21,7 +25,7 @@ const list = useListScroll(releases, 'date');
 const { centerItem, centerIsToday, scrolledOut, recenterIcon, onScrollIntoOutOfView } =
   useCenterButton({ list, center });
 
-const { onClick, onScrollTop, onScrollBottom, reload } = useCalendar({
+const { listRef, onClick, onScrollTop, onScrollBottom, reload } = useCalendar({
   list,
   centerItem,
   fetchData: fetchReleases,
@@ -41,6 +45,29 @@ watchUserChange({
 });
 
 const { onItemClick } = usePanelItem();
+
+const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
+  const lookup: TraktSearchResult[] = await TraktService.lookup({
+    id: item.id.toString(),
+    id_type: 'tmdb',
+    type: 'movie',
+  });
+  onItemClick({
+    item: {
+      ...item,
+      meta: {
+        ...item.meta,
+        ids: {
+          ...item.meta?.ids,
+          movie: {
+            ...item.meta?.ids?.movie,
+            trakt: lookup.pop()?.movie?.ids?.trakt,
+          },
+        },
+      },
+    },
+  });
+};
 </script>
 
 <template>
@@ -49,9 +76,10 @@ const { onItemClick } = usePanelItem();
       ref="listRef"
       :items="list"
       :loading="loading"
-      backdrop
+      :content-height="3"
+      hide-time
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
-      @on-item-click="onItemClick"
+      @on-item-click="onMovieClick"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
       @on-scroll-top="onScrollTop"

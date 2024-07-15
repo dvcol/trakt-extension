@@ -7,7 +7,6 @@ import { TraktService } from '~/services/trakt.service';
 const debugProvider = ref<HTMLDivElement>();
 
 onMounted(() => {
-  console.info('DebugProvider mounted', debugProvider.value);
   Object.defineProperty(debugProvider.value, 'trakt', {
     value: TraktService,
   });

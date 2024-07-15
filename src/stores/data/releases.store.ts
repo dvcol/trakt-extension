@@ -1,10 +1,15 @@
 import { DateUtils } from '@dvcol/common-utils/common/date';
 
-import { TmdbMovieReleaseType } from '@dvcol/tmdb-http-client/models';
+import {
+  type TmdbConfigurationCounty,
+  TmdbMovieReleaseType,
+  type TmdbMovieReleaseTypes,
+  type TmdbMovieShort,
+  type TmdbPaginatedData,
+} from '@dvcol/tmdb-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
-import { computed, reactive, ref } from 'vue';
 
-import type { TmdbConfigurationCounty, TmdbMovieReleaseTypes, TmdbMovieShort } from '@dvcol/tmdb-http-client/models';
+import { computed, reactive, ref } from 'vue';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { ErrorService } from '~/services/error.service';
@@ -24,10 +29,38 @@ const ReleasesStoreConstants = {
 type ReleaseState = {
   date?: number;
   weeks: number;
+  center?: number;
   region?: TmdbConfigurationCounty;
-  types: TmdbMovieReleaseTypes[];
-  startCalendar: number;
-  endCalendar: number;
+  releaseType: TmdbMovieReleaseTypes;
+};
+
+const parseData = ({
+  payload,
+  startDate,
+  endDate,
+}: {
+  payload: TmdbPaginatedData<TmdbMovieShort>;
+  startDate: Date;
+  endDate: Date;
+}): CalendarItem[] => {
+  return payload?.data.map((movie: TmdbMovieShort) => {
+    // To make sure that re-released are not out of range
+    let _date = new Date(movie.release_date);
+    if (_date < startDate) _date = startDate;
+    if (_date > endDate) _date = endDate;
+    return {
+      ...movie,
+      date: _date,
+      type: ListScrollItemType.movie,
+      title: movie.title,
+      content: movie.overview,
+      getPosterQuery: () => ({
+        type: ListScrollItemType.movie,
+        id: movie.id,
+      }),
+      tags: [],
+    };
+  });
 };
 
 export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => {
@@ -35,36 +68,34 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const loading = ref(true);
   const releases = ref<CalendarItem[]>([]);
 
-  const center = ref<Date>(new Date());
-  const startCalendar = ref<Date>(DateUtils.weeks.previous(1, center.value));
-  const endCalendar = ref<Date>(DateUtils.weeks.next(1, center.value));
-
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
+
+  const center = ref<Date>(new Date());
+  const startCalendar = ref<Date>(DateUtils.weeks.previous(weeks.value, center.value));
+  const endCalendar = ref<Date>(DateUtils.weeks.next(weeks.value, center.value));
 
   const regionLoading = ref(true);
   const regions = ref<TmdbConfigurationCounty[]>([]);
   const region = ref<TmdbConfigurationCounty | undefined>();
-  const types = ref<TmdbMovieReleaseTypes[]>([TmdbMovieReleaseType.Theatrical, TmdbMovieReleaseType.TheatricalLimited]);
+  const releaseType = ref<TmdbMovieReleaseTypes>(TmdbMovieReleaseType.Theatrical);
 
   const releasesErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('releases', releasesErrors);
 
   const saveState = async (clear = false) =>
     storage.local.set<ReleaseState>(ReleasesStoreConstants.Store, {
-      date: clear ? undefined : center.value.getTime(),
+      center: clear ? undefined : center.value.getTime(),
       weeks: weeks.value,
       region: region.value,
-      types: types.value,
-      startCalendar: startCalendar.value.getTime(),
-      endCalendar: endCalendar.value.getTime(),
+      releaseType: releaseType.value,
     });
 
   const clearState = (date?: Date) => {
     releases.value = [];
     center.value = date ?? new Date();
-    startCalendar.value = DateUtils.weeks.previous(1, center.value);
-    endCalendar.value = DateUtils.weeks.next(1, center.value);
+    startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
+    endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(releasesErrors);
     saveState(!date).catch(e => logger.error('Failed to save calendar state', e));
   };
@@ -72,12 +103,10 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const restoreState = async () => {
     const restored = await storage.local.get<ReleaseState>(ReleasesStoreConstants.Store);
 
-    if (restored?.date) center.value = new Date(restored.date);
     if (restored?.weeks) weeks.value = restored.weeks;
     if (restored?.region) region.value = restored.region;
-    if (restored?.types) types.value = Object.values(restored.types);
-    if (restored?.startCalendar) startCalendar.value = new Date(restored.startCalendar);
-    if (restored?.endCalendar) endCalendar.value = new Date(restored.endCalendar);
+    if (restored?.releaseType) releaseType.value = restored.releaseType;
+    if (restored?.center) clearState(new Date(restored.center));
   };
 
   const fetchRegions = async () => {
@@ -102,8 +131,6 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       return;
     }
 
-    if (firstLoad.value) firstLoad.value = false;
-
     loading.value = true;
 
     if (mode === 'start') startCalendar.value = DateUtils.previous(days.value, startCalendar.value);
@@ -119,7 +146,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       endDate: endDate.toLocaleDateString(),
       days: days.value,
       region: region.value,
-      types: types.value,
+      releaseType: releaseType.value,
     });
 
     const timeout = setTimeout(() => {
@@ -128,18 +155,30 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       else if (mode === 'end') releases.value = [...releases.value, ...getEmptyWeeks(startDate, true)];
     }, 100);
 
-    const query = { from: startDate, to: endDate, region: region.value?.iso_3166_1, release: types.value };
+    const query = {
+      from: startDate,
+      to: endDate,
+      region: region.value?.iso_3166_1,
+      release: [releaseType.value],
+    };
+
+    const newData: CalendarItem[] = [];
 
     try {
-      const movies = await TraktService.releases.movie(query);
+      let movies = await TraktService.releases.movie(query, { page: 1 });
+
+      newData.push(...parseData({ payload: movies, startDate, endDate }));
+      if (movies?.pagination?.page && movies.pagination.total_pages && movies.pagination.page < movies.pagination.total_pages) {
+        while (movies?.pagination?.page && movies.pagination.total_pages && movies.pagination.page < movies.pagination.total_pages) {
+          // eslint-disable-next-line no-await-in-loop
+          movies = await TraktService.releases.movie(query, { page: movies.pagination.page + 1 });
+          newData.push(...parseData({ payload: movies, startDate, endDate }));
+        }
+      }
+
       delete releasesErrors[JSON.stringify(query)];
 
-      const newData: CalendarItem[] = movies.data
-        .map((movie: TmdbMovieShort) => ({
-          ...movie,
-          date: new Date(movie.release_date),
-        }))
-        .sort((a: CalendarItem, b: CalendarItem) => a.date.getTime() - b.date.getTime());
+      newData.sort((a: CalendarItem, b: CalendarItem) => a.date.getTime() - b.date.getTime());
 
       const spacedData = spaceDate(newData, startDate, endDate);
 
@@ -160,6 +199,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     } finally {
       clearTimeout(timeout);
       loading.value = false;
+      if (firstLoad.value) firstLoad.value = false;
     }
   };
 
@@ -185,13 +225,15 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       set: (value?: string) => {
         region.value = !value ? undefined : regions.value.find(r => r.iso_3166_1 === value);
         saveState().catch(error => logger.error('Failed to save region state', error));
+        return clearState();
       },
     }),
-    types: computed({
-      get: () => types.value,
-      set: (value: TmdbMovieReleaseTypes[]) => {
-        types.value = value;
-        saveState().catch(error => logger.error('Failed to save release types state', error));
+    releaseType: computed({
+      get: () => releaseType.value,
+      set: (value: TmdbMovieReleaseTypes) => {
+        releaseType.value = value;
+        saveState().catch(error => logger.error('Failed to save release type state', error));
+        return clearState();
       },
     }),
     initReleasesStore,

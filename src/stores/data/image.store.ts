@@ -225,15 +225,18 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     return findClosestMatch(size, imageSizes.value.poster);
   };
 
+  const buildImageUrl = ({ url, baseUrl, type, size }: { url: string; baseUrl: string; type: ImageQuery['type']; size: number | 'original' }) =>
+    `${baseUrl}${getImageSize(type, size)}${url}`;
+
   const setResponseValue = (
     { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number | 'original' },
     response: Ref<ImageStoreMedias | undefined> = ref(),
   ) => {
-    if (typeof image === 'string') response.value = `${baseUrl}${getImageSize(type, size)}${image}`;
+    if (typeof image === 'string') response.value = buildImageUrl({ url: image, baseUrl, type, size });
     else {
       response.value = {
-        poster: image.poster ? `${baseUrl}${getImageSize(type, size)}${image.poster}` : undefined,
-        backdrop: image.backdrop ? `${baseUrl}${getImageSize(type, size)}${image.backdrop}` : undefined,
+        poster: image.poster ? buildImageUrl({ url: image.poster, baseUrl, type, size }) : undefined,
+        backdrop: image.backdrop ? buildImageUrl({ url: image.backdrop, baseUrl, type, size }) : undefined,
       };
     }
     return response;
@@ -255,7 +258,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     return setResponseValue({ image: result.image, baseUrl, type, size }, response);
   };
 
-  return { initImageStore, getImageUrl, imageSizes, clearState };
+  return { initImageStore, getImageUrl, imageSizes, clearState, buildImageUrl };
 });
 
 export const useImageStoreRefs = () => storeToRefs(useImageStore());

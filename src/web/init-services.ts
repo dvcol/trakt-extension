@@ -1,10 +1,12 @@
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
+import { useCalendarStore } from '~/stores/data/calendar.store';
 import { useHistoryStore } from '~/stores/data/history.store';
 import { useImageStore } from '~/stores/data/image.store';
 import { useListsStore, useListStore } from '~/stores/data/list.store';
 import { useMovieStore } from '~/stores/data/movie.store';
+import { useReleasesStore } from '~/stores/data/releases.store';
 import { useSearchStore } from '~/stores/data/search.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
@@ -45,6 +47,8 @@ export const initServices = async () => {
     useImageStore().initImageStore(),
     useListsStore().initListsStore(),
     useListStore().initListStore(),
+    useCalendarStore().initCalendarStore(),
+    useReleasesStore().initReleasesStore(),
     useHistoryStore().initHistoryStore(),
     useSearchStore().initSearchStore(),
     useShowStore().initShowStore(),
