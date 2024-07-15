@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/dvcol/trakt-extension/compare/v1.13.0...v1.14.0) (2024-07-15)
+
+
+### Features
+
+* **calendar:** re-factor composables ([8cdcaac](https://github.com/dvcol/trakt-extension/commit/8cdcaacbed7d67b59c416cb965751ebc97478e59))
+* **export:** add support for data exporting ([99e6a99](https://github.com/dvcol/trakt-extension/commit/99e6a99bcda048f41eadc30136f0bd752157eb22))
+* **releases:** adds navbar support to releases ([e8206ed](https://github.com/dvcol/trakt-extension/commit/e8206ed8db15042a607e1088b0c7e945e8fa9304))
+* **release:** setup release fetching ([b37f9a4](https://github.com/dvcol/trakt-extension/commit/b37f9a4464e4fcd6ebd9a8c050def119c91a5c07))
+
+
+### Bug Fixes
+
+* **navbar:** adjust dropdown size based on active tabs ([b74e53f](https://github.com/dvcol/trakt-extension/commit/b74e53ffe6c49161cb304a94b23f4f05b3dd1875))
+* **release:** defaults back to locale when no region selected ([922b156](https://github.com/dvcol/trakt-extension/commit/922b156f54127e19ddc257382c5d49ae73454ca2))
+
 ## [1.13.0](https://github.com/dvcol/trakt-extension/compare/v1.12.0...v1.13.0) (2024-07-09)
 
 
