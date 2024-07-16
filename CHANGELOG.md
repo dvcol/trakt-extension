@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/dvcol/trakt-extension/compare/v1.14.0...v1.15.0) (2024-07-16)
+
+
+### Features
+
+* **auth:** adds device code polling support ([ea2a2ba](https://github.com/dvcol/trakt-extension/commit/ea2a2ba637f925da680d93880700a1b1a572b9a7))
+* **pwa:** adds basic service worker ([3c47116](https://github.com/dvcol/trakt-extension/commit/3c47116de47535fa24a9bb4944d0e575a2c77a77))
+
 ## [1.14.0](https://github.com/dvcol/trakt-extension/compare/v1.13.0...v1.14.0) (2024-07-15)
 
 
