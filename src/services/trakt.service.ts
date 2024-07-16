@@ -22,6 +22,7 @@ import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 
 import type {
   TraktApiResponse,
+  TraktAuthentication,
   TraktAuthenticationApprove,
   TraktCalendarQuery,
   TraktCollection,
@@ -51,6 +52,7 @@ import type {
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
 import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
+import type { TraktDeviceAuthentication } from 'node_modules/@dvcol/trakt-http-client/dist/models/trakt-authentication.model.cjs';
 import type { ImagePayload } from '~/models/poster.model';
 import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
@@ -194,6 +196,15 @@ export class TraktService {
 
     return this.saveAuth({ trakt, tvdb });
   }
+
+  static device = {
+    code: () => TraktService.traktClient.getDeviceCode(),
+    poll: (deviceAuth: TraktDeviceAuthentication) => TraktService.traktClient.pollWithDeviceCode(deviceAuth),
+    login: async (trakt: TraktAuthentication) => {
+      const tvdb = await this.tvdbClient.authenticate();
+      return this.saveAuth({ trakt, tvdb });
+    },
+  };
 
   static async logout(account?: string) {
     await useAuthSettingsStore().setAuth(undefined, account);

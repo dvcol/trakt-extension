@@ -54,7 +54,7 @@
     "@dvcol/base-http-client": "^1.10.0",
     "@dvcol/common-utils": "^1.3.0",
     "@dvcol/tmdb-http-client": "^1.2.3",
-    "@dvcol/trakt-http-client": "^1.3.6",
+    "@dvcol/trakt-http-client": "^1.4.0",
     "@dvcol/tvdb-http-client": "^1.1.3",
     "@dvcol/web-extension-utils": "^3.0.1",
     "@vue/devtools": "^7.0.15",

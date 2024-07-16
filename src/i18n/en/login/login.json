@@ -30,5 +30,17 @@
   "login__checkbox__session": {
     "message": "session to login.",
     "description": "Checkbox message (uncolored)"
+  },
+  "login__checkbox__device_code": {
+    "message": "device code",
+    "description": "Checkbox message (colored)"
+  },
+  "login__checkbox__login": {
+    "message": "to login.",
+    "description": "Checkbox message (uncolored)"
+  },
+  "login__notification__copied": {
+    "message": "Code copied to clipboard.",
+    "description": "Notification message on clipboard copy."
   }
 }

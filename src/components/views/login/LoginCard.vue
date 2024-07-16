@@ -28,6 +28,10 @@ defineProps({
     type: String,
     required: false,
   },
+  buttonDisabled: {
+    type: Boolean,
+    required: false,
+  },
   buttonText: {
     type: String,
     required: false,
@@ -55,12 +59,15 @@ const emits = defineEmits<{
         <NH4 class="title" prefix="bar">{{ message ?? i18n('sub_title') }}</NH4>
       </slot>
 
+      <slot name="main" />
+
       <slot name="button">
         <NButton
           class="button"
           secondary
           type="primary"
           round
+          :disabled="buttonDisabled"
           v-bind="buttonProps"
           @click="e => emits('onSignIn', e)"
         >
