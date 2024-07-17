@@ -9,6 +9,7 @@ import IconListEmpty from '~/components/icons/IconListEmpty.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
+import PanelSelectProgress from '~/components/views/panel/PanelSelectProgress.vue';
 
 import {
   PanelButtonsOption,
@@ -62,12 +63,25 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  watching: {
+    type: Boolean,
+    required: false,
+  },
+  watchProgress: {
+    type: Number,
+    required: false,
+  },
+  checkinLoading: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
   (e: 'onListUpdate', value: ListEntity['id'], remove: boolean): void;
   (e: 'onCollectionUpdate', value: PanelButtonsOptions, date?: number): void;
   (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
+  (e: 'onCheckin', cancel: boolean): void;
 }>();
 
 const {
@@ -77,6 +91,7 @@ const {
   activeLoading,
   activeLists,
   hasRelease,
+  watching,
 } = toRefs(props);
 
 const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
@@ -195,16 +210,16 @@ const listOptions = computed(
     })),
 );
 
-onMounted(() => {
-  fetchLists();
-});
+const onCheckin = () => emit('onCheckin', watching.value);
+
+onMounted(() => fetchLists());
 </script>
 
 <template>
   <div ref="root" class="panel-buttons">
     <!--  List  -->
     <NFlex class="button-container list" justify="center" align="center">
-      <PanelButtonProgress
+      <PanelSelectProgress
         :options="listOptions"
         :value="activeLists"
         :select="{
@@ -229,12 +244,12 @@ onMounted(() => {
           </NFlex>
         </template>
         {{ i18n(`label__list__${ activeLists?.length ? 'update' : 'add' }`) }}
-      </PanelButtonProgress>
+      </PanelSelectProgress>
     </NFlex>
 
     <!--  Collection  -->
     <NFlex class="button-container collection" justify="center" align="center">
-      <PanelButtonProgress
+      <PanelSelectProgress
         :select="{
           options: collectionOptions,
         }"
@@ -251,12 +266,12 @@ onMounted(() => {
         @on-select="onCollectionUpdate"
       >
         {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
-      </PanelButtonProgress>
+      </PanelSelectProgress>
     </NFlex>
 
     <!--  History  -->
     <NFlex class="button-container history" justify="center" align="center">
-      <PanelButtonProgress
+      <PanelSelectProgress
         :select="{
           options: watchedOptions,
         }"
@@ -271,12 +286,32 @@ onMounted(() => {
         @on-select="onWatchedUpdate"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
+      </PanelSelectProgress>
+    </NFlex>
+
+    <!--  Check-in  -->
+    <NFlex
+      class="button-container checkin"
+      :class="{ visible: mode === 'episode' }"
+      justify="center"
+      align="center"
+    >
+      <PanelButtonProgress
+        :filled="watching"
+        :percentage="watchProgress"
+        :loading="checkinLoading"
+        @click="onCheckin"
+      >
+        {{ i18n('checkin', 'common', 'button') }}
       </PanelButtonProgress>
     </NFlex>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/transition' as transition;
+@include transition.scale;
+
 .panel-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -291,16 +326,24 @@ onMounted(() => {
       margin-left: calc(0% - var(--n-icon-margin));
     }
 
-    &.history {
-      min-width: 10.125rem;
-    }
+    &.checkin {
+      width: 0;
+      opacity: 0;
+      scale: 0.9;
+      // stylelint-disable-next-line property-no-unknown
+      tansition-delay: width 0.25s;
+      transition:
+        width 0.5s var(--n-bezier),
+        opacity 0.5s var(--n-bezier),
+        scale 0.5s var(--n-bezier);
 
-    &.collection {
-      min-width: 11.375rem;
-    }
-
-    &.list {
-      min-width: 8.875rem;
+      &.visible {
+        width: 7rem;
+        opacity: 1;
+        scale: 1;
+        // stylelint-disable-next-line property-no-unknown
+        tansition-delay: 0;
+      }
     }
   }
 }
@@ -308,6 +351,12 @@ onMounted(() => {
 @media (width > 800px) {
   .panel-buttons {
     gap: 1.25rem 3rem;
+  }
+}
+
+@media (width < 660px) {
+  .button-container {
+    min-width: 45%;
   }
 }
 </style>

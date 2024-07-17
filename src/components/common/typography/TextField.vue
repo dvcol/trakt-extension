@@ -93,11 +93,13 @@ const { openTab } = useLinksStore();
 
 .value {
   flex: 1 1 auto;
+  min-width: max-content;
 }
 
 .detail {
   flex: var(--text-flex);
   align-items: baseline;
+  min-width: max-content;
 
   &:hover .prefix {
     color: var(--white-70);

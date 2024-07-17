@@ -199,10 +199,12 @@ const onClick = () => {
 
     .column-1 {
       flex: 1 1 auto;
+      min-width: max-content;
     }
 
     .column-2 {
       flex: 1 0 auto;
+      min-width: max-content;
       margin-left: 1rem;
     }
   }
@@ -210,7 +212,8 @@ const onClick = () => {
 
 .limits {
   :deep(.detail) {
-    min-width: 31%;
+    flex-basis: 31%;
+    min-width: max-content;
   }
 }
 
