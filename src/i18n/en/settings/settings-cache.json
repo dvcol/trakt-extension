@@ -55,6 +55,22 @@
     "message": "Evict people data from cache",
     "description": "Label for the evict people data button"
   },
+  "settings__cache__evict_trakt": {
+    "message": "Evict Trakt data from cache",
+    "description": "Label for the evict Trakt data button"
+  },
+  "settings__cache__evict_tmdb": {
+    "message": "Evict TMDb data from cache",
+    "description": "Label for the evict TMDb data button"
+  },
+  "settings__cache__evict_tvdb": {
+    "message": "Evict TVDb data from cache",
+    "description": "Label for the evict TVDb data button"
+  },
+  "settings__cache__evict_all": {
+    "message": "Evict all data from cache",
+    "description": "Label for the evict all data button"
+  },
   "settings__cache__evict_success": {
     "message": "Cache evicted successfully",
     "description": "Message displayed when cache is evicted successfully"

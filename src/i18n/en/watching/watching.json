@@ -1,0 +1,58 @@
+{
+  "watching__movie": {
+    "message": "Movie",
+    "description": "Label for watching type movie."
+  },
+  "watching__episode": {
+    "message": "Episode",
+    "description": "Label for watching type episode."
+  },
+  "watching__checkin": {
+    "message": "checked-in",
+    "description": "Label for watching action checkin."
+  },
+  "watching__scrobble": {
+    "message": "scrobbled",
+    "description": "Label for watching action scrobble."
+  },
+  "watching__at": {
+    "message": "at",
+    "description": "Label for watching word on."
+  },
+  "watching__checkin_success": {
+    "message": "Checked-in started.",
+    "description": "Message for successful checkin."
+  },
+  "watching__checkin_failed": {
+    "message": "Check-in failed.",
+    "description": "Message for failed checkin."
+  },
+  "watching__cancel_checkin_success": {
+    "message": "Check-in canceled.",
+    "description": "Message for successful cancelled action."
+  },
+  "watching__cancel_checkin_failed": {
+    "message": "Check-in cancellation failed.",
+    "description": "Message for failed cancelled action."
+  },
+  "watching__cancel_scrobble_success": {
+    "message": "Scrobble canceled.",
+    "description": "Message for successful cancelled action."
+  },
+  "watching__cancel_scrobble_failed": {
+    "message": "Scrobble cancellation failed.",
+    "description": "Message for failed cancelled action."
+  },
+  "watching__dialog_cancel_checkin": {
+    "message": "Cancel Check-in",
+    "description": "Title for cancelling checking dialog."
+  },
+  "watching__dialog_cancel_scrobble": {
+    "message": "Cancel Scrobble",
+    "description": "Title for cancelling scrobble dialog."
+  },
+  "watching__dialog_cancel_content": {
+    "message": "This action is irreversible.\nAre you sure you want to cancel?",
+    "description": "Message for cancelling scrobble dialog."
+  }
+}

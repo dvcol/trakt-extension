@@ -1,5 +1,15 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :host {
+  /* font variables */
+  --font-size-xxs: 0.625rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size: 1rem;
+  --font-size-md: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+
+  /* color variables */
   --vt-c-white: #fff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
@@ -18,6 +28,7 @@
 
   /* background color variables */
   --bg-blur: 1px;
+  --bg-blur-4: 4px;
   --bg-blur-20: 20px;
   --bg-blur-40: 40px;
   --bg-blur-hover: var(--bg-blur-20);
@@ -60,6 +71,15 @@
   --bg-color-warning-80: rgb(43 37 25 / 80%);
   --bg-color-error: rgb(45 27 28);
   --bg-color-error-80: rgb(45 27 28 / 80%);
+  --bg-trakt: rgb(237 28 36);
+  --bg-trakt-50: rgba(237 28 36 / 50%);
+  --bg-trakt-60: rgba(237 28 36 / 60%);
+  --bg-trakt-80: rgba(237 28 36 / 80%);
+  --bg-trakt-dark: rgb(128 0 10);
+  --bg-trakt-dark-50: rgba(128 0 1 / 50%);
+  --bg-trakt-dark-60: rgba(128 0 1 / 60%);
+  --bg-trakt-dark-80: rgba(128 0 1 / 80%);
+  --bg-trakt-dark-90: rgba(128 0 1 / 90%);
 
   /* ui color variables */
   --white: rgb(255 255 255);

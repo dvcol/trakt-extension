@@ -1,4 +1,5 @@
 import { calendars } from '@dvcol/trakt-http-client/api/calendar';
+import { checkin } from '@dvcol/trakt-http-client/api/checkin';
 import { episodes } from '@dvcol/trakt-http-client/api/episodes';
 import { minimalTraktApi } from '@dvcol/trakt-http-client/api/minimal';
 import { movies } from '@dvcol/trakt-http-client/api/movies';
@@ -20,4 +21,5 @@ export const traktUsedApi = {
   episodes,
   movies,
   people,
+  checkin,
 };

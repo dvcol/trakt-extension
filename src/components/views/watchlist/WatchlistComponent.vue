@@ -27,6 +27,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  footer: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const { panel } = toRefs(props);
@@ -95,7 +99,7 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
       </template>
     </ListScroll>
 
-    <FloatingButton :show="scrolled" @on-click="onClick">
+    <FloatingButton :show="!footer && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
   </div>
