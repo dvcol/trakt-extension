@@ -255,7 +255,7 @@ onActivated(() => {
 <style lang="scss" scoped>
 .search-switch {
   --search-switch-button-color: var(--white-soft);
-  --search-switch-active-rail-color: var(--primary-color-dark);
+  --search-switch-active-rail-color: var(--color-primary-dark);
 
   .label {
     min-width: 2rem;

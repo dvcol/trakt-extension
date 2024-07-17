@@ -94,11 +94,11 @@
   --code-grey: rgb(228 228 228 / 20%);
   --border-grey: rgb(70 70 70);
   --border-white: rgb(255 255 255 / 20%);
-  --primary-color: #63e2b7;
-  --primary-color-lighter: #7fe7c4;
-  --primary-color-disabled: #548272;
-  --primary-color-dark: color-mix(in srgb, var(--primary-color) 40%, black 60%);
-  --primary-color-focus: rgba(99 226 183 / 10%);
+  --color-primary: #63e2b7;
+  --color-primary-lighter: #7fe7c4;
+  --color-primary-disabled: #548272;
+  --color-primary-dark: color-mix(in srgb, var(--color-primary) 40%, black 60%);
+  --color-primary-focus: rgba(99 226 183 / 10%);
   --info-color: #70c0e8;
   --info-color-dark: color-mix(in srgb, var(--info-color) 40%, black 60%);
   --color-disabled: rgba(255 255 255 / 6%);
@@ -106,7 +106,9 @@
   --color-warning: #f2c97d;
   --color-warning-lighter: #f5d599;
   --color-error: #e88080;
+  --color-error-dark: color-mix(in srgb, var(--color-error) 40%, black 60%);
   --color-error-lighter: #e98b8b;
+
 
   /* trakt.tv brand color */
   --trakt-red: #ed1c24;

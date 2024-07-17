@@ -66,5 +66,9 @@
   "common__button__no": {
     "message": "No",
     "description": "Button to cancel action."
+  },
+  "common__button__checkin": {
+    "message": "Check-in",
+    "description": "Button to check-in."
   }
 }

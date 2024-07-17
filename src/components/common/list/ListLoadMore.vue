@@ -62,7 +62,7 @@ const emit = defineEmits<{
   transition: color 0.3s var(--n-bezier);
 
   .page {
-    color: var(--primary-color-disabled);
+    color: var(--color-primary-disabled);
     font-weight: bold;
   }
 }
