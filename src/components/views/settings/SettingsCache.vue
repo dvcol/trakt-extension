@@ -44,7 +44,7 @@ const { clearState: clearImageStore } = useImageStore();
 const evictScopes = [
   {
     label: i18n('evict_images'),
-    click: () => Promise.all([clearImageStore(), TraktService.evict.tmdb()]),
+    click: () => Promise.all([clearImageStore(), TraktService.evict.images()]),
   },
   {
     label: i18n('evict_progress'),
@@ -77,6 +77,28 @@ const evictScopes = [
   { label: i18n('evict_episodes'), click: TraktService.evict.episodes },
   { label: i18n('evict_movies'), click: TraktService.evict.movies },
   { label: i18n('evict_people'), click: TraktService.evict.people },
+  {
+    label: i18n('evict_trakt'),
+    click: TraktService.evict.trakt,
+  },
+  {
+    label: i18n('evict_tmdb'),
+    click: TraktService.evict.tmdb,
+  },
+  {
+    label: i18n('evict_tvdb'),
+    click: TraktService.evict.tvdb,
+  },
+  {
+    label: i18n('evict_all'),
+    click: () =>
+      Promise.all([
+        clearImageStore(),
+        TraktService.evict.trakt(),
+        TraktService.evict.tmdb(),
+        TraktService.evict.tvdb(),
+      ]),
+  },
 ].map((item, index) => ({ ...item, click: () => onClick(item.click, index) }));
 
 const container = ref();

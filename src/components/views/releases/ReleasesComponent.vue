@@ -15,7 +15,14 @@ import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
-const i18n = useI18n('calendar');
+defineProps({
+  footer: {
+    type: Boolean,
+    required: false,
+  },
+});
+
+const i18n = useI18n('releases');
 
 const { releases, loading, center } = useReleasesStoreRefs();
 const { fetchReleases, clearState } = useReleasesStore();
@@ -90,7 +97,7 @@ const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
       </template>
     </ListScroll>
     <FloatingButton
-      :show="scrolledOut"
+      :show="!footer && scrolledOut"
       :width="centerIsToday ? '2.5rem' : '3.5rem'"
       :icon="recenterIcon"
       @on-click="onClick"

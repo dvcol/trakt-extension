@@ -15,16 +15,18 @@ import {
 } from '@dvcol/tmdb-http-client/models';
 import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
 
+import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
+
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
-
 import type {
   TraktApiResponse,
   TraktAuthentication,
   TraktAuthenticationApprove,
   TraktCalendarQuery,
+  TraktCheckinRequest,
   TraktCollection,
   TraktCollectionGetQuery,
   TraktCollectionProgress,
@@ -51,6 +53,7 @@ import type {
   TraktWatchedProgress,
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
+
 import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
 import type { TraktDeviceAuthentication } from 'node_modules/@dvcol/trakt-http-client/dist/models/trakt-authentication.model.cjs';
 import type { ImagePayload } from '~/models/poster.model';
@@ -599,10 +602,32 @@ export class TraktService {
     return response.json();
   };
 
+  static checkin = {
+    watching: async (id: string, extended?: boolean) => {
+      const response = await TraktService.traktClient.users.watching({ id, extended: extended ? TraktApiExtended.Full : undefined });
+      if (response.status === 204) return;
+      return response.json();
+    },
+    checkin: async (query: TraktCheckinRequest) => {
+      const response = await TraktService.traktClient.checkin.add(query);
+      return response.json();
+    },
+    cancel: async () => TraktService.traktClient.checkin.delete(),
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
     tvdb: () => TraktService.tvdbClient.clearCache(),
+    images: () =>
+      Promise.all([
+        TraktService.tmdbClient.v3.configuration.details.cached.evict(),
+        TraktService.tmdbClient.v3.movies.images.cached.evict(),
+        TraktService.tmdbClient.v3.shows.images.cached.evict(),
+        TraktService.tmdbClient.v3.seasons.images.cached.evict(),
+        TraktService.tmdbClient.v3.episodes.images.cached.evict(),
+        TraktService.tmdbClient.v3.people.images.cached.evict(),
+      ]),
     releases: () =>
       Promise.all([
         TraktService.tmdbClient.v3.discover.movie.cached.evict(),

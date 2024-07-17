@@ -51,8 +51,20 @@
     "message": "Export my data",
     "description": "Button to export data."
   },
+  "common__button__cancel": {
+    "message": "Cancel",
+    "description": "Button to cancel action."
+  },
   "common__button__export_cancel": {
     "message": "Cancel export",
     "description": "Button to cancel export data."
+  },
+  "common__button__yes": {
+    "message": "Yes",
+    "description": "Button to confirm action."
+  },
+  "common__button__no": {
+    "message": "No",
+    "description": "Button to cancel action."
   }
 }

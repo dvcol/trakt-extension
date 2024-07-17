@@ -4,6 +4,7 @@ import { NFlex, NFloatButton, NIcon } from 'naive-ui';
 import type { Component, PropType, Transition } from 'vue';
 
 import IconChevronUp from '~/components/icons/IconChevronUp.vue';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 
 defineProps({
   show: {
@@ -21,6 +22,8 @@ defineProps({
   },
 });
 
+const { isWatching } = useWatchingStoreRefs();
+
 const emit = defineEmits<{
   (e: 'onClick'): void;
 }>();
@@ -28,7 +31,13 @@ const emit = defineEmits<{
 
 <template>
   <Transition name="scale">
-    <NFloatButton v-if="show" class="button" width="fit-content" @click="emit('onClick')">
+    <NFloatButton
+      v-if="show"
+      class="button"
+      :class="{ watching: isWatching }"
+      width="fit-content"
+      @click="emit('onClick')"
+    >
       <NFlex size="small" align="center" justify="space-evenly">
         <NIcon :component="icon" />
         <span
@@ -57,6 +66,10 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: row;
   padding: 0.5rem;
+
+  &.watching {
+    bottom: 2.5rem;
+  }
 
   .text {
     display: inline-flex;
