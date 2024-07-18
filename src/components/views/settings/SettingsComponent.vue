@@ -10,6 +10,7 @@ import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
 import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
+import SettingsWatching from '~/components/views/settings/SettingsWatching.vue';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings');
@@ -25,9 +26,10 @@ const sections: Section[] = [
   { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
   { title: 'menu__links', reference: ref(), component: SettingsLinks },
   { title: 'menu__menus', reference: ref(), component: SettingsMenus },
+  { title: 'menu__watching', reference: ref(), component: SettingsWatching },
   { title: 'menu__cache', reference: ref(), component: SettingsCache },
-  { title: 'menu__logs', reference: ref(), component: SettingsLogs },
   { title: 'menu__export', reference: ref(), component: SettingsExport },
+  { title: 'menu__logs', reference: ref(), component: SettingsLogs },
 ];
 
 const focus = ref();
@@ -66,7 +68,7 @@ onDeactivated(() => {
       class="menu"
       bordered
       collapse-mode="width"
-      width="5.125rem"
+      width="6rem"
       :collapsed-width="0"
       :native-scrollbar="false"
       show-trigger="bar"
@@ -128,6 +130,10 @@ onDeactivated(() => {
       margin-bottom: 1rem;
     }
 
+    &:hover {
+      z-index: var(--length);
+    }
+
     &.target {
       border-color: var(--n-color-target);
     }
@@ -136,10 +142,12 @@ onDeactivated(() => {
   .menu {
     @include mixin.hover-background;
 
+    height: calc(100dvh - #{layout.$header-navbar-height});
     padding: 0.5rem;
   }
 
   .content {
+    height: 100dvh;
     background: transparent;
   }
 

@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 
@@ -27,8 +27,20 @@ type override = {
   cancel?: boolean;
 };
 
+export const PollingIntervals = {
+  Disabled: 0,
+  Second: 1000,
+  FiveSeconds: 5 * 1000,
+  TenSeconds: 10 * 1000,
+  ThirtySeconds: 30 * 1000,
+  OneMinute: 60 * 1000,
+  FiveMinutes: 5 * 60 * 1000,
+  TenMinutes: 10 * 60 * 1000,
+  ThirtyMinutes: 30 * 60 * 1000,
+} as const;
+
 /** 30 seconds */
-const defaultPolling = 10 * 1000;
+const defaultPolling = PollingIntervals.TenSeconds;
 
 export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => {
   const loading = reactive<override>({});
@@ -141,8 +153,18 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
   const initWatchingStore = async () => {
     await restoreState();
     await fetchWatching();
-    if (interval.value) clearInterval(interval.value);
-    interval.value = setInterval(() => fetchWatching(), polling.value);
+    watch(
+      polling,
+      () => {
+        if (interval.value) clearInterval(interval.value);
+        if (!polling.value) return;
+        interval.value = setInterval(() => fetchWatching(), polling.value);
+        logger.debug('Polling interval set to', polling.value);
+      },
+      {
+        immediate: true,
+      },
+    );
   };
 
   return {
