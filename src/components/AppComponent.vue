@@ -88,8 +88,8 @@ const onBack = () => {
               width="100%"
               class="panel"
               close-on-esc
-              :on-after-leave="onAfterLeave"
               auto-focus
+              :on-after-leave="onAfterLeave"
             >
               <NDrawerContent :native-scrollbar="false">
                 <!--  Header  -->

@@ -60,19 +60,8 @@ const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
     type: 'movie',
   });
   onItemClick({
-    item: {
-      ...item,
-      meta: {
-        ...item.meta,
-        ids: {
-          ...item.meta?.ids,
-          movie: {
-            ...item.meta?.ids?.movie,
-            trakt: lookup.pop()?.movie?.ids?.trakt,
-          },
-        },
-      },
-    },
+    item,
+    id: lookup.pop()?.movie?.ids?.trakt,
   });
 };
 </script>

@@ -6,6 +6,7 @@ import { computed, defineProps } from 'vue';
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
+import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
@@ -89,17 +90,36 @@ const { onCancel: onCancelWatching } = useCancelWatching(cancel, watching.value?
 const { clearShowWatchedProgress } = useShowStore();
 const { clearMovieWatchedProgress } = useMovieStore();
 
-const onCancel = async () => {
+const onCancel = async (event: MouseEvent) => {
+  event.stopPropagation();
   const cancelled = await onCancelWatching();
   if (!cancelled) return;
   clearShowWatchedProgress();
   clearMovieWatchedProgress();
 };
+
+const { onItemClick } = usePanelItem();
+const onClick = () => {
+  if (!watching.value) return;
+  if (isWatchingMovie(watching.value))
+    onItemClick({
+      type: 'movie',
+      id: watching.value.movie.ids.trakt,
+    });
+  if (isWatchingShow(watching.value))
+    onItemClick({
+      type: 'episode',
+      id: watching.value.episode.ids.trakt,
+      showId: watching.value.show.ids.trakt,
+      seasonNumber: watching.value.episode.season,
+      episodeNumber: watching.value.episode.number,
+    });
+};
 </script>
 
 <template>
   <div class="wrapper">
-    <div class="container" :class="{ watching: isWatching }">
+    <div class="container" :class="{ watching: isWatching }" @click="onClick">
       <span class="left">
         <NIcon class="icon" :component="icon" />
         <div class="column">

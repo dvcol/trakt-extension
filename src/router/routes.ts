@@ -105,10 +105,12 @@ export const routes: RouteRecordRaw[] = [
     path: `/${Route.Settings}`,
     name: Route.Settings,
     component: () => import('../components/views/settings/SettingsComponent.vue'),
+    children: panelRoutes(Route.Settings),
   },
   {
     path: `/${Route.About}`,
     name: Route.About,
     component: () => import('../components/views/about/AboutComponent.vue'),
+    children: panelRoutes(Route.About),
   },
 ];
