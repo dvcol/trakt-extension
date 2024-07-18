@@ -1,4 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
+
 import { computed, reactive, ref } from 'vue';
 
 import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
@@ -9,6 +10,7 @@ import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
+import { wait } from '~/utils/promise.utils';
 
 const WatchingStoreConstants = {
   Store: 'data.watching',
@@ -28,15 +30,12 @@ type override = {
 /** 30 seconds */
 const defaultPolling = 10 * 1000;
 
-export const isWatchingMovie = (watching: TraktWatching): watching is TraktWatching<'movie'> => watching.type === 'movie';
-export const isWatchingShow = (watching: TraktWatching): watching is TraktWatching<'episode'> => watching.type === 'episode';
-
 export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => {
   const loading = reactive<override>({});
   const watching = ref<TraktWatching>();
 
   const polling = ref(defaultPolling);
-  const override = ref(false);
+  const override = ref(true);
 
   const i18n = useI18n('watching');
 
@@ -82,28 +81,6 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }
   };
 
-  const checkin = async (query: TraktCheckinRequest) => {
-    if (loading.checkin) {
-      logger.warn('Already checking in');
-    }
-
-    loading.checkin = true;
-
-    logger.debug('Checking in', query);
-
-    try {
-      await TraktService.checkin.checkin(query);
-      NotificationService.message.success(i18n('checkin.success'));
-    } catch (e) {
-      logger.error('Failed to check in');
-      NotificationService.error(i18n('checkin_failed'), e);
-      throw e;
-    } finally {
-      loading.checkin = false;
-      await fetchWatching();
-    }
-  };
-
   const cancel = async (action: TraktWatching['action'] = watching.value?.action ?? 'checkin') => {
     if (loading.cancel) {
       logger.warn('Already cancelling');
@@ -122,6 +99,40 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
       throw e;
     } finally {
       loading.cancel = false;
+      await fetchWatching();
+    }
+  };
+
+  const checkin = async (query: TraktCheckinRequest, _override = override.value) => {
+    if (loading.checkin) {
+      logger.warn('Already checking in');
+    }
+
+    loading.checkin = true;
+
+    logger.debug('Checking in', query);
+
+    try {
+      await TraktService.checkin.checkin(query);
+      NotificationService.message.success(i18n('checkin_success'));
+    } catch (e) {
+      logger.error('Failed to check in');
+      if (e instanceof Response && e?.status === 409) {
+        logger.warn('Checkin already in progress');
+        if (_override) {
+          await wait(1000);
+          await cancel();
+          await wait(1000);
+          await checkin(query, false);
+        } else {
+          NotificationService.error(i18n('checkin_in_progress'), e);
+        }
+      } else {
+        NotificationService.error(i18n('checkin_failed'), e);
+        throw e;
+      }
+    } finally {
+      loading.checkin = false;
       await fetchWatching();
     }
   };
@@ -152,6 +163,8 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }),
     isWatching: computed(() => !!watching.value),
     cancelling: computed(() => loading.cancel),
+    checkingIn: computed(() => loading.checkin),
+    loading: computed(() => loading.cancel || loading.checkin),
     initWatchingStore,
     checkin,
     cancel,

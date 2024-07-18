@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { type ButtonProps, NButton, NIcon } from 'naive-ui';
+import { type ButtonProps, NButton, NIcon, NTooltip } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
 import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
+import { useI18n } from '~/utils/i18n.utils';
+
+const i18n = useI18n('common');
 
 const props = defineProps({
   filled: {
@@ -31,6 +34,11 @@ const progress = computed(() => {
   if (percentage?.value === undefined) return false;
   return percentage.value > 0 && percentage.value < 100;
 });
+
+const percentageLabel = computed(() => {
+  if (percentage?.value) return Math.round(percentage.value);
+  return 0;
+});
 </script>
 
 <template>
@@ -43,20 +51,32 @@ const progress = computed(() => {
       '--progress-color': `var(--color-${type}-dark)`,
     }"
   >
-    <NButton
-      class="button"
-      :class="{ filled, progress }"
-      round
-      :secondary="!filled"
-      :disabled="loading"
-      :loading="loading"
-      :type="type"
-    >
-      <template #icon>
-        <NIcon :component="IconConfirmCircle" />
+    <NTooltip class="progress-tooltip" :disabled="!progress" :delay="100">
+      <slot name="tooltip">
+        <div>
+          <span class="metric">{{ percentageLabel }}</span>
+          <span>%</span>
+          <span>&nbsp;</span>
+          <span>{{ i18n('watched', 'common', 'button') }}</span>
+        </div>
+      </slot>
+      <template #trigger>
+        <NButton
+          class="button"
+          :class="{ filled, progress }"
+          round
+          :secondary="!filled"
+          :disabled="loading"
+          :loading="loading"
+          :type="type"
+        >
+          <template #icon>
+            <NIcon :component="IconConfirmCircle" />
+          </template>
+          <span><slot /></span>
+        </NButton>
       </template>
-      <span><slot /></span>
-    </NButton>
+    </NTooltip>
   </div>
 </template>
 
@@ -92,5 +112,11 @@ const progress = computed(() => {
     var(--n-color) var(--progress, 0%),
     var(--n-color) 100%
   );
+}
+
+.metric {
+  color: var(--white);
+  font-weight: bolder;
+  font-variant-numeric: tabular-nums;
 }
 </style>

@@ -122,8 +122,10 @@ export const useShowStore = defineStore('data.show', () => {
     collected: showCollectionProgressError,
   });
 
+  const clearShowWatchedProgress = () => clearProxy(showsWatchedProgress);
+
   const clearProgressState = () => {
-    clearProxy(showsWatchedProgress);
+    clearShowWatchedProgress();
     clearProxy(showsCollectionProgress);
 
     clearProxy(showWatchedProgressLoading);
@@ -392,6 +394,7 @@ export const useShowStore = defineStore('data.show', () => {
     getShowProgressLoading,
     getShowCollectionProgress,
     getShowCollectionLoading,
+    clearShowWatchedProgress,
   };
 });
 

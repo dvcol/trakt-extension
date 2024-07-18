@@ -71,7 +71,7 @@ const props = defineProps({
     type: Number,
     required: false,
   },
-  checkinLoading: {
+  watchLoading: {
     type: Boolean,
     required: false,
   },
@@ -297,12 +297,11 @@ onMounted(() => fetchLists());
       align="center"
     >
       <PanelButtonProgress
-        :filled="watching"
-        :percentage="watchProgress"
-        :loading="checkinLoading"
+        :percentage="watching ? watchProgress : 0"
+        :loading="watchLoading"
         @click="onCheckin"
       >
-        {{ i18n('checkin', 'common', 'button') }}
+        {{ i18n(watching ? 'cancel' : 'checkin', 'common', 'button') }}
       </PanelButtonProgress>
     </NFlex>
   </div>
@@ -315,7 +314,7 @@ onMounted(() => fetchLists());
 .panel-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem 1.5rem;
+  gap: 1rem;
   align-items: center;
   justify-content: center;
   width: 100%;

@@ -442,8 +442,8 @@ export class TraktService {
     },
 
     movie: {
-      async watched(): Promise<TraktWatched<'movie', 'short'>[]> {
-        const response = await TraktService.traktClient.sync.watched.cached({ type: 'movies' });
+      async watched(force?: boolean): Promise<TraktWatched<'movie', 'short'>[]> {
+        const response = await TraktService.traktClient.sync.watched.cached({ type: 'movies' }, undefined, { force });
         return response.json() as Promise<TraktWatched<'movie', 'short'>[]>;
       },
 
@@ -610,9 +610,16 @@ export class TraktService {
     },
     checkin: async (query: TraktCheckinRequest) => {
       const response = await TraktService.traktClient.checkin.add(query);
+      TraktService.evict.progress.show().catch(err => logger.error('Failed to evict show cache', { query, err }));
+      TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { query, err }));
       return response.json();
     },
-    cancel: async () => TraktService.traktClient.checkin.delete(),
+    cancel: async () => {
+      const response = await TraktService.traktClient.checkin.delete();
+      TraktService.evict.progress.show().catch(err => logger.error('Failed to evict show cache', { err }));
+      TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { err }));
+      return response;
+    },
   };
 
   static evict = {
