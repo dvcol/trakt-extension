@@ -6,6 +6,7 @@ import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-clien
 
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
@@ -149,16 +150,20 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }
   };
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const interval = ref<ReturnType<typeof setInterval>>();
   const initWatchingStore = async () => {
     await restoreState();
-    await fetchWatching();
     watch(
       polling,
-      () => {
+      async () => {
         if (interval.value) clearInterval(interval.value);
         if (!polling.value) return;
-        interval.value = setInterval(() => fetchWatching(), polling.value);
+        if (isAuthenticated.value) await fetchWatching();
+        interval.value = setInterval(() => {
+          if (!isAuthenticated.value) return;
+          return fetchWatching();
+        }, polling.value);
         logger.debug('Polling interval set to', polling.value);
       },
       {
