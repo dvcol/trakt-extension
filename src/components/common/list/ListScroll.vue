@@ -215,7 +215,7 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
 @include animation.fade-in;
 
 .list-scroll {
-  height: calc(100dvh - 8px);
+  height: calc(var(--full-height) - 8px);
   margin-top: -#{layout.$header-navbar-height};
   margin-bottom: 8px;
 

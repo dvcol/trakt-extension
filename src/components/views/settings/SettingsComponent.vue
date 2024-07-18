@@ -115,7 +115,7 @@ onDeactivated(() => {
 
 .container {
   width: 100%;
-  height: 100dvh;
+  height: var(--full-height);
   margin-top: -#{layout.$header-navbar-height};
   background: transparent;
 
@@ -142,12 +142,12 @@ onDeactivated(() => {
   .menu {
     @include mixin.hover-background;
 
-    height: calc(100dvh - #{layout.$header-navbar-height});
+    height: calc(var(--full-height) - #{layout.$header-navbar-height});
     padding: 0.5rem;
   }
 
   .content {
-    height: 100dvh;
+    height: var(--full-height);
     background: transparent;
   }
 

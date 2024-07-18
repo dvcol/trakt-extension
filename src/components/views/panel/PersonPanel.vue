@@ -77,7 +77,12 @@ const { openTab } = useLinksStore();
     >
       {{ title }}
     </TitleLink>
-    <NSkeleton v-else class="show-title-skeleton" style="width: 50dvh" round />
+    <NSkeleton
+      v-else
+      class="show-title-skeleton"
+      style="width: var(--half-height)"
+      round
+    />
 
     <PanelPoster :tmdb="person?.ids.tmdb" mode="person" portait />
 

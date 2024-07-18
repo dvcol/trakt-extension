@@ -38,7 +38,7 @@ const { openTab } = useLinksStore();
     >
       {{ title }}
     </TitleLink>
-    <NSkeleton v-else class="title-skeleton" style="width: 40dvh" round />
+    <NSkeleton v-else class="title-skeleton" style="width: var(--height-40-dvh)" round />
 
     <div v-if="overview">{{ overview }}</div>
     <NSkeleton v-else style="width: 100%" :repeat="3" :sharp="false" />

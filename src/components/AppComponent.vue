@@ -162,7 +162,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100dvh - #{layout.$header-navbar-height});
+  min-height: calc(var(--full-height) - #{layout.$header-navbar-height});
   margin-top: layout.$header-navbar-height;
 }
 

@@ -16,7 +16,15 @@ import {
   NText,
 } from 'naive-ui';
 
-import { computed, onDeactivated, onMounted, ref, Transition, watch } from 'vue';
+import {
+  computed,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  ref,
+  Transition,
+  watch,
+} from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
@@ -133,6 +141,9 @@ const onClick = () => {
   return onSignIn();
 };
 
+onActivated(() => {
+  if (useCode.value) getCodes();
+});
 onDeactivated(() => onCancel());
 </script>
 

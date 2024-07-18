@@ -90,7 +90,7 @@ const root = ref<HTMLElement>();
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  height: 100vh;
+  height: var(--full-height);
   overflow: auto;
   color: var(--color-text);
   font-weight: normal;
