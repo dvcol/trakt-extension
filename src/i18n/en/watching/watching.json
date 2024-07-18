@@ -54,5 +54,9 @@
   "watching__dialog_cancel_content": {
     "message": "This action is irreversible.\nAre you sure you want to cancel?",
     "description": "Message for cancelling scrobble dialog."
+  },
+  "watching__checkin_in_progress": {
+    "message": "Check-in already in progress.",
+    "description": "Message for checkin already in progress."
   }
 }

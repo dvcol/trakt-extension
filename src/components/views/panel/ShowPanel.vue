@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
+
 import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
@@ -13,6 +14,7 @@ import {
   PanelButtonsOption,
   type PanelButtonsOptions,
 } from '~/components/views/panel/use-panel-buttons';
+import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import {
   DefaultListId,
@@ -23,9 +25,15 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useShowStore } from '~/stores/data/show.store';
+import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
+import {
+  isWatchingShow,
+  useCancelWatching,
+  useWatchingProgress,
+} from '~/utils/watching.utils';
 
 const props = defineProps({
   showId: {
@@ -298,6 +306,34 @@ const onWatchedUpdate = async (
   await fetchShowProgress(showId.value, { force: true });
 };
 
+const { watching, loading: checkinLoading } = useWatchingStoreRefs();
+const { progress } = useWatchingProgress(watching);
+
+const isWatching = computed(() => {
+  if (!watching.value) return false;
+  if (isWatchingShow(watching.value))
+    return watching.value.episode?.ids?.trakt === episode.value?.ids?.trakt;
+  return false;
+});
+
+const { cancel: cancelCheckin, checkin } = useWatchingStore();
+
+const { onCancel } = useCancelWatching(cancelCheckin);
+const onCheckin = async (cancel: boolean) => {
+  if (cancel) {
+    const cancelled = await onCancel();
+    if (!cancelled) return;
+  } else if (!episode.value?.ids?.trakt) {
+    return NotificationService.error(
+      i18n('checkin_failed', 'watching'),
+      new Error('No episode id'),
+    );
+  } else await checkin({ episode: { ids: episode.value.ids } });
+
+  if (!showId.value) return;
+  await fetchShowProgress(showId.value, { force: true });
+};
+
 onMounted(() => {
   watch(
     [showId, seasonNb, episodeNb],
@@ -372,9 +408,13 @@ const { openTab } = useLinksStore();
       :active-loading="listLoading"
       :active-lists="activeLists"
       :has-release="!!releaseDate"
+      :watching="isWatching"
+      :watch-progress="progress"
+      :watch-loading="checkinLoading"
       @on-list-update="onListUpdate"
       @on-collection-update="onCollectionUpdate"
       @on-watched-update="onWatchedUpdate"
+      @on-checkin="onCheckin"
     />
 
     <ShowPanelPicker

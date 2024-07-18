@@ -13,6 +13,7 @@ import {
   PanelButtonsOption,
   type PanelButtonsOptions,
 } from '~/components/views/panel/use-panel-buttons';
+import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import {
   DefaultListId,
@@ -23,9 +24,15 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
+import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
+import {
+  isWatchingMovie,
+  useCancelWatching,
+  useWatchingProgress,
+} from '~/utils/watching.utils';
 
 const props = defineProps({
   movieId: {
@@ -159,7 +166,7 @@ const onCollectionUpdate = async (
 
   const _id = movie.value?.ids?.trakt;
   if (_id === undefined) return;
-  changeMovieCollected(_id, value === PanelButtonsOption.Remove);
+  return changeMovieCollected(_id, value === PanelButtonsOption.Remove);
 };
 
 const onWatchedUpdate = async (
@@ -185,7 +192,7 @@ const onWatchedUpdate = async (
 
   const _id = movie.value?.ids?.trakt;
   if (_id === undefined) return;
-  changeMovieWatched(_id, value === PanelButtonsOption.Remove);
+  return changeMovieWatched(_id, value === PanelButtonsOption.Remove);
 };
 
 const i18n = useI18n('movie', 'panel');
@@ -203,6 +210,32 @@ const titleUrl = computed(() => {
     id: movie.value.ids.trakt,
   });
 });
+
+const { watching, loading: checkinLoading } = useWatchingStoreRefs();
+const { progress } = useWatchingProgress(watching);
+const isWatching = computed(() => {
+  if (!watching.value) return false;
+  if (isWatchingMovie(watching.value))
+    return watching.value.movie?.ids?.trakt.toString() === movieId.value;
+  return false;
+});
+
+const { cancel: cancelCheckin, checkin } = useWatchingStore();
+
+const { onCancel } = useCancelWatching(cancelCheckin);
+const onCheckin = async (cancel: boolean) => {
+  if (cancel) {
+    const cancelled = await onCancel();
+    if (!cancelled) return;
+  } else if (!movie.value?.ids?.trakt) {
+    return NotificationService.error(
+      i18n('checkin_failed', 'watching'),
+      new Error('No movie id'),
+    );
+  } else await checkin({ movie: { ids: movie.value.ids } });
+
+  await fetchMovieWatched(true);
+};
 
 const { openTab } = useLinksStore();
 
@@ -259,9 +292,13 @@ onMounted(() => {
       :active-loading="listLoading"
       :active-lists="activeLists"
       :has-release="!!releaseDate"
+      :watching="isWatching"
+      :watch-progress="progress"
+      :watch-loading="checkinLoading"
       @on-list-update="onListUpdate"
       @on-collection-update="onCollectionUpdate"
       @on-watched-update="onWatchedUpdate"
+      @on-checkin="onCheckin"
     />
 
     <MoviePanelOverview :movie="movie" />

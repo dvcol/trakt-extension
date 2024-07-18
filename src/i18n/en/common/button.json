@@ -70,5 +70,9 @@
   "common__button__checkin": {
     "message": "Check-in",
     "description": "Button to check-in."
+  },
+  "common__button__Watched": {
+    "message": "Watched",
+    "description": "Button to mark as watched."
   }
 }

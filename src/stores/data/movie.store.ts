@@ -34,8 +34,10 @@ export const useMovieStore = defineStore('data.movie', () => {
   const movieErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('movie', movieErrors);
 
+  const clearMovieWatchedProgress = () => clearProxy(moviesWatched);
+
   const clearProgressState = () => {
-    clearProxy(moviesWatched);
+    clearMovieWatchedProgress();
     clearProxy(moviesCollected);
     clearProxy(moviesWatchedDates);
     clearProxy(moviesCollectedDates);
@@ -77,7 +79,7 @@ export const useMovieStore = defineStore('data.movie', () => {
   const getMovieLoading = (id: string | number) => computed(() => loading[id.toString()]);
   const getMovie = (id: string | number) => computed(() => movies[id.toString()]);
 
-  const fetchMovieWatched = async () => {
+  const fetchMovieWatched = async (force?: boolean) => {
     if (loadingWatched.value) {
       logger.warn('Already fetching watched movies');
       return;
@@ -85,9 +87,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
     logger.debug('Fetching watched movies');
 
+    if (force) clearMovieWatchedProgress();
+
     loadingWatched.value = true;
     try {
-      const response = await TraktService.progress.movie.watched();
+      const response = await TraktService.progress.movie.watched(force);
       delete movieErrors.watched;
       const dictionary = response.reduce<MovieWatchedDictionary>((acc, movie) => {
         acc[movie.movie.ids.trakt.toString()] = !!movie?.plays;
@@ -175,6 +179,7 @@ export const useMovieStore = defineStore('data.movie', () => {
     loadingCollected,
     changeMovieWatched,
     changeMovieCollected,
+    clearMovieWatchedProgress,
   };
 });
 

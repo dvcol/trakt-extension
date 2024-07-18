@@ -1,19 +1,21 @@
 <script lang="ts" setup>
-import { elapsedTime } from '@dvcol/common-utils/common/date';
 import { formatTime } from '@dvcol/common-utils/common/format';
-import { NButton, NIcon, NTooltip, useDialog } from 'naive-ui';
-import { computed, defineProps, onBeforeMount, type Ref, ref, watch } from 'vue';
+import { NButton, NIcon, NTooltip } from 'naive-ui';
+import { computed, defineProps } from 'vue';
 
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
+import { useMovieStore } from '~/stores/data/movie.store';
+import { useShowStore } from '~/stores/data/show.store';
+import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { useI18n } from '~/utils/i18n.utils';
 import {
   isWatchingMovie,
   isWatchingShow,
-  useWatchingStore,
-  useWatchingStoreRefs,
-} from '~/stores/data/watching.store';
-import { useI18n } from '~/utils/i18n.utils';
+  useCancelWatching,
+  useWatchingProgress,
+} from '~/utils/watching.utils';
 
 defineProps({
   parentElement: {
@@ -51,36 +53,20 @@ const episode = computed(() => {
   )} ${watching.value.episode.number}`;
 });
 
-const now = ref(new Date());
+const {
+  elapsed: elapsedSeconds,
+  duration: durationSeconds,
+  progress,
+} = useWatchingProgress(watching);
 
-const elapsedSeconds = computed(() => {
-  if (!watching.value) return 0;
-  if (!watching.value.started_at) return 0;
-  return elapsedTime(now.value, new Date(watching.value.started_at));
-});
 const elapsed = computed(() => {
   if (!elapsedSeconds.value) return '';
   return formatTime(elapsedSeconds.value);
 });
 
-const durationSeconds = computed(() => {
-  if (!watching.value) return 0;
-  if (!watching.value.started_at) return 0;
-  if (!watching.value.expires_at) return 0;
-  return elapsedTime(
-    new Date(watching.value.expires_at),
-    new Date(watching.value.started_at),
-  );
-});
 const duration = computed(() => {
   if (!durationSeconds.value) return '';
   return formatTime(durationSeconds.value);
-});
-
-const progress = computed(() => {
-  if (!durationSeconds.value) return 0;
-  if (!elapsedSeconds.value) return 0;
-  return `${(elapsedSeconds.value / durationSeconds.value) * 100}%`;
 });
 
 const type = computed(() => {
@@ -99,52 +85,16 @@ const started = computed(() => {
   return new Date(watching.value.started_at).toLocaleString();
 });
 
-const dialog = useDialog();
-const onCancel = () => {
-  dialog.error({
-    title: i18n(`dialog_cancel_${watching.value?.action ?? 'checkin'}`),
-    content: i18n('dialog_cancel_content'),
-    positiveText: i18n('yes', 'common', 'button'),
-    negativeText: i18n('no', 'common', 'button'),
-    bordered: false,
-    style: {
-      width: '20rem',
-      background: 'var(--bg-black-80)',
-      backdropFilter: 'var(--bg-blur-10)',
-      whiteSpace: 'pre-line',
-    },
-    positiveButtonProps: {
-      quaternary: true,
-      type: 'success',
-      ghost: false,
-      bordered: false,
-    },
-    negativeButtonProps: {
-      quaternary: true,
-      type: 'error',
-      ghost: false,
-      bordered: false,
-    },
-    onPositiveClick: () => cancel(),
-  });
-};
+const { onCancel: onCancelWatching } = useCancelWatching(cancel, watching.value?.action);
+const { clearShowWatchedProgress } = useShowStore();
+const { clearMovieWatchedProgress } = useMovieStore();
 
-const interval: Ref<ReturnType<typeof setInterval> | undefined> = ref();
-onBeforeMount(() => {
-  watch(
-    isWatching,
-    value => {
-      if (value) {
-        interval.value = setInterval(() => {
-          now.value = new Date();
-        }, 1000);
-      } else if (interval.value) {
-        clearInterval(interval.value);
-      }
-    },
-    { immediate: true },
-  );
-});
+const onCancel = async () => {
+  const cancelled = await onCancelWatching();
+  if (!cancelled) return;
+  clearShowWatchedProgress();
+  clearMovieWatchedProgress();
+};
 </script>
 
 <template>
@@ -191,7 +141,7 @@ onBeforeMount(() => {
         </NTooltip>
       </span>
     </div>
-    <div class="background" :style="{ '--progress': progress }" />
+    <div class="background" :style="{ '--progress': `${progress}%` }" />
   </div>
 </template>
 
