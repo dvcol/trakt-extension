@@ -1,0 +1,46 @@
+{
+  "settings__watching__label_polling_interval": {
+    "message": "Configure polling interval for watching state.",
+    "description": "Label for the polling interval setting."
+  },
+  "settings__watching__label_override": {
+    "message": "Automatically cancel pending checkin request.",
+    "description": "Label for the override setting."
+  },
+  "settings__watching__label_interval_disabled": {
+    "message": "Disabled",
+    "description": "Label for the disabled interval."
+  },
+  "settings__watching__label_interval_second": {
+    "message": "1 second",
+    "description": "Label for the 1 second interval."
+  },
+  "settings__watching__label_interval_five_seconds": {
+    "message": "5 seconds",
+    "description": "Label for the 5 seconds interval."
+  },
+  "settings__watching__label_interval_ten_seconds": {
+    "message": "10 seconds",
+    "description": "Label for the 10 seconds interval."
+  },
+  "settings__watching__label_interval_thirty_seconds": {
+    "message": "30 seconds",
+    "description": "Label for the 30 seconds interval."
+  },
+  "settings__watching__label_interval_one_minute": {
+    "message": "1 minute",
+    "description": "Label for the 1 minute interval."
+  },
+  "settings__watching__label_interval_five_minutes": {
+    "message": "5 minutes",
+    "description": "Label for the 5 minutes interval."
+  },
+  "settings__watching__label_interval_ten_minutes": {
+    "message": "10 minutes",
+    "description": "Label for the 10 minutes interval."
+  },
+  "settings__watching__label_interval_thirty_minutes": {
+    "message": "30 minutes",
+    "description": "Label for the 30 minutes interval."
+  }
+}

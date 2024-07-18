@@ -56,7 +56,7 @@ const onBack = () => {
 </script>
 
 <template>
-  <div ref="appRef" class="container">
+  <div ref="appRef">
     <NDialogProvider :to="appRef">
       <header :class="{ open: panel }">
         <RouterView v-slot="{ Component }" name="navbar">
@@ -162,7 +162,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100% - #{layout.$header-navbar-height});
+  min-height: calc(100dvh - #{layout.$header-navbar-height});
   margin-top: layout.$header-navbar-height;
 }
 
@@ -171,10 +171,6 @@ footer {
   bottom: 0;
   z-index: layers.$layer-ui;
   width: 100%;
-}
-
-.container {
-  height: 100%;
 }
 
 .panel {

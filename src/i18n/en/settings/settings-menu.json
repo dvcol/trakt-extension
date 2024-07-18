@@ -26,5 +26,9 @@
   "settings__menu__export": {
     "message": "Export",
     "description": "Export trakt data menu item"
+  },
+  "settings__menu__watching": {
+    "message": "Watching",
+    "description": "Watching ui menu item"
   }
 }
