@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/dvcol/trakt-extension/compare/v1.15.0...v1.16.0) (2024-07-18)
+
+
+### Features
+
+* **checkin:** add checkin button in panels ([d370168](https://github.com/dvcol/trakt-extension/commit/d370168bf5e276811775dc07f58d9f46b4638d72))
+* **checkin:** create now watching bar component ([15730c9](https://github.com/dvcol/trakt-extension/commit/15730c906986eceebea9c66ff59f1dfcb1de50d7))
+* **checkin:** implement checkin button & progress state evict ([08f2705](https://github.com/dvcol/trakt-extension/commit/08f27055425c142dc008589516f99a1a9ab1d259))
+* **checkin:** open panels on checkin click ([f23eee1](https://github.com/dvcol/trakt-extension/commit/f23eee1c3eef89d55496632a5f8d696e3fe043aa))
+* **settings:** adds watching settings ([35d2e3d](https://github.com/dvcol/trakt-extension/commit/35d2e3db89577999832c1f77b80be590a61da4c9))
+* **web:** parametrise full-height to allow override ([1341e93](https://github.com/dvcol/trakt-extension/commit/1341e93de5b36423ad371cf81cd08dc614a5d73a))
+
+
+### Bug Fixes
+
+* **html:** adds overscroll behaviour to prevent bouncing ([69e5986](https://github.com/dvcol/trakt-extension/commit/69e5986a1916a9b39ea001b984b5231f91ded830))
+* **watching:** adds auth check before polling ([9e0baf6](https://github.com/dvcol/trakt-extension/commit/9e0baf6af86d02da40a0f4028dd3393b3c8ee1ea))
+
 ## [1.15.0](https://github.com/dvcol/trakt-extension/compare/v1.14.0...v1.15.0) (2024-07-16)
 
 
