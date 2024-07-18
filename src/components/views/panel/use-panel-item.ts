@@ -5,41 +5,56 @@ import type { ListScrollItem } from '~/models/list-scroll.model';
 export const usePanelItem = () => {
   const { push, currentRoute } = useRouter();
 
-  const onItemClick = ({ item }: { item: ListScrollItem }) => {
-    const type = item?.type;
-    if (!type) return;
+  const onItemClick = ({
+    type,
+    id,
+    showId,
+    seasonNumber,
+    episodeNumber,
+    item,
+  }: {
+    type?: 'person' | 'movie' | 'show' | 'season' | 'episode';
+    id?: number;
+    showId?: number;
+    seasonNumber?: number;
+    episodeNumber?: number;
+
+    item?: ListScrollItem;
+  }) => {
+    const _type = type ?? item?.type;
+    if (!_type) return;
     const base = currentRoute.value.name?.toString();
     if (!base) return;
-    const id = item?.meta?.ids?.[type]?.trakt;
-    const showId = item?.meta?.ids?.show?.trakt;
-    const seasonNumber = item?.meta?.number?.season;
-    const episodeNumber = item?.meta?.number?.episode;
-    switch (type) {
+    const _id = id ?? item?.meta?.ids?.[_type]?.trakt;
+    const _showId = showId ?? item?.meta?.ids?.show?.trakt;
+    const _seasonNumber = seasonNumber ?? item?.meta?.number?.season;
+    const _episodeNumber = episodeNumber ?? item?.meta?.number?.episode;
+    switch (_type) {
       case 'person':
       case 'movie':
       case 'show':
-        if (!id) return;
+        if (!_id) return;
         return push({
-          name: `${base}-${type}`,
-          params: { [`${type}Id`]: id },
+          name: `${base}-${_type}`,
+          params: { [`${_type}Id`]: _id },
         });
       case 'season':
-        if (showId === undefined || seasonNumber === undefined) return;
+        if (_showId === undefined || _seasonNumber === undefined) return;
         return push({
-          name: `${base}-${type}`,
+          name: `${base}-${_type}`,
           params: {
-            showId,
-            seasonNumber,
+            showId: _showId,
+            seasonNumber: _seasonNumber,
           },
         });
       case 'episode':
-        if (showId === undefined || seasonNumber === undefined || episodeNumber === undefined) return;
+        if (_showId === undefined || _seasonNumber === undefined || _episodeNumber === undefined) return;
         return push({
-          name: `${base}-${type}`,
+          name: `${base}-${_type}`,
           params: {
-            showId,
-            seasonNumber,
-            episodeNumber,
+            showId: _showId,
+            seasonNumber: _seasonNumber,
+            episodeNumber: _episodeNumber,
           },
         });
       default:
