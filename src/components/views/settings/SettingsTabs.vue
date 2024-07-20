@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
 
 import { type Component, computed, h, onBeforeMount, ref } from 'vue';
@@ -153,7 +154,9 @@ const container = ref();
         <NSwitch
           :value="state"
           class="form-switch"
-          :disabled="state && disabled"
+          :disabled="
+            (state && disabled) || (Route.Progress === route && !chromeRuntimeId)
+          "
           @update:value="toggleTab(route)"
         >
           <template #checked>{{ i18n('on', 'common', 'button') }}</template>

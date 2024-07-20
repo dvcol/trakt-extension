@@ -1,3 +1,5 @@
+import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
+
 import type { RouteLocationNormalized } from 'vue-router';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds, ContextMenus } from '~/models/context/context-menu.model';
@@ -6,7 +8,6 @@ import { action } from '~/utils/browser/borwser-action.utils';
 import { context, type ContextMenuOnClickedData } from '~/utils/browser/browser-context.utils';
 import { runtime } from '~/utils/browser/browser-runtime.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { createTab } from '~/utils/browser/browser.utils';
 
 const setLastRoute = (data: ContextMenuOnClickedData) => {
   if (!data?.selectionText) return;

@@ -1,3 +1,4 @@
+import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, type Ref } from 'vue';
 
@@ -5,7 +6,6 @@ import type { TagLink } from '~/models/tag.model';
 
 import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { createTab } from '~/utils/browser/browser.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { clearProxy } from '~/utils/vue.utils';
 

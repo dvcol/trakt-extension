@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NSwitch } from 'naive-ui';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
@@ -22,7 +23,12 @@ const { toggleContextMenu } = useContextMenuStore();
       :key="id"
       :label="i18n(`label_menu__${ id }`)"
     >
-      <NSwitch :value="state" class="form-switch" @update:value="toggleContextMenu(id)">
+      <NSwitch
+        :value="state"
+        :disabled="!chromeRuntimeId"
+        class="form-switch"
+        @update:value="toggleContextMenu(id)"
+      >
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>

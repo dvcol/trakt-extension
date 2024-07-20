@@ -1,9 +1,10 @@
 import { Config as TraktConfig } from '@dvcol/trakt-http-client/config';
 
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
+
 import type { TraktClientSettings } from '@dvcol/trakt-http-client/models';
 
 import { WebConfig } from '~/settings/web.config';
-import { chromeRuntimeId } from '~/utils/browser/browser.utils';
 
 export const Config = {
   UserAgent: `${import.meta.env.PKG_NAME}/${import.meta.env.PKG_VERSION}`,

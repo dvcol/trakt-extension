@@ -19,6 +19,8 @@ import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
 import { TvdbClient } from '@dvcol/tvdb-http-client';
 
+import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
+
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 import type {
@@ -70,7 +72,7 @@ import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
-import { createTab } from '~/utils/browser/browser.utils';
+
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
 import { cancellablePaginatedWriteJson } from '~/utils/trakt-service.utils';
 

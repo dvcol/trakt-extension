@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
+
+import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 import { NAvatar, NDropdown, NEllipsis, NFlex, NIcon } from 'naive-ui';
 
 import { computed, defineProps, h, ref } from 'vue';
@@ -24,7 +27,6 @@ import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 
-import { chromeRuntimeId, createTab } from '~/utils/browser/browser.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('navbar', 'settings');

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NAvatar, NButton, NCard, NFlex, NIcon } from 'naive-ui';
 
 import { computed, ref } from 'vue';
@@ -14,7 +15,7 @@ import { useLinksStore } from '~/stores/settings/links.store';
 import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { chromeRuntimeId } from '~/utils/browser/browser.utils';
+
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'account');
