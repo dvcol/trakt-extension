@@ -4,6 +4,7 @@ import { deCapitalise } from '@dvcol/common-utils/common/string';
 import {
   NEllipsis,
   NFlex,
+  NIcon,
   NProgress,
   NSkeleton,
   NTag,
@@ -15,9 +16,12 @@ import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import TagLink from '~/components/common/buttons/TagLink.vue';
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
+import IconGrid from '~/components/icons/IconGrid.vue';
+import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
+import { useMovieStore } from '~/stores/data/movie.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -57,9 +61,19 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showPlayed: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  showCollected: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
-const { item, hideDate } = toRefs(props);
+const { item, hideDate, showProgress, showPlayed, showCollected } = toRefs(props);
 
 const type = computed(() =>
   item.value.type ? i18n(item.value.type, 'common', 'media', 'type') : item.value.type,
@@ -84,15 +98,61 @@ const tags = computed(
     }),
 );
 
-const { getShowWatchedProgress } = useShowStore();
+const { getShowWatchedProgress, getShowCollectionProgress } = useShowStore();
 
 const progress = computed<ShowProgress | undefined>(() => {
+  if (!showProgress.value && !showPlayed.value && !showCollected.value) return;
   if (item?.value?.progress) return item.value?.progress;
   if (item?.value?.progressRef) return item.value?.progressRef.value;
   if (!item?.value?.getProgressQuery) return;
-  const { id, cacheOptions } = item.value?.getProgressQuery() ?? {};
+  const { id, cacheOptions, noFetch } = item.value?.getProgressQuery() ?? {};
   if (!id) return;
-  return getShowWatchedProgress(id, cacheOptions).value;
+  return getShowWatchedProgress(id, cacheOptions, noFetch).value;
+});
+
+const collection = computed<ShowProgress | undefined>(() => {
+  if (!showCollected.value) return;
+  if (!item?.value?.getProgressQuery) return;
+  const { id, noFetch } = item.value?.getProgressQuery() ?? {};
+  if (!id) return;
+  return getShowCollectionProgress(id, noFetch).value;
+});
+
+const { getMovieWatched, getMovieCollected } = useMovieStore();
+
+const played = computed(() => {
+  if (!showPlayed.value) return false;
+  const _item = item?.value;
+  if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
+    return getMovieWatched(_item.meta.ids.movie.trakt)?.value;
+  }
+  if (_item?.type !== 'episode') return false;
+  const _progress = progress.value;
+  if (!_progress) return false;
+  const _season = _item.meta?.number?.season;
+  const _episode = _item.meta?.number?.episode;
+  if (!_season || !_episode) return false;
+  return _progress.seasons
+    ?.find(s => s.number === _season)
+    ?.episodes?.find(e => e.number === _episode)?.completed;
+});
+
+const collected = computed(() => {
+  if (!showCollected.value) return false;
+  const _item = item?.value;
+  if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
+    return getMovieCollected(_item.meta.ids.movie.trakt)?.value;
+  }
+  if (_item?.type !== 'episode') return false;
+  const _collection = collection.value;
+
+  if (!_collection) return false;
+  const _season = _item.meta?.number?.season;
+  const _episode = _item.meta?.number?.episode;
+  if (!_season || !_episode) return false;
+  return _collection.seasons
+    ?.find(s => s.number === _season)
+    ?.episodes?.find(e => e.number === _episode)?.completed;
 });
 
 const { progressType } = useExtensionSettingsStoreRefs();
@@ -144,15 +204,58 @@ const onTagClick = (url?: string) => {
           content
         }}</NEllipsis>
       </div>
-      <NFlex v-if="(!hideTime && date) || tags?.length" size="medium" class="tags">
+      <NFlex
+        v-if="(!hideTime && date) || tags?.length || showCollected || showPlayed"
+        size="medium"
+        class="tags"
+      >
         <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
           <NSkeleton v-if="loading" text style="width: 6%" />
           <TagLink :tag="tag" @on-click="onTagClick" />
         </template>
         <template v-if="!hideTime && date">
-          <NSkeleton v-if="loading" text style="width: 6%" />
-          <NTag v-else class="tag" size="small" type="default" :bordered="false">
+          <NSkeleton v-if="loading" key="date-loader" text style="width: 6%" />
+          <NTag
+            v-else
+            key="date"
+            class="tag"
+            size="small"
+            type="default"
+            :bordered="false"
+          >
             {{ date }}
+          </NTag>
+        </template>
+        <template v-if="showCollected && collected">
+          <NSkeleton v-if="loading" key="collected-loader" text style="width: 3%" />
+          <NTag
+            v-else
+            key="collected"
+            class="tag badge"
+            size="small"
+            type="info"
+            :bordered="false"
+            :title="i18n('collected', 'common', 'tooltip')"
+          >
+            <template #icon>
+              <NIcon :component="IconGrid" />
+            </template>
+          </NTag>
+        </template>
+        <template v-if="showPlayed && played">
+          <NSkeleton v-if="loading" key="played-loader" text style="width: 3%" />
+          <NTag
+            v-else
+            key="played"
+            class="tag badge"
+            size="small"
+            type="primary"
+            :bordered="false"
+            :title="i18n('watched', 'common', 'tooltip')"
+          >
+            <template #icon>
+              <NIcon :component="IconPlayFilled" />
+            </template>
           </NTag>
         </template>
       </NFlex>
@@ -221,5 +324,10 @@ const onTagClick = (url?: string) => {
 <style lang="scss">
 .panel-progress-tooltip.n-tooltip.n-tooltip {
   background: var(--bg-color-80);
+}
+
+// stylelint-disable-next-line selector-class-pattern -- framework overriding
+.n-tag.n-tag--icon.tag.badge .n-tag__icon {
+  margin: 0;
 }
 </style>

@@ -1,7 +1,6 @@
+import { TraktApiExtended, type TraktClientPagination, type TraktHistory, type TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
-import { reactive, ref, watch } from 'vue';
-
-import type { TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
@@ -17,12 +16,20 @@ const HistoryStoreConstants = {
   Store: 'data.history',
 } as const;
 
+type HistoryState = {
+  pageSize: number;
+  historyStart?: Date | number;
+  historyEnd?: Date | number;
+  extended?: boolean;
+};
+
 export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(100);
   const history = ref<TraktHistory[]>([]);
   const pagination = ref<TraktClientPagination>();
+  const extended = ref(false);
 
   const searchHistory = ref('');
 
@@ -35,22 +42,20 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   ErrorService.registerDictionary('history', historyErrors);
 
   const saveState = async () =>
-    storage.local.set(HistoryStoreConstants.Store, {
+    storage.local.set<HistoryState>(HistoryStoreConstants.Store, {
       pageSize: pageSize.value,
       historyStart: historyStart.value?.getTime(),
       historyEnd: historyEnd.value?.getTime(),
+      extended: extended.value,
     });
 
   const restoreState = async () => {
-    const restored = await storage.local.get<{
-      pageSize: number;
-      historyStart: Date | undefined;
-      historyEnd: Date | undefined;
-    }>(HistoryStoreConstants.Store);
+    const restored = await storage.local.get<HistoryState>(HistoryStoreConstants.Store);
 
     if (restored?.pageSize) pageSize.value = restored.pageSize;
     if (restored?.historyStart) historyStart.value = new Date(restored.historyStart);
     if (restored?.historyEnd) historyEnd.value = new Date(restored.historyEnd);
+    if (restored?.extended) extended.value = restored.extended;
   };
 
   const clearState = () => {
@@ -86,6 +91,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       start_at: start?.toISOString(),
       end_at: end?.toISOString(),
     };
+    if (extended.value) query.extended = TraktApiExtended.Full;
     try {
       const response = await TraktService.history(query);
       pagination.value = response.pagination;
@@ -136,6 +142,13 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     setHistoryRange,
     clearState,
     initHistoryStore,
+    extended: computed({
+      get: () => extended.value,
+      set: (value: boolean) => {
+        extended.value = value;
+        saveState().catch(e => logger.error('Failed to save history extended state', e));
+      },
+    }),
   };
 });
 

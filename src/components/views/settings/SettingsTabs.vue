@@ -8,6 +8,7 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions } from '~/models/page-size.model';
 import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
+import { useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
 import {
   type ListEntity,
@@ -94,6 +95,9 @@ const disabled = computed(
   () => enabledTabs.value.filter(([_, state]) => state).length <= 1,
 );
 
+const { extended: calendarExtended } = useCalendarStoreRefs();
+const { extended: historyExtended } = useHistoryStoreRefs();
+
 const container = ref();
 </script>
 
@@ -166,7 +170,9 @@ const container = ref();
 
       <!--  Progress Type  -->
       <SettingsFormItem
-        v-if="state && route === Route.Progress"
+        v-if="route === Route.Progress"
+        :class="{ show: state }"
+        class="hidden-form-item"
         :label="i18n('label_progress_type')"
       >
         <NSelect
@@ -175,6 +181,34 @@ const container = ref();
           :to="container"
           :options="progressTypeOptions"
         />
+      </SettingsFormItem>
+
+      <!--  Calendar Extended  -->
+      <SettingsFormItem
+        v-if="route === Route.Calendar"
+        :class="{ show: state }"
+        class="hidden-form-item"
+        :label="i18n('label_calendar_extended')"
+        :warning="calendarExtended ? i18n('label_extended_warning') : undefined"
+      >
+        <NSwitch v-model:value="calendarExtended" class="form-switch">
+          <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+          <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+        </NSwitch>
+      </SettingsFormItem>
+
+      <!--  History Extended  -->
+      <SettingsFormItem
+        v-if="route === Route.History"
+        :label="i18n('label_history_extended')"
+        :class="{ show: state }"
+        class="hidden-form-item"
+        :warning="historyExtended ? i18n('label_extended_warning') : undefined"
+      >
+        <NSwitch v-model:value="historyExtended" class="form-switch">
+          <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+          <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+        </NSwitch>
       </SettingsFormItem>
     </template>
 
@@ -239,6 +273,20 @@ const container = ref();
 
 .form-select {
   min-width: 5.5rem;
+}
+
+.hidden-form-item {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.3s var(--n-bezier),
+    opacity 0.3s var(--n-bezier);
+
+  &.show {
+    max-height: 6rem;
+    opacity: 1;
+  }
 }
 
 .default-tab,

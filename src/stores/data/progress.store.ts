@@ -26,6 +26,9 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     title: match ? match[2] : progress.fullTitle,
     season: Number(progress.seasonNumber),
     number: Number(progress.episodeNumber),
+    episode_type: progress.episodeTypeLabel,
+    first_aired: progress.firstAired,
+    runtime: Number(progress.runtime),
   };
 
   const show: ListScrollSourceItem['show'] = {
@@ -98,7 +101,7 @@ export const useProgressStore = defineStore('data.progress', () => {
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
       const items = await TraktService.progress.onDeck();
-      progress.value = items.map(progressToListItem);
+      progress.value = items.map<ProgressListItem>(progressToListItem);
     } catch (error) {
       progress.value = [];
       loading.value = false;

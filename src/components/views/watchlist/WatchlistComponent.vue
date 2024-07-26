@@ -87,6 +87,8 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
       :loading="listLoading"
       :pagination="pagination"
       :page-size="pageSize"
+      show-played
+      show-collected
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"

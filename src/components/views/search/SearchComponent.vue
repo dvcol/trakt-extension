@@ -52,6 +52,8 @@ const { onItemClick } = usePanelItem();
       hide-date
       :items="list"
       :loading="loading"
+      show-played
+      show-collected
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"

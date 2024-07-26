@@ -68,6 +68,7 @@ const { onItemClick } = usePanelItem();
         backdrop
         hide-date
         show-progress
+        show-collected
         @on-scroll="scrolled = true"
         @on-scroll-top="scrolled = false"
         @on-item-click="onItemClick"
