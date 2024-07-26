@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, toRefs, watch } from 'vue';
+import { onMounted, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
@@ -11,6 +11,7 @@ import {
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   type AnyList,
   anyListDateGetter,
@@ -22,20 +23,9 @@ import {
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
-const props = defineProps({
-  panel: {
-    type: Boolean,
-    required: false,
-  },
-  footer: {
-    type: Boolean,
-    required: false,
-  },
-});
-
-const { panel } = toRefs(props);
-
 const i18n = useI18n('list');
+
+const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
 const {
   filteredListItems,
@@ -57,8 +47,8 @@ watchUserChange({
 });
 
 onMounted(() => {
-  watch(panel, async value => {
-    if (!value) await fetchListItems();
+  watch(panelOpen, async value => {
+    if (!value && panelDirty.value) await fetchListItems();
   });
   watch(activeList, () => onClick());
 });
@@ -101,7 +91,7 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
       </template>
     </ListScroll>
 
-    <FloatingButton :show="!footer && scrolled" @on-click="onClick">
+    <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
   </div>

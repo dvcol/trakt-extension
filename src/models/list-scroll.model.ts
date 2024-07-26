@@ -1,10 +1,9 @@
 import type { BaseCacheOption } from '@dvcol/base-http-client';
-import type { TraktApiIds } from '@dvcol/trakt-http-client/dist/models/trakt-id.model';
-
 import type {
   BaseTraktProgress,
   BaseTraktProgressEpisode,
   BaseTraktProgressSeason,
+  TraktApiIds,
   TraktEpisode,
   TraktList,
   TraktMovie,
@@ -96,7 +95,7 @@ export type ListScrollItemMeta = {
     season?: Partial<TraktSeason['ids']>;
     episode?: Partial<TraktEpisode['ids']>;
     person?: Partial<TraktPerson['ids']>;
-    [key: string]: Partial<TraktApiIds>;
+    [key: string]: Partial<TraktApiIds> | undefined;
   };
   number?: {
     season?: number;

@@ -3,6 +3,9 @@ import { ref } from 'vue';
 
 export const useAppStateStore = defineStore('app.state', () => {
   const isAppReady = ref(false);
+  const panelOpen = ref(false);
+  const panelDirty = ref(false);
+  const footerOpen = ref(false);
 
   let resolve: (value: boolean) => void;
   const waitAppReady = ref<Promise<boolean>>(
@@ -17,7 +20,7 @@ export const useAppStateStore = defineStore('app.state', () => {
     waitAppReady.value = Promise.resolve(ready);
   };
 
-  return { isAppReady, setAppReady, waitAppReady };
+  return { isAppReady, setAppReady, waitAppReady, panelOpen, panelDirty, footerOpen };
 });
 
 export const useAppStateStoreRefs = () => storeToRefs(useAppStateStore());

@@ -6,19 +6,15 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
-defineProps({
-  footer: {
-    type: Boolean,
-    required: false,
-  },
-});
-
 const i18n = useI18n('calendar');
+
+const { footerOpen } = useAppStateStoreRefs();
 
 const { loading, center, filteredCalendar } = useCalendarStoreRefs();
 const { fetchCalendar, clearState } = useCalendarStore();
@@ -71,7 +67,7 @@ const { onItemClick } = usePanelItem();
       </template>
     </ListScroll>
     <FloatingButton
-      :show="!footer && scrolledOut"
+      :show="!footerOpen && scrolledOut"
       :width="centerIsToday ? '2.5rem' : '3.5rem'"
       :icon="recenterIcon"
       @on-click="onClick"
