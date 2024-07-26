@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/dvcol/trakt-extension/compare/v1.16.0...v1.17.0) (2024-07-26)
+
+
+### Features
+
+* **panel:** move panel state to app store & support dirty state ([c6e5c01](https://github.com/dvcol/trakt-extension/commit/c6e5c01fb3b6747d4cc3f44e34791eb3008e5191))
+* **progress:** adds collection & watched badge, adds eager data fetch ([5fab4b1](https://github.com/dvcol/trakt-extension/commit/5fab4b1936eb73979363f36550363ef501e167d5))
+
 ## [1.16.0](https://github.com/dvcol/trakt-extension/compare/v1.15.0...v1.16.0) (2024-07-18)
 
 
