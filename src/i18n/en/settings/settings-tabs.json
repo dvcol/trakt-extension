@@ -76,7 +76,7 @@
     "description": "Label for the 'Fetch extended history data' setting"
   },
   "settings__tabs__label_extended_warning": {
-    "message": "This option may increase the time it takes to load the page.",
+    "message": "This may increase page load times significantly.",
     "description": "Warning message for the 'Fetch extended data' setting"
   }
 }
