@@ -80,6 +80,16 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showPlayed: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  showCollected: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -216,6 +226,8 @@ const onClick = () => emit('onItemClick', { item: item?.value });
             :hide-time="hideTime"
             :content-height="contentHeight"
             :show-progress="showProgress"
+            :show-played="showPlayed"
+            :show-collected="showCollected"
           >
             <slot :item="item" :loading="loading" />
           </ListItemPanel>

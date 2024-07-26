@@ -33,6 +33,7 @@ import type {
   TraktCollectionGetQuery,
   TraktCollectionProgress,
   TraktCollectionRequest,
+  TraktDeviceAuthentication,
   TraktEpisodeExtended,
   TraktEpisodeShort,
   TraktFavoriteGetQuery,
@@ -57,7 +58,6 @@ import type {
 } from '@dvcol/trakt-http-client/models';
 
 import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
-import type { TraktDeviceAuthentication } from 'node_modules/@dvcol/trakt-http-client/dist/models/trakt-authentication.model.cjs';
 import type { ImagePayload } from '~/models/poster.model';
 import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';

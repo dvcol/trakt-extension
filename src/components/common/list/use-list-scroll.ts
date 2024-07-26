@@ -4,9 +4,12 @@ import { computed, ref } from 'vue';
 
 import type { Ref } from 'vue';
 
+import type { ListScrollItem, ListScrollItemMeta, ListScrollItemTag, ListScrollSourceItem, OnScroll, OnUpdated } from '~/models/list-scroll.model';
+
 import type { ImageQuery } from '~/stores/data/image.store';
 
-import { type ListScrollItem, ListScrollItemType, type ListScrollSourceItem, type OnScroll, type OnUpdated } from '~/models/list-scroll.model';
+import { ListScrollItemType } from '~/models/list-scroll.model';
+
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -80,12 +83,65 @@ export const getPosterQuery =
     } satisfies ImageQuery;
   };
 
+export const getProgressQuery = (item: ListScrollSourceItem): ListScrollItem['getProgressQuery'] => {
+  const showId = item.show?.ids.trakt;
+  if (!showId) return;
+  return () => ({
+    id: showId,
+    noFetch: true,
+  });
+};
+
 const i18n = useI18n('common');
 
 const i18nEpisode = () => i18n('episode', 'common', 'tag');
 const i18nSeason = () => i18n('season', 'common', 'tag');
 const openInEpisode = () => i18n('open_episode_in_trakt', 'common', 'tooltip');
 const openInSeason = () => i18n('open_season_in_trakt', 'common', 'tooltip');
+
+const getEpisodeTypeTag = (episode: ListScrollSourceItem['episode']): ListScrollItemTag | undefined => {
+  if (!episode) return;
+  const type = 'episode_type' in episode ? episode.episode_type : undefined;
+  let premiere: TraktEpisodeTypes | null = null;
+  let color: ListScrollItemTag['type'] = 'primary';
+  // let finale: TraktEpisodeTypes;
+  if (type === TraktEpisodeType.SeriesPremiere || (episode.season === 1 && episode.number === 1)) {
+    premiere = TraktEpisodeType.SeriesPremiere;
+  } else if (type === TraktEpisodeType.MidSeasonPremiere) {
+    premiere = TraktEpisodeType.MidSeasonPremiere;
+    color = 'info';
+  } else if (type === TraktEpisodeType.SeasonPremiere || episode.number === 1) {
+    premiere = TraktEpisodeType.SeasonPremiere;
+  }
+
+  if (premiere) {
+    return {
+      label: premiere,
+      i18n: ['common', 'tag'],
+      type: color,
+      bordered: true,
+    };
+  }
+  if (!type) return;
+
+  let finale: TraktEpisodeTypes | null = null;
+  if (type === TraktEpisodeType.SeriesFinale) {
+    finale = TraktEpisodeType.SeriesFinale;
+  } else if (type === TraktEpisodeType.MidSeasonFinale) {
+    finale = TraktEpisodeType.MidSeasonFinale;
+    color = 'info';
+  } else if (type === TraktEpisodeType.SeasonFinale) {
+    finale = TraktEpisodeType.SeasonFinale;
+  }
+
+  if (!finale) return;
+  return {
+    label: finale,
+    i18n: ['common', 'tag'],
+    type: color,
+    bordered: true,
+  };
+};
 
 export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, type: ListScrollItem['type']): ListScrollItem['tags'] => {
   const tags: ListScrollItem['tags'] = [];
@@ -102,19 +158,8 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
       }),
     });
 
-    let premiere: TraktEpisodeTypes | null = null;
-    // let finale: TraktEpisodeTypes;
-    if (item.episode.season === 1 && item.episode.number === 1) premiere = TraktEpisodeType.SeriesPremiere;
-    else if (item.episode.number === 1) premiere = TraktEpisodeType.SeasonPremiere;
-
-    if (premiere) {
-      tags.push({
-        label: premiere,
-        i18n: ['common', 'tag'],
-        type: premiere === 'season' ? 'info' : 'primary',
-        bordered: true,
-      });
-    }
+    const typeTag = getEpisodeTypeTag(item.episode);
+    if (typeTag) tags.push(typeTag);
   } else if (type === 'season' && item.season) {
     tags.push({
       label: `${i18nSeason()} ${item.season.number.toString().padStart(2, '0')}`,
@@ -134,12 +179,12 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
 export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
   items: Ref<T[]>,
   dateFn?: D | ((item: T) => T[D]),
-) => {
+): Ref<ListScrollItem[]> => {
   return computed<ListScrollItem[]>(() => {
     const array = items.value;
     if (!array.length) return [];
     return array.map((item, index) => {
-      const _item: ListScrollItem = {
+      const _item: ListScrollItem<ListScrollItemMeta> = {
         ...item,
         index,
         key: `${index}-${item.id}`,
@@ -151,6 +196,7 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
       if (!_item.content) _item.content = getContent(item);
       if (!_item.posterRef) _item.posterRef = ref<string>();
       if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
+      if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
       if (!_item.tags) _item.tags = getTags(item, _item.type);
 
       _item.date = getDate(item, array, index, dateFn);

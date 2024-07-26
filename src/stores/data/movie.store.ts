@@ -9,6 +9,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { wait } from '~/utils/promise.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -113,8 +114,9 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
   const getMovieWatchedDate = (id: string | number) => computed(() => moviesWatchedDates[id.toString()]);
-  const changeMovieWatched = (id: string | number, remove?: boolean) => {
+  const changeMovieWatched = async (id: string | number, remove?: boolean) => {
     moviesWatched[id.toString()] = !remove;
+    await wait(500);
     return fetchMovieWatched();
   };
 
@@ -150,8 +152,9 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
   const getMovieCollectedDate = (id: string | number) => computed(() => moviesCollectedDates[id.toString()]);
-  const changeMovieCollected = (id: string | number, remove?: boolean) => {
+  const changeMovieCollected = async (id: string | number, remove?: boolean) => {
     moviesCollected[id.toString()] = !remove;
+    await wait(500);
     return fetchMovieCollected();
   };
 

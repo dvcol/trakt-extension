@@ -1,4 +1,5 @@
 import type { BaseCacheOption } from '@dvcol/base-http-client';
+import type { TraktApiIds } from '@dvcol/trakt-http-client/dist/models/trakt-id.model';
 
 import type {
   BaseTraktProgress,
@@ -14,6 +15,7 @@ import type {
 import type { NVirtualList, VirtualListInst } from 'naive-ui';
 import type { Ref } from 'vue';
 import type { PosterItem } from '~/models/poster.model';
+import type { ProgressItem } from '~/models/progress.model';
 import type { TagLink } from '~/models/tag.model';
 
 export type VirtualListRef = VirtualListInst & InstanceType<typeof NVirtualList>;
@@ -37,7 +39,7 @@ export type ListScrollSourceItem = {
   movie?: TraktMovie<'short'>;
   show?: TraktShow<'short'>;
   season?: TraktSeason<'short'>;
-  episode?: TraktEpisode<'short'>;
+  episode?: TraktEpisode<'short'> | TraktEpisode<'extended'>;
   person?: TraktPerson<'short'>;
   list?: TraktList<'short'>;
 };
@@ -86,8 +88,25 @@ export const ListScrollItemType = {
   placeholder: 'placeholder',
 } as const;
 
+export type ListScrollItemMeta = {
+  source: ListScrollSourceItem | ProgressItem;
+  ids: {
+    movie?: Partial<TraktMovie['ids']>;
+    show?: Partial<TraktShow['ids']>;
+    season?: Partial<TraktSeason['ids']>;
+    episode?: Partial<TraktEpisode['ids']>;
+    person?: Partial<TraktPerson['ids']>;
+    [key: string]: Partial<TraktApiIds>;
+  };
+  number?: {
+    season?: number;
+    episode?: number;
+  };
+  [key: string]: unknown;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- meta is intentionally weakly typed
-export type ListScrollItem<T = Record<string, any>> = Omit<PosterItem, 'type'> & {
+export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> = Omit<PosterItem, 'type'> & {
   id: string | number;
   index: number;
   key: string;
@@ -99,7 +118,7 @@ export type ListScrollItem<T = Record<string, any>> = Omit<PosterItem, 'type'> &
 
   progress?: ShowProgress;
   progressRef?: Ref<ShowProgress | undefined>;
-  getProgressQuery?: () => { id: string | number | undefined; cacheOptions?: BaseCacheOption };
+  getProgressQuery?: () => { id: string | number | undefined; cacheOptions?: BaseCacheOption; noFetch?: boolean };
 
   meta?: T;
 

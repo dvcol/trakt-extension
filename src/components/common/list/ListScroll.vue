@@ -70,6 +70,16 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showPlayed: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  showCollected: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emits = defineEmits<{
@@ -188,6 +198,8 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"
           :show-progress="showProgress"
+          :show-played="showPlayed"
+          :show-collected="showCollected"
           @on-hover="onHover"
           @on-item-click="(...args) => $emit('onItemClick', ...args)"
           @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"

@@ -67,6 +67,7 @@ const { onItemClick } = usePanelItem();
       :loading="loading"
       :pagination="pagination"
       :page-size="pageSize"
+      show-collected
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"

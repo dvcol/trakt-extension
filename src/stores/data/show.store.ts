@@ -334,8 +334,9 @@ export const useShowStore = defineStore('data.show', () => {
     });
 
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
-  const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption) => {
+  const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption, noFetch = false) => {
     if (
+      !noFetch &&
       !showsWatchedProgress[id.toString()] &&
       !showWatchedProgressLoading[id.toString()] &&
       shouldRetry(showWatchedProgressError[id.toString()], { error: `Watched Progress for ${id.toString()}` })
@@ -350,8 +351,9 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
-  const getShowCollectionProgress = (id: number | string) => {
+  const getShowCollectionProgress = (id: number | string, noFetch = false) => {
     if (
+      !noFetch &&
       !showsCollectionProgress[id.toString()] &&
       !showCollectionProgressLoading[id.toString()] &&
       shouldRetry(showCollectionProgressError[id.toString()], { error: `Collection Progress for ${id.toString()}` })

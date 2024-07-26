@@ -42,5 +42,13 @@
   "common__tooltip__list_click_to_refresh": {
     "message": "Click un-checked list to refresh.",
     "description": "Label for a link that refreshes the list state."
+  },
+  "common__tooltip__collected": {
+    "message": "Collected",
+    "description": "Label for a collected item."
+  },
+  "common__tooltip__watched": {
+    "message": "Watched",
+    "description": "Label for a watched item."
   }
 }

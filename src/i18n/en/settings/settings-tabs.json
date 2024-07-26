@@ -66,5 +66,17 @@
   "settings__tabs__label_progress_type": {
     "message": "Progress type",
     "description": "Label for the 'Progress type' setting"
+  },
+  "settings__tabs__label_calendar_extended": {
+    "message": "Fetch extended calendar data",
+    "description": "Label for the 'Fetch extended calendar data' setting"
+  },
+  "settings__tabs__label_history_extended": {
+    "message": "Fetch extended history data",
+    "description": "Label for the 'Fetch extended history data' setting"
+  },
+  "settings__tabs__label_extended_warning": {
+    "message": "This option may increase the time it takes to load the page.",
+    "description": "Warning message for the 'Fetch extended data' setting"
   }
 }

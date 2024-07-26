@@ -2,6 +2,8 @@ export type ProgressItem = {
   episodeId: string;
   episodeNumber: string;
   episodeTitle: string;
+  episodeTypeClass: string;
+  episodeTypeLabel: string;
   fanart: string;
   firstAired: string;
   fullTitle: string;

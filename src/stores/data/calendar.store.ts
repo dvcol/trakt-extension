@@ -1,8 +1,7 @@
 import { DateUtils } from '@dvcol/common-utils/common/date';
+import { TraktApiExtended, type TraktCalendarMovie, type TraktCalendarQuery, type TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
-
-import type { TraktCalendarMovie, TraktCalendarQuery, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 
@@ -23,12 +22,14 @@ const CalendarStoreConstants = {
 type CalendarState = {
   center?: number;
   weeks: number;
+  extended?: boolean;
 };
 
 export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const calendar = ref<CalendarItem[]>([]);
+  const extended = ref(false);
 
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
@@ -46,6 +47,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     storage.local.set<CalendarState>(CalendarStoreConstants.Store, {
       center: clear ? undefined : center.value.getTime(),
       weeks: weeks.value,
+      extended: extended.value,
     });
 
   const clearState = (date?: Date) => {
@@ -62,6 +64,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
 
     if (restored?.weeks) weeks.value = restored.weeks;
     if (restored?.center) clearState(new Date(restored.center));
+    if (restored?.extended) extended.value = restored.extended;
   };
 
   const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
@@ -96,6 +99,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     }, 100);
 
     const query: TraktCalendarQuery = { start_date, days: days.value };
+    if (extended.value) query.extended = TraktApiExtended.Full;
 
     try {
       const [shows, movies] = await Promise.all([TraktService.calendar(query, 'shows'), TraktService.calendar(query, 'movies')]);
@@ -154,6 +158,13 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     center,
     filteredCalendar,
     initCalendarStore,
+    extended: computed({
+      get: () => extended.value,
+      set: (value: boolean) => {
+        extended.value = value;
+        saveState().catch(e => logger.error('Failed to save calendar extended state', e));
+      },
+    }),
   };
 });
 
