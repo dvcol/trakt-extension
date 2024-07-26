@@ -10,19 +10,15 @@ import { useListScroll } from '~/components/common/list/use-list-scroll';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { TraktService } from '~/services/trakt.service';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
-defineProps({
-  footer: {
-    type: Boolean,
-    required: false,
-  },
-});
-
 const i18n = useI18n('releases');
+
+const { footerOpen } = useAppStateStoreRefs();
 
 const { releases, loading, center } = useReleasesStoreRefs();
 const { fetchReleases, clearState } = useReleasesStore();
@@ -86,7 +82,7 @@ const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
       </template>
     </ListScroll>
     <FloatingButton
-      :show="!footer && scrolledOut"
+      :show="!footerOpen && scrolledOut"
       :width="centerIsToday ? '2.5rem' : '3.5rem'"
       :icon="recenterIcon"
       @on-click="onClick"

@@ -17,14 +17,15 @@ import NavbarComponent from '~/components/common/navbar/NavbarComponent.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconClose from '~/components/icons/IconClose.vue';
 import CheckinComponent from '~/components/views/checkin/CheckinComponent.vue';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 const { currentRoute, push, back } = useRouter();
 
-const panel = ref(false);
+const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
+
 const base = ref();
-const footer = ref(false);
 
 const appRef = ref();
 const mainRef = ref();
@@ -33,20 +34,25 @@ const footerRef = ref();
 watch(
   currentRoute,
   (_next, _prev) => {
-    panel.value = !!_next.meta?.panel;
+    panelOpen.value = !!_next.meta?.panel;
     base.value = _next.meta?.base;
   },
   {
     immediate: true,
   },
 );
+
 const onAfterLeave = () => {
   if (!base.value) return;
   push({ name: base.value });
 };
 
+const onAfterEnter = () => {
+  panelDirty.value = false;
+};
+
 const onClose = () => {
-  panel.value = false;
+  panelOpen.value = false;
 };
 
 const onBack = () => {
@@ -58,9 +64,9 @@ const onBack = () => {
 <template>
   <div ref="appRef">
     <NDialogProvider :to="appRef">
-      <header :class="{ open: panel }">
+      <header :class="{ open: panelOpen }">
         <RouterView v-slot="{ Component }" name="navbar">
-          <NavbarComponent v-if="isAuthenticated" :disabled="panel">
+          <NavbarComponent v-if="isAuthenticated" :disabled="panelOpen">
             <template v-if="Component" #drawer="{ parentElement }">
               <Transition name="scale" mode="out-in">
                 <KeepAlive>
@@ -76,20 +82,25 @@ const onBack = () => {
           <GridBackground v-if="!Component" :size="20" />
           <Transition name="scale" mode="out-in">
             <KeepAlive>
-              <component :is="Component ?? PageLoading" :panel="panel" :footer="footer" />
+              <component
+                :is="Component ?? PageLoading"
+                :panel="panelOpen"
+                :footer="footerOpen"
+              />
             </KeepAlive>
           </Transition>
         </main>
         <aside>
           <RouterView v-slot="{ Component: PanelComponent }">
             <NDrawer
-              v-model:show="panel"
+              v-model:show="panelOpen"
               :to="mainRef"
               width="100%"
               class="panel"
               close-on-esc
               auto-focus
               :on-after-leave="onAfterLeave"
+              :on-after-enter="onAfterEnter"
             >
               <NDrawerContent :native-scrollbar="false">
                 <!--  Header  -->
@@ -118,7 +129,11 @@ const onBack = () => {
             </NDrawer>
           </RouterView>
         </aside>
-        <footer ref="footerRef" @mouseenter="footer = true" @mouseleave="footer = false">
+        <footer
+          ref="footerRef"
+          @mouseenter="footerOpen = true"
+          @mouseleave="footerOpen = false"
+        >
           <CheckinComponent :parent-element="footerRef" />
         </footer>
         <DebugProvider />

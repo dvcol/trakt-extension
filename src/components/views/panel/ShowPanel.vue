@@ -16,6 +16,7 @@ import {
 } from '~/components/views/panel/use-panel-buttons';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   DefaultListId,
   DefaultLists,
@@ -249,11 +250,14 @@ const titleUrl = computed(() => {
 
 const releaseDate = computed(() => activeItem.value?.first_aired);
 
+const { panelDirty } = useAppStateStoreRefs();
+
 const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   if (!panelType.value || !activeItem.value?.ids) return;
   const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
+  panelDirty.value = true;
   await addToOrRemoveFromList({
     list: _list,
     itemType: panelType.value,
@@ -271,15 +275,19 @@ const onCollectionUpdate = async (
     date = releaseDate.value;
   }
 
-  await addToOrRemoveFromList({
-    list: DefaultLists.ShowCollection,
-    itemType: panelType.value,
-    itemIds: activeItem.value.ids,
-    date,
-    remove: value === PanelButtonsOption.Remove,
-  });
-  if (!showId.value) return;
-  await fetchShowCollectionProgress(showId.value, { force: true });
+  try {
+    await addToOrRemoveFromList({
+      list: DefaultLists.ShowCollection,
+      itemType: panelType.value,
+      itemIds: activeItem.value.ids,
+      date,
+      remove: value === PanelButtonsOption.Remove,
+    });
+    if (!showId.value) return;
+    await fetchShowCollectionProgress(showId.value, { force: true });
+  } finally {
+    panelDirty.value = true;
+  }
 };
 
 const onWatchedUpdate = async (
@@ -291,6 +299,7 @@ const onWatchedUpdate = async (
     date = releaseDate.value;
   }
 
+  panelDirty.value = true;
   await addToOrRemoveFromList({
     list: {
       id: DefaultListId.History,
@@ -328,7 +337,10 @@ const onCheckin = async (cancel: boolean) => {
       i18n('checkin_failed', 'watching'),
       new Error('No episode id'),
     );
-  } else await checkin({ episode: { ids: episode.value.ids } });
+  } else {
+    panelDirty.value = true;
+    await checkin({ episode: { ids: episode.value.ids } });
+  }
 
   if (!showId.value) return;
   await fetchShowProgress(showId.value, { force: true });

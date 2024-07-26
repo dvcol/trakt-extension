@@ -10,6 +10,7 @@ import {
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   type SearchResult,
   useSearchStore,
@@ -17,14 +18,9 @@ import {
 } from '~/stores/data/search.store';
 import { useI18n } from '~/utils/i18n.utils';
 
-defineProps({
-  footer: {
-    type: Boolean,
-    required: false,
-  },
-});
-
 const i18n = useI18n('search');
+
+const { footerOpen } = useAppStateStoreRefs();
 
 const { searchResults, loading, pagination } = useSearchStoreRefs();
 const { fetchSearchResults } = useSearchStore();
@@ -64,7 +60,7 @@ const { onItemClick } = usePanelItem();
       </template>
     </ListScroll>
 
-    <FloatingButton :show="!footer && scrolled" @on-click="onClick">
+    <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
   </div>

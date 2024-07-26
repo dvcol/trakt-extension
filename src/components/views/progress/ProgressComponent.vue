@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NFlex } from 'naive-ui';
-import { onMounted, toRefs, Transition, watch } from 'vue';
+import { onMounted, Transition, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
@@ -9,24 +9,14 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 import LoginCard from '~/components/views/login/LoginCard.vue';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ExternaLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
-const props = defineProps({
-  panel: {
-    type: Boolean,
-    required: false,
-  },
-  footer: {
-    type: Boolean,
-    required: false,
-  },
-});
-
-const { panel } = toRefs(props);
-
 const i18n = useI18n('progress');
+
+const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
 const { progress, loading, loggedOut } = useProgressStoreRefs();
 const { fetchProgress, clearState } = useProgressStore();
@@ -37,8 +27,8 @@ watchUserChange({
 });
 
 onMounted(() => {
-  watch(panel, async value => {
-    if (!value) await fetchProgress();
+  watch(panelOpen, async value => {
+    if (!value && panelDirty.value) await fetchProgress();
   });
 });
 
@@ -79,7 +69,7 @@ const { onItemClick } = usePanelItem();
       </ListScroll>
     </Transition>
 
-    <FloatingButton :show="!footer && scrolled" @on-click="onClick">
+    <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
   </div>

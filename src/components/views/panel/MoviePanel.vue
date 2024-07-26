@@ -15,6 +15,7 @@ import {
 } from '~/components/views/panel/use-panel-buttons';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   DefaultListId,
   DefaultLists,
@@ -147,6 +148,8 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
 
 const releaseDate = computed(() => movie.value?.released);
 
+const { panelDirty } = useAppStateStoreRefs();
+
 const onCollectionUpdate = async (
   value: PanelButtonsOptions,
   date?: string | number | Date,
@@ -156,6 +159,7 @@ const onCollectionUpdate = async (
     date = releaseDate.value;
   }
 
+  panelDirty.value = true;
   await addToOrRemoveFromList({
     list: DefaultLists.ShowCollection,
     itemType: 'movie',
@@ -178,6 +182,7 @@ const onWatchedUpdate = async (
     date = releaseDate.value;
   }
 
+  panelDirty.value = true;
   await addToOrRemoveFromList({
     list: {
       id: DefaultListId.History,
@@ -232,7 +237,10 @@ const onCheckin = async (cancel: boolean) => {
       i18n('checkin_failed', 'watching'),
       new Error('No movie id'),
     );
-  } else await checkin({ movie: { ids: movie.value.ids } });
+  } else {
+    panelDirty.value = true;
+    await checkin({ movie: { ids: movie.value.ids } });
+  }
 
   await fetchMovieWatched(true);
 };
