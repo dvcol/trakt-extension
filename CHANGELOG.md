@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.1](https://github.com/dvcol/trakt-extension/compare/v1.17.0...v1.17.1) (2024-07-27)
+
+
+### Bug Fixes
+
+* **i18n:** rephrasing page warning ([101ee1e](https://github.com/dvcol/trakt-extension/commit/101ee1e9abef99d242f540787f668f74c9cb0b12))
+* **storage:** handle variable quota size errors ([db0a60d](https://github.com/dvcol/trakt-extension/commit/db0a60d421cfecc73b4b3bbaaa98644cae2686e9))
+
 ## [1.17.0](https://github.com/dvcol/trakt-extension/compare/v1.16.0...v1.17.0) (2024-07-26)
 
 
