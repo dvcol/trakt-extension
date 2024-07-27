@@ -10,7 +10,7 @@ import type { ImagePayload } from '~/models/poster.model';
 import { ErrorService } from '~/services/error.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
-import { localCache, storage } from '~/utils/browser/browser-storage.utils';
+import { setStorageWrapper, storage } from '~/utils/browser/browser-storage.utils';
 import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -94,11 +94,11 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const saveState = debounce(
     (_images = images) =>
       Promise.all([
-        localCache(ImageStoreConstants.LocalMovie, _images.movie, CachePrefix.Tmdb),
-        localCache(ImageStoreConstants.LocalShow, _images.show, CachePrefix.Tmdb),
-        localCache(ImageStoreConstants.LocalSeason, _images.season, CachePrefix.Tmdb),
-        localCache(ImageStoreConstants.LocalEpisode, _images.episode, CachePrefix.Tmdb),
-        localCache(ImageStoreConstants.LocalPerson, _images.person, CachePrefix.Tmdb),
+        setStorageWrapper(ImageStoreConstants.LocalMovie, _images.movie, CachePrefix.Tmdb),
+        setStorageWrapper(ImageStoreConstants.LocalShow, _images.show, CachePrefix.Tmdb),
+        setStorageWrapper(ImageStoreConstants.LocalSeason, _images.season, CachePrefix.Tmdb),
+        setStorageWrapper(ImageStoreConstants.LocalEpisode, _images.episode, CachePrefix.Tmdb),
+        setStorageWrapper(ImageStoreConstants.LocalPerson, _images.person, CachePrefix.Tmdb),
       ]),
     1000,
   );

@@ -3,7 +3,7 @@ import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import type { ResponseOrTypedResponse, TypedResponse } from '@dvcol/base-http-client';
 import type { CacheStore, CacheStoreEntity } from '@dvcol/common-utils/common';
 
-import { localCache, storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
+import { setStorageWrapper, storage, type StorageArea } from '~/utils/browser/browser-storage.utils';
 
 type FlatResponse<T extends Response = ResponseOrTypedResponse> = Record<keyof T, unknown>;
 
@@ -61,7 +61,7 @@ export class ChromeCacheStore<T> implements CacheStore<T> {
     this.retention = retention;
     this.store = {
       ...store,
-      set: <V>(key: string, value: V) => localCache(key, value, this.prefix),
+      set: <V>(key: string, value: V) => setStorageWrapper(key, value, this.prefix, store),
     };
     this.prefix = prefix;
   }
