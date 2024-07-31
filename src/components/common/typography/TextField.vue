@@ -46,6 +46,26 @@ defineProps({
     type: Object as PropType<SkeletonProps>,
     required: false,
   },
+  vertical: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  wrap: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  align: {
+    type: String,
+    required: false,
+    default: 'baseline',
+  },
+  size: {
+    type: String,
+    required: false,
+    default: 'medium',
+  },
 });
 
 const { openTab } = useLinksStore();
@@ -56,29 +76,33 @@ const { openTab } = useLinksStore();
     class="detail"
     :class="{ grow, array }"
     :style="{ '--prefix-min-width': labelWidth, '--text-flex': flex }"
-    align="baseline"
-    :wrap="false"
+    :align="align"
+    :wrap="wrap"
+    :vertical="vertical"
+    :size="size"
   >
     <span class="prefix">{{ label }}</span>
-    <NFlex v-if="array" class="value">
-      <template v-if="values !== undefined">
-        <TagLinkComponent
-          v-for="(tag, i) of values"
-          :key="i"
-          :tag="{ ...tag, round: true }"
-          @on-click="openTab"
-        />
-      </template>
+    <slot>
+      <NFlex v-if="array" class="value">
+        <template v-if="values !== undefined">
+          <TagLinkComponent
+            v-for="(tag, i) of values"
+            :key="i"
+            :tag="{ ...tag, round: true }"
+            @on-click="openTab"
+          />
+        </template>
+        <template v-else>
+          <NSkeleton round v-bind="skeleton" />
+          <NSkeleton round v-bind="skeleton" />
+          <NSkeleton round v-bind="skeleton" />
+        </template>
+      </NFlex>
       <template v-else>
-        <NSkeleton round v-bind="skeleton" />
-        <NSkeleton round v-bind="skeleton" />
-        <NSkeleton round v-bind="skeleton" />
+        <span v-if="value !== undefined" class="value" :class="{ pre }">{{ value }}</span>
+        <NSkeleton v-else :repeat="pre ? 3 : 0" round v-bind="skeleton" />
       </template>
-    </NFlex>
-    <template v-else>
-      <span v-if="value !== undefined" class="value" :class="{ pre }">{{ value }}</span>
-      <NSkeleton v-else :repeat="pre ? 3 : 0" round v-bind="skeleton" />
-    </template>
+    </slot>
   </NFlex>
 </template>
 

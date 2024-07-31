@@ -6,6 +6,7 @@ import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+import PanelRatings from '~/components/views/panel/PanelRatings.vue';
 import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
@@ -378,6 +379,18 @@ onMounted(() => {
   );
 });
 
+const votes = computed(() => {
+  if (panelType.value === 'episode') return episode.value?.votes;
+  if (panelType.value === 'season') return season.value?.votes;
+  return show.value?.votes;
+});
+
+const rating = computed(() => {
+  if (panelType.value === 'episode') return episode.value?.rating;
+  if (panelType.value === 'season') return season.value?.rating;
+  return show.value?.rating;
+});
+
 const { openTab } = useLinksStore();
 </script>
 
@@ -399,13 +412,16 @@ const { openTab } = useLinksStore();
       round
     />
 
-    <PanelPoster
-      :tmdb="show?.ids.tmdb"
-      :mode="panelType"
-      :portait="panelType === 'season'"
-      :season-number="seasonNb"
-      :episode-number="episodeNb"
-    />
+    <NFlex>
+      <PanelPoster
+        :tmdb="show?.ids.tmdb"
+        :mode="panelType"
+        :portait="panelType === 'season'"
+        :season-number="seasonNb"
+        :episode-number="episodeNb"
+      />
+      <PanelRatings :votes="votes" :rating="rating" />
+    </NFlex>
 
     <ShowPanelDetails
       :show="show"
