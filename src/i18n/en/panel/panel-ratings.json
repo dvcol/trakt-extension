@@ -1,0 +1,14 @@
+{
+  "panel__ratings__label_votes": {
+    "message": "Votes",
+    "description": "Label for the number of votes in the ratings panel"
+  },
+  "panel__ratings__label_rating": {
+    "message": "Rating",
+    "description": "Label for the rating in the ratings panel"
+  },
+  "panel__ratings__label_score": {
+    "message": "Score",
+    "description": "Label for the score in the ratings panel"
+  }
+}

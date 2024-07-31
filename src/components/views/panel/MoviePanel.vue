@@ -9,6 +9,7 @@ import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 
+import PanelRatings from '~/components/views/panel/PanelRatings.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
@@ -289,7 +290,10 @@ onMounted(() => {
       round
     />
 
-    <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
+    <NFlex>
+      <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
+      <PanelRatings :votes="movie?.votes" :rating="movie?.rating" />
+    </NFlex>
 
     <MoviePanelDetails
       :movie="movie"
