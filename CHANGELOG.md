@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/dvcol/trakt-extension/compare/v1.17.1...v1.18.0) (2024-08-01)
+
+
+### Features
+
+* **panel:** adds ratings to movie & show panels ([061153d](https://github.com/dvcol/trakt-extension/commit/061153d480ef729132749d53316cc6e5c3db4126))
+* **rating:** refactor and add loading & link handling ([b7da524](https://github.com/dvcol/trakt-extension/commit/b7da5240b26202bc7f8ea9a710382b49efca9e83))
+* **ratings:** adds rating addition & removal in store ([0c9f95c](https://github.com/dvcol/trakt-extension/commit/0c9f95cdef90f2007c520094710578c448ec6360))
+* **ratings:** adds rating edition mode ([a14e06d](https://github.com/dvcol/trakt-extension/commit/a14e06d1b5e145a46aa60d868ba753b0b0547bd4))
+* **ratings:** adds score & review options ([c296dca](https://github.com/dvcol/trakt-extension/commit/c296dcaab533d94eb783d1a2ebeeac88c71436e1))
+
+
+### Bug Fixes
+
+* **color:** rename info-color to color-info ([60fe888](https://github.com/dvcol/trakt-extension/commit/60fe88819db1b0b8a747177210a0c41a0ce08a00))
+
 ### [1.17.1](https://github.com/dvcol/trakt-extension/compare/v1.17.0...v1.17.1) (2024-07-27)
 
 
