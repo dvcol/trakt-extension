@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { NProgress, NSkeleton, NSpin } from 'naive-ui';
 
-import { onDeactivated, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 
 import AnimatedNumber from './AnimatedNumber.vue';
 
+import { Rating } from '~/models/rating.model';
 import { wait } from '~/utils/promise.utils';
 
 const props = defineProps({
@@ -47,6 +48,13 @@ const { progress, delay } = toRefs(props);
 
 const _progress = ref(0);
 
+const color = computed(() => {
+  if (_progress.value <= Rating.Bad * 10) return 'color-error';
+  if (_progress.value <= Rating.Mediocre * 10) return 'color-warning';
+  if (_progress.value <= Rating.Good * 10) return 'color-info';
+  return 'color-primary';
+});
+
 onMounted(async () => {
   watch(
     progress,
@@ -74,7 +82,10 @@ onUnmounted(() => {
     class="progress custom-color"
     type="circle"
     :percentage="_progress"
-    :style="{ '--duration': `${duration - delay}ms` }"
+    :style="{
+      '--duration': `${ duration - delay }ms`,
+      '--custom-progress-color': `var(--${ color })`,
+    }"
   >
     <AnimatedNumber
       :from="from"
@@ -94,7 +105,7 @@ onUnmounted(() => {
 }
 
 .custom-color {
-  --custom-color: var(--info-color) --n-fill-color: var(--custom-color) !important;
+  --n-fill-color: var(--custom-progress-color, var(--color-info)) !important;
 }
 
 .spin {
