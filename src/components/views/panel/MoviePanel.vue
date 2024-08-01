@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
+
+import { TraktRatingType } from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
@@ -26,6 +28,7 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
+import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -94,7 +97,7 @@ const {
   fetchAll,
 } = useListStore();
 
-const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
+const { loadLists, loadListsPageSize, enableRatings } = useExtensionSettingsStoreRefs();
 
 const shouldFetchLists = computed(() => {
   if (!myLists.value?.length) return false;
@@ -248,11 +251,19 @@ const onCheckin = async (cancel: boolean) => {
 
 const { openTab } = useLinksStore();
 
+const { loadRatings, getRatings } = useRatingsStore();
+
+const score = computed(() => {
+  if (!movieId.value) return;
+  return getRatings(TraktRatingType.Movies, movieId.value);
+});
+
 onMounted(() => {
   watch(
     movieId,
     id => {
       fetchMovie(id);
+      if (enableRatings.value) loadRatings(TraktRatingType.Movies, id);
     },
     { immediate: true },
   );
@@ -290,9 +301,10 @@ onMounted(() => {
       round
     />
 
-    <NFlex>
+    <NFlex class="rating-row" justify="space-around">
+      <PanelRatings v-if="enableRatings" :votes="movie?.votes" :rating="movie?.rating" />
       <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
-      <PanelRatings :votes="movie?.votes" :rating="movie?.rating" />
+      <PanelRatings v-if="enableRatings" :score="score?.rating" mode="score" />
     </NFlex>
 
     <MoviePanelDetails
@@ -323,6 +335,10 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.rating-row {
+  width: 100%;
+}
+
 .show-title-skeleton {
   height: 1.5rem;
   margin-top: 0.625rem;

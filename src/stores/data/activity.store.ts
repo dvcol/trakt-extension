@@ -102,6 +102,10 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
         refreshUserSettings();
         logger.info('Evicted account');
       }
+      if (changed.movies.rated_at || changed.shows.rated_at || changed.seasons.rated_at || changed.episodes.rated_at) {
+        TraktService.evict.ratings();
+        logger.info('Evicted ratings');
+      }
     });
 
     if (fetch) await fetchActivity();

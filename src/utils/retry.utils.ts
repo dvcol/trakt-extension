@@ -1,7 +1,7 @@
 import { NotificationService } from '~/services/notification.service';
 
 type ErrorDictionaryKey = string | number | symbol;
-export type ErrorDictionary = Record<ErrorDictionaryKey, ErrorCount>;
+export type ErrorDictionary<T extends ErrorDictionaryKey = ErrorDictionaryKey> = Record<T, ErrorCount>;
 
 export class ErrorCount {
   last: Date;

@@ -67,6 +67,14 @@
     "message": "Progress type",
     "description": "Label for the 'Progress type' setting"
   },
+  "settings__tabs__label_enable_ratings": {
+    "message": "Enable ratings in panels",
+    "description": "Label for the 'Enable ratings in panels' setting"
+  },
+  "settings__tabs__label_enable_ratings_warning": {
+    "message": "This may increase page load times significantly.",
+    "description": "Warning message for the 'Enable ratings in panels' setting"
+  },
   "settings__tabs__label_calendar_extended": {
     "message": "Fetch extended calendar data",
     "description": "Label for the 'Fetch extended calendar data' setting"

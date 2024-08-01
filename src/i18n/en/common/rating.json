@@ -1,0 +1,46 @@
+{
+  "common__rating__worst": {
+    "message": "Worst",
+    "description": "Rating for the worst possible value (1)"
+  },
+  "common__rating__terrible": {
+    "message": "Terrible",
+    "description": "Rating for a very bad value (2)"
+  },
+  "common__rating__bad": {
+    "message": "Bad",
+    "description": "Rating for a bad value (3)"
+  },
+  "common__rating__poor": {
+    "message": "Poor",
+    "description": "Rating for a poor value (4)"
+  },
+  "common__rating__mediocre": {
+    "message": "Mediocre",
+    "description": "Rating for a mediocre value (5)"
+  },
+  "common__rating__fair": {
+    "message": "Fair",
+    "description": "Rating for a fair value (6)"
+  },
+  "common__rating__good": {
+    "message": "Good",
+    "description": "Rating for a good value (7)"
+  },
+  "common__rating__great": {
+    "message": "Great",
+    "description": "Rating for a great value (8)"
+  },
+  "common__rating__excellent": {
+    "message": "Excellent",
+    "description": "Rating for an excellent value (9)"
+  },
+  "common__rating__perfect": {
+    "message": "Perfect",
+    "description": "Rating for the best possible value (10)"
+  },
+  "common__rating__not_rated": {
+    "message": "Not rated",
+    "description": "Rating for a value that has not been rated"
+  }
+}

@@ -1,25 +1,29 @@
 <script lang="ts" setup>
 import { NFlex, NNumberAnimation, NProgress, NStatistic } from 'naive-ui';
-import { computed, onMounted, ref, toRefs, watch } from 'vue';
+import { computed, onMounted, type PropType, ref, toRefs, watch } from 'vue';
 
 import TextField from '~/components/common/typography/TextField.vue';
+import { RatingLabel } from '~/models/rating.model';
+import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
+  mode: {
+    type: String as PropType<'rating' | 'score'>,
+    required: false,
+    default: 'rating',
+  },
   rating: {
     type: Number,
     required: false,
-    default: 0,
   },
   votes: {
     type: Number,
     required: false,
-    default: 0,
   },
   score: {
     type: Number,
     required: false,
-    default: 0,
   },
   duration: {
     type: Number,
@@ -38,6 +42,7 @@ const i18n = useI18n('panel', 'ratings');
 const { votes, rating, score } = toRefs(props);
 
 const votesUnit = computed(() => {
+  if (votes?.value === undefined) return null;
   if (votes?.value >= 10000) return 'k';
   if (votes?.value >= 1000000) return 'm';
   if (votes?.value >= 1000000000) return 'b';
@@ -56,6 +61,16 @@ const _ratingProgress = ref(0);
 
 const _score = computed(() => (score?.value ?? 0) * 10);
 const _scoreProgress = ref(0);
+
+const _scoreLabel = computed(() => {
+  if (!score?.value) return 'not_rated';
+  try {
+    return RatingLabel[score.value];
+  } catch (e) {
+    logger.error('RatingLabel', e);
+    return 'not_rated';
+  }
+});
 
 onMounted(() => {
   watch(
@@ -76,9 +91,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <NFlex class="rating-container" align="center" justify="center" vertical>
-    <TextField :label="i18n('label_votes')" vertical size="small" flex="0 1 auto">
-      <NStatistic class="statistics" tabular-nums>
+  <NFlex class="rating-container" align="center" justify="center" vertical size="large">
+    <!--  Vote count  -->
+    <TextField
+      v-if="mode === 'rating'"
+      :label="i18n('label_votes')"
+      :disabled="!votes"
+      vertical
+      size="small"
+      flex="0 1 auto"
+    >
+      <NStatistic class="statistics" :class="{ disabled: !votes }" tabular-nums>
         <NNumberAnimation
           :from="0"
           :to="_votes"
@@ -88,14 +111,21 @@ onMounted(() => {
         <span v-if="votesUnit" class="unit">{{ votesUnit }}</span>
       </NStatistic>
     </TextField>
-    <TextField :label="i18n('label_rating')" vertical flex="0 1 auto">
+
+    <!--  Rating progress  -->
+    <TextField
+      v-if="mode === 'rating'"
+      :label="i18n('label_rating')"
+      vertical
+      flex="0 1 auto"
+    >
       <NProgress
         class="progress"
         type="circle"
         :percentage="_ratingProgress"
         :style="{ '--duration': `${duration}ms` }"
       >
-        <NStatistic class="statistics" tabular-nums>
+        <NStatistic class="statistics" :class="{ disabled: !rating }" tabular-nums>
           <NNumberAnimation
             :from="0"
             :to="_rating"
@@ -105,17 +135,38 @@ onMounted(() => {
         </NStatistic>
       </NProgress>
     </TextField>
-    <TextField :label="i18n('label_score')" vertical flex="0 1 auto">
+
+    <!--  Review  -->
+    <TextField
+      v-if="mode === 'score'"
+      :label="i18n('label_review')"
+      :disabled="!score"
+      vertical
+      size="small"
+      flex="0 1 auto"
+    >
+      <span class="score-label" :class="{ disabled: !score }">
+        {{ i18n(_scoreLabel, 'common', 'rating') }}
+      </span>
+    </TextField>
+
+    <!--  Score  -->
+    <TextField
+      v-if="mode === 'score'"
+      :label="i18n('label_score')"
+      vertical
+      flex="0 1 auto"
+    >
       <NProgress
         class="progress"
         type="circle"
         :percentage="_scoreProgress"
         :style="{ '--duration': `${duration}ms` }"
       >
-        <NStatistic class="statistics" tabular-nums>
+        <NStatistic class="statistics" :class="{ disabled: !score }" tabular-nums>
           <NNumberAnimation
             :from="0"
-            :to="_pStores"
+            :to="_score"
             :duration="duration"
             :precision="precision"
           />
@@ -130,7 +181,7 @@ onMounted(() => {
   --duration: 1000ms;
 
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.5rem;
 
   .progress {
     width: 3rem;
@@ -153,6 +204,23 @@ onMounted(() => {
       padding-left: 0.125rem;
       color: var(--white-50);
     }
+
+    &.disabled {
+      --n-value-text-color: var(--text-color-disabled) !important;
+    }
+  }
+
+  .score-label {
+    align-self: center;
+    padding: 0.25rem 0;
+
+    &.disabled {
+      color: var(--text-color-disabled);
+    }
+  }
+
+  @media (width <= 640px) {
+    padding: 0.5rem 25%;
   }
 }
 </style>

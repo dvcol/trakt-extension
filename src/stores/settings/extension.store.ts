@@ -41,6 +41,7 @@ type ExtensionSettings = {
   loadLists: ListEntity[];
   loadListsPageSize: number;
   progressType: ProgressTypes;
+  enableRatings: boolean;
 };
 
 const ExtensionSettingsConstants = {
@@ -58,6 +59,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const defaultTab = ref<Route>(Route.Calendar);
   const initialized = ref<Promise<boolean>>();
   const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
+  const enableRatings = ref(false);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -78,6 +80,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         loadLists: loadLists.value,
         loadListsPageSize: loadListsPageSize.value,
         progressType: progressType.value,
+        enableRatings: enableRatings.value,
       }),
     500,
   );
@@ -100,6 +103,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.loadLists !== undefined) loadLists.value = Object.values(restored.loadLists);
     if (restored?.loadListsPageSize !== undefined) loadListsPageSize.value = restored.loadListsPageSize;
     if (restored?.progressType !== undefined) progressType.value = restored.progressType;
+    if (restored?.enableRatings !== undefined) enableRatings.value = restored.enableRatings;
   };
 
   const saveDefaultTab = debounce(() => storage.sync.set(ExtensionSettingsConstants.LocalDefaultTab, defaultTab.value), 500);
@@ -180,6 +184,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: ExtensionSettings['progressType']) => {
         progressType.value = value;
         saveState().catch(err => logger.error('Failed to save progress type extension settings', { value, err }));
+      },
+    }),
+    enableRatings: computed({
+      get: () => enableRatings.value,
+      set: (value: boolean) => {
+        enableRatings.value = value;
+        saveState().catch(err => logger.error('Failed to save enable ratings extension settings', { value, err }));
       },
     }),
   };

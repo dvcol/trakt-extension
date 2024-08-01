@@ -62,9 +62,14 @@ defineProps({
     default: 'baseline',
   },
   size: {
-    type: String,
+    type: String as PropType<'small' | 'medium' | 'large'>,
     required: false,
     default: 'medium',
+  },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 
@@ -74,14 +79,16 @@ const { openTab } = useLinksStore();
 <template>
   <NFlex
     class="detail"
-    :class="{ grow, array }"
+    :class="{ grow, array, disabled }"
     :style="{ '--prefix-min-width': labelWidth, '--text-flex': flex }"
     :align="align"
     :wrap="wrap"
     :vertical="vertical"
     :size="size"
   >
-    <span class="prefix">{{ label }}</span>
+    <slot name="label">
+      <span class="prefix">{{ label }}</span>
+    </slot>
     <slot>
       <NFlex v-if="array" class="value">
         <template v-if="values !== undefined">
@@ -109,6 +116,7 @@ const { openTab } = useLinksStore();
 <style lang="scss" scoped>
 .prefix {
   flex: 0 0 auto;
+  align-self: center;
   min-width: var(--prefix-min-width);
   color: var(--white-50);
   font-weight: 600;
@@ -117,7 +125,14 @@ const { openTab } = useLinksStore();
 
 .value {
   flex: 1 1 auto;
+  align-self: center;
   min-width: max-content;
+}
+
+.disabled {
+  .value {
+    color: var(--text-color-disabled);
+  }
 }
 
 .detail {
