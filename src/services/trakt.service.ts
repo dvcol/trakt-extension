@@ -46,9 +46,11 @@ import type {
   TraktListItemsGetQuery,
   TraktMovieExtended,
   TraktPersonExtended,
+  TraktRatingRequest,
   TraktSearch,
   TraktSeasonExtended,
   TraktShowExtended,
+  TraktSyncRatingRequest,
   TraktSyncRequest,
   TraktUserListItemAddedRequest,
   TraktUserListItemRemoveRequest,
@@ -624,6 +626,23 @@ export class TraktService {
     },
   };
 
+  static ratings = {
+    get: async (query: TraktSyncRatingRequest) => {
+      const response = await TraktService.traktClient.sync.ratings.get.cached(query);
+      return { data: await response.json(), pagination: response.pagination };
+    },
+    add: async (query: TraktRatingRequest) => {
+      const response = await TraktService.traktClient.sync.ratings.add(query);
+      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => logger.error('Failed to evict ratings cache', { query, err }));
+      return response.json();
+    },
+    remove: async (query: TraktSyncRequest) => {
+      const response = await TraktService.traktClient.sync.ratings.remove(query);
+      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => logger.error('Failed to evict ratings cache', { query, err }));
+      return response.json();
+    },
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
@@ -693,6 +712,7 @@ export class TraktService {
         ]),
       movie: TraktService.traktClient.sync.collection.get.cached.evict,
     },
+    ratings: () => TraktService.traktClient.sync.ratings.get.cached.evict(),
   };
 
   static export = {

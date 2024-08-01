@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
+import { TraktRatingType, type TraktRatingTypes } from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, onMounted, toRefs, watch } from 'vue';
@@ -26,6 +27,7 @@ import {
   useListsStoreRefs,
   useListStore,
 } from '~/stores/data/list.store';
+import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -182,7 +184,7 @@ const {
   isItemListLoading,
   fetchAll,
 } = useListStore();
-const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
+const { loadLists, loadListsPageSize, enableRatings } = useExtensionSettingsStoreRefs();
 
 const shouldFetchLists = computed(() => {
   if (!myLists.value?.length) return false;
@@ -284,7 +286,7 @@ const onCollectionUpdate = async (
       date,
       remove: value === PanelButtonsOption.Remove,
     });
-    if (!showId.value) return;
+    if (!showId?.value) return;
     await fetchShowCollectionProgress(showId.value, { force: true });
   } finally {
     panelDirty.value = true;
@@ -312,7 +314,7 @@ const onWatchedUpdate = async (
     date,
     remove: value === PanelButtonsOption.Remove,
   });
-  if (!showId.value) return;
+  if (!showId?.value) return;
   await fetchShowProgress(showId.value, { force: true });
 };
 
@@ -343,9 +345,36 @@ const onCheckin = async (cancel: boolean) => {
     await checkin({ episode: { ids: episode.value.ids } });
   }
 
-  if (!showId.value) return;
+  if (!showId?.value) return;
   await fetchShowProgress(showId.value, { force: true });
 };
+
+const { loadRatings } = useRatingsStore();
+const { getRatings } = useRatingsStore();
+
+const score = computed(() => {
+  if (!showId?.value) return null;
+
+  let id: string;
+  let type: TraktRatingTypes;
+
+  if (panelType.value === 'show') {
+    id = showId.value;
+    type = TraktRatingType.Shows;
+  } else if (panelType.value === 'season') {
+    if (!season.value?.ids.trakt) return null;
+    id = `${showId.value}-${season.value.ids.trakt}`;
+    type = TraktRatingType.Seasons;
+  } else if (panelType.value === 'episode') {
+    if (!episode.value?.ids.trakt) return null;
+    id = `${showId.value}-${episode.value.ids.trakt}`;
+    type = TraktRatingType.Episodes;
+  } else {
+    return null;
+  }
+  if (enableRatings.value) loadRatings(type, id);
+  return getRatings(type, id);
+});
 
 onMounted(() => {
   watch(
@@ -412,7 +441,8 @@ const { openTab } = useLinksStore();
       round
     />
 
-    <NFlex>
+    <NFlex class="rating-row" justify="space-evenly">
+      <PanelRatings v-if="enableRatings" :votes="votes" :rating="rating" />
       <PanelPoster
         :tmdb="show?.ids.tmdb"
         :mode="panelType"
@@ -420,7 +450,7 @@ const { openTab } = useLinksStore();
         :season-number="seasonNb"
         :episode-number="episodeNb"
       />
-      <PanelRatings :votes="votes" :rating="rating" />
+      <PanelRatings v-if="enableRatings" :score="score?.rating" mode="score" />
     </NFlex>
 
     <ShowPanelDetails
@@ -468,6 +498,10 @@ const { openTab } = useLinksStore();
 </template>
 
 <style lang="scss" scoped>
+.rating-row {
+  width: 100%;
+}
+
 .show-title-skeleton {
   height: 1.5rem;
   margin-top: 0.625rem;

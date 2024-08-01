@@ -10,5 +10,9 @@
   "panel__ratings__label_score": {
     "message": "Score",
     "description": "Label for the score in the ratings panel"
+  },
+  "panel__ratings__label_review": {
+    "message": "Review",
+    "description": "Label for the review in the ratings panel"
   }
 }

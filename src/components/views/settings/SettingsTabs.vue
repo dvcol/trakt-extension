@@ -37,6 +37,7 @@ const {
   loadLists,
   loadListsPageSize,
   progressType,
+  enableRatings,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -145,13 +146,24 @@ const container = ref();
       </NSwitch>
     </SettingsFormItem>
 
+    <!--  Enable Ratings  -->
+    <SettingsFormItem
+      :label="i18n('label_enable_ratings')"
+      :warning="enableRatings ? i18n('label_enable_ratings_warning') : undefined"
+    >
+      <NSwitch v-model:value="enableRatings" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+      </NSwitch>
+    </SettingsFormItem>
+
     <!--  Enable tabs  -->
     <template v-for="[route, state] of enabledTabs" :key="route">
       <SettingsFormItem
-        :label="i18n(`label_route_${ route }`)"
+        :label="i18n(`label_route_${route}`)"
         :warning="
           state && [Route.Progress, Route.Releases].includes(route)
-            ? i18n(`label_route_${ route }_warning`)
+            ? i18n(`label_route_${route}_warning`)
             : undefined
         "
       >

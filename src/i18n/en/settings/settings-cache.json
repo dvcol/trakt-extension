@@ -55,6 +55,10 @@
     "message": "Evict people data from cache",
     "description": "Label for the evict people data button"
   },
+  "settings__cache__evict_ratings": {
+    "message": "Evict ratings data from cache",
+    "description": "Label for the evict ratings data button"
+  },
   "settings__cache__evict_trakt": {
     "message": "Evict Trakt data from cache",
     "description": "Label for the evict Trakt data button"
