@@ -44,7 +44,7 @@ const props = defineProps({
 
 const i18n = useI18n('panel', 'ratings');
 
-const { votes, rating, score } = toRefs(props);
+const { votes, rating } = toRefs(props);
 
 const votesUnit = computed(() => {
   if (votes?.value === undefined) return undefined;
@@ -121,17 +121,19 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
 .rating-container {
   --duration: 1000ms;
 
-  flex: 1 1 auto;
-  min-width: 6rem;
-  padding: 0.5rem;
+  flex: 1 0 6rem;
 
   .rating-skeleton {
     width: 2.125rem;
     margin-top: 0.5rem;
   }
 
-  @media (width <= 640px) {
-    padding: 0.5rem 25%;
+  @media (width <= 725px) {
+    padding: 0.5rem 10%;
+  }
+
+  @media (width <= 500px) {
+    padding: 0.5rem;
   }
 }
 </style>

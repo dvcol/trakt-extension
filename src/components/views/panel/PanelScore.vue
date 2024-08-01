@@ -106,9 +106,7 @@ const containerRef = ref<InstanceType<typeof TextField>>();
 .score-container {
   --duration: 1000ms;
 
-  flex: 1 1 auto;
-  min-width: 6rem;
-  padding: 0.5rem;
+  flex: 1 0 6rem;
 
   .score-label {
     align-self: center;
@@ -124,8 +122,12 @@ const containerRef = ref<InstanceType<typeof TextField>>();
     margin-top: 0.5rem;
   }
 
-  @media (width <= 640px) {
-    padding: 0.5rem 25%;
+  @media (width <= 725px) {
+    padding: 0.5rem 10%;
+  }
+
+  @media (width <= 500px) {
+    padding: 0.5rem;
   }
 }
 </style>

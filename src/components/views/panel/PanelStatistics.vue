@@ -6,6 +6,7 @@ import type { TraktSyncRatingValue } from '@dvcol/trakt-http-client/models';
 import PanelRating from '~/components/views/panel/PanelRating.vue';
 import PanelScore from '~/components/views/panel/PanelScore.vue';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
+import { watchMedia } from '~/utils/window.utils';
 
 defineProps({
   rating: {
@@ -41,10 +42,13 @@ const emit = defineEmits<{
 const { enableRatings } = useExtensionSettingsStoreRefs();
 
 const onScoreEdit = (progress: TraktSyncRatingValue) => emit('onScoreEdit', progress);
+
+const isCompact = watchMedia('(max-width: 725px)');
 </script>
 
 <template>
   <NFlex class="statistics-container" justify="space-around">
+    <slot v-if="isCompact" />
     <PanelRating
       v-if="enableRatings"
       :loading="loadingRating"
@@ -52,7 +56,7 @@ const onScoreEdit = (progress: TraktSyncRatingValue) => emit('onScoreEdit', prog
       :rating="rating"
       :url="url"
     />
-    <slot />
+    <slot v-if="!isCompact" />
     <PanelScore
       v-if="enableRatings"
       :loading="loadingScore"
