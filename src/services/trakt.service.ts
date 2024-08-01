@@ -634,7 +634,9 @@ export class TraktService {
     add: async (query: TraktRatingRequest) => {
       const response = await TraktService.traktClient.sync.ratings.add(query);
       TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => logger.error('Failed to evict ratings cache', { query, err }));
-      return response.json();
+      const { added, not_found } = await response.json();
+      if (Object.values(not_found).some(value => value?.length)) throw not_found;
+      return added;
     },
     remove: async (query: TraktSyncRequest) => {
       const response = await TraktService.traktClient.sync.ratings.remove(query);

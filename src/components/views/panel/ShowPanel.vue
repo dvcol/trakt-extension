@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
-import { TraktRatingType, type TraktRatingTypes } from '@dvcol/trakt-http-client/models';
+import {
+  TraktRatingType,
+  type TraktRatingTypes,
+  type TraktSyncRatingValue,
+} from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, onMounted, toRefs, watch } from 'vue';
@@ -352,7 +356,8 @@ const onCheckin = async (cancel: boolean) => {
   await fetchShowProgress(showId.value, { force: true });
 };
 
-const { loadRatings, getRatings, getLoading } = useRatingsStore();
+const { loadRatings, getRatings, getLoading, addRating, removeRating } =
+  useRatingsStore();
 
 const ratingLoading = computed(() => {
   if (panelType.value === 'episode') {
@@ -361,8 +366,8 @@ const ratingLoading = computed(() => {
     return getEpisodesLoading(showId.value, seasonNb.value, episodeNb.value).value;
   }
   if (panelType.value === 'season') {
-    if (!showId?.value || seasonNb.value === undefined) return false;
-    return getSeasonsLoading(showId.value, seasonNb.value).value;
+    if (!showId?.value) return false;
+    return getSeasonsLoading(showId.value).value;
   }
   if (!showId?.value) return false;
   return getShowLoading(showId.value).value;
@@ -427,6 +432,61 @@ const ratingUrl = computed(() => {
   });
 });
 
+const votes = computed(() => {
+  if (panelType.value === 'episode') return episode.value?.votes;
+  if (panelType.value === 'season') return season.value?.votes;
+  return show.value?.votes;
+});
+
+const rating = computed(() => {
+  if (panelType.value === 'episode') return episode.value?.rating;
+  if (panelType.value === 'season') return season.value?.rating;
+  return show.value?.rating;
+});
+
+const onScoreEdit = async (_score: TraktSyncRatingValue) => {
+  if (!show.value?.ids?.trakt) return;
+  const addOrRemove = _score ? addRating : removeRating;
+  if (panelType.value === 'episode') {
+    if (!episode.value?.ids?.trakt) return;
+    return addOrRemove(
+      TraktRatingType.Episodes,
+      {
+        episodes: [
+          {
+            ids: episode.value.ids,
+            rating: _score,
+          },
+        ],
+      },
+      show.value.ids.trakt,
+    );
+  }
+  if (panelType.value === 'season') {
+    if (!season.value?.ids?.trakt) return;
+    return addOrRemove(
+      TraktRatingType.Seasons,
+      {
+        seasons: [
+          {
+            ids: season.value.ids,
+            rating: _score,
+          },
+        ],
+      },
+      show.value.ids.trakt,
+    );
+  }
+  return addOrRemove(TraktRatingType.Shows, {
+    shows: [
+      {
+        ids: show.value.ids,
+        rating: _score,
+      },
+    ],
+  });
+};
+
 onMounted(() => {
   watch(
     [showId, seasonNb, episodeNb],
@@ -459,18 +519,6 @@ onMounted(() => {
   );
 });
 
-const votes = computed(() => {
-  if (panelType.value === 'episode') return episode.value?.votes;
-  if (panelType.value === 'season') return season.value?.votes;
-  return show.value?.votes;
-});
-
-const rating = computed(() => {
-  if (panelType.value === 'episode') return episode.value?.rating;
-  if (panelType.value === 'season') return season.value?.rating;
-  return show.value?.rating;
-});
-
 const { openTab } = useLinksStore();
 </script>
 
@@ -499,6 +547,7 @@ const { openTab } = useLinksStore();
       :url="ratingUrl"
       :loading-score="scoreLoading"
       :loading-rating="ratingLoading"
+      @on-score-edit="onScoreEdit"
     >
       <PanelPoster
         :tmdb="show?.ids.tmdb"
