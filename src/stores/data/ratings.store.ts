@@ -1,12 +1,20 @@
+import {
+  type TraktApiIds,
+  type TraktClientPagination,
+  type TraktRating,
+  type TraktRatingRequest,
+  TraktRatingType,
+  type TraktRatingTypes,
+  type TraktSyncRatingValue,
+} from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
 import { reactive, ref } from 'vue';
-
-import type { TraktClientPagination, TraktRating, TraktRatingTypes } from '@dvcol/trakt-http-client/models';
 
 import { ErrorService } from '~/services/error.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { logger } from '~/stores/settings/log.store';
+import { useI18n } from '~/utils/i18n.utils';
 import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 
 import { clearProxy } from '~/utils/vue.utils';
@@ -32,6 +40,28 @@ const isEpisodeRating = (rating: TraktRating): rating is TraktRating<'episode'> 
 
 const pageLoaded = (pagination?: TraktClientPagination) => pagination && pagination.page >= pagination.pageCount;
 
+const updateRatings = (rating: TraktRating, score: TraktSyncRatingValue) => {
+  rating.rating = score;
+  rating.rated_at = new Date().toISOString();
+};
+
+const createRatings = <T extends 'movie' | 'show' | 'season' | 'episode'>(
+  dictionary: RatingsDictionary,
+  ratingTypes: TraktRatingTypes,
+  ids: Pick<TraktApiIds, 'trakt'>,
+  rating: TraktSyncRatingValue,
+  ratingType: T,
+  prefix?: string | number,
+) => {
+  if (!dictionary[ratingTypes]) dictionary[ratingTypes] = {};
+  dictionary[ratingTypes]![prefix ? `${prefix}-${ids.trakt}` : ids.trakt] = {
+    rated_at: new Date().toISOString(),
+    rating,
+    [ratingTypes]: { ids },
+    type: ratingType,
+  } as never;
+};
+
 const RatingsStoreConstants = {
   Store: 'data.ratings',
 } as const;
@@ -45,6 +75,8 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
   const paginations = reactive<RatingsPaginationDictionary>({});
 
   ErrorService.registerDictionary('ratings', errors);
+
+  const i18n = useI18n('rating');
 
   const clearState = () => {
     clearProxy(ratings);
@@ -99,6 +131,85 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     }
   };
 
+  const updateDictionary = (query: TraktRatingRequest, showId?: number) => {
+    if (query.movies) {
+      query.movies.forEach(movie => {
+        const _rating = ratings[TraktRatingType.Movies]?.[movie.ids.trakt];
+        if (_rating) return updateRatings(_rating, movie.rating);
+        return createRatings(ratings, TraktRatingType.Movies, movie.ids, movie.rating, 'movie');
+      });
+    }
+    if (query.shows) {
+      query.shows.forEach(show => {
+        const _rating = ratings[TraktRatingType.Shows]?.[show.ids.trakt];
+        if (_rating) return updateRatings(_rating, show.rating);
+        return createRatings(ratings, TraktRatingType.Shows, show.ids, show.rating, 'show');
+      });
+    }
+    if (query.seasons) {
+      query.seasons.forEach(season => {
+        if (!showId) return;
+        const _rating = ratings[TraktRatingType.Seasons]?.[`${showId}-${season.ids.trakt}`];
+        if (_rating) return updateRatings(_rating, season.rating);
+        return createRatings(ratings, TraktRatingType.Seasons, season.ids, season.rating, 'season', showId);
+      });
+    }
+    if (query.episodes) {
+      query.episodes.forEach(episode => {
+        if (!showId) return;
+        const _rating = ratings[TraktRatingType.Episodes]?.[`${showId}-${episode.ids.trakt}`];
+        if (_rating) return updateRatings(_rating, episode.rating);
+        return createRatings(ratings, TraktRatingType.Episodes, episode.ids, episode.rating, 'episode', showId);
+      });
+    }
+  };
+
+  const addRating = async (type: TraktRatingTypes, query: TraktRatingRequest, showId?: number) => {
+    if (loading[type]) {
+      logger.warn('Already fetching or adding ratings', type);
+      return;
+    }
+
+    logger.debug('Adding ratings', query);
+
+    loading[type] = true;
+
+    try {
+      await TraktService.ratings.add(query);
+      updateDictionary(query, showId);
+      NotificationService.message.success(i18n('rating_added_success', 'common', 'rating'));
+    } catch (error) {
+      logger.error('Failed to add ratings');
+      NotificationService.error(i18n('rating_added_error', 'common', 'rating'), error);
+      throw error;
+    } finally {
+      loading[type] = false;
+    }
+  };
+
+  const removeRating = async (type: TraktRatingTypes, query: TraktRatingRequest, showId?: number) => {
+    if (loading[type]) {
+      logger.warn('Already fetching or removing ratings', type);
+      return;
+    }
+
+    logger.debug('Removing ratings', query);
+
+    loading[type] = true;
+
+    try {
+      await TraktService.ratings.remove(query);
+      updateDictionary(query, showId);
+      NotificationService.message.success(i18n('rating_remove_success', 'common', 'rating'));
+    } catch (error) {
+      logger.error('Failed to remove ratings');
+      NotificationService.error(i18n('rating_remove_error', 'common', 'rating'), error);
+      throw error;
+    } finally {
+      loading[type] = false;
+    }
+  };
+
   const getLoading = (type: TraktRatingTypes) => !!loading[type];
   const getRatings = <T extends TraktRatingTypes, R = TraktRatingsReturn<T> | undefined>(type: T, id: string): R => ratings[type]?.[id] as R;
 
@@ -122,6 +233,8 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     getLoading,
     getRatings,
     loadRatings,
+    addRating,
+    removeRating,
   };
 });
 

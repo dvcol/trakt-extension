@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { NFlex } from 'naive-ui';
 
+import type { TraktSyncRatingValue } from '@dvcol/trakt-http-client/models';
+
 import PanelRating from '~/components/views/panel/PanelRating.vue';
 import PanelScore from '~/components/views/panel/PanelScore.vue';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -33,12 +35,12 @@ defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'onScoreEdit', progress: number): void;
+  (e: 'onScoreEdit', progress: TraktSyncRatingValue): void;
 }>();
 
 const { enableRatings } = useExtensionSettingsStoreRefs();
 
-const onScoreEdit = (progress: number) => emit('onScoreEdit', progress);
+const onScoreEdit = (progress: TraktSyncRatingValue) => emit('onScoreEdit', progress);
 </script>
 
 <template>

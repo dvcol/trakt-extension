@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
 
-import { TraktRatingType } from '@dvcol/trakt-http-client/models';
+import {
+  TraktRatingType,
+  type TraktSyncRatingValue,
+} from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
@@ -256,7 +259,8 @@ const onCheckin = async (cancel: boolean) => {
 
 const { openTab } = useLinksStore();
 
-const { loadRatings, getRatings, getLoading } = useRatingsStore();
+const { loadRatings, getRatings, getLoading, addRating, removeRating } =
+  useRatingsStore();
 
 const scoreLoading = computed(() => getLoading(TraktRatingType.Movies));
 
@@ -273,6 +277,18 @@ const ratingUrl = computed(() => {
     suffix: '/stats',
   });
 });
+
+const onScoreEdit = async (_score: TraktSyncRatingValue) => {
+  if (!movie.value?.ids?.trakt) return;
+  return (_score ? addRating : removeRating)(TraktRatingType.Movies, {
+    movies: [
+      {
+        ids: movie.value.ids,
+        rating: _score,
+      },
+    ],
+  });
+};
 
 onMounted(() => {
   watch(
@@ -324,6 +340,7 @@ onMounted(() => {
       :loading-score="scoreLoading"
       :loading-rating="movieLoading"
       :url="ratingUrl"
+      @on-score-edit="onScoreEdit"
     >
       <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
     </PanelStatistics>

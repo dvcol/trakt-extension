@@ -42,5 +42,21 @@
   "common__rating__not_rated": {
     "message": "Not rated",
     "description": "Rating for a value that has not been rated"
+  },
+  "common__rating__rating_added_success": {
+    "message": "Rating successfully saved",
+    "description": "Success message"
+  },
+  "common__rating__rating_added_error": {
+    "message": "An error occurred while saving the rating",
+    "description": "Error message"
+  },
+  "common__rating__rating_remove_success": {
+    "message": "Rating successfully removed",
+    "description": "Success message"
+  },
+  "common__rating__rating_remove_error": {
+    "message": "An error occurred while removing the rating",
+    "description": "Error message"
   }
 }

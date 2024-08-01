@@ -2,6 +2,8 @@
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, ref, toRefs } from 'vue';
 
+import type { TraktSyncRatingValue } from '@dvcol/trakt-http-client/models';
+
 import ProgressNumber from '~/components/common/numbers/ProgressNumber.vue';
 
 import TextField from '~/components/common/typography/TextField.vue';
@@ -31,7 +33,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'onEdit', progress: number): void;
+  (e: 'onEdit', progress: TraktSyncRatingValue): void;
 }>();
 
 const i18n = useI18n('panel', 'ratings');
@@ -51,7 +53,8 @@ const _scoreLabel = computed(() => {
 });
 
 const transformProgress = (progress: number) => Math.round(progress / 10) * 10;
-const onEdit = (_progress: number) => emit('onEdit', _progress);
+const onEdit = (_progress: number) =>
+  emit('onEdit', (_progress / 10) as TraktSyncRatingValue);
 
 const containerRef = ref<InstanceType<typeof TextField>>();
 </script>
