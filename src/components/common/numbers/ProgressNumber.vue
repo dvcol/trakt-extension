@@ -1,11 +1,20 @@
 <script lang="ts" setup>
 import { NProgress, NSkeleton, NSpin } from 'naive-ui';
 
-import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  type PropType,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 
 import AnimatedNumber from './AnimatedNumber.vue';
 
 import { Rating } from '~/models/rating.model';
+import { debounce } from '~/utils/debounce.utils';
 import { wait } from '~/utils/promise.utils';
 
 const props = defineProps({
@@ -42,18 +51,90 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  editable: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  container: {
+    type: Object as PropType<HTMLElement>,
+    required: false,
+  },
+  transform: {
+    type: Function as PropType<(progress: number) => number>,
+    required: false,
+  },
 });
 
-const { progress, delay } = toRefs(props);
+const emit = defineEmits<{
+  (e: 'onEditing', editing: boolean): void;
+  (e: 'onEdit', progress: number): void;
+  (e: 'onEditProgress', progress: number): void;
+}>();
+
+const { progress, delay, container, duration, editable, transform } = toRefs(props);
 
 const _progress = ref(0);
 
+const progressRef = ref<InstanceType<typeof NProgress>>();
+const containerRef = computed(() => container?.value ?? progressRef.value?.$el);
+
+const editing = ref(false);
+const angleProgress = ref(0);
+
+const debounceEmitProgress = debounce(
+  () => emit('onEditProgress', angleProgress.value),
+  500,
+);
+
+const editProgress = computed(() => {
+  if (!editing.value) return _progress.value;
+  debounceEmitProgress();
+  return angleProgress.value;
+});
+
+const progressDuration = computed(() =>
+  editing.value ? 100 : duration.value - delay.value,
+);
+
 const color = computed(() => {
-  if (_progress.value <= Rating.Bad * 10) return 'color-error';
-  if (_progress.value <= Rating.Mediocre * 10) return 'color-warning';
-  if (_progress.value <= Rating.Good * 10) return 'color-info';
+  if (editProgress.value <= Rating.Bad * 10) return 'color-error';
+  if (editProgress.value <= Rating.Mediocre * 10) return 'color-warning';
+  if (editProgress.value <= Rating.Good * 10) return 'color-info';
   return 'color-primary';
 });
+
+const emitProgress = computed(() => {
+  if (!transform?.value || typeof transform.value !== 'function') {
+    return angleProgress.value;
+  }
+  return transform.value(angleProgress.value);
+});
+
+const onClick = () => {
+  if (!editable.value) return;
+  editing.value = !editing.value;
+  emit('onEditing', editing.value);
+  if (!editing.value) emit('onEdit', emitProgress.value);
+  if (editing.value) progressRef.value?.$el?.focus();
+};
+
+const listener = (event: MouseEvent) => {
+  if (!progressRef.value?.$el) return;
+  // Get the bounding rectangle of the tracking box
+  const rect = progressRef.value?.$el.getBoundingClientRect();
+
+  // Calculate the mouse position relative to the tracking box
+  const mouseX = event.clientX - (rect.left + rect.width / 2);
+  const mouseY = rect.top + rect.height / 2 - event.clientY;
+
+  // Convert (x, y) to angle in radians then in degrees
+  let degrees = Math.atan2(mouseX, mouseY) * (180 / Math.PI) - 180;
+
+  // Adjust angle to 0-360° range
+  if (degrees < 0) degrees += 360;
+  angleProgress.value = Math.round(degrees / 3.6);
+};
 
 onMounted(async () => {
   watch(
@@ -64,32 +145,50 @@ onMounted(async () => {
     },
     { immediate: true },
   );
+  watch(
+    containerRef,
+    (_new, _old) => {
+      _old?.removeEventListener('mousemove', listener);
+      if (editable.value) _new?.addEventListener('mousemove', listener);
+    },
+
+    { immediate: true },
+  );
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   _progress.value = 0;
+  containerRef.value?.removeEventListener('mousemove', listener);
 });
 </script>
 
 <template>
-  <NSpin v-if="loading" class="spin" size="large">
+  <NSpin v-show="loading" class="spin" size="large">
     <NProgress class="progress" type="circle">
       <NSkeleton class="skeleton" text round />
     </NProgress>
   </NSpin>
   <NProgress
-    v-else
+    v-show="!loading"
+    ref="progressRef"
     class="progress custom-color"
+    :class="{ editing, editable }"
     type="circle"
-    :percentage="_progress"
+    :percentage="editProgress"
     :style="{
-      '--duration': `${ duration - delay }ms`,
+      '--duration': `${ progressDuration }ms`,
       '--custom-progress-color': `var(--${ color })`,
     }"
+    :tabindex="editable ? 0 : undefined"
+    @click="onClick"
+    @keydown.enter="onClick"
+    @blur="editing = false"
   >
+    <span v-if="editing">{{ emitProgress }}</span>
     <AnimatedNumber
+      v-else
       :from="from"
-      :to="_progress"
+      :to="editProgress"
       :duration="duration"
       :precision="precision"
       :disabled="!_progress"
@@ -102,10 +201,22 @@ onUnmounted(() => {
 .spin,
 .progress {
   --progress-size: 3.7rem !important;
+
+  &.editable {
+    cursor: grab;
+  }
+
+  &.editing {
+    cursor: grabbing;
+  }
 }
 
 .custom-color {
   --n-fill-color: var(--custom-progress-color, var(--color-info)) !important;
+
+  &:focus-visible {
+    outline: -webkit-focus-ring-color auto 1px;
+  }
 }
 
 .spin {

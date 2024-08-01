@@ -32,7 +32,13 @@ defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (e: 'onScoreEdit', progress: number): void;
+}>();
+
 const { enableRatings } = useExtensionSettingsStoreRefs();
+
+const onScoreEdit = (progress: number) => emit('onScoreEdit', progress);
 </script>
 
 <template>
@@ -45,7 +51,12 @@ const { enableRatings } = useExtensionSettingsStoreRefs();
       :url="url"
     />
     <slot />
-    <PanelScore v-if="enableRatings" :loading="loadingScore" :score="score" />
+    <PanelScore
+      v-if="enableRatings"
+      :loading="loadingScore"
+      :score="score"
+      @on-edit="onScoreEdit"
+    />
   </NFlex>
 </template>
 

@@ -30,12 +30,23 @@ defineProps({
     required: false,
     default: false,
   },
+  active: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
 });
 </script>
 
 <template>
   <NStatistic class="statistics" :class="{ disabled }" tabular-nums>
-    <NNumberAnimation :from="from" :to="to" :duration="duration" :precision="precision" />
+    <NNumberAnimation
+      :from="from"
+      :to="to"
+      :duration="duration"
+      :precision="precision"
+      :active="active"
+    />
     <span v-if="unit" class="unit">{{ unit }}</span>
   </NStatistic>
 </template>

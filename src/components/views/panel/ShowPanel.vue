@@ -59,6 +59,8 @@ const { showId, seasonNumber, episodeNumber } = toRefs(props);
 const {
   getShow,
   getShowLoading,
+  getSeasonsLoading,
+  getEpisodesLoading,
   fetchShow,
   fetchShowProgress,
   fetchShowCollectionProgress,
@@ -97,11 +99,6 @@ const episodeNb = computed(() => {
   const _episodeNumber = Number(episodeNumber.value);
   if (Number.isNaN(_episodeNumber)) return;
   return _episodeNumber;
-});
-
-const showLoading = computed(() => {
-  if (!showId?.value) return true;
-  return getShowLoading(showId.value).value;
 });
 
 const show = computed(() => {
@@ -357,6 +354,20 @@ const onCheckin = async (cancel: boolean) => {
 
 const { loadRatings, getRatings, getLoading } = useRatingsStore();
 
+const ratingLoading = computed(() => {
+  if (panelType.value === 'episode') {
+    if (!showId?.value || seasonNb.value === undefined || episodeNb.value === undefined)
+      return false;
+    return getEpisodesLoading(showId.value, seasonNb.value, episodeNb.value).value;
+  }
+  if (panelType.value === 'season') {
+    if (!showId?.value || seasonNb.value === undefined) return false;
+    return getSeasonsLoading(showId.value, seasonNb.value).value;
+  }
+  if (!showId?.value) return false;
+  return getShowLoading(showId.value).value;
+});
+
 const scoreLoading = computed(() => {
   if (!showId?.value) return false;
   if (panelType.value === 'season') return getLoading(TraktRatingType.Seasons);
@@ -487,7 +498,7 @@ const { openTab } = useLinksStore();
       :score="score?.rating"
       :url="ratingUrl"
       :loading-score="scoreLoading"
-      :loading-rating="showLoading"
+      :loading-rating="ratingLoading"
     >
       <PanelPoster
         :tmdb="show?.ids.tmdb"

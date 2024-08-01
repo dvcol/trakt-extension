@@ -79,7 +79,7 @@ const { openTab } = useLinksStore();
 <template>
   <NFlex
     class="detail"
-    :class="{ grow, array, disabled }"
+    :class="{ grow, array, disabled, vertical }"
     :style="{ '--prefix-min-width': labelWidth, '--text-flex': flex }"
     :align="align"
     :wrap="wrap"
@@ -139,6 +139,10 @@ const { openTab } = useLinksStore();
   flex: var(--text-flex);
   align-items: baseline;
   min-width: max-content;
+
+  &.vertical {
+    width: 100%;
+  }
 
   &:hover .prefix {
     color: var(--white-70);
