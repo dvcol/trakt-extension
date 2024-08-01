@@ -7,7 +7,7 @@ import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-import PanelRatings from '~/components/views/panel/PanelRatings.vue';
+import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
 import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
@@ -58,6 +58,7 @@ const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
 const {
   getShow,
+  getShowLoading,
   fetchShow,
   fetchShowProgress,
   fetchShowCollectionProgress,
@@ -96,6 +97,11 @@ const episodeNb = computed(() => {
   const _episodeNumber = Number(episodeNumber.value);
   if (Number.isNaN(_episodeNumber)) return;
   return _episodeNumber;
+});
+
+const showLoading = computed(() => {
+  if (!showId?.value) return true;
+  return getShowLoading(showId.value).value;
 });
 
 const show = computed(() => {
@@ -349,8 +355,14 @@ const onCheckin = async (cancel: boolean) => {
   await fetchShowProgress(showId.value, { force: true });
 };
 
-const { loadRatings } = useRatingsStore();
-const { getRatings } = useRatingsStore();
+const { loadRatings, getRatings, getLoading } = useRatingsStore();
+
+const scoreLoading = computed(() => {
+  if (!showId?.value) return false;
+  if (panelType.value === 'season') return getLoading(TraktRatingType.Seasons);
+  if (panelType.value === 'episode') return getLoading(TraktRatingType.Episodes);
+  return getLoading(TraktRatingType.Shows);
+});
 
 const score = computed(() => {
   if (!showId?.value) return null;
@@ -374,6 +386,34 @@ const score = computed(() => {
   }
   if (enableRatings.value) loadRatings(type, id);
   return getRatings(type, id);
+});
+
+const ratingUrl = computed(() => {
+  if (!show.value?.ids?.slug) return;
+  if (panelType.value === 'episode') {
+    if (!episodeNb.value || !seasonNb.value) return;
+    return ResolveExternalLinks.trakt.item({
+      type: 'episode',
+      slug: show.value.ids.slug,
+      episode: episodeNb.value,
+      season: seasonNb.value,
+      suffix: '/stats',
+    });
+  }
+  if (panelType.value === 'season') {
+    if (!seasonNb.value) return;
+    return ResolveExternalLinks.trakt.item({
+      type: 'season',
+      slug: show.value.ids.slug,
+      season: seasonNb.value,
+      suffix: '/stats',
+    });
+  }
+  return ResolveExternalLinks.trakt.item({
+    type: 'shows',
+    slug: show.value.ids.slug,
+    suffix: '/stats',
+  });
 });
 
 onMounted(() => {
@@ -441,8 +481,14 @@ const { openTab } = useLinksStore();
       round
     />
 
-    <NFlex class="rating-row" justify="space-evenly">
-      <PanelRatings v-if="enableRatings" :votes="votes" :rating="rating" />
+    <PanelStatistics
+      :rating="rating"
+      :votes="votes"
+      :score="score?.rating"
+      :url="ratingUrl"
+      :loading-score="scoreLoading"
+      :loading-rating="showLoading"
+    >
       <PanelPoster
         :tmdb="show?.ids.tmdb"
         :mode="panelType"
@@ -450,8 +496,7 @@ const { openTab } = useLinksStore();
         :season-number="seasonNb"
         :episode-number="episodeNb"
       />
-      <PanelRatings v-if="enableRatings" :score="score?.rating" mode="score" />
-    </NFlex>
+    </PanelStatistics>
 
     <ShowPanelDetails
       :show="show"
@@ -498,10 +543,6 @@ const { openTab } = useLinksStore();
 </template>
 
 <style lang="scss" scoped>
-.rating-row {
-  width: 100%;
-}
-
 .show-title-skeleton {
   height: 1.5rem;
   margin-top: 0.625rem;

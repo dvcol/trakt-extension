@@ -34,16 +34,18 @@ export const ResolveExternalLinks = {
       season,
       episode,
       base = ExternaLinks.trakt.production,
+      suffix,
     }: {
       type: 'movies' | 'shows' | 'season' | 'episode' | 'person' | 'comment' | 'list';
       slug: string;
       season?: number;
       episode?: number;
       base?: string;
+      suffix?: string;
     }) => {
-      if (type === 'episode') return `${base}shows/${slug}/seasons/${season}/episodes/${episode}`;
-      if (type === 'season') return `${base}shows/${slug}/seasons/${season}`;
-      return `${base}${type}/${slug}`;
+      if (type === 'episode') return `${base}shows/${slug}/seasons/${season}/episodes/${episode}${suffix ?? ''}`;
+      if (type === 'season') return `${base}shows/${slug}/seasons/${season}${suffix ?? ''}`;
+      return `${base}${type}/${slug}${suffix ?? ''}`;
     },
     query: (query: string) => `${ExternaLinks.trakt.production}search?query=${query}`,
     watchlist: (user: string) => `${ExternaLinks.trakt.production}users/${user}/watchlist`,
