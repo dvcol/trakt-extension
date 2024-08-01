@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NFlex, NSkeleton } from 'naive-ui';
-import { computed, toRefs } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 
 import ProgressNumber from '~/components/common/numbers/ProgressNumber.vue';
 
@@ -30,6 +30,10 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (e: 'onEdit', progress: number): void;
+}>();
+
 const i18n = useI18n('panel', 'ratings');
 
 const { score } = toRefs(props);
@@ -45,6 +49,11 @@ const _scoreLabel = computed(() => {
     return 'not_rated';
   }
 });
+
+const transformProgress = (progress: number) => Math.round(progress / 10) * 10;
+const onEdit = (_progress: number) => emit('onEdit', _progress);
+
+const containerRef = ref<InstanceType<typeof TextField>>();
 </script>
 
 <template>
@@ -56,6 +65,9 @@ const _scoreLabel = computed(() => {
       vertical
       size="small"
       flex="0 1 auto"
+      align="center"
+      justify="center"
+      style="padding-top: 1.5rem"
     >
       <NSkeleton v-if="loading" class="score-skeleton" text round />
       <span v-else class="score-label" :class="{ disabled: !score }">
@@ -64,12 +76,24 @@ const _scoreLabel = computed(() => {
     </TextField>
 
     <!--  Score  -->
-    <TextField :label="i18n('label_score')" vertical flex="0 1 auto">
+    <TextField
+      ref="containerRef"
+      :label="i18n('label_score')"
+      :title="i18n('title_score')"
+      vertical
+      flex="0 1 auto"
+      align="center"
+      style="padding-bottom: 1.5rem"
+    >
       <ProgressNumber
         :progress="_score"
         :duration="duration"
         :precision="precision"
         :loading="loading"
+        :container="containerRef?.$el"
+        :transform="transformProgress"
+        editable
+        @on-edit="onEdit"
       />
     </TextField>
   </NFlex>
@@ -79,7 +103,8 @@ const _scoreLabel = computed(() => {
 .score-container {
   --duration: 1000ms;
 
-  gap: 1rem;
+  flex: 1 1 auto;
+  min-width: 6rem;
   padding: 0.5rem;
 
   .score-label {
@@ -92,6 +117,7 @@ const _scoreLabel = computed(() => {
   }
 
   .score-skeleton {
+    width: 2.125rem;
     margin-top: 0.5rem;
   }
 

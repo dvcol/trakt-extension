@@ -75,6 +75,8 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
       vertical
       size="small"
       flex="0 1 auto"
+      align="center"
+      style="padding-top: 1.5rem"
     >
       <NSkeleton v-if="loading" class="rating-skeleton" text round />
       <AnimatedNumber
@@ -89,7 +91,13 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
     </TextField>
 
     <!--  Rating progress  -->
-    <TextField :label="i18n('label_rating')" vertical flex="0 1 auto">
+    <TextField
+      :label="i18n('label_rating')"
+      vertical
+      flex="0 1 auto"
+      align="center"
+      style="padding-bottom: 1.5rem"
+    >
       <ButtonLinkExternal
         :href="url"
         :title="i18n('calendar', 'common', 'link')"
@@ -113,10 +121,12 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
 .rating-container {
   --duration: 1000ms;
 
-  gap: 1rem;
+  flex: 1 1 auto;
+  min-width: 6rem;
   padding: 0.5rem;
 
   .rating-skeleton {
+    width: 2.125rem;
     margin-top: 0.5rem;
   }
 
