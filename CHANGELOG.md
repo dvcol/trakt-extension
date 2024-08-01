@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.1](https://github.com/dvcol/trakt-extension/compare/v1.18.0...v1.18.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* **ratings:** fix css responsive flow on screen <= 725px ([6c4f013](https://github.com/dvcol/trakt-extension/commit/6c4f01339ccad3699a168b1b4e3814dc06e416e8))
+
 ## [1.18.0](https://github.com/dvcol/trakt-extension/compare/v1.17.1...v1.18.0) (2024-08-01)
 
 
