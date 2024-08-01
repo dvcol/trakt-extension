@@ -10,8 +10,7 @@ import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
 import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-
-import PanelRatings from '~/components/views/panel/PanelRatings.vue';
+import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
@@ -50,6 +49,7 @@ const { movieId } = toRefs(props);
 
 const {
   getMovie,
+  getMovieLoading,
   fetchMovie,
   getMovieWatched,
   getMovieWatchedDate,
@@ -62,6 +62,11 @@ const {
 } = useMovieStore();
 
 const { loadingCollected, loadingWatched } = useMovieStoreRefs();
+
+const movieLoading = computed(() => {
+  if (!movieId?.value) return false;
+  return getMovieLoading(movieId.value).value;
+});
 
 const movie = computed(() => {
   if (!movieId?.value) return;
@@ -251,11 +256,22 @@ const onCheckin = async (cancel: boolean) => {
 
 const { openTab } = useLinksStore();
 
-const { loadRatings, getRatings } = useRatingsStore();
+const { loadRatings, getRatings, getLoading } = useRatingsStore();
+
+const scoreLoading = computed(() => getLoading(TraktRatingType.Movies));
 
 const score = computed(() => {
   if (!movieId.value) return;
   return getRatings(TraktRatingType.Movies, movieId.value);
+});
+
+const ratingUrl = computed(() => {
+  if (!movie.value?.ids?.slug) return;
+  return ResolveExternalLinks.trakt.item({
+    type: 'movies',
+    slug: movie.value.ids.slug,
+    suffix: '/stats',
+  });
 });
 
 onMounted(() => {
@@ -301,11 +317,16 @@ onMounted(() => {
       round
     />
 
-    <NFlex class="rating-row" justify="space-around">
-      <PanelRatings v-if="enableRatings" :votes="movie?.votes" :rating="movie?.rating" />
+    <PanelStatistics
+      :rating="movie?.rating"
+      :votes="movie?.votes"
+      :score="score?.rating"
+      :loading-score="scoreLoading"
+      :loading-rating="movieLoading"
+      :url="ratingUrl"
+    >
       <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
-      <PanelRatings v-if="enableRatings" :score="score?.rating" mode="score" />
-    </NFlex>
+    </PanelStatistics>
 
     <MoviePanelDetails
       :movie="movie"
@@ -335,10 +356,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.rating-row {
-  width: 100%;
-}
-
 .show-title-skeleton {
   height: 1.5rem;
   margin-top: 0.625rem;

@@ -22,7 +22,7 @@ defineProps({
     required: false,
   },
   icon: {
-    type: Object as PropType<Component>,
+    type: Object as PropType<Component | null>,
     required: false,
     default: IconExternalLinkRounded,
   },
@@ -51,7 +51,7 @@ const anchor = ref();
           v-bind="$attrs"
         >
           <slot />
-          <template #icon>
+          <template v-if="icon" #icon>
             <NIcon :component="icon" />
           </template>
         </NButton>
@@ -67,6 +67,11 @@ const anchor = ref();
   z-index: layers.$in-front;
   color: inherit;
   text-decoration: none;
+
+  .external-link {
+    height: unset;
+    min-height: var(--n-height);
+  }
 
   .external-link:not(.slotted) {
     width: 2.25rem;
