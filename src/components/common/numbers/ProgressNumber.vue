@@ -111,22 +111,20 @@ const emitProgress = computed(() => {
   return transform.value(angleProgress.value);
 });
 
-const onClick = () => {
-  if (!editable.value) return;
-  editing.value = !editing.value;
-  emit('onEditing', editing.value);
-  if (!editing.value) emit('onEdit', emitProgress.value);
-  if (editing.value) progressRef.value?.$el?.focus();
-};
+const isMouse = (event: MouseEvent | TouchEvent): event is MouseEvent =>
+  event.type === 'mousemove' || event.type === 'mousedown' || event.type === 'mouseup';
 
-const listener = (event: MouseEvent) => {
+const listener = (event: MouseEvent | TouchEvent) => {
   if (!progressRef.value?.$el) return;
   // Get the bounding rectangle of the tracking box
   const rect = progressRef.value?.$el.getBoundingClientRect();
 
+  const clientX = isMouse(event) ? event.clientX : event.touches[0].clientX;
+  const clientY = isMouse(event) ? event.clientY : event.touches[0].clientY;
+
   // Calculate the mouse position relative to the tracking box
-  const mouseX = event.clientX - (rect.left + rect.width / 2);
-  const mouseY = rect.top + rect.height / 2 - event.clientY;
+  const mouseX = clientX - (rect.left + rect.width / 2);
+  const mouseY = rect.top + rect.height / 2 - clientY;
 
   // Convert (x, y) to angle in radians then in degrees
   let degrees = Math.atan2(mouseX, mouseY) * (180 / Math.PI) - 180;
@@ -134,6 +132,15 @@ const listener = (event: MouseEvent) => {
   // Adjust angle to 0-360° range
   if (degrees < 0) degrees += 360;
   angleProgress.value = Math.round(degrees / 3.6);
+};
+
+const onClick = (event: MouseEvent | TouchEvent) => {
+  if (!editable.value) return;
+  editing.value = !editing.value;
+  emit('onEditing', editing.value);
+  if (!editing.value) return emit('onEdit', emitProgress.value);
+  progressRef.value?.$el?.focus();
+  listener(event);
 };
 
 onMounted(async () => {
@@ -149,7 +156,11 @@ onMounted(async () => {
     containerRef,
     (_new, _old) => {
       _old?.removeEventListener('mousemove', listener);
-      if (editable.value) _new?.addEventListener('mousemove', listener);
+      _old?.removeEventListener('touchmove', listener);
+      if (editable.value) {
+        _new?.addEventListener('mousemove', listener);
+        _new?.addEventListener('touchmove', listener);
+      }
     },
 
     { immediate: true },
@@ -159,6 +170,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   _progress.value = 0;
   containerRef.value?.removeEventListener('mousemove', listener);
+  containerRef.value?.removeEventListener('touchmove', listener);
 });
 </script>
 
@@ -182,6 +194,8 @@ onBeforeUnmount(() => {
     :tabindex="editable ? 0 : undefined"
     @click="onClick"
     @keydown.enter="onClick"
+    @touchstart="onClick"
+    @touchend="onClick"
     @blur="editing = false"
   >
     <span v-if="editing">{{ emitProgress }}</span>
