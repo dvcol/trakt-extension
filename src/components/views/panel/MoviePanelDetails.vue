@@ -121,6 +121,22 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       :placeholder="movieTitle"
     />
     <NFlex class="row" size="large">
+      <!--  Year  -->
+      <TextField :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
+
+      <!--  Country  -->
+      <TextField :label="i18n('country')" :value="country" :skeleton="{ width: '2ch' }" />
+
+      <!--  Status  -->
+      <TextField
+        :label="i18n('status')"
+        :value="status"
+        :skeleton="{ width: '7.5rem' }"
+        grow
+      />
+    </NFlex>
+
+    <NFlex class="row" size="large">
       <!--  Release date  -->
       <TextField
         :label="i18n('released')"
@@ -128,14 +144,6 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
         :skeleton="{ width: '5.125rem' }"
       />
 
-      <!--  Year  -->
-      <TextField :label="i18n('year')" :value="year" :skeleton="{ width: '2.25rem' }" />
-
-      <!--  Country  -->
-      <TextField :label="i18n('country')" :value="country" :skeleton="{ width: '2ch' }" />
-    </NFlex>
-
-    <NFlex class="row" size="large">
       <!--  Release Time  -->
       <TextField
         :label="i18n('released_time')"
@@ -148,14 +156,6 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
         :label="i18n('runtime')"
         :value="runtime"
         :skeleton="{ width: '3.75rem' }"
-      />
-
-      <!--  Status  -->
-      <TextField
-        :label="i18n('status')"
-        :value="status"
-        :skeleton="{ width: '7.5rem' }"
-        grow
       />
     </NFlex>
 

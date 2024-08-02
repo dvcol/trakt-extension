@@ -15,7 +15,6 @@ defineProps({
   labelWidth: {
     type: String,
     required: false,
-    default: '2.5rem',
   },
   value: {
     type: [String, Number, Boolean],
@@ -90,7 +89,7 @@ const { openTab } = useLinksStore();
       <span class="prefix">{{ label }}</span>
     </slot>
     <slot>
-      <NFlex v-if="array" class="value" wrap>
+      <NFlex v-if="array" wrap align="center">
         <template v-if="values !== undefined">
           <TagLinkComponent
             v-for="(tag, i) of values"
@@ -117,7 +116,7 @@ const { openTab } = useLinksStore();
 .prefix {
   flex: 0 0 auto;
   align-self: center;
-  min-width: var(--prefix-min-width);
+  min-width: var(--prefix-min-width, 4rem);
   color: var(--white-50);
   font-weight: 600;
   transition: color 0.3s var(--n-bezier);
@@ -142,6 +141,10 @@ const { openTab } = useLinksStore();
 
   &.vertical {
     width: 100%;
+
+    .prefix {
+      min-width: var(--prefix-min-width, max-content);
+    }
   }
 
   &:hover .prefix {
@@ -155,6 +158,11 @@ const { openTab } = useLinksStore();
   &.array {
     flex: 1 1 auto;
     width: 100%;
+    min-width: fit-content;
+
+    .prefix {
+      align-self: baseline;
+    }
   }
 
   .pre {

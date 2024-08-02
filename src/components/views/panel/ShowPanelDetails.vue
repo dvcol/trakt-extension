@@ -190,7 +190,6 @@ const title = computed(() =>
         :values="genres"
         :skeleton="{ width: '3rem' }"
         array
-        wrap
       />
 
       <!--  links  -->
@@ -224,18 +223,19 @@ const title = computed(() =>
     </NFlex>
 
     <NFlex class="row" size="large">
-      <!--  Air date  -->
-      <TextField
-        :label="i18n('aired')"
-        :value="airedDate"
-        :skeleton="{ width: '5.125rem' }"
-      />
-
       <!--  Runtime  -->
       <TextField
         :label="i18n('runtime')"
         :value="runtime"
         :skeleton="{ width: '3.75rem' }"
+      />
+
+      <!--  Season aired episodes  -->
+      <TextField
+        v-if="mode !== 'show'"
+        :label="i18n('aired_episodes')"
+        :value="airedEpisodes"
+        :skeleton="{ width: '3rem' }"
       />
 
       <!--  Show Status  -->
@@ -248,19 +248,18 @@ const title = computed(() =>
     </NFlex>
 
     <NFlex class="row" size="large">
+      <!--  Air date  -->
+      <TextField
+        :label="i18n('aired')"
+        :value="airedDate"
+        :skeleton="{ width: '5.125rem' }"
+      />
+
       <!--  Air Time  -->
       <TextField
         :label="i18n('aired_time')"
         :value="airedTime"
         :skeleton="{ width: '5.125rem' }"
-      />
-
-      <!--  Season aired episodes  -->
-      <TextField
-        v-if="mode !== 'show'"
-        :label="i18n('aired_episodes')"
-        :value="airedEpisodes"
-        :skeleton="{ width: '3rem' }"
       />
 
       <!--  Episode Type  -->

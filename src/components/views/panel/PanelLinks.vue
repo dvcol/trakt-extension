@@ -146,11 +146,5 @@ const links = computed(() => {
 </script>
 
 <template>
-  <TextField
-    :label="i18n('links')"
-    :values="links"
-    :skeleton="{ width: '3rem' }"
-    array
-    wrap
-  />
+  <TextField :label="i18n('links')" :values="links" :skeleton="{ width: '3rem' }" array />
 </template>

@@ -56,7 +56,7 @@
     "description": "Runtime label in the panel detail"
   },
   "panel__detail__aired_episodes": {
-    "message": "Aired Episodes",
+    "message": "Episodes",
     "description": "Season Aired Episodes label in the panel detail"
   },
   "panel__detail__type": {
