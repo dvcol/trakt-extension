@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.2](https://github.com/dvcol/trakt-extension/compare/v1.18.1...v1.18.2) (2024-08-02)
+
+
+### Bug Fixes
+
+* **panel:** fix links overflow issues on small screen ([b4cfb8e](https://github.com/dvcol/trakt-extension/commit/b4cfb8ed1b51c6825d89bb9966c19d2c7e61cac9))
+* **panel:** rework wording and fix overflow issues ([cd8b54c](https://github.com/dvcol/trakt-extension/commit/cd8b54cdc9c1b6439925d60a10d6cd3779ff8c51))
+* **rating:** adds support for touch targets ([43fd32c](https://github.com/dvcol/trakt-extension/commit/43fd32c81e962e6755c338a6da67184ea1a0b219))
+
 ### [1.18.1](https://github.com/dvcol/trakt-extension/compare/v1.18.0...v1.18.1) (2024-08-01)
 
 
