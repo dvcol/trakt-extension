@@ -32,7 +32,7 @@
     "clear": "rimraf dist",
     "dist": "pnpm run clear && esno scripts/prepare.ts",
     "type:check": "vue-tsc --build",
-    "vite:serve": "vite",
+    "vite:serve": "vite --host",
     "vite:build": "vite build",
     "vite:preview": "vite preview",
     "dev": "cross-env NODE_ENV=development run-p dist vite:serve",
