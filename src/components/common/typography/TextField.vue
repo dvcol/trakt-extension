@@ -90,7 +90,7 @@ const { openTab } = useLinksStore();
       <span class="prefix">{{ label }}</span>
     </slot>
     <slot>
-      <NFlex v-if="array" class="value">
+      <NFlex v-if="array" class="value" wrap>
         <template v-if="values !== undefined">
           <TagLinkComponent
             v-for="(tag, i) of values"

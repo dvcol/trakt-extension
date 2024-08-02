@@ -182,14 +182,15 @@ const title = computed(() =>
 </script>
 
 <template>
-  <NFlex size="large" class="container" vertical>
-    <NFlex vertical size="large">
+  <NFlex size="large" class="container" vertical wrap>
+    <NFlex class="link-row" vertical size="large" wrap>
       <!--  Genres  -->
       <TextField
         :label="i18n('genres')"
         :values="genres"
         :skeleton="{ width: '3rem' }"
         array
+        wrap
       />
 
       <!--  links  -->
@@ -313,6 +314,11 @@ const title = computed(() =>
 .row {
   flex: 1 1 auto;
   width: 100%;
+}
+
+.link-row {
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 @media (width < 700px) {

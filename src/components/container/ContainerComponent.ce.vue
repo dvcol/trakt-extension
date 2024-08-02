@@ -113,6 +113,7 @@ const root = ref<HTMLElement>();
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-width: thin;
 }
 
 #trakt-extension-root {
