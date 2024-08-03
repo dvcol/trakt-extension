@@ -110,7 +110,7 @@ onMounted(() => {
           :class="{ progress, interval }"
           prefix="bar"
           :style="{
-            minWidth: minWidth ?? `${ _message?.length }ch`,
+            minWidth,
             '--progress': `${ _progress }%`,
             '--interval': `${interval}ms`,
           }"

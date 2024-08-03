@@ -78,7 +78,7 @@ const onBack = () => {
         </RouterView>
       </header>
       <RouterView v-slot="{ Component }">
-        <main ref="mainRef">
+        <main ref="mainRef" :class="{ 'full-height': !isAuthenticated }">
           <GridBackground v-if="!Component" :size="20" />
           <Transition name="scale" mode="out-in">
             <KeepAlive>
@@ -102,7 +102,7 @@ const onBack = () => {
               :on-after-leave="onAfterLeave"
               :on-after-enter="onAfterEnter"
             >
-              <NDrawerContent :native-scrollbar="false">
+              <NDrawerContent v-if="isAuthenticated" :native-scrollbar="false">
                 <!--  Header  -->
                 <NFlex justify="space-between" class="panel-header">
                   <NButton circle quaternary @click="onBack">
@@ -134,7 +134,7 @@ const onBack = () => {
           @mouseenter="footerOpen = true"
           @mouseleave="footerOpen = false"
         >
-          <CheckinComponent :parent-element="footerRef" />
+          <CheckinComponent v-if="isAuthenticated" :parent-element="footerRef" />
         </footer>
         <DebugProvider />
       </RouterView>
@@ -179,6 +179,11 @@ main {
   justify-content: center;
   min-height: calc(var(--full-height) - #{layout.$header-navbar-height});
   margin-top: layout.$header-navbar-height;
+
+  &.full-height {
+    min-height: var(--full-height);
+    margin-top: 0;
+  }
 }
 
 footer {

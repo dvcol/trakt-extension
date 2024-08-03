@@ -154,7 +154,7 @@ onDeactivated(() => onCancel());
 </script>
 
 <template>
-  <NFlex vertical justify="space-around" align="center">
+  <NFlex class="login-container" vertical justify="space-around" align="center">
     <GridBackground :size="20" />
 
     <Transition name="scale" mode="in-out">
@@ -222,8 +222,13 @@ onDeactivated(() => onCancel());
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/layout' as layout;
 @use '~/styles/transition' as transition;
 @include transition.scale(0.9);
+
+.login-container {
+  margin-top: layout.$header-navbar-height;
+}
 
 .checkboxes {
   align-self: center;
