@@ -93,7 +93,15 @@ const getCodes = async () => {
 const poll = ref<CancellablePolling>();
 const progressInterval = ref<ReturnType<typeof setInterval>>();
 const progress = ref(0);
-const progressRounded = computed(() => Math.round(progress.value * 10) / 20 || 0.1);
+const progressRounded = computed(() => {
+  if (!auth.value?.expires_in) return 0;
+  return Math.round((progress.value / auth.value.expires_in) * 100) || 1;
+});
+
+const interval = computed(() => {
+  if (!useCode.value) return 0;
+  return (auth.value?.interval ?? 0) * 1000;
+});
 
 const onCancel = () => {
   if (poll.value) poll.value.cancel();
@@ -106,12 +114,9 @@ const polling = async () => {
   if (poll.value) onCancel();
   try {
     poll.value = TraktService.device.poll(auth.value);
-    progressInterval.value = setInterval(
-      () => {
-        progress.value += 0.1;
-      },
-      (auth.value.expires_in / 100) * 100,
-    );
+    progressInterval.value = setInterval(() => {
+      progress.value += 1;
+    }, 1000);
     const traktAuth = await poll.value;
     await TraktService.device.login(traktAuth);
   } catch (error) {
@@ -154,7 +159,12 @@ onDeactivated(() => onCancel());
 
     <Transition name="scale" mode="in-out">
       <div v-if="show">
-        <LoginCard @on-sign-in="onClick">
+        <LoginCard
+          :message="useCode ? i18n('polling_title') : undefined"
+          :interval="interval"
+          min-width="16.25rem"
+          @on-sign-in="onClick"
+        >
           <NFlex class="checkboxes" vertical>
             <NCheckbox v-model:checked="signUp" :disabled="useCode">
               {{ i18n('checkbox__sign_up_for') }}

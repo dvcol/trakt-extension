@@ -3,6 +3,10 @@
     "message": "Trakt",
     "description": "Login title"
   },
+  "login__polling_title": {
+    "message": "Polling for user activation code ...",
+    "description": "Login polling title"
+  },
   "login__sub_title": {
     "message": "Please sign in to access your data.",
     "description": "Login sub title"

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { NButton, NCard, NFlex, NH4 } from 'naive-ui';
 
-import type { ButtonProps } from 'naive-ui';
+import { computed, onMounted, type PropType, ref, toRefs, watch } from 'vue';
 
-import type { PropType } from 'vue';
+import type { ButtonProps } from 'naive-ui';
 
 import Logo from '~/assets/logo.svg';
 
@@ -11,7 +11,7 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('login');
 
-defineProps({
+const props = defineProps({
   logo: {
     type: String,
     required: false,
@@ -27,6 +27,7 @@ defineProps({
   message: {
     type: String,
     required: false,
+    default: '',
   },
   buttonDisabled: {
     type: Boolean,
@@ -40,11 +41,59 @@ defineProps({
     type: Object as PropType<ButtonProps & Pick<HTMLAnchorElement, 'href'>>,
     required: false,
   },
+  minWidth: {
+    type: String,
+    required: false,
+  },
+  progress: {
+    type: Number,
+    required: false,
+  },
+  interval: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 });
 
 const emits = defineEmits<{
   (name: 'onSignIn', e: MouseEvent): void;
 }>();
+
+const { message, interval, progress } = toRefs(props);
+
+const debounceMessage = ref<string>(message.value);
+const _message = computed(() => debounceMessage.value || i18n('sub_title'));
+
+const changed = ref(false);
+const timeout = ref<ReturnType<typeof setTimeout>>();
+
+const reverse = ref(false);
+const _interval = ref<ReturnType<typeof setInterval>>();
+
+const _progress = computed(() => {
+  if (interval.value) return reverse.value ? 0 : 100;
+  return progress?.value;
+});
+
+onMounted(() => {
+  watch(message, (_new, _old) => {
+    changed.value = _old !== _new;
+    if (!changed.value) return;
+    if (timeout.value) clearTimeout(timeout.value);
+    timeout.value = setTimeout(() => {
+      changed.value = false;
+      debounceMessage.value = _new;
+    }, 250);
+  });
+  watch(interval, _new => {
+    if (_interval.value) clearInterval(_interval.value);
+    if (!_new) return;
+    _interval.value = setInterval(() => {
+      reverse.value = !reverse.value;
+    }, _new);
+  });
+});
 </script>
 
 <template>
@@ -56,7 +105,20 @@ const emits = defineEmits<{
 
     <NFlex class="content" vertical justify="space-evenly">
       <slot name="message">
-        <NH4 class="title" prefix="bar">{{ message ?? i18n('sub_title') }}</NH4>
+        <NH4
+          class="title"
+          :class="{ progress, interval }"
+          prefix="bar"
+          :style="{
+            minWidth: minWidth ?? `${ _message?.length }ch`,
+            '--progress': `${ _progress }%`,
+            '--interval': `${interval}ms`,
+          }"
+        >
+          <span class="title-content" :class="{ changed }">
+            {{ _message }}
+          </span>
+        </NH4>
       </slot>
 
       <slot name="main" />
@@ -108,12 +170,44 @@ const emits = defineEmits<{
     height: 100%;
 
     .title {
+      --progress-color: rgb(99 226 184 / 10%);
+      --color: rgb(99 226 184 / 5%);
+
+      min-width: 0;
       margin: 0;
       padding: 1rem;
       white-space: pre-line;
-      background: rgb(99 226 184 / 5%);
-      transition: background 0.5s;
-      will-change: background;
+      background: var(--color);
+      transition:
+        min-width 0.5s var(--n-bezier),
+        background 0.5s var(--n-bezier),
+        --progress 0.5s var(--n-bezier);
+
+      &.progress {
+        @include mixin.progress-background($rail: var(--color));
+      }
+
+      &.interval {
+        @include mixin.progress-background(
+          $rail: var(--color),
+          $color: var(--progress-color)
+        );
+
+        transition:
+          min-width 0.5s var(--n-bezier),
+          background var(--interval) linear,
+          --progress var(--interval) linear;
+      }
+
+      &-content {
+        display: flex;
+        opacity: 1;
+        transition: opacity 0.25s var(--n-bezier);
+
+        &.changed {
+          opacity: 0.25;
+        }
+      }
     }
 
     .button {
@@ -125,8 +219,9 @@ const emits = defineEmits<{
   }
 
   &:hover {
-    .title {
-      background: rgb(99 226 184 / 9%);
+    .title:not(&.progress) {
+      --color: rgb(99 226 184 / 9%);
+      --progress-color: rgb(99 226 184 / 14%);
     }
   }
 }
