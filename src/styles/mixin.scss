@@ -33,3 +33,17 @@
     background: $to;
   }
 }
+
+@mixin progress-background(
+  $color: var(--progress-color, var(--color-primary)),
+  $rail: var(--rail-color, var(--color-primary-focus)),
+  $progress: var(--progress, 0%),
+) {
+  background: linear-gradient(
+                  to right,
+                  $color 0%,
+                  $color var(--progress, 0%),
+                  $rail $progress,
+                  $rail 100%
+  );
+}

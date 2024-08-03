@@ -9,13 +9,14 @@ import {
   NNotificationProvider,
 } from 'naive-ui';
 
-import { computed, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 
 import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
 import { NavbarService } from '~/services/navbar.service';
 import { lazyComponent } from '~/utils/lazy.utils';
+import { addCustomProgressProperty } from '~/utils/style.utils';
 
 const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
 
@@ -30,6 +31,8 @@ const { drawer } = NavbarService;
 const drawerOpen = NavbarService.open;
 
 const root = ref<HTMLElement>();
+
+onBeforeMount(() => addCustomProgressProperty());
 </script>
 
 <template>

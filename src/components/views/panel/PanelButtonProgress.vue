@@ -17,6 +17,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+  },
   percentage: {
     type: Number,
     required: false,
@@ -43,7 +47,6 @@ const percentageLabel = computed(() => {
 
 <template>
   <div
-    ref="root"
     class="container"
     :data-progress="percentage"
     :style="{
@@ -66,7 +69,7 @@ const percentageLabel = computed(() => {
           :class="{ filled, progress }"
           round
           :secondary="!filled"
-          :disabled="loading"
+          :disabled="disabled"
           :loading="loading"
           :type="type"
         >
@@ -81,6 +84,8 @@ const percentageLabel = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/mixin' as mixin;
+
 .container {
   i {
     margin-left: calc(0% - var(--n-icon-margin));
@@ -88,30 +93,26 @@ const percentageLabel = computed(() => {
 }
 
 .button {
-  background: linear-gradient(to right, var(--n-color) 0%, var(--n-color) 100%);
   transition:
     color 0.3s var(--n-bezier),
     background 0.3s var(--n-bezier),
     background-color 0.3s var(--n-bezier),
     opacity 0.3s var(--n-bezier),
     border-color 0.3s var(--n-bezier),
-    filter 0.3s var(--n-bezier);
-  will-change: color, background, background-color, opacity, border-color, filter;
+    filter 0.3s var(--n-bezier),
+    --progress 0.3s var(--n-bezier);
 
   &:hover {
-    background-color: unset;
     filter: brightness(1.2);
   }
 }
 
+.filled:not(.progress) {
+  background: linear-gradient(to right, var(--n-color) 0%, var(--n-color) 100%);
+}
+
 .progress:not(.filled) {
-  background: linear-gradient(
-    to right,
-    var(--progress-color) 0%,
-    var(--progress-color) var(--progress, 0%),
-    var(--n-color) var(--progress, 0%),
-    var(--n-color) 100%
-  );
+  @include mixin.progress-background($rail: var(--n-color));
 }
 
 .metric {
