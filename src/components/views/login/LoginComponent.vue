@@ -91,8 +91,9 @@ const getCodes = async () => {
 };
 
 const poll = ref<CancellablePolling>();
-const progress = ref(0);
 const progressInterval = ref<ReturnType<typeof setInterval>>();
+const progress = ref(0);
+const progressRounded = computed(() => Math.round(progress.value * 10) / 20 || 0.1);
 
 const onCancel = () => {
   if (poll.value) poll.value.cancel();
@@ -174,6 +175,7 @@ onDeactivated(() => onCancel());
             <div class="code-input" :class="{ show: useCode }">
               <NInputGroup class="input-group">
                 <NInput
+                  :style="{ '--n-border-radius': '3px 0 0 0' }"
                   :value="code"
                   placeholder="Code"
                   :disabled="!code?.length"
@@ -194,7 +196,7 @@ onDeactivated(() => onCancel());
                   class="timeout-code"
                   type="line"
                   status="success"
-                  :percentage="progress"
+                  :percentage="progressRounded"
                   :show-indicator="false"
                   :theme-overrides="{
                     railHeight: 'var(--rail-height)',
@@ -243,6 +245,7 @@ onDeactivated(() => onCancel());
 
   .input-group {
     position: relative;
+    justify-content: center;
   }
 
   .timeout-code {
@@ -250,7 +253,13 @@ onDeactivated(() => onCancel());
 
     position: absolute;
     bottom: calc(var(--rail-height) * -1);
+    left: 1px; // border width
     border-radius: 0;
+
+    :deep(.n-progress-graph-line-rail),
+    :deep(.n-progress-graph-line-rail .n-progress-graph-line-fill) {
+      border-radius: 0;
+    }
   }
 }
 </style>
