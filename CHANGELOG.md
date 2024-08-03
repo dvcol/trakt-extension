@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.3](https://github.com/dvcol/trakt-extension/compare/v1.18.2...v1.18.3) (2024-08-03)
+
+
+### Bug Fixes
+
+* **login:** fix blank header in login page ([7129f7a](https://github.com/dvcol/trakt-extension/commit/7129f7a02b89d328f9ed75e72b2180e13d2a4d0a))
+* **login:** fix progress indicator and add polling indicator ([0f20096](https://github.com/dvcol/trakt-extension/commit/0f20096600ace60556b4e7a255b71c46356735a3))
+* **login:** improve border css on code login ([1ea6dfc](https://github.com/dvcol/trakt-extension/commit/1ea6dfcb583de354c1704fd44f6272e88f561de8))
+* **panel:** refactor and fix background progress transition ([e2f6e3f](https://github.com/dvcol/trakt-extension/commit/e2f6e3ff5d5b67e2080984412fca80bd8082b5dd))
+
 ### [1.18.2](https://github.com/dvcol/trakt-extension/compare/v1.18.1...v1.18.2) (2024-08-02)
 
 
