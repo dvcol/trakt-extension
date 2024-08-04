@@ -4,9 +4,9 @@ import { computed, reactive, ref, toRaw } from 'vue';
 
 import { ProgressType, type ProgressTypes } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { type ListEntity } from '~/stores/data/list.store';
-import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 
@@ -90,7 +90,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (retention.tmdb !== undefined) cacheRetention.tmdb = retention.tmdb;
     if (retention.tvdb !== undefined) cacheRetention.tvdb = retention.tvdb;
     TraktService.changeRetention(cacheRetention);
-    if (persist) saveState().catch(err => logger.error('Failed to save extension settings', { retention, err }));
+    if (persist) saveState().catch(err => Logger.error('Failed to save extension settings', { retention, err }));
   };
 
   const restoreState = async () => {
@@ -121,7 +121,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const setDefaultTab = (value?: Route) => {
     if (!value) return;
     defaultTab.value = value;
-    saveDefaultTab().catch(err => logger.error('Failed to save default tab in extension settings', { value, err }));
+    saveDefaultTab().catch(err => Logger.error('Failed to save default tab in extension settings', { value, err }));
   };
 
   const toggleTab = (tab: Route) => {
@@ -129,7 +129,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (defaultTab.value === tab && !routeDictionary[tab]) {
       setDefaultTab((Object.keys(routeDictionary) as Route[]).find(key => routeDictionary[key]));
     }
-    saveState().catch(err => logger.error('Failed to save enabled tab extension settings', { tab, err }));
+    saveState().catch(err => Logger.error('Failed to save enabled tab extension settings', { tab, err }));
   };
 
   return {
@@ -141,21 +141,21 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       get: () => restoreRoute.value,
       set: (value: boolean) => {
         restoreRoute.value = value;
-        saveState().catch(err => logger.error('Failed to save restore route extension settings', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save restore route extension settings', { value, err }));
       },
     }),
     restorePanel: computed({
       get: () => restorePanel.value,
       set: (value: boolean) => {
         restorePanel.value = value;
-        saveState().catch(err => logger.error('Failed to save restore panel extension settings', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save restore panel extension settings', { value, err }));
       },
     }),
     loadLists: computed({
       get: () => loadLists.value,
       set: (value: ListEntity[]) => {
         loadLists.value = value;
-        saveState().catch(err => logger.error('Failed to save load lists extension settings', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save load lists extension settings', { value, err }));
       },
     }),
     loadListsPageSize,
@@ -183,14 +183,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       get: () => progressType.value,
       set: (value: ExtensionSettings['progressType']) => {
         progressType.value = value;
-        saveState().catch(err => logger.error('Failed to save progress type extension settings', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save progress type extension settings', { value, err }));
       },
     }),
     enableRatings: computed({
       get: () => enableRatings.value,
       set: (value: boolean) => {
         enableRatings.value = value;
-        saveState().catch(err => logger.error('Failed to save enable ratings extension settings', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save enable ratings extension settings', { value, err }));
       },
     }),
   };

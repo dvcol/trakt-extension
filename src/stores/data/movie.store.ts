@@ -1,3 +1,4 @@
+import { wait } from '@dvcol/common-utils/common/promise';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, watch } from 'vue';
@@ -5,11 +6,10 @@ import { computed, reactive, ref, watch } from 'vue';
 import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
-import { wait } from '~/utils/promise.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -56,11 +56,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovie = async (id: string | number) => {
     if (loading[id]) {
-      logger.warn('Already fetching movie', id);
+      Logger.warn('Already fetching movie', id);
       return;
     }
 
-    logger.debug('Fetching movie', id);
+    Logger.debug('Fetching movie', id);
 
     loading[id] = true;
 
@@ -68,7 +68,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       movies[id] = await TraktService.movie(id);
       delete movieErrors[id.toString()];
     } catch (error) {
-      logger.error('Failed to fetch movie', id);
+      Logger.error('Failed to fetch movie', id);
       NotificationService.error(`Failed to fetch movie '${id}'.`, error);
       movieErrors[id.toString()] = ErrorCount.fromDictionary(movieErrors, id.toString(), error);
       throw error;
@@ -82,11 +82,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovieWatched = async (force?: boolean) => {
     if (loadingWatched.value) {
-      logger.warn('Already fetching watched movies');
+      Logger.warn('Already fetching watched movies');
       return;
     }
 
-    logger.debug('Fetching watched movies');
+    Logger.debug('Fetching watched movies');
 
     if (force) clearMovieWatchedProgress();
 
@@ -103,7 +103,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       }, {} as MovieWatchedDictionary);
       Object.assign(moviesWatched, dictionary);
     } catch (error) {
-      logger.error('Failed to fetch watched movies');
+      Logger.error('Failed to fetch watched movies');
       NotificationService.error('Failed to fetch watched movies', error);
       movieErrors.watched = ErrorCount.fromDictionary(movieErrors, 'watched', error);
       throw error;
@@ -122,11 +122,11 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const fetchMovieCollected = async () => {
     if (loadingCollected.value) {
-      logger.warn('Already fetching collected movies');
+      Logger.warn('Already fetching collected movies');
       return;
     }
 
-    logger.debug('Fetching collected movies');
+    Logger.debug('Fetching collected movies');
 
     loadingCollected.value = true;
     try {
@@ -141,7 +141,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       }, {} as MovieCollectedDictionary);
       Object.assign(moviesCollected, dictionary);
     } catch (error) {
-      logger.error('Failed to fetch collected movies');
+      Logger.error('Failed to fetch collected movies');
       NotificationService.error('Failed to fetch collected movies', error);
       movieErrors.collected = ErrorCount.fromDictionary(movieErrors, 'collected', error);
       throw error;

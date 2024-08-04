@@ -66,15 +66,14 @@ import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 
 import { ErrorService } from '~/services/error.service';
 import { LoadingBarService } from '~/services/loading-bar.service';
+import { Logger } from '~/services/logger.service';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
 import { traktUsedApi } from '~/services/trakt-used.api';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
 import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
-
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
 import { cancellablePaginatedWriteJson } from '~/utils/trakt-service.utils';
 
@@ -233,20 +232,20 @@ export class TraktService {
 
   static listen() {
     this.traktClient.onAuthChange(async _auth => {
-      logger.debug('TraktClient.onAuthChange', { ..._auth });
+      Logger.debug('TraktClient.onAuthChange', { ..._auth });
     });
 
     this.traktClient.onCall(async call => {
-      logger.debug('TraktClient.onCall', call);
+      Logger.debug('TraktClient.onCall', call);
       await this.loadingBar(call.query);
     });
 
     this.tvdbClient.onAuthChange(async _auth => {
-      logger.debug('TvdbClient.onAuthChange', { ..._auth });
+      Logger.debug('TvdbClient.onAuthChange', { ..._auth });
     });
 
     this.tvdbClient.onCall(async call => {
-      logger.debug('TvdbClient.onCall', call);
+      Logger.debug('TvdbClient.onCall', call);
       try {
         await call.query;
       } catch (error) {
@@ -255,11 +254,11 @@ export class TraktService {
     });
 
     this.tmdbClient.onAuthChange(async _auth => {
-      logger.debug('TmdbClient.onAuthChange', { ..._auth });
+      Logger.debug('TmdbClient.onAuthChange', { ..._auth });
     });
 
     this.tmdbClient.onCall(async call => {
-      logger.debug('TmdbClient.onCall', call);
+      Logger.debug('TmdbClient.onCall', call);
       try {
         await call.query;
       } catch (error) {
@@ -508,34 +507,34 @@ export class TraktService {
   static add = {
     async watchlist(payload: TraktSyncRequest) {
       const response = await TraktService.traktClient.sync.watchlist.add(payload);
-      TraktService.evict.watchlist().catch(err => logger.error('Failed to evict watchlist cache', { payload, err }));
+      TraktService.evict.watchlist().catch(err => Logger.error('Failed to evict watchlist cache', { payload, err }));
       return response.json();
     },
 
     async list(payload: TraktUserListItemAddedRequest) {
       const response = await TraktService.traktClient.users.list.items.add(payload);
-      TraktService.evict.list().catch(err => logger.error('Failed to evict list cache', { payload, err }));
+      TraktService.evict.list().catch(err => Logger.error('Failed to evict list cache', { payload, err }));
       return response.json();
     },
 
     async history(payload: TraktHistoryRequest) {
       const response = await TraktService.traktClient.sync.history.add(payload);
-      TraktService.evict.history().catch(err => logger.error('Failed to evict history cache', { payload, err }));
-      if ('movies' in payload) TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { payload, err }));
-      else TraktService.evict.progress.show().catch(err => logger.error('Failed to evict progress cache', { payload, err }));
+      TraktService.evict.history().catch(err => Logger.error('Failed to evict history cache', { payload, err }));
+      if ('movies' in payload) TraktService.evict.progress.movie().catch(err => Logger.error('Failed to evict movie cache', { payload, err }));
+      else TraktService.evict.progress.show().catch(err => Logger.error('Failed to evict progress cache', { payload, err }));
       return response.json();
     },
 
     async collection(payload: TraktCollectionRequest) {
       const response = await TraktService.traktClient.sync.collection.add(payload);
-      if ('movies' in payload) TraktService.evict.collection.movie().catch(err => logger.error('Failed to evict movie cache', { payload, err }));
-      else TraktService.evict.collection.show().catch(err => logger.error('Failed to evict show cache', { payload, err }));
+      if ('movies' in payload) TraktService.evict.collection.movie().catch(err => Logger.error('Failed to evict movie cache', { payload, err }));
+      else TraktService.evict.collection.show().catch(err => Logger.error('Failed to evict show cache', { payload, err }));
       return response.json();
     },
 
     async favorites(payload: TraktFavoriteRequest) {
       const response = await TraktService.traktClient.sync.favorites.add(payload);
-      TraktService.evict.favorites().catch(err => logger.error('Failed to evict favorites cache', { payload, err }));
+      TraktService.evict.favorites().catch(err => Logger.error('Failed to evict favorites cache', { payload, err }));
       return response.json();
     },
   };
@@ -543,34 +542,34 @@ export class TraktService {
   static remove = {
     async watchlist(payload: TraktSyncRequest) {
       const response = await TraktService.traktClient.sync.watchlist.remove(payload);
-      TraktService.evict.watchlist().catch(err => logger.error('Failed to evict watchlist cache', { payload, err }));
+      TraktService.evict.watchlist().catch(err => Logger.error('Failed to evict watchlist cache', { payload, err }));
       return response.json();
     },
 
     async list(payload: TraktUserListItemRemoveRequest) {
       const response = await TraktService.traktClient.users.list.items.remove(payload);
-      TraktService.evict.list().catch(err => logger.error('Failed to evict list cache', { payload, err }));
+      TraktService.evict.list().catch(err => Logger.error('Failed to evict list cache', { payload, err }));
       return response.json();
     },
 
     async history(payload: TraktHistoryRemovedRequest) {
       const response = await TraktService.traktClient.sync.history.remove(payload);
-      TraktService.evict.history().catch(err => logger.error('Failed to evict history cache', { payload, err }));
-      if ('movies' in payload) TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { payload, err }));
-      else TraktService.evict.progress.show().catch(err => logger.error('Failed to evict show cache', { payload, err }));
+      TraktService.evict.history().catch(err => Logger.error('Failed to evict history cache', { payload, err }));
+      if ('movies' in payload) TraktService.evict.progress.movie().catch(err => Logger.error('Failed to evict movie cache', { payload, err }));
+      else TraktService.evict.progress.show().catch(err => Logger.error('Failed to evict show cache', { payload, err }));
       return response.json();
     },
 
     async collection(payload: TraktSyncRequest) {
       const response = await TraktService.traktClient.sync.collection.remove(payload);
-      if ('movies' in payload) TraktService.evict.collection.movie().catch(err => logger.error('Failed to evict movie cache', { payload, err }));
-      else TraktService.evict.collection.show().catch(err => logger.error('Failed to evict show cache', { payload, err }));
+      if ('movies' in payload) TraktService.evict.collection.movie().catch(err => Logger.error('Failed to evict movie cache', { payload, err }));
+      else TraktService.evict.collection.show().catch(err => Logger.error('Failed to evict show cache', { payload, err }));
       return response.json();
     },
 
     async favorites(payload: TraktFavoriteRequest) {
       const response = await TraktService.traktClient.sync.favorites.remove(payload);
-      TraktService.evict.favorites().catch(err => logger.error('Failed to evict favorites cache', { payload, err }));
+      TraktService.evict.favorites().catch(err => Logger.error('Failed to evict favorites cache', { payload, err }));
       return response.json();
     },
   };
@@ -614,14 +613,14 @@ export class TraktService {
     },
     checkin: async (query: TraktCheckinRequest) => {
       const response = await TraktService.traktClient.checkin.add(query);
-      TraktService.evict.progress.show().catch(err => logger.error('Failed to evict show cache', { query, err }));
-      TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { query, err }));
+      TraktService.evict.progress.show().catch(err => Logger.error('Failed to evict show cache', { query, err }));
+      TraktService.evict.progress.movie().catch(err => Logger.error('Failed to evict movie cache', { query, err }));
       return response.json();
     },
     cancel: async () => {
       const response = await TraktService.traktClient.checkin.delete();
-      TraktService.evict.progress.show().catch(err => logger.error('Failed to evict show cache', { err }));
-      TraktService.evict.progress.movie().catch(err => logger.error('Failed to evict movie cache', { err }));
+      TraktService.evict.progress.show().catch(err => Logger.error('Failed to evict show cache', { err }));
+      TraktService.evict.progress.movie().catch(err => Logger.error('Failed to evict movie cache', { err }));
       return response;
     },
   };
@@ -633,14 +632,14 @@ export class TraktService {
     },
     add: async (query: TraktRatingRequest) => {
       const response = await TraktService.traktClient.sync.ratings.add(query);
-      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => logger.error('Failed to evict ratings cache', { query, err }));
+      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => Logger.error('Failed to evict ratings cache', { query, err }));
       const { added, not_found } = await response.json();
       if (Object.values(not_found).some(value => value?.length)) throw not_found;
       return added;
     },
     remove: async (query: TraktSyncRequest) => {
       const response = await TraktService.traktClient.sync.ratings.remove(query);
-      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => logger.error('Failed to evict ratings cache', { query, err }));
+      TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => Logger.error('Failed to evict ratings cache', { query, err }));
       return response.json();
     },
   };

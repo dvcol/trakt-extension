@@ -1,3 +1,6 @@
+import { LoggerColor } from '@dvcol/common-utils/common/logger';
+
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -59,4 +62,6 @@ export const initServices = async () => {
   ]);
 
   setAppReady(true);
+
+  Logger.info(...Logger.colorize(LoggerColor.Success, Logger.timestamp, 'All services initialized!'));
 };

@@ -7,10 +7,10 @@ import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { ErrorCount } from '~/utils/retry.utils';
 import { asyncRefGetter, clearProxy } from '~/utils/vue.utils';
 
@@ -32,11 +32,11 @@ export const usePersonStore = defineStore('data.person', () => {
 
   const fetchPerson = async (id: string | number) => {
     if (loading[id]) {
-      logger.warn('Already fetching person', id);
+      Logger.warn('Already fetching person', id);
       return;
     }
 
-    logger.debug('Fetching person', id);
+    Logger.debug('Fetching person', id);
 
     loading[id] = true;
 
@@ -44,7 +44,7 @@ export const usePersonStore = defineStore('data.person', () => {
       people[id] = await TraktService.person(id);
       delete peopleErrors[id.toString()];
     } catch (error) {
-      logger.error('Failed to fetch person', id);
+      Logger.error('Failed to fetch person', id);
       NotificationService.error(`Failed to fetch person '${id}'.`, error);
       peopleErrors[id.toString()] = ErrorCount.fromDictionary(peopleErrors, id, error);
       throw error;

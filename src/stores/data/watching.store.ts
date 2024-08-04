@@ -1,17 +1,17 @@
+import { wait } from '@dvcol/common-utils/common/promise';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
-import { wait } from '~/utils/promise.utils';
 
 const WatchingStoreConstants = {
   Store: 'data.watching',
@@ -69,15 +69,15 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
 
   const fetchWatching = async () => {
     if (loading.watching) {
-      logger.warn('Already fetching watching state');
+      Logger.warn('Already fetching watching state');
       return;
     }
     if (!user.value) {
-      logger.warn('User not set, skipping watch polling');
+      Logger.warn('User not set, skipping watch polling');
       return;
     }
     if (polling.value <= 0) {
-      logger.debug('Polling interval is 0, skipping watch polling');
+      Logger.debug('Polling interval is 0, skipping watch polling');
       return;
     }
 
@@ -86,7 +86,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     try {
       watching.value = await TraktService.checkin.watching(user.value);
     } catch (e) {
-      logger.error('Failed to fetch watching state');
+      Logger.error('Failed to fetch watching state');
       NotificationService.error('Failed to fetch watching state', e);
       throw e;
     } finally {
@@ -96,18 +96,18 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
 
   const cancel = async (action: TraktWatching['action'] = watching.value?.action ?? 'checkin') => {
     if (loading.cancel) {
-      logger.warn('Already cancelling');
+      Logger.warn('Already cancelling');
     }
 
     loading.cancel = true;
 
-    logger.debug('Cancelling');
+    Logger.debug('Cancelling');
 
     try {
       await TraktService.checkin.cancel();
       NotificationService.message.success(i18n(`cancel_${action}_success`));
     } catch (e) {
-      logger.error('Failed to cancel');
+      Logger.error('Failed to cancel');
       NotificationService.error(i18n(`cancel_${action}_failed`), e);
       throw e;
     } finally {
@@ -118,20 +118,20 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
 
   const checkin = async (query: TraktCheckinRequest, _override = override.value) => {
     if (loading.checkin) {
-      logger.warn('Already checking in');
+      Logger.warn('Already checking in');
     }
 
     loading.checkin = true;
 
-    logger.debug('Checking in', query);
+    Logger.debug('Checking in', query);
 
     try {
       await TraktService.checkin.checkin(query);
       NotificationService.message.success(i18n('checkin_success'));
     } catch (e) {
-      logger.error('Failed to check in');
+      Logger.error('Failed to check in');
       if (e instanceof Response && e?.status === 409) {
-        logger.warn('Checkin already in progress');
+        Logger.warn('Checkin already in progress');
         if (_override) {
           await wait(1000);
           await cancel();
@@ -164,7 +164,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
           if (!isAuthenticated.value) return;
           return fetchWatching();
         }, polling.value);
-        logger.debug('Polling interval set to', polling.value);
+        Logger.debug('Polling interval set to', polling.value);
       },
       {
         immediate: true,
@@ -178,14 +178,14 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
       get: () => polling.value,
       set: (value: number = defaultPolling) => {
         polling.value = value;
-        saveState().catch(e => logger.error('Failed to save watching state', e));
+        saveState().catch(e => Logger.error('Failed to save watching state', e));
       },
     }),
     override: computed({
       get: () => override.value,
       set: (value: boolean) => {
         override.value = value;
-        saveState().catch(e => logger.error('Failed to save watching state', e));
+        saveState().catch(e => Logger.error('Failed to save watching state', e));
       },
     }),
     isWatching: computed(() => !!watching.value),

@@ -1,15 +1,11 @@
+import { LogLevel } from '@dvcol/common-utils/common/logger';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
+import type { StorageChangeCallback } from '~/utils/browser/browser-storage.utils';
+
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
-
-export enum LogLevel {
-  Error,
-  Warn,
-  Info,
-  Debug,
-}
 
 type LogSettings = {
   logLevel: LogLevel;
@@ -33,8 +29,16 @@ export const useLogStore = defineStore(LogStoreConstants.Store, () => {
     if (restored?.logLevel !== undefined) logLevel.value = restored.logLevel;
   };
 
+  const getChangeCallback: (name: string) => StorageChangeCallback = (name: string) => changes => {
+    if (logLevel.value < LogLevel.Debug) return;
+    console.debug(`[${name}]: Storage changes`, changes);
+  };
+
   const initLogStore = async () => {
     await restoreState();
+    storage.sync.listen(getChangeCallback('sync'));
+    storage.local.listen(getChangeCallback('local'));
+    storage.session.listen(getChangeCallback('session'));
   };
 
   return {
@@ -52,22 +56,3 @@ export const useLogStore = defineStore(LogStoreConstants.Store, () => {
 });
 
 export const useLogStoreRefs = () => storeToRefs(useLogStore());
-
-export const logger = {
-  get debug() {
-    if (useLogStore().logLevel < LogLevel.Debug) return () => {};
-    return console.debug.bind(console);
-  },
-  get info() {
-    if (useLogStore().logLevel < LogLevel.Info) return () => {};
-    return console.info.bind(console);
-  },
-  get warn() {
-    if (useLogStore().logLevel < LogLevel.Warn) return () => {};
-    return console.warn.bind(console);
-  },
-  get error() {
-    if (useLogStore().logLevel < LogLevel.Error) return () => {};
-    return console.error.bind(console);
-  },
-};

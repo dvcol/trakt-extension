@@ -21,10 +21,10 @@ import IconHeart from '~/components/icons/IconHeart.vue';
 import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useActivityStore } from '~/stores/data/activity.store';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -128,12 +128,12 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
 
   const fetchLists = async () => {
     if (!firstLoad.value && loading.value) {
-      logger.warn('Already fetching lists');
+      Logger.warn('Already fetching lists');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    logger.debug('Fetching Lists');
+    Logger.debug('Fetching Lists');
     loading.value = true;
     try {
       const [personals, collaborations] = await Promise.all([TraktService.lists(user.value), TraktService.lists(user.value, true)]);
@@ -160,11 +160,11 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
         ),
       ];
       if (activeList.value?.id && !lists.value.some(l => activeList.value.id === l?.id)) {
-        logger.warn('Active List not found, falling back to default', activeList.value);
+        Logger.warn('Active List not found, falling back to default', activeList.value);
         activeList.value = DefaultLists.Watchlist;
       }
     } catch (e) {
-      logger.error('Failed to fetch lists');
+      Logger.error('Failed to fetch lists');
       NotificationService.error('Failed to fetch lists', e);
       listsErrors[user.value] = ErrorCount.fromDictionary(listsErrors, user.value, e);
       throw e;
@@ -326,12 +326,12 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false) => {
     if (!firstLoad.value && !parallel && loading.value) {
-      logger.warn('Already fetching list');
+      Logger.warn('Already fetching list');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    logger.debug('Fetching List', { list, page, limit });
+    Logger.debug('Fetching List', { list, page, limit });
 
     if (!parallel) loading.value = true;
     typeLoading[list.type] = true;
@@ -348,7 +348,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       pagination.value = response.pagination;
       listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
     } catch (e) {
-      logger.error('Failed to fetch list');
+      Logger.error('Failed to fetch list');
       NotificationService.error(`Failed to fetch list '${list}'`, e);
       listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.loading);
       throw e;
@@ -397,7 +397,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     }
 
     if (typeItemLoading[listType]?.[itemType]?.[itemIds.trakt.toString()]) {
-      logger.warn('Already adding item to list');
+      Logger.warn('Already adding item to list');
       return;
     }
 
@@ -430,7 +430,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
         await TraktService[remove ? 'remove' : 'add'].list({ id: userId!, list_id: listId, [`${itemType}s`]: [{ ids: itemIds }] });
         updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
       } else {
-        logger.error(`Unknown list type ${listType}.`);
+        Logger.error(`Unknown list type ${listType}.`);
       }
       NotificationService.message.success(
         [
@@ -443,7 +443,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
           .join(' '),
       );
     } catch (e) {
-      logger.error('Failed to add item to list');
+      Logger.error('Failed to add item to list');
       NotificationService.error(`Failed to add item to list '${list.name}'`, e);
       throw e;
     } finally {

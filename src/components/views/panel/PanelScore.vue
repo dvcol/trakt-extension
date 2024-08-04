@@ -8,7 +8,7 @@ import ProgressNumber from '~/components/common/numbers/ProgressNumber.vue';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import { RatingLabel } from '~/models/rating.model';
-import { logger } from '~/stores/settings/log.store';
+import { Logger } from '~/services/logger.service';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -47,7 +47,7 @@ const _scoreLabel = computed(() => {
   try {
     return RatingLabel[score.value];
   } catch (e) {
-    logger.error('RatingLabel', e);
+    Logger.error('RatingLabel', e);
     return 'not_rated';
   }
 });

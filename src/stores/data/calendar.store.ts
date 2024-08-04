@@ -6,9 +6,9 @@ import { computed, reactive, ref } from 'vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { type CalendarItem, getEmptyWeeks, getLoadingPlaceholder, spaceDate } from '~/utils/calendar.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
@@ -43,37 +43,39 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
   const calendarErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('calendar', calendarErrors);
 
-  const saveState = async (clear = false) =>
-    storage.local.set<CalendarState>(CalendarStoreConstants.Store, {
+  const saveState = async (clear = false) => {
+    return storage.local.set<CalendarState>(CalendarStoreConstants.Store, {
       center: clear ? undefined : center.value.getTime(),
       weeks: weeks.value,
       extended: extended.value,
     });
+  };
 
-  const clearState = (date?: Date) => {
+  const clearState = (date?: Date, save = true) => {
     calendar.value = [];
     center.value = date ?? new Date();
     startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
     endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(calendarErrors);
-    saveState(!date).catch(e => logger.error('Failed to save calendar state', e));
+    if (!save) return;
+    saveState(!date).catch(e => Logger.error('Failed to save calendar state', e));
   };
 
   const restoreState = async () => {
     const restored = await storage.local.get<CalendarState>(CalendarStoreConstants.Store);
 
     if (restored?.weeks) weeks.value = restored.weeks;
-    if (restored?.center) clearState(new Date(restored.center));
     if (restored?.extended) extended.value = restored.extended;
+    if (restored?.center) clearState(new Date(restored.center), false);
   };
 
   const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
     if (!firstLoad.value && loading.value) {
-      logger.warn('Already fetching calendar');
+      Logger.warn('Already fetching calendar');
       return;
     }
     if (filter.value) {
-      logger.warn('Filtering calendar, fetch is disabled');
+      Logger.warn('Filtering calendar, fetch is disabled');
       return;
     }
 
@@ -90,7 +92,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
 
     if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
 
-    logger.debug('Fetching calendar', { mode, start_date, end_date, days: days.value });
+    Logger.debug('Fetching calendar', { mode, start_date, end_date, days: days.value });
 
     const timeout = setTimeout(() => {
       if (mode === 'reload') calendar.value = getEmptyWeeks(startDate, true);
@@ -127,7 +129,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
         calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
     } catch (e) {
-      logger.error('Failed to fetch calendar');
+      Logger.error('Failed to fetch calendar');
       NotificationService.error('Failed to fetch calendar', e);
       calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
       const errorKey = JSON.stringify(query);
@@ -162,7 +164,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       get: () => extended.value,
       set: (value: boolean) => {
         extended.value = value;
-        saveState().catch(e => logger.error('Failed to save calendar extended state', e));
+        saveState().catch(e => Logger.error('Failed to save calendar extended state', e));
       },
     }),
   };

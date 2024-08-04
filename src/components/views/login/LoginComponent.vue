@@ -31,11 +31,11 @@ import { useRoute, useRouter } from 'vue-router';
 import GridBackground from '~/components/common/background/GridBackground.vue';
 import IconClipboard from '~/components/icons/IconClipboard.vue';
 import LoginCard from '~/components/views/login/LoginCard.vue';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('login');
@@ -70,7 +70,7 @@ const onSignIn = async () => {
       prompt: !useSession.value,
     });
   } catch (error) {
-    logger.error('Error:', error);
+    Logger.error('Error:', error);
   }
 };
 
@@ -85,8 +85,8 @@ const getCodes = async () => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define -- recursive call
     await polling();
   } catch (error) {
-    logger.error('Failed to login with Trakt.tv');
-    logger.error(error);
+    Logger.error('Failed to login with Trakt.tv');
+    Logger.error(error);
   }
 };
 
@@ -120,8 +120,8 @@ const polling = async () => {
     const traktAuth = await poll.value;
     await TraktService.device.login(traktAuth);
   } catch (error) {
-    logger.error('Failed to login with Trakt.tv');
-    logger.error(error);
+    Logger.error('Failed to login with Trakt.tv');
+    Logger.error(error);
     if (error instanceof TraktPollingExpiredError) await getCodes();
   }
 };

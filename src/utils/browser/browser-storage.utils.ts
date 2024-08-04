@@ -30,6 +30,16 @@ const getLocalStorageSize = (storage = window.localStorage, encoder = new TextEn
   return Object.entries(storage).reduce((acc, [key, value]) => acc + encoder.encode(key).length + encoder.encode(value).length, 0);
 };
 
+export type StorageChange<T> = {
+  /** Optional. The new value of the item, if there is a new value. */
+  newValue?: T;
+  /** Optional. The old value of the item, if there was an old value. */
+  oldValue?: T;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Callback type is unknown and can be anything
+export type StorageChangeCallback<T = any> = (changes: Record<string, StorageChange<T>>) => void;
+
 export type StorageAreaWrapper = {
   name: string;
   getBytesInUse: () => Promise<number>;
@@ -39,6 +49,7 @@ export type StorageAreaWrapper = {
   remove: (key: string) => Promise<void>;
   removeAll: (regex: string | RegExp) => Promise<void>;
   clear: () => Promise<void>;
+  listen: <T>(callback: StorageChangeCallback<T>) => void;
 };
 
 /**
@@ -49,6 +60,8 @@ export type StorageAreaWrapper = {
 export const storageWrapper = (area: chrome.storage.StorageArea, name: string): StorageAreaWrapper => {
   if (!globalThis?.chrome?.storage) {
     console.warn('Storage API is not available, using local storage instead.');
+
+    const callbacks = new Set<StorageChangeCallback>();
 
     const storage = {
       id: `trakt-${name}-storage`,
@@ -61,13 +74,20 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string): 
         window.localStorage.setItem(this.id, JSON.stringify(value));
       },
       setItem(key: string, value: unknown) {
+        const oldValue = structuredClone(this.values[key]);
         this.values = { ...this.values, [key]: value };
+        callbacks.forEach(callback => callback({ [key]: { newValue: this.values[key], oldValue } }));
       },
       removeItem(key: string) {
+        const oldValue = structuredClone(this.values[key]);
         this.values = { ...this.values, [key]: undefined };
+        callbacks.forEach(callback => callback({ [key]: { newValue: this.values[key], oldValue } }));
       },
       clear() {
+        const oldValue = structuredClone(this.values);
         this.values = {};
+        const change = Object.keys(oldValue).reduce((acc, key) => ({ ...acc, [key]: { newValue: undefined, oldValue: oldValue[key] } }), {});
+        callbacks.forEach(callback => callback(change));
       },
     };
 
@@ -83,6 +103,10 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string): 
         storage.values = reverseFilterObject(storage.values, regex);
       },
       clear: async (): Promise<void> => storage.clear(),
+      listen: <T>(callback: StorageChangeCallback<T>) => {
+        callbacks.add(callback);
+        return () => callbacks.delete(callback);
+      },
     };
   }
   return {
@@ -103,6 +127,10 @@ export const storageWrapper = (area: chrome.storage.StorageArea, name: string): 
       );
     },
     clear: (): Promise<void> => area.clear(),
+    listen: <T>(callback: StorageChangeCallback<T>) => {
+      area.onChanged.addListener(callback);
+      return () => area.onChanged.removeListener(callback);
+    },
   };
 };
 

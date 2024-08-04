@@ -1,5 +1,6 @@
 import { DateUtils } from '@dvcol/common-utils/common/date';
 
+import { getIntlRegion, getNavigatorRegion } from '@dvcol/common-utils/common/intl';
 import {
   type TmdbConfigurationCounty,
   TmdbMovieReleaseType,
@@ -13,12 +14,11 @@ import { computed, reactive, ref } from 'vue';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { type CalendarItem, getEmptyWeeks, getLoadingPlaceholder, spaceDate } from '~/utils/calendar.utils';
-import { getIntlRegion, getNavigatorRegion } from '~/utils/intl.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -97,7 +97,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
     endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(releasesErrors);
-    saveState(!date).catch(e => logger.error('Failed to save calendar state', e));
+    saveState(!date).catch(e => Logger.error('Failed to save calendar state', e));
   };
 
   const restoreState = async () => {
@@ -122,7 +122,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       regions.value = await TraktService.providers.regions();
       if (!region.value) region.value = getLocaleRegion();
     } catch (e) {
-      logger.error('Failed to fetch regions');
+      Logger.error('Failed to fetch regions');
       NotificationService.error('Failed to fetch regions', e);
     } finally {
       regionLoading.value = false;
@@ -131,12 +131,12 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
 
   const fetchReleases = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
     if (!firstLoad.value && loading.value) {
-      logger.warn('Already fetching releases');
+      Logger.warn('Already fetching releases');
       return;
     }
 
     if (!region.value) {
-      logger.warn('Region not selected');
+      Logger.warn('Region not selected');
       return;
     }
 
@@ -149,7 +149,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
 
     if (mode === 'end') endCalendar.value = DateUtils.next(days.value, endCalendar.value);
 
-    logger.debug('Fetching releases', {
+    Logger.debug('Fetching releases', {
       mode,
       startDate: startDate.toLocaleDateString(),
       endDate: endDate.toLocaleDateString(),
@@ -199,7 +199,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
         releases.value = [...releases.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
     } catch (e) {
-      logger.error('Failed to fetch releases');
+      Logger.error('Failed to fetch releases');
       NotificationService.error('Failed to fetch releases', e);
       releases.value = releases.value.filter(c => c.type !== ListScrollItemType.loading);
       const errorKey = JSON.stringify(query);
@@ -233,7 +233,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       get: () => region.value?.iso_3166_1,
       set: (value?: string) => {
         region.value = regions.value?.find(r => r.iso_3166_1 === value) ?? getLocaleRegion();
-        saveState().catch(error => logger.error('Failed to save region state', error));
+        saveState().catch(error => Logger.error('Failed to save region state', error));
         return clearState();
       },
     }),
@@ -241,7 +241,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       get: () => releaseType.value,
       set: (value: TmdbMovieReleaseTypes) => {
         releaseType.value = value;
-        saveState().catch(error => logger.error('Failed to save release type state', error));
+        saveState().catch(error => Logger.error('Failed to save release type state', error));
         return clearState();
       },
     }),

@@ -2,7 +2,7 @@ import { ref } from 'vue';
 
 import type { useLoadingBar } from 'naive-ui';
 
-import { logger } from '~/stores/settings/log.store';
+import { Logger } from '~/services/logger.service';
 
 export class LoadingBarService {
   private static instance: ReturnType<typeof useLoadingBar>;
@@ -17,21 +17,21 @@ export class LoadingBarService {
   }
 
   static start() {
-    if (!this.instance?.start) logger.warn('LoadingBarService instance is not initialized');
+    if (!this.instance?.start) Logger.warn('LoadingBarService instance is not initialized');
     this.instance.start();
     this.loading.value = true;
   }
 
   static finish() {
     if (!this.isLoading) return;
-    if (!this.instance?.finish) logger.warn('LoadingBarService instance is not initialized');
+    if (!this.instance?.finish) Logger.warn('LoadingBarService instance is not initialized');
     this.instance.finish();
     this.loading.value = false;
   }
 
   static error() {
     if (!this.isLoading) return;
-    if (!this.instance?.error) logger.warn('LoadingBarService instance is not initialized');
+    if (!this.instance?.error) Logger.warn('LoadingBarService instance is not initialized');
     this.instance.error();
     this.loading.value = false;
   }

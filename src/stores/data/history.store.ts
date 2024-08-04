@@ -5,9 +5,9 @@ import { computed, reactive, ref, watch } from 'vue';
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
@@ -78,12 +78,12 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     end = historyEnd.value,
   }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
     if (!firstLoad.value && loading.value) {
-      logger.warn('Already fetching history');
+      Logger.warn('Already fetching history');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    logger.debug('Fetching History', { page, limit, start, end });
+    Logger.debug('Fetching History', { page, limit, start, end });
     loading.value = true;
     const timeout = debounceLoading(history, loadingPlaceholder, !page);
     const query: TraktHistoryGetQuery = {
@@ -98,7 +98,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
       delete historyErrors[JSON.stringify(query)];
     } catch (e) {
-      logger.error('Failed to fetch history');
+      Logger.error('Failed to fetch history');
       NotificationService.error('Failed to fetch history', e);
       history.value = history.value.filter(h => h.id >= 0);
       throw e;
@@ -146,7 +146,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       get: () => extended.value,
       set: (value: boolean) => {
         extended.value = value;
-        saveState().catch(e => logger.error('Failed to save history extended state', e));
+        saveState().catch(e => Logger.error('Failed to save history extended state', e));
       },
     }),
   };

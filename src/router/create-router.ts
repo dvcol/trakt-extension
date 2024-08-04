@@ -4,13 +4,12 @@ import { createRouter as createVueRouter, createWebHashHistory, type LocationQue
 import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 import { Route } from '~/models/router.model';
 import { routes } from '~/router/routes';
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
-
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStore, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { logger } from '~/stores/settings/log.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
 export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
@@ -62,8 +61,8 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
       try {
         await TraktService.login(query.code);
       } catch (error) {
-        logger.error('Failed to login with Trakt.tv');
-        logger.error(error);
+        Logger.error('Failed to login with Trakt.tv');
+        Logger.error(error);
       }
     }
 

@@ -8,8 +8,8 @@ import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/model
 import type { ImagePayload } from '~/models/poster.model';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { setStorageWrapper, storage } from '~/utils/browser/browser-storage.utils';
 import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
@@ -126,7 +126,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     clearProxy(images.episode);
     clearProxy(images.person);
     clearProxy(imageErrors);
-    return saveState().catch(err => logger.error('Failed to save image store', err));
+    return saveState().catch(err => Logger.error('Failed to save image store', err));
   };
 
   const initImageStore = async (config?: TmdbConfiguration) => {
@@ -149,7 +149,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
       delete imageErrors[type]?.[key];
       return response;
     } catch (error) {
-      logger.error('Failed to queue image request', { key, type });
+      Logger.error('Failed to queue image request', { key, type });
       if (!imageErrors[type]) imageErrors[type] = {};
       imageErrors[type]![key] = ErrorCount.fromDictionary(imageErrors[type]!, key, error);
       throw error;
@@ -179,7 +179,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     } else if (type === 'show') {
       payload = await queueRequest({ key, type }, () => TraktService.posters.show(id));
     } else {
-      logger.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
+      Logger.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
       throw new Error('Unsupported type or missing parameters for fetchImageUrl');
     }
 
@@ -199,7 +199,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
       if (!image.poster && !image.backdrop) return;
       images[type][key] = image;
 
-      saveState().catch(err => logger.error('Failed to save image store', err));
+      saveState().catch(err => Logger.error('Failed to save image store', err));
       return { image, key, type };
     }
 
@@ -214,7 +214,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     const image = arrayMax(fetchedImages, 'vote_average', i => !!i.file_path)?.file_path;
     if (!image) return;
     images[type][key] = image;
-    saveState().catch(err => logger.error('Failed to save image store', err));
+    saveState().catch(err => Logger.error('Failed to save image store', err));
     return { image, key, type };
   };
 

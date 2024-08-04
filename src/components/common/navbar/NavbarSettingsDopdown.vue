@@ -2,6 +2,7 @@
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
+
 import { NAvatar, NDropdown, NEllipsis, NFlex, NIcon } from 'naive-ui';
 
 import { computed, defineProps, h, ref } from 'vue';
@@ -20,10 +21,10 @@ import IconLightBulb from '~/components/icons/IconLightBulb.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 
 import { Route } from '~/models/router.model';
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 
@@ -40,7 +41,7 @@ const username = computed(() => userSetting.value?.user?.username);
 
 const fallback = ref<boolean>(!chromeRuntimeId);
 const onAvatarError = (event: Event) => {
-  logger.error('Failed to fetch avatar', event);
+  Logger.error('Failed to fetch avatar', event);
   fallback.value = true;
 };
 
@@ -122,7 +123,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       if (typeof label === 'string' && key.startsWith('user-')) {
         return loadUser(label);
       }
-      logger.error('Unknown key:', key);
+      Logger.error('Unknown key:', key);
   }
 };
 </script>

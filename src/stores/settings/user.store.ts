@@ -4,8 +4,8 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type { UserSetting } from '~/models/trakt-service.model';
 
+import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 type UserSettings = Record<string, UserSetting>;
@@ -111,17 +111,17 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
 
   const refreshUserSettings = async () => {
     if (loading[user.value]) {
-      logger.warn('User settings are already loading', { user: user.value });
+      Logger.warn('User settings are already loading', { user: user.value });
       return;
     }
 
-    logger.debug('Refreshing user settings', { user: user.value });
+    Logger.debug('Refreshing user settings', { user: user.value });
 
     loading[user.value] = true;
     try {
       await setUserSetting(await TraktService.getUserSettings());
     } catch (err) {
-      logger.error('Failed to refresh user settings', { user: user.value, err });
+      Logger.error('Failed to refresh user settings', { user: user.value, err });
     } finally {
       loading[user.value] = false;
     }
@@ -129,7 +129,7 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
 
   // Propagate user change to http service
   watch(user, _user => {
-    logger.info('User changed', { user: _user });
+    Logger.info('User changed', { user: _user });
     TraktService.changeUser(_user);
   });
 

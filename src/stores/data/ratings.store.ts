@@ -11,9 +11,9 @@ import { defineStore, storeToRefs } from 'pinia';
 import { reactive, ref } from 'vue';
 
 import { ErrorService } from '~/services/error.service';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 
@@ -89,16 +89,16 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
 
   const fetchRatings = async (type: TraktRatingTypes) => {
     if (loading[type]) {
-      logger.warn('Already fetching ratings', type);
+      Logger.warn('Already fetching ratings', type);
       return;
     }
 
     if (pageLoaded(paginations[type])) {
-      logger.warn('Already fetched all ratings', type);
+      Logger.warn('Already fetched all ratings', type);
       return;
     }
 
-    logger.debug('Fetching ratings', type);
+    Logger.debug('Fetching ratings', type);
 
     loading[type] = true;
 
@@ -122,7 +122,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
       paginations[type] = pagination;
       delete errors[JSON.stringify(query)];
     } catch (error) {
-      logger.error('Failed to fetch ratings', type);
+      Logger.error('Failed to fetch ratings', type);
       NotificationService.error(`Failed to fetch ratings '${type}'.`, error);
       errors[JSON.stringify(query)] = ErrorCount.fromDictionary(errors, JSON.stringify(query), error);
       throw error;
@@ -166,11 +166,11 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
 
   const addRating = async (type: TraktRatingTypes, query: TraktRatingRequest, showId?: number) => {
     if (loading[type]) {
-      logger.warn('Already fetching or adding ratings', type);
+      Logger.warn('Already fetching or adding ratings', type);
       return;
     }
 
-    logger.debug('Adding ratings', query);
+    Logger.debug('Adding ratings', query);
 
     loading[type] = true;
 
@@ -179,7 +179,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
       updateDictionary(query, showId);
       NotificationService.message.success(i18n('rating_added_success', 'common', 'rating'));
     } catch (error) {
-      logger.error('Failed to add ratings');
+      Logger.error('Failed to add ratings');
       NotificationService.error(i18n('rating_added_error', 'common', 'rating'), error);
       throw error;
     } finally {
@@ -189,11 +189,11 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
 
   const removeRating = async (type: TraktRatingTypes, query: TraktRatingRequest, showId?: number) => {
     if (loading[type]) {
-      logger.warn('Already fetching or removing ratings', type);
+      Logger.warn('Already fetching or removing ratings', type);
       return;
     }
 
-    logger.debug('Removing ratings', query);
+    Logger.debug('Removing ratings', query);
 
     loading[type] = true;
 
@@ -202,7 +202,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
       updateDictionary(query, showId);
       NotificationService.message.success(i18n('rating_remove_success', 'common', 'rating'));
     } catch (error) {
-      logger.error('Failed to remove ratings');
+      Logger.error('Failed to remove ratings');
       NotificationService.error(i18n('rating_remove_error', 'common', 'rating'), error);
       throw error;
     } finally {

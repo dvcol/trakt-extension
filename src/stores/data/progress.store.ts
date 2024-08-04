@@ -7,9 +7,9 @@ import type { TraktEpisode, TraktShow } from '@dvcol/trakt-http-client/models';
 import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
 import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-scroll.model';
 import { type ProgressItem } from '~/models/progress.model';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 type ProgressListItem = Omit<ListScrollItem, 'posterRef' | 'progressRef'>;
@@ -91,12 +91,12 @@ export const useProgressStore = defineStore('data.progress', () => {
 
   const fetchProgress = async () => {
     if (!firstLoad.value && loading.value) {
-      logger.warn('Already fetching list');
+      Logger.warn('Already fetching list');
       return;
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    logger.debug('Fetching progress');
+    Logger.debug('Fetching progress');
     loading.value = true;
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
@@ -107,12 +107,12 @@ export const useProgressStore = defineStore('data.progress', () => {
       loading.value = false;
 
       if (error instanceof Response && error.status === 401) {
-        logger.warn('User is not logged in', error);
+        Logger.warn('User is not logged in', error);
         loggedOut.value = true;
         return;
       }
 
-      logger.error(error);
+      Logger.error(error);
       NotificationService.error('Failed to fetch progress', error);
       throw error;
     } finally {

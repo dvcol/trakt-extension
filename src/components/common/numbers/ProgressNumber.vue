@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { wait } from '@dvcol/common-utils/common/promise';
 import { NProgress, NSkeleton, NSpin } from 'naive-ui';
 
 import {
@@ -15,7 +16,6 @@ import AnimatedNumber from './AnimatedNumber.vue';
 
 import { Rating } from '~/models/rating.model';
 import { debounce } from '~/utils/debounce.utils';
-import { wait } from '~/utils/promise.utils';
 
 const props = defineProps({
   from: {

@@ -10,9 +10,9 @@ import TextField from '~/components/common/typography/TextField.vue';
 import IconAccount from '~/components/icons/IconAccount.vue';
 
 import IconLogOut from '~/components/icons/IconLogOut.vue';
+import { Logger } from '~/services/logger.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useLinksStore } from '~/stores/settings/links.store';
-import { logger } from '~/stores/settings/log.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 
@@ -48,7 +48,7 @@ const joinDate = computed(() => {
 });
 
 const onAvatarError = (event: Event) => {
-  logger.error('Failed to fetch avatar', event);
+  Logger.error('Failed to fetch avatar', event);
   fallback.value = true;
 };
 

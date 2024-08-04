@@ -13,6 +13,7 @@ import IconDownload from '~/components/icons/IconDownload.vue';
 import IconLoadingDots from '~/components/icons/IconLoadingDots.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import {
@@ -22,7 +23,6 @@ import {
   type ListTypes,
   useListsStoreRefs,
 } from '~/stores/data/list.store';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -63,7 +63,7 @@ const getOnClick = (scope: ExportScope, index: number) => async () => {
       }
     }
   } catch (error) {
-    logger.error(`Failed to export '${scope.name}'.`, error);
+    Logger.error(`Failed to export '${scope.name}'.`, error);
     NotificationService.error(`${scope.name} ${i18n('export_failure')}`, error);
   } finally {
     cancelled[index] = false;

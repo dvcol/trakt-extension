@@ -1,7 +1,4 @@
-import { isDarkTheme } from '@dvcol/common-utils/common/window';
 import { onUnmounted, ref } from 'vue';
-
-export { isDarkTheme };
 
 export const watchMedia = (query: string) => {
   const media = window.matchMedia(query);

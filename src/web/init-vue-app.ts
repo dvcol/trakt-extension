@@ -22,7 +22,7 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
   if (!router) router = createRouter(options);
   app.use(router);
 
-  initServices().then(() => console.info('Services initialized.'));
+  initServices().catch(error => console.error('Failed to initialized services.', error));
 
   return app;
 };

@@ -7,11 +7,11 @@ import { reactive, ref } from 'vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useImageStore } from '~/stores/data/image.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { logger } from '~/stores/settings/log.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'cache');
@@ -32,7 +32,7 @@ const onClick = async (fn: () => unknown, index: number) => {
     await fn();
     NotificationService.message.success(i18n('evict_success'));
   } catch (error) {
-    logger.error('Failed to evict cache.', error);
+    Logger.error('Failed to evict cache.', error);
     NotificationService.error(i18n('evict_failure'), error);
   } finally {
     loading[index] = false;

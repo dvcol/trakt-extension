@@ -6,9 +6,9 @@ import { ref, watch } from 'vue';
 import type { RecursiveType } from '@dvcol/common-utils/common';
 import type { TraktSyncActivities } from '@dvcol/trakt-http-client/models';
 
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { logger } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
@@ -31,14 +31,14 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
   };
 
   const fetchActivity = async () => {
-    logger.debug('Fetching activity');
+    Logger.debug('Fetching activity');
     loading.value = true;
 
     try {
       activity.value = await TraktService.activity();
       await saveState();
     } catch (error) {
-      logger.error('Failed to fetch activity', error);
+      Logger.error('Failed to fetch activity', error);
       NotificationService.error('Failed to fetch activity', error);
       throw error;
     } finally {
@@ -59,14 +59,14 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
         TraktService.evict.progress.show();
         TraktService.evict.history();
         TraktService.evict.calendar();
-        logger.info('Evicted show progress, history and calendar');
+        Logger.info('Evicted show progress, history and calendar');
       }
 
       if (changed?.movies?.watched_at || changed?.movies?.hidden_at) {
         TraktService.evict.progress.movie();
         TraktService.evict.history();
         TraktService.evict.calendar();
-        logger.info('Evicted movie progress, history and calendar');
+        Logger.info('Evicted movie progress, history and calendar');
       }
 
       if (
@@ -78,33 +78,33 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       ) {
         TraktService.evict.watchlist();
         TraktService.evict.calendar();
-        logger.info('Evicted watchlist');
+        Logger.info('Evicted watchlist');
       }
       if (changed?.collaborations?.updated_at || changed?.lists?.updated_at) {
         TraktService.evict.lists();
-        logger.info('Evicted lists');
+        Logger.info('Evicted lists');
       }
       if (changed?.episodes?.collected_at) {
         TraktService.evict.collection.show();
         TraktService.evict.calendar();
-        logger.info('Evicted show collection');
+        Logger.info('Evicted show collection');
       }
       if (changed?.movies?.collected_at) {
         TraktService.evict.collection.movie();
         TraktService.evict.calendar();
-        logger.info('Evicted movie collection');
+        Logger.info('Evicted movie collection');
       }
       if (changed?.favorites?.updated_at) {
         TraktService.evict.favorites();
-        logger.info('Evicted favorites');
+        Logger.info('Evicted favorites');
       }
       if (changed?.account?.settings_at) {
         refreshUserSettings();
-        logger.info('Evicted account');
+        Logger.info('Evicted account');
       }
       if (changed.movies.rated_at || changed.shows.rated_at || changed.seasons.rated_at || changed.episodes.rated_at) {
         TraktService.evict.ratings();
-        logger.info('Evicted ratings');
+        Logger.info('Evicted ratings');
       }
     });
 
