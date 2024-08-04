@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/dvcol/trakt-extension/compare/v1.18.3...v1.19.0) (2024-08-04)
+
+
+### Features
+
+* **logger:** rework logger service & bump common utils ([dc7dbb4](https://github.com/dvcol/trakt-extension/commit/dc7dbb4b49555ea3dca3afe0028187bafd5bca92))
+
 ### [1.18.3](https://github.com/dvcol/trakt-extension/compare/v1.18.2...v1.18.3) (2024-08-03)
 
 

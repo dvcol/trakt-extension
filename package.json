@@ -1,7 +1,7 @@
 {
   "name": "@dvcol/trakt-extension",
   "type": "module",
-  "version": "1.18.3",
+  "version": "1.19.0",
   "title": "Side Trakt (companion app for Trakt.tv)",
   "packageManager": "pnpm@9.4.0",
   "description": "Side Trakt, a chrome extension for Trakt.tv",
