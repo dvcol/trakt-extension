@@ -62,7 +62,7 @@ const onBack = () => {
 </script>
 
 <template>
-  <div ref="appRef">
+  <div ref="appRef" class="app-container">
     <NDialogProvider :to="appRef">
       <header :class="{ open: panelOpen }">
         <RouterView v-slot="{ Component }" name="navbar">
@@ -149,63 +149,67 @@ const onBack = () => {
 @use '~/styles/transition' as transition;
 @include transition.scale;
 
-header {
-  position: absolute;
-  top: 0;
-  z-index: layers.$layer-ui;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  min-height: layout.$header-navbar-height;
+.app-container {
+  overflow: hidden;
 
-  > :first-child {
-    @include mixin.hover-background;
+  header {
+    position: absolute;
+    top: 0;
+    z-index: layers.$layer-ui;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: layout.$header-navbar-height;
+
+    > :first-child {
+      @include mixin.hover-background;
+    }
+
+    &.open > :first-child {
+      background: var(--bg-gradient-60-90);
+      // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+      -webkit-backdrop-filter: blur(var(--bg-blur-20));
+      backdrop-filter: blur(var(--bg-blur-20));
+    }
   }
 
-  &.open > :first-child {
-    background: var(--bg-gradient-60-90);
-    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
-    -webkit-backdrop-filter: blur(var(--bg-blur-20));
-    backdrop-filter: blur(var(--bg-blur-20));
-  }
-}
+  main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(var(--full-height) - #{layout.$header-navbar-height});
+    margin-top: layout.$header-navbar-height;
 
-main {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(var(--full-height) - #{layout.$header-navbar-height});
-  margin-top: layout.$header-navbar-height;
-
-  &.full-height {
-    min-height: var(--full-height);
-    margin-top: 0;
-  }
-}
-
-footer {
-  position: fixed;
-  bottom: 0;
-  z-index: layers.$layer-ui;
-  width: 100%;
-}
-
-.panel {
-  position: relative;
-  max-height: calc(100% - #{layout.$header-navbar-height});
-  overflow: auto;
-
-  &-header {
-    position: sticky;
-    top: 1rem;
+    &.full-height {
+      min-height: var(--full-height);
+      margin-top: 0;
+    }
   }
 
-  &-content {
-    margin-top: -1.125rem;
-    padding: 0 3rem 1.25rem;
+  footer {
+    position: fixed;
+    bottom: 0;
+    z-index: layers.$layer-ui;
+    width: 100%;
+  }
+
+  .panel {
+    position: relative;
+    max-height: calc(100% - #{layout.$header-navbar-height});
+    overflow: auto;
+
+    &-header {
+      position: sticky;
+      top: 1rem;
+    }
+
+    &-content {
+      margin-top: -1.125rem;
+      padding: 0 3rem 1.25rem;
+    }
   }
 }
 </style>
