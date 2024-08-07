@@ -20,6 +20,7 @@ import IconGrid from '~/components/icons/IconGrid.vue';
 import IconHeart from '~/components/icons/IconHeart.vue';
 import IconList from '~/components/icons/IconList.vue';
 import { ListScrollItemType } from '~/models/list-scroll.model';
+import { PageSize } from '~/models/page-size.model';
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -230,7 +231,7 @@ const ListStoreConstants = {
 export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
-  const pageSize = ref(100);
+  const pageSize = ref(PageSize.p100);
   const pagination = ref<TraktClientPagination>();
 
   const typeLoading = reactive<ListTypeLoading>({});

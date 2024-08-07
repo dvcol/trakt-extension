@@ -5,7 +5,7 @@ import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
 import { type Component, computed, h, onBeforeMount, ref } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
-import { pageSizeOptions } from '~/models/page-size.model';
+import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
 import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { useCalendarStoreRefs } from '~/stores/data/calendar.store';
@@ -17,6 +17,7 @@ import {
   useListsStoreRefs,
   useListStoreRefs,
 } from '~/stores/data/list.store';
+import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import {
   useExtensionSettingsStore,
@@ -78,6 +79,13 @@ onBeforeMount(() => {
 const { pageSize: historyPageSize } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();
 const { pageSize: searchPageSize } = useSearchStoreRefs();
+const { pageSize: ratingPageSize } = useRatingsStoreRefs();
+
+const pageSizeLoadListWarning = computed(() => {
+  if (!loadLists.value.length) return i18n('label_load_lists_warning');
+  if (!loadListsPageSize.value) return i18n('label_page_size_warning');
+  return undefined;
+});
 
 const tabsOptions = computed(() =>
   enabledTabs.value.map(([route, state]) => ({
@@ -141,17 +149,6 @@ const container = ref();
     <!--  Restore panel  -->
     <SettingsFormItem :label="i18n('label_restore_panel')">
       <NSwitch v-model:value="restorePanel" class="form-switch">
-        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
-        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
-      </NSwitch>
-    </SettingsFormItem>
-
-    <!--  Enable Ratings  -->
-    <SettingsFormItem
-      :label="i18n('label_enable_ratings')"
-      :warning="enableRatings ? i18n('label_enable_ratings_warning') : undefined"
-    >
-      <NSwitch v-model:value="enableRatings" class="form-switch">
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
@@ -224,17 +221,32 @@ const container = ref();
       </SettingsFormItem>
     </template>
 
-    <!--  Page Size  -->
-    <SettingsFormItem :label="i18n('label_load_lists_page_size')">
+    <!--  Enable Ratings  -->
+    <SettingsFormItem
+      :label="i18n('label_enable_ratings')"
+      :warning="enableRatings ? i18n('label_enable_ratings_warning') : undefined"
+    >
+      <NSwitch v-model:value="enableRatings" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+      </NSwitch>
+    </SettingsFormItem>
+
+    <!--  Rating Page Sizes  -->
+    <SettingsFormItem
+      :label="i18n('label_ratings_page_size')"
+      :warning="!ratingPageSize ? i18n('label_page_size_warning') : undefined"
+    >
       <NSelect
-        v-model:value="loadListsPageSize"
-        :disabled="!loadLists.length"
+        v-model:value="ratingPageSize"
+        :disabled="!enableRatings"
         class="form-select"
         :to="container"
-        :options="pageSizeOptions"
+        :options="pageSizeOptionsWithZero"
       />
     </SettingsFormItem>
 
+    <!--  History Page Sizes  -->
     <SettingsFormItem :label="i18n('label_history_page_size')">
       <NSelect
         v-model:value="historyPageSize"
@@ -245,6 +257,7 @@ const container = ref();
       />
     </SettingsFormItem>
 
+    <!--  List Page Sizes  -->
     <SettingsFormItem :label="i18n('label_list_page_size')">
       <NSelect
         v-model:value="listPageSize"
@@ -255,6 +268,21 @@ const container = ref();
       />
     </SettingsFormItem>
 
+    <!--  Load List Page Sizes  -->
+    <SettingsFormItem
+      :label="i18n('label_load_lists_page_size')"
+      :warning="pageSizeLoadListWarning"
+    >
+      <NSelect
+        v-model:value="loadListsPageSize"
+        :disabled="!loadLists.length"
+        class="form-select"
+        :to="container"
+        :options="pageSizeOptionsWithZero"
+      />
+    </SettingsFormItem>
+
+    <!--  Search page size  -->
     <SettingsFormItem :label="i18n('label_search_page_size')">
       <NSelect
         v-model:value="searchPageSize"

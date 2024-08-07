@@ -13,6 +13,7 @@ import IconDownload from '~/components/icons/IconDownload.vue';
 import IconLoadingDots from '~/components/icons/IconLoadingDots.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 
+import { PageSize } from '~/models/page-size.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
@@ -113,7 +114,7 @@ const fetchData = (type: ListTypes, name: string, entity?: ListEntity) => {
           id: user.value,
           list_id: entity.id.toString(),
           extended: TraktApiExtended.Full,
-          pagination: { limit: 1000 },
+          pagination: { limit: PageSize.p1000 },
         },
         writer,
       });

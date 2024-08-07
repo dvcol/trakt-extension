@@ -4,6 +4,7 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
+import { PageSize } from '~/models/page-size.model';
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -26,7 +27,7 @@ type HistoryState = {
 export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
-  const pageSize = ref(100);
+  const pageSize = ref(PageSize.p100);
   const history = ref<TraktHistory[]>([]);
   const pagination = ref<TraktClientPagination>();
   const extended = ref(false);

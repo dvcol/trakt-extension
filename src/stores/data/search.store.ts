@@ -7,7 +7,9 @@ import type { TraktClientPagination, TraktSearch, TraktSearchResult, TraktSearch
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
+import { PageSize } from '~/models/page-size.model';
 import { ErrorService } from '~/services/error.service';
+
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 
@@ -40,7 +42,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const searchErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('search', searchErrors);
 
-  const pageSize = ref(100);
+  const pageSize = ref(PageSize.p100);
   const pagination = ref<TraktClientPagination>();
 
   const loading = ref(false);
