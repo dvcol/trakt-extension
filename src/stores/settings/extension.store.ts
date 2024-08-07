@@ -2,6 +2,7 @@ import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
+import { PageSize } from '~/models/page-size.model';
 import { ProgressType, type ProgressTypes } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
@@ -55,7 +56,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const restoreRoute = ref<ExtensionSettings['restoreRoute']>(true);
   const restorePanel = ref<ExtensionSettings['restorePanel']>(false);
   const loadLists = ref<ExtensionSettings['loadLists']>([]);
-  const loadListsPageSize = ref<ExtensionSettings['loadListsPageSize']>(500);
+  const loadListsPageSize = ref<ExtensionSettings['loadListsPageSize']>(PageSize.p500);
   const defaultTab = ref<Route>(Route.Calendar);
   const initialized = ref<Promise<boolean>>();
   const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
@@ -158,7 +159,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         saveState().catch(err => Logger.error('Failed to save load lists extension settings', { value, err }));
       },
     }),
-    loadListsPageSize,
+    loadListsPageSize: computed({
+      get: () => loadListsPageSize.value,
+      set: (value: number) => {
+        loadListsPageSize.value = value;
+        saveState().catch(err => Logger.error('Failed to save load lists page size extension settings', { value, err }));
+      },
+    }),
     toggleTab,
     routeDictionary,
     defaultTab: computed({

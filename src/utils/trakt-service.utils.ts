@@ -12,10 +12,12 @@ import { reactive, ref, type Ref } from 'vue';
 import type { RecursiveRecord } from '@dvcol/common-utils/common';
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 
+import { PageSize } from '~/models/page-size.model';
+
 type PaginatedQuery = TraktApiParamsExtended & TraktApiParamsPagination;
 export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(
   fetch: (query: Q) => Promise<TraktApiResponse<T>>,
-  query: Q = { extended: TraktApiExtended.Full, pagination: { limit: 1000 } } as Q,
+  query: Q = { extended: TraktApiExtended.Full, pagination: { limit: PageSize.p1000 } } as Q,
   writerOptions?: JsonWriterOptions,
   cancel?: Ref<boolean>,
   pagination?: Partial<TraktClientPagination>,
@@ -46,7 +48,7 @@ export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQue
 export type CancellableWritePromise<T> = Promise<T> & { cancel: () => Promise<T>; pagination: Partial<TraktClientPagination> };
 export const cancellablePaginatedWriteJson = <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(
   fetch: (query: Q) => Promise<TraktApiResponse<T>>,
-  query: Q = { extended: TraktApiExtended.Full, pagination: { limit: 1000 } } as Q,
+  query: Q = { extended: TraktApiExtended.Full, pagination: { limit: PageSize.p1000 } } as Q,
   writerOptions?: JsonWriterOptions & { separator?: string },
 ): CancellableWritePromise<FileSystemFileHandle> => {
   const cancel = ref(false);

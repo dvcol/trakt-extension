@@ -59,9 +59,25 @@
     "message": "Lists to load when opening panels",
     "description": "Label for the 'Load lists' setting"
   },
+  "settings__tabs__label_ratings_page_size": {
+    "message": "Ratings page size",
+    "description": "Label for the 'Page size for ratings' setting"
+  },
   "settings__tabs__label_load_lists_page_size": {
-    "message": "Page size for lists",
+    "message": "Panel list page size",
     "description": "Label for the 'Page size for lists' setting"
+  },
+  "settings__tabs__label_load_lists_warning": {
+    "message": "No lists found. Please create at least one list to use this feature.",
+    "description": "Label for the 'No lists found' warning"
+  },
+  "settings__tabs__label_page_size_warning": {
+    "message": "An unlimited page size may impact performance.",
+    "description": "Label for the 'An unlimited page size' warning"
+  },
+  "settings__tabs__label_page_size_none": {
+    "message": "None",
+    "description": "Label for the 'None' page size"
   },
   "settings__tabs__label_progress_type": {
     "message": "Progress type",

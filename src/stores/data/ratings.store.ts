@@ -8,12 +8,14 @@ import {
   type TraktSyncRatingValue,
 } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
+import { PageSize } from '~/models/page-size.model';
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 
@@ -62,6 +64,10 @@ const createRatings = <T extends 'movie' | 'show' | 'season' | 'episode'>(
   } as never;
 };
 
+type RatingsState = {
+  pageSize: number;
+};
+
 const RatingsStoreConstants = {
   Store: 'data.ratings',
 } as const;
@@ -71,12 +77,21 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
   const loading = reactive<RatingsLoadingDictionary>({});
   const errors = reactive<ErrorDictionary>({});
 
-  const pageSize = ref(500);
+  const pageSize = ref(PageSize.p500);
   const paginations = reactive<RatingsPaginationDictionary>({});
 
   ErrorService.registerDictionary('ratings', errors);
 
   const i18n = useI18n('rating');
+
+  const saveState = async () =>
+    storage.local.set<RatingsState>(RatingsStoreConstants.Store, {
+      pageSize: pageSize.value,
+    });
+  const restoreState = async () => {
+    const restored = await storage.local.get<RatingsState>(RatingsStoreConstants.Store);
+    if (restored?.pageSize) pageSize.value = restored.pageSize;
+  };
 
   const clearState = () => {
     clearProxy(ratings);
@@ -227,7 +242,18 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     return getRatings(type, id);
   };
 
+  const initListStore = async () => {
+    await restoreState();
+  };
+
   return {
+    pageSize: computed({
+      get: () => pageSize.value,
+      set: (value: number) => {
+        pageSize.value = value;
+        saveState().catch(err => Logger.error('Failed to save ratings settings', { value, err }));
+      },
+    }),
     clearState,
     fetchRatings,
     getLoading,
@@ -235,6 +261,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     loadRatings,
     addRating,
     removeRating,
+    initListStore,
   };
 });
 
