@@ -24,8 +24,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       '@dvcol/web-extension-utils':
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.1.0
+        version: 3.1.0
       '@vue/devtools':
         specifier: ^7.0.15
         version: 7.0.15(rollup@4.8.0)(vite@5.0.10(@types/node@20.5.3)(sass@1.66.1)(sugarss@2.0.0)(terser@5.31.2))(vue@3.4.14(typescript@5.4.2))
@@ -1161,8 +1161,8 @@ packages:
     resolution: {integrity: sha512-FZkZrb/VqIABRugH+aLlKBDObtWFUgNazolY4BjHy7WPAjLRdw2sv75gqA8mxP9mO3wQ8Ikk+Gs6OASDQnO/gg==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/web-extension-utils@3.0.1':
-    resolution: {integrity: sha512-vVff1sf+UbnA+oD9cMePyhDZjLM4Oj5SmSd3FfFPSvXy3tocCZf11QIqt9wphHdRbo3aYQ8eVhjnJmslwenPNQ==}
+  '@dvcol/web-extension-utils@3.1.0':
+    resolution: {integrity: sha512-jUdWsG0VP6te+YDXpuCX8BEcgkFMw0ow3PYKycP0E4jqCX28GB0U+LX8bizsEge7c/ycQ3eIDmvJXiSax7Fh+w==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
 
   '@electron/get@2.0.3':
@@ -8043,7 +8043,7 @@ snapshots:
       '@dvcol/base-http-client': 1.10.0
       '@dvcol/common-utils': 1.7.0
 
-  '@dvcol/web-extension-utils@3.0.1':
+  '@dvcol/web-extension-utils@3.1.0':
     dependencies:
       '@dvcol/common-utils': 1.7.0
       fast-glob: 3.3.2

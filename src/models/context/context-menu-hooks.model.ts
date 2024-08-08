@@ -1,12 +1,13 @@
+import { openPopup } from '@dvcol/web-extension-utils/chrome/action';
+import { context } from '@dvcol/web-extension-utils/chrome/context';
+import { runtime } from '@dvcol/web-extension-utils/chrome/runtime';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
+import type { ContextMenuOnClickedData } from '@dvcol/web-extension-utils/chrome/models';
 import type { RouteLocationNormalized } from 'vue-router';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds, ContextMenus } from '~/models/context/context-menu.model';
 import { Route, RouterStorageKey } from '~/models/router.model';
-import { action } from '~/utils/browser/borwser-action.utils';
-import { context, type ContextMenuOnClickedData } from '~/utils/browser/browser-context.utils';
-import { runtime } from '~/utils/browser/browser-runtime.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 const setLastRoute = (data: ContextMenuOnClickedData) => {
@@ -17,8 +18,8 @@ const setLastRoute = (data: ContextMenuOnClickedData) => {
   } satisfies Partial<RouteLocationNormalized>);
 };
 
-const openPopup = async () => {
-  if (action?.openPopup) return action.openPopup();
+const openPopupApp = async () => {
+  if (openPopup) return openPopup();
   if (!runtime) return;
   await createTab({
     url: runtime.getURL('views/options/index.html'),
@@ -28,7 +29,7 @@ const openPopup = async () => {
 export const ContextMenusHooks: Record<ContextMenuIds, (data: ContextMenuOnClickedData) => void | Promise<void>> = {
   [ContextMenuId.OpenInSideTrakt]: async data => {
     await setLastRoute(data);
-    await openPopup();
+    await openPopupApp();
   },
   [ContextMenuId.AddToSearchHistory]: setLastRoute,
 } as const;

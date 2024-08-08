@@ -1,4 +1,5 @@
 import { arrayMax, findClosestMatch } from '@dvcol/common-utils/common/math';
+import { getShortLocale } from '@dvcol/common-utils/common/navigator';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, type Ref, ref } from 'vue';
@@ -11,7 +12,6 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { setStorageWrapper, storage } from '~/utils/browser/browser-storage.utils';
-import { getShortLocale } from '~/utils/browser/browser.utils';
 import { CachePrefix } from '~/utils/cache.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';

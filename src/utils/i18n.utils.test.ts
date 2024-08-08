@@ -1,3 +1,4 @@
+import * as I18nUtils from '@dvcol/web-extension-utils/chrome/i18n';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as I18nStore from '../stores/i18n.store';
@@ -5,7 +6,6 @@ import * as I18nStore from '../stores/i18n.store';
 import { useI18n } from './i18n.utils';
 
 import * as RouterStore from '~/stores/router.store';
-import * as I18nUtils from '~/utils/browser/browser-i18n.utils';
 
 describe('i18n.utils.ts', () => {
   afterEach(() => {

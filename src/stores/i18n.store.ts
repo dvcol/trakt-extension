@@ -1,8 +1,8 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
+import type { BrowserI18nInput } from '@dvcol/web-extension-utils/chrome/i18n';
 import type { Locale, Locales } from '~/models/i18n.model';
-import type { BrowserI18nInput } from '~/utils/browser/browser-i18n.utils';
 
 export const useI18nStore = defineStore('i18n', () => {
   const lang = ref<string>('en');

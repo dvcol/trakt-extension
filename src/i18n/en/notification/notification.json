@@ -1,0 +1,14 @@
+{
+  "notification__release_title": {
+    "message": "New version installed",
+    "description": "The extension has been updated to a new version."
+  },
+  "notification__release_content": {
+    "message": "A new update has just been installed.\nTo now more, see the release notes.",
+    "description": "The content of the notification that is shown when a new version is installed."
+  },
+  "notification__release_notes": {
+    "message": "Release notes",
+    "description": "The text of the link to the release notes."
+  }
+}

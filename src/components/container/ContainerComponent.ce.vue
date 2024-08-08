@@ -165,22 +165,25 @@ onBeforeMount(() => addCustomProgressProperty());
   );
 }
 
-.n-notification-container .n-notification,
+.n-notification-container .n-notification.n-notification--error-type,
 .n-message-wrapper .n-message.n-message--error-type {
   --custom-bg-color: var(--bg-color-error-80);
   --custom-bg-color-hover: var(--bg-color-error);
 }
 
+.n-notification-container .n-notification.n-notification--success-type,
 .n-message-wrapper .n-message.n-message--success-type {
   --custom-bg-color: var(--bg-color-success-80);
   --custom-bg-color-hover: var(--bg-color-success);
 }
 
+.n-notification-container .n-notification.n-notification--info-type,
 .n-message-wrapper .n-message.n-message--info-type {
   --custom-bg-color: var(--bg-color-info-80);
   --custom-bg-color-hover: var(--bg-color-info);
 }
 
+.n-notification-container .n-notification.n-notification--warning-type,
 .n-message-wrapper .n-message.n-message--warning-type {
   --custom-bg-color: var(--bg-color-warning-80);
   --custom-bg-color-hover: var(--bg-color-warning);
