@@ -4,7 +4,7 @@ import { computed, reactive, toRefs } from 'vue';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds } from '~/models/context/context-menu.model';
 import { MessageType } from '~/models/message/message-type.model';
-import { runtime } from '~/utils/browser/browser-runtime.utils';
+import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 
@@ -24,7 +24,7 @@ export const useContextMenuStore = defineStore(ContextMenuConstants.Store, () =>
 
   const saveState = debounce(async () => {
     await storage.local.set(ContextMenuConstants.LocalEnabled, enabled);
-    await runtime?.sendMessage({ type: MessageType.ContextMenu, enabled });
+    await sendMessage({ type: MessageType.ContextMenu, payload: enabled });
   }, 500);
 
   const restoreState = async () => {

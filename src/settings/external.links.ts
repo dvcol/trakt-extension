@@ -23,6 +23,7 @@ export const ExternaLinks = {
   support: 'https://github.com/dvcol/trakt-extension/issues',
   store: 'https://chrome.google.com/webstore/detail/pdodapikbijcfickiofjkjgkkmlcnbba',
   privacy: 'https://github.com/dvcol/trakt-extension/blob/main/PRIVACY.md',
+  release: 'https://github.com/dvcol/trakt-extension/releases',
 } as const;
 
 export const ResolveExternalLinks = {

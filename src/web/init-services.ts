@@ -1,6 +1,11 @@
 import { LoggerColor } from '@dvcol/common-utils/common/logger';
 
+import type { MessagePayload } from '~/models/message/message-type.model';
+
+import { MessageType } from '~/models/message/message-type.model';
+
 import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -19,7 +24,16 @@ import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogStore } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
+import { storage } from '~/utils/browser/browser-storage.utils';
 import { initLocalI18n } from '~/utils/i18n.utils';
+
+const onVersionUpdate = async () => {
+  const versionUpdate = await storage.local.get<MessagePayload<typeof MessageType.VersionUpdate>>(MessageType.VersionUpdate);
+  if (!versionUpdate) return;
+
+  NotificationService.release(versionUpdate);
+  await storage.local.remove(MessageType.VersionUpdate);
+};
 
 export const initServices = async () => {
   await useLogStore().initLogStore();
@@ -64,4 +78,6 @@ export const initServices = async () => {
   setAppReady(true);
 
   Logger.info(...Logger.colorize(LoggerColor.Success, Logger.timestamp, 'All services initialized!'));
+
+  onVersionUpdate().catch(Logger.error);
 };
