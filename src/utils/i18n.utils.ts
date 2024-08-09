@@ -1,9 +1,8 @@
-import { chromeI18n, useI18nTranslate } from '@dvcol/web-extension-utils/chrome/i18n';
-
 import type { Locale, Locales } from '~/models/i18n.model';
 
 import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
+import { chromeI18n, useI18nTranslate } from '~/utils/browser/browser-i18n.utils';
 
 export const initLocalI18n = () => {
   const store = useI18nStore();
