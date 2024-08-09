@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NSwitch } from 'naive-ui';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
@@ -14,7 +15,11 @@ const { enableBadge } = useBadgeStoreRefs();
   <div class="badge-container">
     <!--  Enable  -->
     <SettingsFormItem :label="i18n('label_enable_badge')">
-      <NSwitch v-model:value="enableBadge" class="form-switch">
+      <NSwitch
+        v-model:value="enableBadge"
+        class="form-switch"
+        :disabled="!chromeRuntimeId"
+      >
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
