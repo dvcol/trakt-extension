@@ -12,6 +12,7 @@ import {
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
@@ -20,6 +21,7 @@ const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 const { filteredHistory, pagination, loading, pageSize, belowThreshold, searchHistory } =
   useHistoryStoreRefs();
 const { fetchHistory, clearState } = useHistoryStore();
+const { isWatching } = useWatchingStoreRefs();
 
 const i18n = useI18n('history');
 
@@ -31,6 +33,10 @@ watchUserChange({
 onMounted(() => {
   watch(panelOpen, async value => {
     if (!value && panelDirty.value) await fetchHistory();
+  });
+  watch(isWatching, async () => {
+    if (panelOpen.value) return;
+    await fetchHistory();
   });
 });
 

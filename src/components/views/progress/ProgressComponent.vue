@@ -11,6 +11,7 @@ import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ExternaLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 
@@ -20,6 +21,7 @@ const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
 const { progress, loading, loggedOut } = useProgressStoreRefs();
 const { fetchProgress, clearState } = useProgressStore();
+const { isWatching } = useWatchingStoreRefs();
 
 watchUserChange({
   fetch: fetchProgress,
@@ -29,6 +31,10 @@ watchUserChange({
 onMounted(() => {
   watch(panelOpen, async value => {
     if (!value && panelDirty.value) await fetchProgress();
+  });
+  watch(isWatching, async () => {
+    if (panelOpen.value) return;
+    await fetchProgress();
   });
 });
 
