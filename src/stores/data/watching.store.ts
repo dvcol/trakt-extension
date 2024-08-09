@@ -5,6 +5,7 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 
+import { PollingIntervals } from '~/models/polling.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
@@ -15,6 +16,8 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const WatchingStoreConstants = {
   Store: 'data.watching',
+  /** 10 seconds */
+  DefaultPolling: PollingIntervals.TenSeconds,
 } as const;
 
 type WatchingState = {
@@ -28,26 +31,11 @@ type override = {
   cancel?: boolean;
 };
 
-export const PollingIntervals = {
-  Disabled: 0,
-  Second: 1000,
-  FiveSeconds: 5 * 1000,
-  TenSeconds: 10 * 1000,
-  ThirtySeconds: 30 * 1000,
-  OneMinute: 60 * 1000,
-  FiveMinutes: 5 * 60 * 1000,
-  TenMinutes: 10 * 60 * 1000,
-  ThirtyMinutes: 30 * 60 * 1000,
-} as const;
-
-/** 30 seconds */
-const defaultPolling = PollingIntervals.TenSeconds;
-
 export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => {
   const loading = reactive<override>({});
   const watching = ref<TraktWatching>();
 
-  const polling = ref(defaultPolling);
+  const polling = ref(WatchingStoreConstants.DefaultPolling);
   const override = ref(true);
 
   const i18n = useI18n('watching');
@@ -63,7 +51,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
   const restoreState = async () => {
     const restored = await storage.local.get<WatchingState>(WatchingStoreConstants.Store);
 
-    if (restored?.polling) polling.value = restored.polling;
+    if (restored?.polling !== undefined) polling.value = restored.polling;
     if (restored?.override) override.value = restored.override;
   };
 
@@ -74,10 +62,6 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }
     if (!user.value) {
       Logger.warn('User not set, skipping watch polling');
-      return;
-    }
-    if (polling.value <= 0) {
-      Logger.debug('Polling interval is 0, skipping watch polling');
       return;
     }
 
@@ -164,19 +148,24 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
           if (!isAuthenticated.value) return;
           return fetchWatching();
         }, polling.value);
-        Logger.debug('Polling interval set to', polling.value);
+        Logger.debug('Watching polling interval set to', polling.value);
       },
       {
         immediate: true,
       },
     );
+
+    watch(user, async () => {
+      if (!isAuthenticated.value) return;
+      await fetchWatching();
+    });
   };
 
   return {
     watching,
     polling: computed({
       get: () => polling.value,
-      set: (value: number = defaultPolling) => {
+      set: (value: number = WatchingStoreConstants.DefaultPolling) => {
         polling.value = value;
         saveState().catch(e => Logger.error('Failed to save watching state', e));
       },

@@ -30,5 +30,9 @@
   "settings__menu__watching": {
     "message": "Watching",
     "description": "Watching ui menu item"
+  },
+  "settings__menu__activity": {
+    "message": "Activity",
+    "description": "Activity ui menu item"
   }
 }
