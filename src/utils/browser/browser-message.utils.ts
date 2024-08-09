@@ -1,3 +1,4 @@
+import { ApiUnavailableError } from '@dvcol/web-extension-utils/chrome/error';
 import { onMessageEvent, sendMessageEvent } from '@dvcol/web-extension-utils/chrome/message';
 
 import type { ChromeMessage, ChromeMessageListener, ChromeMessageOptions, ChromeResponsePayload } from '@dvcol/web-extension-utils/chrome/models';
@@ -20,4 +21,11 @@ export const sendMessage = async <
 >(
   message: ChromeMessage<T, P>,
   options?: ChromeMessageOptions,
-) => sendMessageEvent<T, P, R>(message, options);
+) => {
+  try {
+    return await sendMessageEvent<T, P, R>(message, options);
+  } catch (error) {
+    if (error instanceof ApiUnavailableError) console.warn('Failed to send message', { message, error });
+    else throw error;
+  }
+};

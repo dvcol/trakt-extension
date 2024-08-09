@@ -5,6 +5,7 @@ import { type Component, onDeactivated, type Ref, ref } from 'vue';
 
 import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
 import SettingsActivity from '~/components/views/settings/SettingsActivity.vue';
+import SettingsBadge from '~/components/views/settings/SettingsBadge.vue';
 import SettingsCache from '~/components/views/settings/SettingsCache.vue';
 import SettingsExport from '~/components/views/settings/SettingsExport.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
@@ -12,6 +13,7 @@ import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
 import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
 import SettingsWatching from '~/components/views/settings/SettingsWatching.vue';
+
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings');
@@ -29,6 +31,7 @@ const sections: Section[] = [
   { title: 'menu__menus', reference: ref(), component: SettingsMenus },
   { title: 'menu__watching', reference: ref(), component: SettingsWatching },
   { title: 'menu__activity', reference: ref(), component: SettingsActivity },
+  { title: 'menu__badge', reference: ref(), component: SettingsBadge },
   { title: 'menu__cache', reference: ref(), component: SettingsCache },
   { title: 'menu__export', reference: ref(), component: SettingsExport },
   { title: 'menu__logs', reference: ref(), component: SettingsLogs },

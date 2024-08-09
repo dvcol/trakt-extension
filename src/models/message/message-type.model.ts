@@ -4,9 +4,18 @@ import type { ContextMenuIds } from '~/models/context/context-menu.model';
 export const MessageType = {
   ContextMenu: 'context-menu',
   VersionUpdate: 'version-update',
+  AppReady: 'app-ready',
+  BadgeUpdate: 'badge-update',
 } as const;
 
 export type MessageTypes = (typeof MessageType)[keyof typeof MessageType];
+
+export type BadgeUpdatePayload = {
+  title?: string;
+  text?: string;
+  color?: string;
+  backgroundColor?: string;
+};
 
 /**
  * Type union of possible message payloads
@@ -15,4 +24,8 @@ export type MessagePayload<T extends MessageTypes = MessageTypes> = T extends ty
   ? Record<ContextMenuIds, boolean>
   : T extends typeof MessageType.VersionUpdate
     ? VersionUpdateDetails & { date: number }
-    : MessageTypes;
+    : T extends typeof MessageType.AppReady
+      ? boolean
+      : T extends typeof MessageType.BadgeUpdate
+        ? BadgeUpdatePayload
+        : MessageTypes;

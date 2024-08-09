@@ -19,6 +19,7 @@ import { useSearchStore } from '~/stores/data/search.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore } from '~/stores/data/watching.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
+import { useBadgeStore } from '~/stores/settings/badge.store';
 import { useContextMenuStore } from '~/stores/settings/context-menu.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -56,8 +57,7 @@ export const initServices = async () => {
     useExtensionSettingsStore().initExtensionSettingsStore(),
   ]);
 
-  const { isAuthenticated } = useAuthSettingsStore();
-  await useActivityStore().initActivityStore(isAuthenticated);
+  await useActivityStore().initActivityStore();
 
   await Promise.all([
     initLocalI18n().promise,
@@ -75,7 +75,10 @@ export const initServices = async () => {
     useWatchingStore().initWatchingStore(),
   ]);
 
-  setAppReady(true);
+  // requires calendarStore to be init
+  await useBadgeStore().initBadgeStore();
+
+  setAppReady(true).catch(Logger.error);
 
   Logger.info(...Logger.colorize(LoggerColor.Success, Logger.timestamp, 'All services initialized!'));
 
