@@ -9,7 +9,6 @@ import { storage } from '~/utils/browser/browser-storage.utils';
 
 type SettingsAuthenticated = {
   trakt?: boolean;
-  tvdb?: boolean;
   tmdb?: boolean;
 };
 
@@ -31,14 +30,12 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
     return values.length > 0 ? values.every(Boolean) : false;
   });
 
-  const setAuthenticated = ({ trakt, tvdb, tmdb }: SettingsAuth = auth.value) => {
+  const setAuthenticated = ({ trakt, tmdb }: SettingsAuth = auth.value) => {
     if (trakt) authenticated.trakt = !!trakt.access_token;
-    if (tvdb) authenticated.tvdb = !!tvdb.accessToken;
     if (tmdb) authenticated.tmdb = !!tmdb.accessToken;
 
-    if (!trakt && !tvdb && !tmdb) {
+    if (!trakt && !tmdb) {
       delete authenticated.trakt;
-      delete authenticated.tvdb;
       delete authenticated.tmdb;
     }
     return authenticated;
@@ -69,7 +66,6 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
 
     if (!auths[account]) auths[account] = {};
     if (_auth.trakt) auths[account].trakt = _auth.trakt;
-    if (_auth.tvdb) auths[account].tvdb = _auth.tvdb;
     if (_auth.tmdb) auths[account].tmdb = _auth.tmdb;
 
     setAuthenticated();
