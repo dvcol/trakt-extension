@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@dvcol/base-http-client": "^1.10.0",
-    "@dvcol/common-utils": "^1.8.0",
+    "@dvcol/common-utils": "^1.9.0",
     "@dvcol/tmdb-http-client": "^1.2.3",
     "@dvcol/trakt-http-client": "^1.4.5",
     "@dvcol/web-extension-utils": "^3.3.2",
