@@ -85,7 +85,7 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
    * Restore all users from chrome storage
    */
   const syncRestoreAllUsers = async () => {
-    const restored = await storage.sync.getAll<UserSettings>(`${UserStoreConstants.Store}r.`);
+    const restored = await storage.sync.getAll<UserSettings>(`${UserStoreConstants.Store}.`);
 
     Object.entries(restored).forEach(([account, settings]) => {
       const _account = decodeURIComponent(account.replace(`${UserStoreConstants.Store}.`, ''));
