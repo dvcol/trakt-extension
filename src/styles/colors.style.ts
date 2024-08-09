@@ -3,6 +3,7 @@ export const Colors = {
   bgBlurBlackHover: 'rgba(0, 0, 0, 60%)',
   traktRed: '#ed1c24',
   traktRedDark: '#ba080f',
+  white: '#fff',
 } as const;
 
 export const Blurs = {

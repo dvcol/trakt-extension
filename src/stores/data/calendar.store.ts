@@ -4,7 +4,6 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
-
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -23,6 +22,22 @@ type CalendarState = {
   center?: number;
   weeks: number;
   extended?: boolean;
+};
+
+export const fetchCalendarData = async (query: TraktCalendarQuery): Promise<CalendarItem[]> => {
+  const [shows, movies] = await Promise.all([TraktService.calendar(query, 'shows'), TraktService.calendar(query, 'movies')]);
+  return [
+    ...(shows as TraktCalendarShow[]).map(show => ({
+      ...show,
+      id: show.episode.ids.trakt ?? show.show.ids.trakt,
+      date: new Date(show.first_aired),
+    })),
+    ...(movies as TraktCalendarMovie[]).map(movie => ({
+      ...movie,
+      id: movie.movie.ids.trakt,
+      date: new Date(movie.released),
+    })),
+  ].sort((a, b) => a.date.getTime() - b.date.getTime());
 };
 
 export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => {
@@ -104,21 +119,8 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     if (extended.value) query.extended = TraktApiExtended.Full;
 
     try {
-      const [shows, movies] = await Promise.all([TraktService.calendar(query, 'shows'), TraktService.calendar(query, 'movies')]);
+      const newData: CalendarItem[] = await fetchCalendarData(query);
       delete calendarErrors[JSON.stringify(query)];
-      const newData: CalendarItem[] = [
-        ...(shows as TraktCalendarShow[]).map(show => ({
-          ...show,
-          id: show.episode.ids.trakt ?? show.show.ids.trakt,
-          date: new Date(show.first_aired),
-        })),
-        ...(movies as TraktCalendarMovie[]).map(movie => ({
-          ...movie,
-          id: movie.movie.ids.trakt,
-          date: new Date(movie.released),
-        })),
-      ].sort((a, b) => a.date.getTime() - b.date.getTime());
-
       const spacedData = spaceDate(newData, startDate, endDate);
 
       if (mode === 'reload') {

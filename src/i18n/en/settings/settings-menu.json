@@ -34,5 +34,9 @@
   "settings__menu__activity": {
     "message": "Activity",
     "description": "Activity ui menu item"
+  },
+  "settings__menu__badge": {
+    "message": "Badge",
+    "description": "Badge ui menu item"
   }
 }
