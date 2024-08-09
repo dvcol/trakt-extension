@@ -1,0 +1,6 @@
+{
+  "settings__activity__label_polling_interval": {
+    "message": "Configure polling interval for activity state.",
+    "description": "Label for the polling interval setting."
+  }
+}

@@ -1,33 +1,48 @@
 import { compareDateObject, toDateObject } from '@dvcol/common-utils/common/date';
 import { defineStore, storeToRefs } from 'pinia';
 
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import type { RecursiveType } from '@dvcol/common-utils/common';
 import type { TraktSyncActivities } from '@dvcol/trakt-http-client/models';
 
+import { PollingIntervals } from '~/models/polling.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { useUserSettingsStore } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { useUserSettingsStore, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
+
+type ActivityStoreState = {
+  activity?: TraktSyncActivities;
+  polling?: number;
+};
 
 const ActivityStoreConstants = {
   Store: 'data.activity',
+  /** 30 seconds */
+  DefaultPolling: PollingIntervals.ThirtySeconds,
 } as const;
 
 export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => {
   const activity = ref<TraktSyncActivities>();
   const loading = ref(false);
+  const polling = ref(ActivityStoreConstants.DefaultPolling);
 
   const clearState = () => {
     activity.value = undefined;
   };
 
-  const saveState = async () => storage.local.set(ActivityStoreConstants.Store, activity.value);
+  const saveState = async () =>
+    storage.local.set<ActivityStoreState>(ActivityStoreConstants.Store, {
+      activity: activity.value,
+      polling: polling.value,
+    });
   const restoreState = async () => {
-    const state = await storage.local.get<TraktSyncActivities>(ActivityStoreConstants.Store);
-    if (state) activity.value = state;
+    const state = await storage.local.get<ActivityStoreState>(ActivityStoreConstants.Store);
+    if (state?.activity) activity.value = state.activity;
+    if (state?.polling !== undefined) polling.value = state.polling;
   };
 
   const fetchActivity = async () => {
@@ -47,8 +62,11 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
   };
 
   const { refreshUserSettings } = useUserSettingsStore();
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
+  const { user } = useUserSettingsStoreRefs();
+  const interval = ref<ReturnType<typeof setInterval>>();
 
-  const initActivityStore = async (fetch?: boolean) => {
+  const initActivityStore = async () => {
     await restoreState();
 
     watch(activity, (next, prev) => {
@@ -108,10 +126,48 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       }
     });
 
-    if (fetch) await fetchActivity();
+    watch(
+      polling,
+      async () => {
+        if (interval.value) clearInterval(interval.value);
+        if (!polling.value) return;
+        if (isAuthenticated.value) await fetchActivity();
+        interval.value = setInterval(() => {
+          if (!isAuthenticated.value) return;
+          return fetchActivity();
+        }, polling.value);
+        Logger.debug('Activity polling interval set to', polling.value);
+      },
+      {
+        immediate: true,
+      },
+    );
+
+    watch(user, async () => {
+      if (!isAuthenticated.value) return;
+      await fetchActivity();
+    });
+
+    if (polling.value || !isAuthenticated.value) return;
+    return fetchActivity();
   };
 
-  return { activity, loading, fetchActivity, clearState, saveState, restoreState, initActivityStore };
+  return {
+    activity,
+    polling: computed({
+      get: () => polling.value,
+      set: (value: number = ActivityStoreConstants.DefaultPolling) => {
+        polling.value = value;
+        saveState().catch(e => Logger.error('Failed to save watching state', e));
+      },
+    }),
+    loading,
+    fetchActivity,
+    clearState,
+    saveState,
+    restoreState,
+    initActivityStore,
+  };
 });
 
 export const useActivityStoreRefs = () => storeToRefs(useActivityStore());

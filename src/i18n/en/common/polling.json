@@ -1,0 +1,38 @@
+{
+  "common__polling__interval__disabled": {
+    "message": "Disabled",
+    "description": "Label for the disabled interval."
+  },
+  "common__polling__interval__second": {
+    "message": "1 second",
+    "description": "Label for the 1 second interval."
+  },
+  "common__polling__interval__five_seconds": {
+    "message": "5 seconds",
+    "description": "Label for the 5 seconds interval."
+  },
+  "common__polling__interval__ten_seconds": {
+    "message": "10 seconds",
+    "description": "Label for the 10 seconds interval."
+  },
+  "common__polling__interval__thirty_seconds": {
+    "message": "30 seconds",
+    "description": "Label for the 30 seconds interval."
+  },
+  "common__polling__interval__one_minute": {
+    "message": "1 minute",
+    "description": "Label for the 1 minute interval."
+  },
+  "common__polling__interval__five_minutes": {
+    "message": "5 minutes",
+    "description": "Label for the 5 minutes interval."
+  },
+  "common__polling__interval__ten_minutes": {
+    "message": "10 minutes",
+    "description": "Label for the 10 minutes interval."
+  },
+  "common__polling__interval__thirty_minutes": {
+    "message": "30 minutes",
+    "description": "Label for the 30 minutes interval."
+  }
+}
