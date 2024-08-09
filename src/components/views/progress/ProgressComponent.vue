@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { NFlex } from 'naive-ui';
-import { onMounted, Transition, watch } from 'vue';
+import { NFlex, type NotificationReactive } from 'naive-ui';
+import { onMounted, ref, Transition, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
@@ -8,12 +8,15 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 
 import LoginCard from '~/components/views/login/LoginCard.vue';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { NotificationService } from '~/services/notification.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
+import { getSessionUser } from '~/utils/trakt-service.utils';
 
 const i18n = useI18n('progress');
 
@@ -23,11 +26,6 @@ const { progress, loading, loggedOut } = useProgressStoreRefs();
 const { fetchProgress, clearState } = useProgressStore();
 const { isWatching } = useWatchingStoreRefs();
 
-watchUserChange({
-  fetch: fetchProgress,
-  clear: clearState,
-});
-
 onMounted(() => {
   watch(panelOpen, async value => {
     if (!value && panelDirty.value) await fetchProgress();
@@ -36,6 +34,34 @@ onMounted(() => {
     if (panelOpen.value) return;
     await fetchProgress();
   });
+});
+
+const { user } = useUserSettingsStoreRefs();
+const unSub = ref<() => void>();
+const notification = ref<NotificationReactive>();
+
+watchUserChange({
+  fetch: fetchProgress,
+  clear: clearState,
+  activated: async () => {
+    await fetchProgress();
+    unSub.value = watch(
+      user,
+      async _user => {
+        const session = await getSessionUser();
+        if (notification.value) notification.value.destroy();
+        if (!session || _user === session) return;
+        notification.value = NotificationService.userMismatch({ user: _user, session });
+      },
+      {
+        immediate: true,
+      },
+    );
+  },
+  deactivated: () => {
+    unSub.value?.();
+    notification.value?.destroy();
+  },
 });
 
 const { scrolled, listRef, onClick } = useBackToTop();

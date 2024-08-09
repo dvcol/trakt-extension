@@ -7,12 +7,15 @@ import {
   type TraktClientPagination,
 } from '@dvcol/trakt-http-client/models';
 
+import { getCookie } from '@dvcol/web-extension-utils/chrome/cookie';
 import { reactive, ref, type Ref } from 'vue';
 
 import type { RecursiveRecord } from '@dvcol/common-utils/common';
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 
 import { PageSize } from '~/models/page-size.model';
+
+import { ExternaLinks } from '~/settings/external.links';
 
 type PaginatedQuery = TraktApiParamsExtended & TraktApiParamsPagination;
 export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(
@@ -60,4 +63,13 @@ export const cancellablePaginatedWriteJson = <Q extends PaginatedQuery = Paginat
   };
   promise.pagination = pagination;
   return promise;
+};
+
+export const getSessionUser = async (): Promise<string | undefined> => {
+  if (!getCookie) return;
+  const cookie = await getCookie({
+    url: ExternaLinks.trakt.onDeck,
+    name: 'trakt_username',
+  });
+  return cookie?.value;
 };

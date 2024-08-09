@@ -1,4 +1,4 @@
-import { type BaseCacheOption, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
+import { type BaseCacheOption, type BaseInit, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
 
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { DateUtils } from '@dvcol/common-utils/common/date';
@@ -69,13 +69,14 @@ import { LoadingBarService } from '~/services/loading-bar.service';
 import { Logger } from '~/services/logger.service';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
 import { traktUsedApi } from '~/services/trakt-used.api';
+import { ExternaLinks } from '~/settings/external.links';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
 import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
-import { cancellablePaginatedWriteJson } from '~/utils/trakt-service.utils';
+import { cancellablePaginatedWriteJson, getSessionUser } from '~/utils/trakt-service.utils';
 
 const shouldEvict = (cache?: CacheResponse<unknown>, date?: string | number | Date): boolean => {
   // no cache skip
@@ -385,9 +386,10 @@ export class TraktService {
 
   private static cachedProgress = getCachedFunction(
     // @ts-expect-error -- CancellablePromise extends promise
-    async (): CancellablePromise<TypedResponse<ProgressItem[]>> => {
-      const response = await fetch('https://trakt.tv/dashboard/on_deck', {
+    async (init?: BaseInit): CancellablePromise<TypedResponse<ProgressItem[]>> => {
+      const response = await fetch(ExternaLinks.trakt.onDeck, {
         credentials: 'include',
+        ...init,
       });
 
       isResponseOk(response);
@@ -403,21 +405,26 @@ export class TraktService {
     {
       cache: this.caches.trakt,
       retention: CacheRetention.Hour * 2,
-      key: JSON.stringify({
-        template: {
-          method: 'GET',
-          url: 'https://trakt.tv/dashboard/on_deck',
-        },
-        init: {
-          credentials: 'include',
-        },
-      }),
+      key: (param, init) => {
+        return JSON.stringify({
+          template: {
+            method: 'GET',
+            url: ExternaLinks.trakt.onDeck,
+          },
+          param,
+          init: {
+            credentials: 'include',
+            ...init,
+          },
+        });
+      },
     },
   );
 
   static progress = {
     async onDeck() {
-      const call = TraktService.cachedProgress();
+      const sessionUser = await getSessionUser();
+      const call = TraktService.cachedProgress(sessionUser ? { headers: { 'X-session-user': sessionUser } } : undefined);
       TraktService.loadingBar(call).catch(); // ignore loading error
       const response = await call;
       if (!response.ok) throw response;
@@ -702,6 +709,7 @@ export class TraktService {
           // Progress for watched episodes
           TraktService.traktClient.sync.watched.cached.evict(),
         ]),
+      deck: TraktService.cachedProgress.evict,
     },
     collection: {
       show: () =>

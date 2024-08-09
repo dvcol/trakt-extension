@@ -2,6 +2,8 @@ export const ExternaLinks = {
   trakt: {
     production: 'https://trakt.tv/',
     staging: 'https://staging.trakt.tv/',
+    onDeck: 'https://trakt.tv/dashboard/on_deck',
+    signOut: 'https://trakt.tv/auth/signout',
   },
   tmdb: 'https://www.themoviedb.org/',
   imdb: 'https://www.imdb.com/',

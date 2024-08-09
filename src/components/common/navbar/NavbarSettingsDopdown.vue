@@ -22,6 +22,7 @@ import IconLogOut from '~/components/icons/IconLogOut.vue';
 
 import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
+import { NavbarService } from '~/services/navbar.service';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -33,7 +34,7 @@ import { useI18n } from '~/utils/i18n.utils';
 const i18n = useI18n('navbar', 'settings');
 const router = useRouter();
 
-const { user, userSetting, userSettings } = useUserSettingsStoreRefs();
+const { userSetting, userSettings } = useUserSettingsStoreRefs();
 const { enabledRoutes } = useExtensionSettingsStoreRefs();
 
 const avatar = computed(() => userSetting.value?.user?.images?.avatar?.full);
@@ -137,6 +138,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     size="small"
     class="settings-dropdown"
     :style="{ '--tab-count': enabledRoutes.length + 1 }"
+    :on-update:show="(visible: boolean) => (NavbarService.dropdown.value = visible)"
     @select="onSelect"
   >
     <NFlex justify="space-around" align="center" :wrap="false">
