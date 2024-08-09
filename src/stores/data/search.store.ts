@@ -102,7 +102,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
 
     if (_state?.types) types.value = _state.types;
     if (_state?.query) query.value = _state.query;
-    if (_state?.pageSize) pageSize.value = _state.pageSize;
+    if (_state?.pageSize !== undefined) pageSize.value = _state.pageSize;
     if (_history) history.value = new Set(_history);
 
     if (_search?.date) {

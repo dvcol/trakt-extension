@@ -53,7 +53,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const restoreState = async () => {
     const restored = await storage.local.get<HistoryState>(HistoryStoreConstants.Store);
 
-    if (restored?.pageSize) pageSize.value = restored.pageSize;
+    if (restored?.pageSize !== undefined) pageSize.value = restored.pageSize;
     if (restored?.historyStart) historyStart.value = new Date(restored.historyStart);
     if (restored?.historyEnd) historyEnd.value = new Date(restored.historyEnd);
     if (restored?.extended) extended.value = restored.extended;

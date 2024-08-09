@@ -90,7 +90,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     });
   const restoreState = async () => {
     const restored = await storage.local.get<RatingsState>(RatingsStoreConstants.Store);
-    if (restored?.pageSize) pageSize.value = restored.pageSize;
+    if (restored?.pageSize !== undefined) pageSize.value = restored.pageSize;
   };
 
   const clearState = () => {
