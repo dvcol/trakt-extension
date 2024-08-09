@@ -87,17 +87,12 @@ const evictScopes = [
     click: TraktService.evict.tmdb,
   },
   {
-    label: i18n('evict_tvdb'),
-    click: TraktService.evict.tvdb,
-  },
-  {
     label: i18n('evict_all'),
     click: () =>
       Promise.all([
         clearImageStore(),
         TraktService.evict.trakt(),
         TraktService.evict.tmdb(),
-        TraktService.evict.tvdb(),
       ]),
   },
 ].map((item, index) => ({ ...item, click: () => onClick(item.click, index) }));

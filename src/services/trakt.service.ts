@@ -17,8 +17,6 @@ import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
 
 import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
-import { TvdbClient } from '@dvcol/tvdb-http-client';
-
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
@@ -59,7 +57,6 @@ import type {
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
 
-import type { TvdbApiResponse } from '@dvcol/tvdb-http-client/models';
 import type { ImagePayload } from '~/models/poster.model';
 import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
@@ -72,7 +69,6 @@ import { traktUsedApi } from '~/services/trakt-used.api';
 import { ExternaLinks } from '~/settings/external.links';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
-import { tvdbClientSettings } from '~/settings/tvdb.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
@@ -102,18 +98,15 @@ const imageResponseEmpty = (payload: ImagePayload) => {
 export class TraktService {
   private static traktClient: TraktClient;
   private static tmdbClient: TmdbClient;
-  private static tvdbClient: TvdbClient;
 
   private static caches: {
     trakt: ChromeCacheStore<TraktApiResponse>;
     tmdb: ChromeCacheStore<TmdbApiResponse>;
-    tvdb: ChromeCacheStore<TvdbApiResponse>;
   };
 
   static get auth() {
     return {
       trakt: this.traktClient.auth,
-      tvdb: this.tvdbClient.auth,
       tmdb: this.tmdbClient.auth,
     };
   }
@@ -128,10 +121,6 @@ export class TraktService {
         prefix: CachePrefix.Trakt,
         retention: CacheRetention.Week,
       }),
-      tvdb: new ChromeCacheStore<TvdbApiResponse>({
-        prefix: CachePrefix.Tvdb,
-        retention: CacheRetention.Year,
-      }),
       tmdb: new ChromeCacheStore<TmdbApiResponse>({
         prefix: CachePrefix.Tmdb,
         retention: CacheRetention.Year,
@@ -140,12 +129,10 @@ export class TraktService {
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktUsedApi);
     this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbUsedApi);
-    this.tvdbClient = new TvdbClient({ ...tvdbClientSettings, cacheStore: this.caches.tvdb });
   }
 
   static changeUser(user: string) {
     this.caches.trakt.prefix = `trakt-cache-${user}`;
-    this.caches.tvdb.prefix = `tvdb-cache-${user}`;
   }
 
   static async getUserSettings() {
@@ -153,9 +140,8 @@ export class TraktService {
     return response.json();
   }
 
-  static changeRetention({ trakt, tvdb, tmdb }: { trakt?: number; tvdb?: number; tmdb?: number }) {
+  static changeRetention({ trakt, tmdb }: { trakt?: number; tmdb?: number }) {
     if (trakt !== undefined) this.caches.trakt.retention = trakt;
-    if (tvdb !== undefined) this.caches.tvdb.retention = tvdb;
     if (tmdb !== undefined) this.caches.tmdb.retention = tmdb;
   }
 
@@ -178,16 +164,15 @@ export class TraktService {
     return { settings: useUserSettingsStore().userSetting, auth };
   }
 
-  static async importAuthentication({ trakt, tvdb, tmdb }: SettingsAuth = {}): Promise<{
+  static async importAuthentication({ trakt, tmdb }: SettingsAuth = {}): Promise<{
     auth: SettingsAuth;
     settings: UserSetting;
   }> {
     const promises = [];
     if (trakt) promises.push(this.traktClient.importAuthentication(trakt));
-    if (tvdb) promises.push(this.tvdbClient.importAuthentication(tvdb));
     if (tmdb) this.tmdbClient.importAuthentication(tmdb);
     await Promise.all(promises);
-    return this.saveAuth({ trakt, tvdb, tmdb });
+    return this.saveAuth({ trakt, tmdb });
   }
 
   static async approve(params: TraktAuthenticationApprove = {}) {
@@ -199,17 +184,14 @@ export class TraktService {
 
   static async login(token: string): Promise<{ auth: SettingsAuth; settings: UserSetting }> {
     const trakt = await this.traktClient.exchangeCodeForToken(token);
-    const tvdb = await this.tvdbClient.authenticate();
-
-    return this.saveAuth({ trakt, tvdb });
+    return this.saveAuth({ trakt });
   }
 
   static device = {
     code: () => TraktService.traktClient.getDeviceCode(),
     poll: (deviceAuth: TraktDeviceAuthentication) => TraktService.traktClient.pollWithDeviceCode(deviceAuth),
     login: async (trakt: TraktAuthentication) => {
-      const tvdb = await this.tvdbClient.authenticate();
-      return this.saveAuth({ trakt, tvdb });
+      return this.saveAuth({ trakt });
     },
   };
 
@@ -239,19 +221,6 @@ export class TraktService {
     this.traktClient.onCall(async call => {
       Logger.debug('TraktClient.onCall', call);
       await this.loadingBar(call.query);
-    });
-
-    this.tvdbClient.onAuthChange(async _auth => {
-      Logger.debug('TvdbClient.onAuthChange', { ..._auth });
-    });
-
-    this.tvdbClient.onCall(async call => {
-      Logger.debug('TvdbClient.onCall', call);
-      try {
-        await call.query;
-      } catch (error) {
-        ErrorService.registerError(error);
-      }
     });
 
     this.tmdbClient.onAuthChange(async _auth => {
@@ -654,7 +623,6 @@ export class TraktService {
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
-    tvdb: () => TraktService.tvdbClient.clearCache(),
     images: () =>
       Promise.all([
         TraktService.tmdbClient.v3.configuration.details.cached.evict(),

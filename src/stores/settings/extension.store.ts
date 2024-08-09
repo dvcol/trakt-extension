@@ -14,13 +14,11 @@ import { debounce } from '~/utils/debounce.utils';
 type CacheRetentionState = {
   trakt: number;
   tmdb: number;
-  tvdb: number;
 };
 
 const DefaultCacheRetention: CacheRetentionState = {
   trakt: CacheRetention.Week,
   tmdb: CacheRetention.Year,
-  tvdb: CacheRetention.Year,
 } as const;
 
 type RouteDictionary = Partial<Record<Route, boolean>>;
@@ -89,7 +87,6 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const setRetention = (retention: Partial<CacheRetentionState>, persist = true) => {
     if (retention.trakt !== undefined) cacheRetention.trakt = retention.trakt;
     if (retention.tmdb !== undefined) cacheRetention.tmdb = retention.tmdb;
-    if (retention.tvdb !== undefined) cacheRetention.tvdb = retention.tvdb;
     TraktService.changeRetention(cacheRetention);
     if (persist) saveState().catch(err => Logger.error('Failed to save extension settings', { retention, err }));
   };

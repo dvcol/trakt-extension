@@ -96,5 +96,4 @@ export class ChromeCacheStore<T> implements CacheStore<T> {
 export const CachePrefix = {
   Trakt: 'trakt-cache' as const,
   Tmdb: 'tmdb-cache' as const,
-  Tvdb: 'tvdb-cache' as const,
 } as const;
