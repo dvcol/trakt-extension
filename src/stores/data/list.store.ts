@@ -251,7 +251,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const restoreState = async () => {
     const restored = await storage.local.get<number>(ListStoreConstants.LocalPageSize);
     if (restored === pageSize.value) return;
-    if (restored) pageSize.value = restored;
+    if (restored !== undefined) pageSize.value = restored;
   };
 
   const clearState = () => {
