@@ -1,6 +1,8 @@
 import { ApiUnavailableError } from '@dvcol/web-extension-utils/chrome/error';
 import { onMessageEvent, sendMessageEvent } from '@dvcol/web-extension-utils/chrome/message';
 
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
+
 import type { ChromeMessage, ChromeMessageListener, ChromeMessageOptions, ChromeResponsePayload } from '@dvcol/web-extension-utils/chrome/models';
 
 import type { MessagePayload, MessageTypes } from '~/models/message/message-type.model';
@@ -22,6 +24,7 @@ export const sendMessage = async <
   message: ChromeMessage<T, P>,
   options?: ChromeMessageOptions,
 ) => {
+  if (!chromeRuntimeId) return console.warn('Chrome runtime ID not available');
   try {
     return await sendMessageEvent<T, P, R>(message, options);
   } catch (error) {

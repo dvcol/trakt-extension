@@ -46,7 +46,12 @@ export const initServices = async () => {
   const restoredSettings = await syncRestoreUser();
   const restoredAuth = await syncRestoreAuth(restoredSettings?.user?.username);
 
-  await TraktService.importAuthentication(restoredAuth);
+  try {
+    await TraktService.importAuthentication(restoredAuth);
+  } catch (error) {
+    Logger.error('Failed to import authentication', error);
+    await TraktService.logout();
+  }
 
   TraktService.listen();
 
