@@ -10,5 +10,9 @@
   "notification__release_notes": {
     "message": "Release notes",
     "description": "The text of the link to the release notes."
+  },
+  "notification__sign_out": {
+    "message": "Sign Out",
+    "description": "The text of the link to the login page."
   }
 }

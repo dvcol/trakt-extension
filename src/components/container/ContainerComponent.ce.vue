@@ -15,6 +15,7 @@ import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
 import { NavbarService } from '~/services/navbar.service';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { lazyComponent } from '~/utils/lazy.utils';
 import { addCustomProgressProperty } from '~/utils/style.utils';
 
@@ -27,8 +28,8 @@ const override: GlobalThemeOverrides = {
   // TODO red palette
 };
 
-const { drawer } = NavbarService;
-const drawerOpen = NavbarService.open;
+const { drawer, open, dropdown } = NavbarService;
+const { enabledRoutes } = useExtensionSettingsStoreRefs();
 
 const root = ref<HTMLElement>();
 
@@ -36,7 +37,11 @@ onBeforeMount(() => addCustomProgressProperty());
 </script>
 
 <template>
-  <div id="trakt-extension-root" ref="root">
+  <div
+    id="trakt-extension-root"
+    ref="root"
+    :style="{ '--tab-count': enabledRoutes.length + 1 }"
+  >
     <NConfigProvider :theme="theme" :theme-overrides="override" abstract>
       <AppComponent />
 
@@ -51,11 +56,7 @@ onBeforeMount(() => addCustomProgressProperty());
         :to="root"
         :max="2"
         :container-class="
-          [
-            'message-container',
-            drawer ? 'has-drawer' : '',
-            drawerOpen ? 'drawer-visible' : '',
-          ]
+          ['message-container', drawer ? 'has-drawer' : '', open ? 'drawer-visible' : '']
             .filter(Boolean)
             .join(' ')
         "
@@ -70,7 +71,8 @@ onBeforeMount(() => addCustomProgressProperty());
           [
             'notification-container',
             drawer ? 'has-drawer' : '',
-            drawerOpen ? 'drawer-visible' : '',
+            open ? 'drawer-visible' : '',
+            dropdown ? 'dropdown-visible' : '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -124,22 +126,44 @@ onBeforeMount(() => addCustomProgressProperty());
 }
 
 .notification-container.n-notification-container.n-notification-container {
-  @include layout.navbar-transition($transition: top);
+  @include layout.navbar-transition(
+    #{top layout.$navbar-transition,
+    right layout.$navbar-transition},
+    #{top layout.$navbar-transition-visible,
+    right layout.$navbar-transition-visible},
+    #{layout.$navbar-transition-delay,
+    layout.$navbar-transition-delay-visible}
+  );
 
   top: layout.$header-navbar-height;
 
   &.drawer-visible {
     top: layout.$header-open-drawer-height;
   }
+
+  &.dropdown-visible {
+    right: max(calc(100vw / var(--tab-count)), 8rem);
+  }
 }
 
 .message-container.n-message-container.n-message-container {
-  @include layout.navbar-transition($transition: top);
+  @include layout.navbar-transition(
+    #{top layout.$navbar-transition,
+    right layout.$navbar-transition},
+    #{top layout.$navbar-transition-visible,
+    right layout.$navbar-transition-visible},
+    #{layout.$navbar-transition-delay,
+    layout.$navbar-transition-delay-visible}
+  );
 
   top: calc(#{layout.$header-navbar-height} + 12px);
 
   &.drawer-visible {
     top: calc(#{layout.$header-open-drawer-height} + 12px);
+  }
+
+  &.dropdown-visible {
+    right: max(calc(100vw / var(--tab-count)), 8rem);
   }
 }
 

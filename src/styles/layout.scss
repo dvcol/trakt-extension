@@ -6,13 +6,18 @@ $navbar-transition-visible: 0.25s var(--n-bezier);
 $navbar-transition-delay: 0.5s;
 $navbar-transition-delay-visible: 0s;
 
-@mixin navbar-transition($transition: height) {
-  transition: $transition $navbar-transition;
+@mixin navbar-transition(
+  $transition: height $navbar-transition,
+  $transition-visible: height $navbar-transition-visible,
+  $navbar-transition-delay: $navbar-transition-delay,
+  $navbar-transition-delay-visible: $navbar-transition-delay-visible
+) {
+  transition: $transition;
   transition-delay: $navbar-transition-delay;
 
   &.drawer-visible {
     height: $header-drawer-height;
-    transition: $transition $navbar-transition-visible;
+    transition: $transition-visible;
     transition-delay: $navbar-transition-delay-visible;
   }
 
