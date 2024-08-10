@@ -110,9 +110,9 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     Logger.debug('Fetching calendar', { mode, start_date, end_date, days: days.value });
 
     const timeout = setTimeout(() => {
-      if (mode === 'reload') calendar.value = getEmptyWeeks(startDate, true);
+      if (mode === 'reload') calendar.value = getEmptyWeeks({ startDate, loading: true, days: days.value });
       else if (mode === 'start') calendar.value = [getLoadingPlaceholder(DateUtils.previous(1, endDate)), ...calendar.value];
-      else if (mode === 'end') calendar.value = [...calendar.value, ...getEmptyWeeks(startDate, true)];
+      else if (mode === 'end') calendar.value = [...calendar.value, ...getEmptyWeeks({ startDate, loading: true, days: days.value })];
     }, 100);
 
     const query: TraktCalendarQuery = { start_date, days: days.value };
@@ -121,7 +121,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     try {
       const newData: CalendarItem[] = await fetchCalendarData(query);
       delete calendarErrors[JSON.stringify(query)];
-      const spacedData = spaceDate(newData, startDate, endDate);
+      const spacedData = spaceDate(newData, { startDate, endDate, days: days.value });
 
       if (mode === 'reload') {
         calendar.value = [...spacedData];

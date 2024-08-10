@@ -159,9 +159,9 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     });
 
     const timeout = setTimeout(() => {
-      if (mode === 'reload') releases.value = getEmptyWeeks(startDate, true);
+      if (mode === 'reload') releases.value = getEmptyWeeks({ startDate, loading: true, days: days.value });
       else if (mode === 'start') releases.value = [getLoadingPlaceholder(DateUtils.previous(1, endDate)), ...releases.value];
-      else if (mode === 'end') releases.value = [...releases.value, ...getEmptyWeeks(startDate, true)];
+      else if (mode === 'end') releases.value = [...releases.value, ...getEmptyWeeks({ startDate, loading: true, days: days.value })];
     }, 100);
 
     const query = {
