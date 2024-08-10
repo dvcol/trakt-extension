@@ -92,12 +92,17 @@ export const getProgressQuery = (item: ListScrollSourceItem): ListScrollItem['ge
   });
 };
 
-const i18n = useI18n('common');
+let i18n: ReturnType<typeof useI18n>;
 
-const i18nEpisode = () => i18n('episode', 'common', 'tag');
-const i18nSeason = () => i18n('season', 'common', 'tag');
-const openInEpisode = () => i18n('open_episode_in_trakt', 'common', 'tooltip');
-const openInSeason = () => i18n('open_season_in_trakt', 'common', 'tooltip');
+const getI18n = () => {
+  if (!i18n) i18n = useI18n('common');
+  return i18n;
+};
+
+const i18nEpisode = () => getI18n()('episode', 'common', 'tag');
+const i18nSeason = () => getI18n()('season', 'common', 'tag');
+const openInEpisode = () => getI18n()('open_episode_in_trakt', 'common', 'tooltip');
+const openInSeason = () => getI18n()('open_season_in_trakt', 'common', 'tooltip');
 
 const getEpisodeTypeTag = (episode: ListScrollSourceItem['episode']): ListScrollItemTag | undefined => {
   if (!episode) return;

@@ -62,10 +62,11 @@ export const initServices = async () => {
     useExtensionSettingsStore().initExtensionSettingsStore(),
   ]);
 
+  await initLocalI18n().promise;
+
   await useActivityStore().initActivityStore();
 
   await Promise.all([
-    initLocalI18n().promise,
     syncRestoreAllUsers(),
     useImageStore().initImageStore(),
     useListsStore().initListsStore(),
