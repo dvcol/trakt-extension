@@ -87,7 +87,7 @@ export const ListScrollItemType = {
   placeholder: 'placeholder',
 } as const;
 
-export type ListScrollItemMeta = {
+export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
   source: ListScrollSourceItem | ProgressItem;
   ids: {
     movie?: Partial<TraktMovie['ids']>;
@@ -101,8 +101,7 @@ export type ListScrollItemMeta = {
     season?: number;
     episode?: number;
   };
-  [key: string]: unknown;
-};
+} & T;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- meta is intentionally weakly typed
 export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> = Omit<PosterItem, 'type'> & {

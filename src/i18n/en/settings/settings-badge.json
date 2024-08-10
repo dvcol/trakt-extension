@@ -2,5 +2,9 @@
   "settings__badge__label_enable_badge": {
     "message": "Enable badge (daily calendar releases)",
     "description": "Label for enabling badge."
+  },
+  "settings__badge__label_badge_mode": {
+    "message": "Badge mode",
+    "description": "Label for badge mode."
   }
 }

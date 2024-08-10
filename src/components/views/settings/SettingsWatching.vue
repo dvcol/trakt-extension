@@ -7,16 +7,11 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { PollingIntervals } from '~/models/polling.model';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { toSnakeCase } from '~/utils/string.utils';
 
 const i18n = useI18n('settings', 'watching');
 
 const { polling, override } = useWatchingStoreRefs();
-
-const toSnakeCase = (str: string) =>
-  str
-    .replace(/([A-Z])/g, '_$1')
-    .toLowerCase()
-    .slice(1);
 
 const options = Object.entries(PollingIntervals).map(([key, value]) => ({
   label: i18n(toSnakeCase(key), 'common', 'polling', 'interval'),

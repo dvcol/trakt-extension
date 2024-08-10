@@ -4,15 +4,24 @@ import { ref } from 'vue';
 
 import type { TraktEpisode, TraktShow } from '@dvcol/trakt-http-client/models';
 
+import type { ListScrollItem, ListScrollItemMeta, ListScrollSourceItem } from '~/models/list-scroll.model';
+
 import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
-import { type ListScrollItem, type ListScrollSourceItem } from '~/models/list-scroll.model';
 import { type ProgressItem } from '~/models/progress.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
-type ProgressListItem = Omit<ListScrollItem, 'posterRef' | 'progressRef'>;
+export type ProgressListItem = Omit<
+  ListScrollItem<
+    ListScrollItemMeta<{
+      episode: ListScrollSourceItem['episode'];
+      show: ListScrollSourceItem['show'];
+    }>
+  >,
+  'posterRef' | 'progressRef'
+>;
 
 const titleRegex = /(.*)\s\d+x\d+\s"([^"]+)"/;
 
@@ -77,6 +86,11 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
   };
 };
 
+export const fetchProgressData = async (): Promise<ProgressListItem[]> => {
+  const items = await TraktService.progress.onDeck();
+  return items.map<ProgressListItem>(progressToListItem);
+};
+
 export const useProgressStore = defineStore('data.progress', () => {
   const firstLoad = ref(true);
   const loading = ref(true);
@@ -100,8 +114,7 @@ export const useProgressStore = defineStore('data.progress', () => {
     loading.value = true;
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
-      const items = await TraktService.progress.onDeck();
-      progress.value = items.map<ProgressListItem>(progressToListItem);
+      progress.value = await fetchProgressData();
     } catch (error) {
       progress.value = [];
       loading.value = false;

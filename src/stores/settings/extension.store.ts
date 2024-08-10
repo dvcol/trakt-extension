@@ -170,6 +170,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: setDefaultTab,
     }),
     enabledTabs: computed(() => Object.entries(routeDictionary) as [Route, boolean][]),
+    isProgressEnabled: computed(() => routeDictionary[Route.Progress]),
     enabledRoutes: computed(() =>
       Object.entries(routeDictionary)
         .filter(([, value]) => value)

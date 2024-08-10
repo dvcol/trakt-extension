@@ -1,0 +1,10 @@
+{
+  "common__badge__mode__calendar": {
+    "message": "Calendar",
+    "description": "Badge mode calendar."
+  },
+  "common__badge__mode__progress": {
+    "message": "Progress",
+    "description": "Badge mode progress."
+  }
+}
