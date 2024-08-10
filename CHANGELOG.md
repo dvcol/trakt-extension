@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.20.0](https://github.com/dvcol/trakt-extension/compare/v1.19.0...v1.20.0) (2024-08-10)
+
+
+### Features
+
+* **activity:** adds activity polling and fix watching polling ([3dd58e8](https://github.com/dvcol/trakt-extension/commit/3dd58e870567ac6343ffebe1b715a8f696fb766f))
+* **badge:** adds calendar badge summary ([6f6112f](https://github.com/dvcol/trakt-extension/commit/6f6112f322fd8ad5976910244a1110fa178f30e7))
+* **progress:** adds mismatch warning and improve stale data detection ([dc8ac91](https://github.com/dvcol/trakt-extension/commit/dc8ac9195c101812b9aad450273608bb3237a0be))
+* **release:** adds release note notification on update ([4e69561](https://github.com/dvcol/trakt-extension/commit/4e6956171b15224b0eb0282920d5935029e32009))
+
+
+### Bug Fixes
+
+* **app:** fix overflow flashing scrollbar on panel opening ([09363cc](https://github.com/dvcol/trakt-extension/commit/09363ccca3b5fe5e78b36d63b271e47d0d6a27aa))
+* **badge:** uses local date to detect today instead of UTC ([7b486a2](https://github.com/dvcol/trakt-extension/commit/7b486a2ea6ba7ec07137e9bb9f8beea2c3cefed3))
+* **checkin:** refresh progress and calendar view on checkin event ([ab64adc](https://github.com/dvcol/trakt-extension/commit/ab64adcad6a19bbeb74ccc52d0aebef74b46c12e))
+* **pagination:** creates constant and fix settings page sizes ([df26938](https://github.com/dvcol/trakt-extension/commit/df26938986a275d190a369235227877c78079a8c))
+* **settings:** disable badge for the web version ([d11d457](https://github.com/dvcol/trakt-extension/commit/d11d45793d9fdb35d212332fb849900432eb3a50))
+* **store:** set on pageSize undefined instead of truthy (to include 0) ([61ff5c0](https://github.com/dvcol/trakt-extension/commit/61ff5c0c1aaec75f1c0ab4b67b090508f27d72e0))
+* **test:** rework import to allow mocking ([719af6e](https://github.com/dvcol/trakt-extension/commit/719af6e8a1a558969187fa8f0b2763dfddaa5fe3))
+* **user:** remove typo in restaure user list hook ([5314c05](https://github.com/dvcol/trakt-extension/commit/5314c05f7e8bfd4ae9720546f126bf3c8b187d35))
+* **web:** early abort sendMessage and fix invalid auth ([58c7426](https://github.com/dvcol/trakt-extension/commit/58c7426b4fb078c9add659b66984a508f50b2cad))
+
 ## [1.19.0](https://github.com/dvcol/trakt-extension/compare/v1.18.3...v1.19.0) (2024-08-04)
 
 
