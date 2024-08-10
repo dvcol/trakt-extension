@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/dvcol/trakt-extension/compare/v1.20.0...v1.21.0) (2024-08-10)
+
+
+### Features
+
+* **badge:** adds support for progress badge ([ec9a58b](https://github.com/dvcol/trakt-extension/commit/ec9a58b6ab8125608d30be92429a6fecec5fe670))
+
+
+### Bug Fixes
+
+* **calendar:** correctly space days when 1 or 2 results only ([06fb538](https://github.com/dvcol/trakt-extension/commit/06fb5383eace999dafdf8fd21ef747c50a42046f))
+
 ## [1.20.0](https://github.com/dvcol/trakt-extension/compare/v1.19.0...v1.20.0) (2024-08-10)
 
 
