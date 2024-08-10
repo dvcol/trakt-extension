@@ -214,7 +214,7 @@ const onTagClick = (url?: string) => {
           <TagLink :tag="tag" @on-click="onTagClick" />
         </template>
         <template v-if="!hideTime && date">
-          <NSkeleton v-if="loading" key="date-loader" text style="width: 6%" />
+          <NSkeleton v-if="loading" key="date-loader" text style="width: 8%" />
           <NTag
             v-else
             key="date"
