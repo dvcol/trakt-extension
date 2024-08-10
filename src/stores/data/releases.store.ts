@@ -189,7 +189,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
 
       newData.sort((a: CalendarItem, b: CalendarItem) => a.date.getTime() - b.date.getTime());
 
-      const spacedData = spaceDate(newData, startDate, endDate);
+      const spacedData = spaceDate(newData, { startDate, endDate, days: days.value });
 
       if (mode === 'reload') {
         releases.value = [...spacedData];
