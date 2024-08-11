@@ -35,7 +35,7 @@ export const useRouterStore = defineStore('router', () => {
   const restoreLastRoute = async () => {
     const _route = await storage.local.get<RouteLocationNormalized>(RouterStorageKey.LastRoute);
     if (_route) lastRoute.value = _route;
-    return _route;
+    return lastRoute.value;
   };
 
   const baseName = ref('');

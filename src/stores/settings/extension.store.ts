@@ -1,4 +1,5 @@
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
@@ -102,6 +103,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.loadListsPageSize !== undefined) loadListsPageSize.value = restored.loadListsPageSize;
     if (restored?.progressType !== undefined) progressType.value = restored.progressType;
     if (restored?.enableRatings !== undefined) enableRatings.value = restored.enableRatings;
+
+    if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
 
   const saveDefaultTab = debounce(() => storage.sync.set(ExtensionSettingsConstants.LocalDefaultTab, defaultTab.value), 500);

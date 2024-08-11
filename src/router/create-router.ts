@@ -1,3 +1,4 @@
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { watch } from 'vue';
 import { createRouter as createVueRouter, createWebHashHistory, type LocationQueryRaw } from 'vue-router';
 
@@ -56,6 +57,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   router.beforeResolve(async to => {
     const query: LocationQueryRaw = { ...routeParam.value };
     if (routeParam.value) setRouteParam(undefined);
+    if (!chromeRuntimeId && to.name === Route.Progress) return defaultTab.value;
 
     if (isLoginAuthResponseSuccess(query)) {
       try {
