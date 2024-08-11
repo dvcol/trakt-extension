@@ -17,6 +17,7 @@ import { TraktClient } from '@dvcol/trakt-http-client';
 
 import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
@@ -177,7 +178,8 @@ export class TraktService {
     const url = this.traktClient
       .redirectToAuthenticationUrl(params)
       .replace(`${traktClientSettings.corsProxy}/${traktClientSettings.corsPrefix}`, traktClientSettings.endpoint);
-    return createTab({ url });
+    if (chromeRuntimeId) return createTab({ url });
+    window.location.href = url;
   }
 
   static async login(token: string): Promise<{ auth: SettingsAuth; settings: UserSetting }> {
