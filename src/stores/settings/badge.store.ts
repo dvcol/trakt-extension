@@ -11,6 +11,7 @@ import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { fetchCalendarData } from '~/stores/data/calendar.store';
 import { fetchProgressData } from '~/stores/data/progress.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { Colors } from '~/styles/colors.style';
@@ -173,6 +174,7 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
 
   const { isProgressEnabled } = useExtensionSettingsStoreRefs();
   const { user } = useUserSettingsStoreRefs();
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const initBadgeStore = async () => {
     await restoreState();
 
@@ -191,6 +193,7 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
     });
 
     watch(user, async () => {
+      if (!isAuthenticated.value) return cleanCalendarBadge();
       await sendBadgeUpdate();
     });
 
