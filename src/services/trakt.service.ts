@@ -1,4 +1,4 @@
-import { type BaseCacheOption, type BaseInit, type CacheResponse, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
+import { type BaseCacheOption, type CacheResponse } from '@dvcol/base-http-client';
 
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { DateUtils } from '@dvcol/common-utils/common/date';
@@ -13,7 +13,7 @@ import {
   type TmdbPaginatedData,
   type TmdbParamPagination,
 } from '@dvcol/tmdb-http-client/models';
-import { isResponseOk, TraktClient } from '@dvcol/trakt-http-client';
+import { TraktClient } from '@dvcol/trakt-http-client';
 
 import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
@@ -58,7 +58,6 @@ import type {
 } from '@dvcol/trakt-http-client/models';
 
 import type { ImagePayload } from '~/models/poster.model';
-import type { ProgressItem } from '~/models/progress.model';
 import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 
 import { ErrorService } from '~/services/error.service';
@@ -66,13 +65,12 @@ import { LoadingBarService } from '~/services/loading-bar.service';
 import { Logger } from '~/services/logger.service';
 import { tmdbUsedApi } from '~/services/tmdb.used.api';
 import { traktUsedApi } from '~/services/trakt-used.api';
-import { ExternaLinks } from '~/settings/external.links';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { traktClientSettings } from '~/settings/traktv.api';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
-import { cancellablePaginatedWriteJson, getSessionUser } from '~/utils/trakt-service.utils';
+import { cancellablePaginatedWriteJson, getCachedProgressEndpoint, getSessionUser } from '~/utils/trakt-service.utils';
 
 const shouldEvict = (cache?: CacheResponse<unknown>, date?: string | number | Date): boolean => {
   // no cache skip
@@ -353,42 +351,7 @@ export class TraktService {
     return { data: await response.json(), pagination: response.pagination };
   }
 
-  private static cachedProgress = getCachedFunction(
-    // @ts-expect-error -- CancellablePromise extends promise
-    async (init?: BaseInit): CancellablePromise<TypedResponse<ProgressItem[]>> => {
-      const response = await fetch(ExternaLinks.trakt.onDeck, {
-        credentials: 'include',
-        ...init,
-      });
-
-      isResponseOk(response);
-
-      const htmlString = await response.text();
-      const htmlDoc = new DOMParser().parseFromString(htmlString, 'text/html');
-      const data = Array.from(htmlDoc.querySelectorAll<HTMLAnchorElement>('a[class="watch"]')).map(
-        a => ({ ...a.dataset }) as unknown as ProgressItem,
-      );
-
-      return new Response(JSON.stringify(data)) as TypedResponse<ProgressItem[]>;
-    },
-    {
-      cache: this.caches.trakt,
-      retention: CacheRetention.Hour * 2,
-      key: (param, init) => {
-        return JSON.stringify({
-          template: {
-            method: 'GET',
-            url: ExternaLinks.trakt.onDeck,
-          },
-          param,
-          init: {
-            credentials: 'include',
-            ...init,
-          },
-        });
-      },
-    },
-  );
+  private static cachedProgress = getCachedProgressEndpoint(this.caches.trakt);
 
   static progress = {
     async onDeck() {
