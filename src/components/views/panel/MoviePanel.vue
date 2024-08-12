@@ -55,9 +55,7 @@ const {
   getMovieLoading,
   fetchMovie,
   getMovieWatched,
-  getMovieWatchedDate,
   getMovieCollected,
-  getMovieCollectedDate,
   fetchMovieWatched,
   fetchMovieCollected,
   changeMovieWatched,
@@ -78,22 +76,22 @@ const movie = computed(() => {
 
 const watched = computed(() => {
   if (!movieId?.value) return;
-  return !!getMovieWatched(movieId.value)?.value;
+  return getMovieWatched(movieId.value)?.value;
 });
 
 const watchedDate = computed(() => {
-  if (!watched?.value) return;
-  return getMovieWatchedDate(movieId.value)?.value;
+  if (!watched?.value?.last_watched_at) return;
+  return new Date(watched.value.last_watched_at);
 });
 
 const collected = computed(() => {
   if (!movieId?.value) return;
-  return !!getMovieCollected(movieId.value)?.value;
+  return getMovieCollected(movieId.value)?.value;
 });
 
 const collectedDate = computed(() => {
-  if (!collected?.value) return;
-  return getMovieCollectedDate(movieId.value)?.value;
+  if (!collected?.value?.collected_at) return;
+  return new Date(collected.value.collected_at);
 });
 
 const { myLists } = useListsStoreRefs();
@@ -352,9 +350,9 @@ onMounted(() => {
     />
 
     <MoviePanelButtons
-      :watched="watched"
+      :watched="!!watched"
       :watched-loading="watchedLoading"
-      :collected="collected"
+      :collected="!!collected"
       :collected-loading="collectionLoading"
       :active-loading="listLoading"
       :active-lists="activeLists"

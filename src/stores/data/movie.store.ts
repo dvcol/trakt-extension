@@ -3,7 +3,7 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, watch } from 'vue';
 
-import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
+import type { TraktCollection, TraktMovieExtended, TraktWatched } from '@dvcol/trakt-http-client/models';
 
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
@@ -14,9 +14,8 @@ import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
 type MovieDictionary = Record<string, TraktMovieExtended>;
-type MovieWatchedDictionary = Record<string, boolean>;
-type MovieCollectedDictionary = Record<string, boolean>;
-type MovieDateDictionary = Record<string, Date>;
+type MovieWatchedDictionary = Record<string, TraktWatched<'movie'>>;
+type MovieCollectedDictionary = Record<string, TraktCollection<'movie'>>;
 
 type LoadingDictionary = Record<string, boolean>;
 
@@ -24,9 +23,6 @@ export const useMovieStore = defineStore('data.movie', () => {
   const movies = reactive<MovieDictionary>({});
   const moviesWatched = reactive<MovieWatchedDictionary>({});
   const moviesCollected = reactive<MovieCollectedDictionary>({});
-
-  const moviesWatchedDates = reactive<MovieDateDictionary>({});
-  const moviesCollectedDates = reactive<MovieDateDictionary>({});
 
   const loading = reactive<LoadingDictionary>({});
   const loadingWatched = ref(false);
@@ -36,12 +32,11 @@ export const useMovieStore = defineStore('data.movie', () => {
   ErrorService.registerDictionary('movie', movieErrors);
 
   const clearMovieWatchedProgress = () => clearProxy(moviesWatched);
+  const clearMovieCollectedProgress = () => clearProxy(moviesCollected);
 
   const clearProgressState = () => {
     clearMovieWatchedProgress();
-    clearProxy(moviesCollected);
-    clearProxy(moviesWatchedDates);
-    clearProxy(moviesCollectedDates);
+    clearMovieCollectedProgress();
 
     loadingWatched.value = false;
     loadingCollected.value = false;
@@ -86,7 +81,7 @@ export const useMovieStore = defineStore('data.movie', () => {
       return;
     }
 
-    Logger.debug('Fetching watched movies');
+    Logger.debug('Fetching watched movies', { force });
 
     if (force) clearMovieWatchedProgress();
 
@@ -94,14 +89,9 @@ export const useMovieStore = defineStore('data.movie', () => {
     try {
       const response = await TraktService.progress.movie.watched(force);
       delete movieErrors.watched;
-      const dictionary = response.reduce<MovieWatchedDictionary>((acc, movie) => {
-        acc[movie.movie.ids.trakt.toString()] = !!movie?.plays;
-        if (movie?.last_watched_at) {
-          moviesWatchedDates[movie.movie.ids.trakt.toString()] = new Date(movie.last_watched_at);
-        }
-        return acc;
-      }, {} as MovieWatchedDictionary);
-      Object.assign(moviesWatched, dictionary);
+      response.forEach(m => {
+        moviesWatched[m.movie.ids.trakt.toString()] = m;
+      });
     } catch (error) {
       Logger.error('Failed to fetch watched movies');
       NotificationService.error('Failed to fetch watched movies', error);
@@ -113,33 +103,37 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
-  const getMovieWatchedDate = (id: string | number) => computed(() => moviesWatchedDates[id.toString()]);
   const changeMovieWatched = async (id: string | number, remove?: boolean) => {
-    moviesWatched[id.toString()] = !remove;
+    if (remove) delete moviesWatched[id.toString()];
+    else {
+      moviesWatched[id.toString()] = {
+        plays: 1,
+        last_watched_at: new Date().toISOString(),
+        last_updated_at: movies[id.toString()]?.updated_at,
+        movie: movies[id.toString()],
+      };
+    }
     await wait(500);
     return fetchMovieWatched();
   };
 
-  const fetchMovieCollected = async () => {
+  const fetchMovieCollected = async (force?: boolean) => {
     if (loadingCollected.value) {
       Logger.warn('Already fetching collected movies');
       return;
     }
 
-    Logger.debug('Fetching collected movies');
+    Logger.debug('Fetching collected movies', { force });
+
+    if (force) clearMovieCollectedProgress();
 
     loadingCollected.value = true;
     try {
       const response = await TraktService.progress.movie.collection();
       delete movieErrors.collected;
-      const dictionary = response.reduce<MovieCollectedDictionary>((acc, movie) => {
-        acc[movie.movie.ids.trakt.toString()] = true;
-        if (movie?.collected_at) {
-          moviesCollectedDates[movie.movie.ids.trakt.toString()] = new Date(movie.collected_at);
-        }
-        return acc;
-      }, {} as MovieCollectedDictionary);
-      Object.assign(moviesCollected, dictionary);
+      response.forEach(m => {
+        moviesCollected[m.movie.ids.trakt.toString()] = m;
+      });
     } catch (error) {
       Logger.error('Failed to fetch collected movies');
       NotificationService.error('Failed to fetch collected movies', error);
@@ -151,9 +145,15 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
-  const getMovieCollectedDate = (id: string | number) => computed(() => moviesCollectedDates[id.toString()]);
   const changeMovieCollected = async (id: string | number, remove?: boolean) => {
-    moviesCollected[id.toString()] = !remove;
+    if (remove) delete moviesCollected[id.toString()];
+    else {
+      moviesCollected[id.toString()] = {
+        collected_at: new Date().toISOString(),
+        updated_at: movies[id.toString()]?.updated_at,
+        movie: movies[id.toString()],
+      };
+    }
     await wait(500);
     return fetchMovieCollected();
   };
@@ -174,11 +174,9 @@ export const useMovieStore = defineStore('data.movie', () => {
     getMovieLoading,
     fetchMovieWatched,
     getMovieWatched,
-    getMovieWatchedDate,
     loadingWatched,
     fetchMovieCollected,
     getMovieCollected,
-    getMovieCollectedDate,
     loadingCollected,
     changeMovieWatched,
     changeMovieCollected,

@@ -3,7 +3,7 @@ import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
 
-import type { TraktApiIds, TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
+import type { TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
@@ -17,7 +17,7 @@ import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
-type IdDictionary = Record<string, Partial<TraktApiIds>>;
+type IdDictionary = Record<string, TraktHistory>;
 
 type HistoryDictionary = {
   movie?: IdDictionary;
@@ -153,10 +153,10 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       newHistory?.forEach(h => {
         if (h.type === 'movie' && 'movie' in h) {
           if (!historyDictionary.movie) historyDictionary.movie = {};
-          historyDictionary.movie[h.movie.ids.trakt] = h.movie.ids;
+          historyDictionary.movie[h.movie.ids.trakt] = h;
         } else if (h.type === 'episode' && 'episode' in h) {
           if (!historyDictionary.episode) historyDictionary.episode = {};
-          historyDictionary.episode[h.episode.ids.trakt] = h.episode.ids;
+          historyDictionary.episode[h.episode.ids.trakt] = h;
         }
       });
     });
