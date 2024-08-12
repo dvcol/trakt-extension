@@ -76,7 +76,7 @@ onBeforeMount(() => {
   fetchLists();
 });
 
-const { pageSize: historyPageSize } = useHistoryStoreRefs();
+const { pageSize: historyPageSize, init } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();
 const { pageSize: searchPageSize } = useSearchStoreRefs();
 const { pageSize: ratingPageSize } = useRatingsStoreRefs();
@@ -155,7 +155,12 @@ const container = ref();
     </SettingsFormItem>
 
     <!--  Enable tabs  -->
-    <template v-for="[route, state] of enabledTabs" :key="route">
+    <div
+      v-for="[route, state] of enabledTabs"
+      :key="route"
+      class="tab-group"
+      :class="{ collapsed: !state }"
+    >
       <SettingsFormItem
         :label="i18n(`label_route_${route}`)"
         :warning="
@@ -219,7 +224,21 @@ const container = ref();
           <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
         </NSwitch>
       </SettingsFormItem>
-    </template>
+
+      <!--  History init  -->
+      <SettingsFormItem
+        v-if="route === Route.History"
+        :label="i18n('label_history_init')"
+        :class="{ show: state }"
+        class="hidden-form-item"
+        :warning="init ? i18n('label_init_warning') : undefined"
+      >
+        <NSwitch v-model:value="init" class="form-switch">
+          <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+          <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+        </NSwitch>
+      </SettingsFormItem>
+    </div>
 
     <!--  Enable Ratings  -->
     <SettingsFormItem
@@ -308,6 +327,17 @@ const container = ref();
     min-width: 5rem;
     padding: 0 0.5rem;
     font-size: 0.75rem;
+  }
+
+  .tab-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: gap 0.3s var(--n-bezier);
+
+    &.collapsed {
+      gap: 0;
+    }
   }
 }
 

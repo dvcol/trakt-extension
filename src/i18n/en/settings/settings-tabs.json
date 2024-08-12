@@ -102,5 +102,13 @@
   "settings__tabs__label_extended_warning": {
     "message": "This may increase page load times significantly.",
     "description": "Warning message for the 'Fetch extended data' setting"
+  },
+  "settings__tabs__label_history_init": {
+    "message": "Fetch history data on startup",
+    "description": "Label for the 'Fetch history data on startup' setting"
+  },
+  "settings__tabs__label_init_warning": {
+    "message": "This may increase application startup time.",
+    "description": "Warning message for the 'Fetch history data on startup' setting"
   }
 }
