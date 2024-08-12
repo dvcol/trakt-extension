@@ -41,16 +41,9 @@ const { activeList } = useListsStoreRefs();
 const { scrolled, listRef, onClick } = useBackToTop();
 const { onItemClick } = usePanelItem();
 
-watchUserChange({
+const { active } = watchUserChange({
   fetch: fetchListItems,
   clear: clearState,
-});
-
-onMounted(() => {
-  watch(panelOpen, async value => {
-    if (!value && panelDirty.value) await fetchListItems();
-  });
-  watch(activeList, () => onClick());
 });
 
 const list = useListScroll<AnyList, AnyListDateTypes>(
@@ -65,6 +58,14 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
   pagination,
   loading: listLoading,
   belowThreshold,
+  active,
+});
+
+onMounted(() => {
+  watch(panelOpen, async value => {
+    if (!value && panelDirty.value) await fetchListItems();
+  });
+  watch(activeList, () => onClick());
 });
 </script>
 

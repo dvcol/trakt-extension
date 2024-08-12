@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NFlex, NTimeline, NVirtualList } from 'naive-ui';
 
-import { ref, toRefs } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 
 import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { PropType, Ref, Transition } from 'vue';
@@ -141,12 +141,13 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
 const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number }) => {
   emits('onloadMore', { listRef, ...payload });
 };
+const isEmpty = computed(() => !items.value.length && !loading.value);
 </script>
 
 <template>
   <Transition name="fade" mode="out-in">
     <NVirtualList
-      v-if="items.length || loading"
+      v-if="!isEmpty"
       ref="listRef"
       class="list-scroll"
       :data-length="items.length"
