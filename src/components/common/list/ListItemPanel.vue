@@ -160,25 +160,48 @@ const movieWatched = computed(() => {
   return getMovieWatched(_item.meta.ids.movie.trakt)?.value;
 });
 
+const moviePlayed = computed(() => {
+  if (!showPlayed.value) return;
+  if (movieWatched.value !== undefined) return movieWatched.value?.last_watched_at;
+  return movieHistory.value?.watched_at;
+});
+
+const episodePlayed = computed(() => {
+  if (!showPlayed.value) return;
+  if (episodeProgress.value !== undefined) {
+    return {
+      date: episodeProgress.value?.date,
+      completed: episodeProgress.value?.completed,
+    };
+  }
+  return {
+    date: episodeHistory.value?.watched_at,
+    completed: !!episodeHistory.value,
+  };
+});
+
 const played = computed(() => {
   if (!showPlayed.value) return false;
-  const _item = item?.value;
-  if (_item?.type === 'movie') {
-    const _watched = movieWatched.value;
-    if (_watched !== undefined) return !!_watched.plays;
-    return !!movieHistory.value;
+  if (item?.value?.type === 'movie') return !!moviePlayed.value;
+  if (item?.value?.type !== 'episode') return false;
+  return episodePlayed.value?.completed;
+});
+
+const playedDate = computed(() => {
+  if (!played.value) return;
+  if (item?.value?.type === 'movie') {
+    if (!moviePlayed.value) return;
+    return new Date(moviePlayed.value).toLocaleString();
   }
-  if (_item?.type !== 'episode') return false;
-  const _progress = episodeProgress.value;
-  if (_progress !== undefined) return _progress.completed;
-  return !!episodeHistory.value;
+  if (!episodePlayed.value?.date) return;
+  return new Date(episodePlayed.value?.date).toLocaleString();
 });
 
 const collected = computed(() => {
   if (!showCollected.value) return false;
   const _item = item?.value;
   if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
-    return getMovieCollected(_item.meta.ids.movie.trakt)?.value;
+    return getMovieCollected(_item.meta.ids.movie.trakt)?.value?.collected_at;
   }
   if (_item?.type !== 'episode') return false;
   const _collection = collection.value;
@@ -189,7 +212,13 @@ const collected = computed(() => {
   if (!_season || !_episode) return false;
   return _collection.seasons
     ?.find(s => s.number === _season)
-    ?.episodes?.find(e => e.number === _episode)?.completed;
+    ?.episodes?.find(e => e.number === _episode)?.date;
+});
+
+const collectedDate = computed(() => {
+  if (!collected.value) return;
+  if (typeof collected.value !== 'string') return;
+  return new Date(collected.value).toLocaleString();
 });
 
 const { progressType } = useExtensionSettingsStoreRefs();
@@ -272,7 +301,10 @@ const onTagClick = (url?: string) => {
             size="small"
             type="info"
             :bordered="false"
-            :title="i18n('collected', 'common', 'tooltip')"
+            :title="
+              i18n('collected', 'common', 'tooltip') +
+              (collectedDate ? `: ${ collectedDate }` : '')
+            "
           >
             <template #icon>
               <NIcon :component="IconGrid" />
@@ -288,7 +320,9 @@ const onTagClick = (url?: string) => {
             size="small"
             type="primary"
             :bordered="false"
-            :title="i18n('watched', 'common', 'tooltip')"
+            :title="
+              i18n('watched', 'common', 'tooltip') + (playedDate ? `: ${ playedDate }` : '')
+            "
           >
             <template #icon>
               <NIcon :component="IconPlayFilled" />
