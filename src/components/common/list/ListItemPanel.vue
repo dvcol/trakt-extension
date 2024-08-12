@@ -21,6 +21,7 @@ import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
+import { useHistoryStore } from '~/stores/data/history.store';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -119,22 +120,43 @@ const collection = computed<ShowProgress | undefined>(() => {
 });
 
 const { getMovieWatched, getMovieCollected } = useMovieStore();
+const { getMovieHistory, getEpisodeHistory } = useHistoryStore();
+
+const movieHistory = computed(() => {
+  if (!showPlayed.value) return;
+  const _item = item?.value;
+  if (_item?.type !== 'movie') return;
+  if (!_item?.meta?.ids?.movie?.trakt) return;
+  return !!getMovieHistory(_item.meta.ids.movie.trakt)?.value;
+});
+
+const episodeHistory = computed(() => {
+  if (!showPlayed.value) return;
+  const _item = item?.value;
+  if (_item?.type !== 'episode') return;
+  if (!_item?.meta?.ids?.episode?.trakt) return;
+  return !!getEpisodeHistory(_item.meta.ids.episode.trakt)?.value;
+});
 
 const played = computed(() => {
   if (!showPlayed.value) return false;
   const _item = item?.value;
   if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
-    return getMovieWatched(_item.meta.ids.movie.trakt)?.value;
+    const _watched = getMovieWatched(_item.meta.ids.movie.trakt)?.value;
+    if (_watched !== undefined) return _watched;
+    return movieHistory.value;
   }
   if (_item?.type !== 'episode') return false;
   const _progress = progress.value;
-  if (!_progress) return false;
+  if (!_progress) return episodeHistory.value;
   const _season = _item.meta?.number?.season;
   const _episode = _item.meta?.number?.episode;
-  if (!_season || !_episode) return false;
-  return _progress.seasons
+  if (!_season || !_episode) return episodeHistory.value;
+  const _watched = _progress.seasons
     ?.find(s => s.number === _season)
     ?.episodes?.find(e => e.number === _episode)?.completed;
+  if (_watched !== undefined) return _watched;
+  return episodeHistory.value;
 });
 
 const collected = computed(() => {

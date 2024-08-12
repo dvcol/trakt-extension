@@ -1,6 +1,9 @@
-import { TraktApiExtended, type TraktClientPagination, type TraktHistory, type TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
+import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
+
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
+
+import type { TraktApiIds, TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
 
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
@@ -12,6 +15,13 @@ import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
+
+type IdDictionary = Record<string, Partial<TraktApiIds>>;
+
+type HistoryDictionary = {
+  movie?: IdDictionary;
+  episode?: IdDictionary;
+};
 
 const HistoryStoreConstants = {
   Store: 'data.history',
@@ -29,6 +39,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const loading = ref(true);
   const pageSize = ref(PageSize.p100);
   const history = ref<TraktHistory[]>([]);
+  const historyDictionary = reactive<HistoryDictionary>({});
   const pagination = ref<TraktClientPagination>();
   const extended = ref(false);
 
@@ -66,6 +77,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     historyStart.value = undefined;
     historyEnd.value = undefined;
     clearProxy(historyErrors);
+    clearProxy(historyDictionary);
   };
 
   const belowThreshold = useBelowThreshold(threshold, pagination);
@@ -117,6 +129,10 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     await saveState();
   };
 
+  const getHistory = (id: number, type: TraktHistory['type']) => computed(() => historyDictionary[type]?.[id]);
+  const getMovieHistory = (id: number) => getHistory(id, 'movie');
+  const getEpisodeHistory = (id: number) => getHistory(id, 'episode');
+
   const initHistoryStore = async () => {
     await restoreState();
 
@@ -124,6 +140,19 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       await fetchHistory();
       searchHistory.value = '';
       await saveState();
+    });
+
+    watch(history, newHistory => {
+      clearProxy(historyDictionary);
+      newHistory?.forEach(h => {
+        if (h.type === 'movie' && 'movie' in h) {
+          if (!historyDictionary.movie) historyDictionary.movie = {};
+          historyDictionary.movie[h.movie.ids.trakt] = h.movie.ids;
+        } else if (h.type === 'episode' && 'episode' in h) {
+          if (!historyDictionary.episode) historyDictionary.episode = {};
+          historyDictionary.episode[h.episode.ids.trakt] = h.episode.ids;
+        }
+      });
     });
   };
 
@@ -141,6 +170,9 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     historyStart,
     historyEnd,
     setHistoryRange,
+    getHistory,
+    getMovieHistory,
+    getEpisodeHistory,
     clearState,
     initHistoryStore,
     extended: computed({
