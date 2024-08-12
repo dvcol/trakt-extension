@@ -127,7 +127,7 @@ const movieHistory = computed(() => {
   const _item = item?.value;
   if (_item?.type !== 'movie') return;
   if (!_item?.meta?.ids?.movie?.trakt) return;
-  return !!getMovieHistory(_item.meta.ids.movie.trakt)?.value;
+  return getMovieHistory(_item.meta.ids.movie.trakt)?.value;
 });
 
 const episodeHistory = computed(() => {
@@ -135,28 +135,43 @@ const episodeHistory = computed(() => {
   const _item = item?.value;
   if (_item?.type !== 'episode') return;
   if (!_item?.meta?.ids?.episode?.trakt) return;
-  return !!getEpisodeHistory(_item.meta.ids.episode.trakt)?.value;
+  return getEpisodeHistory(_item.meta.ids.episode.trakt)?.value;
+});
+
+const episodeProgress = computed(() => {
+  if (!showPlayed.value) return;
+  const _item = item?.value;
+  if (_item?.type !== 'episode') return;
+  const _progress = progress.value;
+  if (!_progress) return;
+  const _season = _item.meta?.number?.season;
+  const _episode = _item.meta?.number?.episode;
+  if (!_season || !_episode) return;
+  return _progress.seasons
+    ?.find(s => s.number === _season)
+    ?.episodes?.find(e => e.number === _episode);
+});
+
+const movieWatched = computed(() => {
+  if (!showPlayed.value) return;
+  const _item = item?.value;
+  if (_item?.type !== 'movie') return;
+  if (!_item?.meta?.ids?.movie?.trakt) return;
+  return getMovieWatched(_item.meta.ids.movie.trakt)?.value;
 });
 
 const played = computed(() => {
   if (!showPlayed.value) return false;
   const _item = item?.value;
-  if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
-    const _watched = getMovieWatched(_item.meta.ids.movie.trakt)?.value;
-    if (_watched !== undefined) return _watched;
-    return movieHistory.value;
+  if (_item?.type === 'movie') {
+    const _watched = movieWatched.value;
+    if (_watched !== undefined) return !!_watched.plays;
+    return !!movieHistory.value;
   }
   if (_item?.type !== 'episode') return false;
-  const _progress = progress.value;
-  if (!_progress) return episodeHistory.value;
-  const _season = _item.meta?.number?.season;
-  const _episode = _item.meta?.number?.episode;
-  if (!_season || !_episode) return episodeHistory.value;
-  const _watched = _progress.seasons
-    ?.find(s => s.number === _season)
-    ?.episodes?.find(e => e.number === _episode)?.completed;
-  if (_watched !== undefined) return _watched;
-  return episodeHistory.value;
+  const _progress = episodeProgress.value;
+  if (_progress !== undefined) return _progress.completed;
+  return !!episodeHistory.value;
 });
 
 const collected = computed(() => {
