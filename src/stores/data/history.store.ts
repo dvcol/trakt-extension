@@ -48,7 +48,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const historyStart = ref<Date | undefined>(undefined);
   const historyEnd = ref<Date | undefined>(undefined);
 
-  const threshold = ref(10);
+  const threshold = ref(4);
 
   const historyErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('history', historyErrors);

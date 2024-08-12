@@ -28,8 +28,8 @@ export type VirtualListProps = {
 };
 export type VirtualListScrollToOptions = Parameters<VirtualListInst['scrollTo']>[0];
 
-export type OnScroll = (listRef: Ref<VirtualListRef | undefined>) => void;
-export type OnUpdated = (listRef: Ref<VirtualListRef | undefined>) => void;
+export type OnScroll = (listRef: Ref<VirtualListRef | undefined> | VirtualListRef) => void;
+export type OnUpdated = (listRef: Ref<VirtualListRef | undefined> | VirtualListRef) => void;
 
 export type ListScrollSourceItem = {
   id: string | number;
