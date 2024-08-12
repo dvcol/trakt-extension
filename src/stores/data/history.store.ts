@@ -12,6 +12,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
@@ -29,9 +30,10 @@ const HistoryStoreConstants = {
 
 type HistoryState = {
   pageSize: number;
+  extended: boolean;
+  init: boolean;
   historyStart?: Date | number;
   historyEnd?: Date | number;
-  extended?: boolean;
 };
 
 export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
@@ -42,6 +44,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const historyDictionary = reactive<HistoryDictionary>({});
   const pagination = ref<TraktClientPagination>();
   const extended = ref(false);
+  const init = ref(false);
 
   const searchHistory = ref('');
 
@@ -59,6 +62,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       historyStart: historyStart.value?.getTime(),
       historyEnd: historyEnd.value?.getTime(),
       extended: extended.value,
+      init: init.value,
     });
 
   const restoreState = async () => {
@@ -68,6 +72,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     if (restored?.historyStart) historyStart.value = new Date(restored.historyStart);
     if (restored?.historyEnd) historyEnd.value = new Date(restored.historyEnd);
     if (restored?.extended) extended.value = restored.extended;
+    if (restored?.init) init.value = restored.init;
   };
 
   const clearState = () => {
@@ -133,6 +138,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const getMovieHistory = (id: number) => getHistory(id, 'movie');
   const getEpisodeHistory = (id: number) => getHistory(id, 'episode');
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const initHistoryStore = async () => {
     await restoreState();
 
@@ -154,6 +160,10 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
         }
       });
     });
+
+    if (!init.value) return;
+    if (!isAuthenticated.value) return;
+    await fetchHistory();
   };
 
   return {
@@ -180,6 +190,14 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       set: (value: boolean) => {
         extended.value = value;
         saveState().catch(e => Logger.error('Failed to save history extended state', e));
+      },
+    }),
+    init: computed({
+      get: () => init.value,
+      set: (value: boolean) => {
+        init.value = value;
+        saveState().catch(e => Logger.error('Failed to save history init state', e));
+        if (value) return fetchHistory();
       },
     }),
   };
