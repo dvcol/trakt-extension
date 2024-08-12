@@ -235,7 +235,14 @@ export const useListScrollEvents = (
     pagination,
     loading,
     belowThreshold,
-  }: { data: Ref<ListScrollItem[]>; pagination: Ref<TraktClientPagination | undefined>; loading: Ref<boolean>; belowThreshold?: Ref<boolean> },
+    active,
+  }: {
+    data: Ref<ListScrollItem[]>;
+    pagination: Ref<TraktClientPagination | undefined>;
+    loading: Ref<boolean>;
+    belowThreshold?: Ref<boolean>;
+    active?: Ref<boolean>;
+  },
 ) => {
   const onScroll: OnScroll = async listRef => {
     const key = data.value[data.value.length - 1].id;
@@ -252,10 +259,18 @@ export const useListScrollEvents = (
 
   /**
    * This is a workaround for the onUpdated lifecycle hook not triggering when wrapped in transition.
+   * It fires when the list is updated and checks if the list is scrolled to the bottom to trigger the next page load.
    */
   const onUpdated: OnUpdated = listRef => {
     const { scrollHeight, clientHeight } = listRef.value?.$el?.firstElementChild ?? {};
-    if (scrollHeight !== clientHeight || !belowThreshold?.value || loading.value) return;
+    // If  already loading we don't trigger
+    if (loading.value) return;
+    // If the list is not scrolled to the bottom we don't trigger
+    if (scrollHeight !== clientHeight) return;
+    // If the list is not below the threshold we don't trigger
+    if (belowThreshold?.value === false) return;
+    // If the view is not currently active we don't trigger
+    if (active?.value === false) return;
 
     return onLoadMore();
   };

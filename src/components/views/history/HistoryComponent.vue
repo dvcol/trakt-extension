@@ -25,9 +25,24 @@ const { isWatching } = useWatchingStoreRefs();
 
 const i18n = useI18n('history');
 
-watchUserChange({
+const { active } = watchUserChange({
   fetch: fetchHistory,
   clear: clearState,
+});
+
+const list = useListScroll(filteredHistory, 'watched_at');
+
+const history = addLoadMore(list, pagination, searchHistory);
+
+const { scrolled, listRef, onClick } = useBackToTop();
+const { onItemClick } = usePanelItem();
+
+const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchHistory, {
+  data: history,
+  pagination,
+  loading,
+  belowThreshold,
+  active,
 });
 
 onMounted(() => {
@@ -39,20 +54,6 @@ onMounted(() => {
     await fetchHistory();
   });
 });
-
-const list = useListScroll(filteredHistory, 'watched_at');
-
-const history = addLoadMore(list, pagination, searchHistory);
-
-const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchHistory, {
-  data: history,
-  pagination,
-  loading,
-  belowThreshold,
-});
-
-const { scrolled, listRef, onClick } = useBackToTop();
-const { onItemClick } = usePanelItem();
 </script>
 
 <template>
