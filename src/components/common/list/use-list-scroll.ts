@@ -1,6 +1,6 @@
 import { type TraktClientPagination, TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
 
-import { computed, ref } from 'vue';
+import { computed, isRef, ref } from 'vue';
 
 import type { Ref } from 'vue';
 
@@ -245,11 +245,12 @@ export const useListScrollEvents = (
   },
 ) => {
   const onScroll: OnScroll = async listRef => {
+    const _listRef = isRef(listRef) ? listRef.value : listRef;
     const key = data.value[data.value.length - 1].id;
     await callback({
       page: pagination.value?.page ? pagination.value.page + 1 : 0,
     });
-    listRef.value?.scrollTo({ key, debounce: true });
+    _listRef?.scrollTo({ key, debounce: true });
   };
 
   const onLoadMore = async () =>
@@ -262,7 +263,8 @@ export const useListScrollEvents = (
    * It fires when the list is updated and checks if the list is scrolled to the bottom to trigger the next page load.
    */
   const onUpdated: OnUpdated = listRef => {
-    const { scrollHeight, clientHeight } = listRef.value?.$el?.firstElementChild ?? {};
+    const _listRef = isRef(listRef) ? listRef.value : listRef;
+    const { scrollHeight, clientHeight } = _listRef?.$el?.firstElementChild ?? {};
     // If  already loading we don't trigger
     if (loading.value) return;
     // If the list is not scrolled to the bottom we don't trigger

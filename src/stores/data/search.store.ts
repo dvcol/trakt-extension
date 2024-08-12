@@ -166,12 +166,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       await addToHistory().catch(e => Logger.error('Failed to save search history', e));
     });
 
-    watch(pageSize, async () => {
-      await fetchSearchResults();
-      await saveState();
-    });
-
-    watch(types, async () => {
+    watch([pageSize, types], async () => {
       await fetchSearchResults();
       await saveState();
     });

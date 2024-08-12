@@ -239,7 +239,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const listItems = ref<AnyList[]>([]);
   const searchList = ref('');
-  const threshold = ref(10);
+  const threshold = ref(4);
 
   const listDictionary = reactive<ListDictionary>({});
   const listDictionaryLoading = reactive<ListDictionaryLoading>({});
