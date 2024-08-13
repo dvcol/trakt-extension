@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.22.0](https://github.com/dvcol/trakt-extension/compare/v1.21.0...v1.22.0) (2024-08-13)
+
+
+### Features
+
+* **history:** adds settings to load history on startup ([c4c2268](https://github.com/dvcol/trakt-extension/commit/c4c226865105d474b8f2bb965178b45f1a25a639))
+* **list:** adds collected & watched date on hover ([02cd3d3](https://github.com/dvcol/trakt-extension/commit/02cd3d32258a0e870ec6903642a88fc37808fafc))
+* **list:** source played status from history when no progress available ([88429b2](https://github.com/dvcol/trakt-extension/commit/88429b21b0cb3f46a5f055c722388e0429626277))
+
+
+### Bug Fixes
+
+* **api:** fix redirect url on web ([4c8346e](https://github.com/dvcol/trakt-extension/commit/4c8346e9e2f2482d564e34179d1a7a85c68e26b2))
+* **badge:** do not fetch when not authenticated ([6152459](https://github.com/dvcol/trakt-extension/commit/61524591d06a98c2577ab63b2025862d4b3efbd5))
+* **list:** only trigger updated when view is active ([e25e06c](https://github.com/dvcol/trakt-extension/commit/e25e06c1c01566866decf1dd043a4d0d2744c8b7))
+* **login:** login in place on web ([1f86a90](https://github.com/dvcol/trakt-extension/commit/1f86a90d3789706a002dea06619ae3fbcf254fc6))
+* **proxy:** refactor cached progress and handle proxy on web ([0345b34](https://github.com/dvcol/trakt-extension/commit/0345b34fdab247b37000c498ae09a942cd9c47bd))
+* **proxy:** update proxy prefix ([19f28cc](https://github.com/dvcol/trakt-extension/commit/19f28cc86bee8a65976a8ff849b79174c321e94a))
+* **router:** make progress inaccessible from web ([d2c8f5a](https://github.com/dvcol/trakt-extension/commit/d2c8f5a8791802c153ea5e8086b9103cc5c021c5))
+* **web:** fix unsafe store access in use-list-scroll ([b1875cb](https://github.com/dvcol/trakt-extension/commit/b1875cb416bbc8031d0d11b09cbd7cc17a90f9bd))
+
 ## [1.21.0](https://github.com/dvcol/trakt-extension/compare/v1.20.0...v1.21.0) (2024-08-10)
 
 
