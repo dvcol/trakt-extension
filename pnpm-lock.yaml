@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@dvcol/base-http-client':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.12.2
+        version: 1.12.2
       '@dvcol/common-utils':
         specifier: ^1.9.0
         version: 1.9.0
       '@dvcol/tmdb-http-client':
-        specifier: ^1.2.3
-        version: 1.2.3
+        specifier: ^1.3.3
+        version: 1.3.3
       '@dvcol/trakt-http-client':
-        specifier: ^1.4.5
-        version: 1.4.5
+        specifier: ^1.4.6
+        version: 1.4.6
       '@dvcol/web-extension-utils':
         specifier: ^3.3.2
         version: 3.3.2
@@ -1042,8 +1042,12 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@dvcol/base-http-client@1.10.0':
-    resolution: {integrity: sha512-kNSO7IePifulnkTihfm+9YxFgJXcogtZ2AUW1NKkeLbmBxRldCsO4wVOXdTEjHxSU4jLHHUnxDfjttbw5hzuAA==}
+  '@dvcol/base-http-client@1.12.2':
+    resolution: {integrity: sha512-kXvkGqCuS/N8p+lu7lYrWimpSYqJ1z3PY1h2Vd1HQX3bM7BM1KSneXlQrGSLIQTxXj7ICGtoCa5iyIXBXCZYYw==}
+    engines: {node: '>=20', pnpm: '>= 8'}
+
+  '@dvcol/common-utils@1.10.0':
+    resolution: {integrity: sha512-74tmv1/NXR5dUkb+aTyFIdKPhAWFuuy3MrWW2nIShnVk35JTUfOxheZ1GrlyWWdY/kjnM1oJ5SrpZ252rcnWIQ==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/common-utils@1.9.0':
@@ -1146,12 +1150,12 @@ packages:
       postcss-scss:
         optional: true
 
-  '@dvcol/tmdb-http-client@1.2.3':
-    resolution: {integrity: sha512-/GvGtj733FSFEdnMraHgHiKjI9ZwaGeNkW4RmH4ZLx3gcN/1IUtMPCQhbUGqvEN0oTYRzB6UgHTH5IpFIEN8Hw==}
+  '@dvcol/tmdb-http-client@1.3.3':
+    resolution: {integrity: sha512-hnNhWhyYCFd3Bq+qcnPjMlEUIvWPgzFYQUEOLr9/fKJbsgFjy11CIjdccoosjzI6ESaUWK+IaxrjLWQ56POkNg==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/trakt-http-client@1.4.5':
-    resolution: {integrity: sha512-UfkWQvmWqay/lMQQFiL1NL/PAS6pS05GREeKEAbuSDl77vusFLBByQvD1UfK+YgNs320NW2AMlkBhtphwa9Ypw==}
+  '@dvcol/trakt-http-client@1.4.6':
+    resolution: {integrity: sha512-X1/+43Nj3FnbPl/CS4lNaPhkb8pFW48S0sjXiRHN0+kE+ZyEI5w9ECpsY2J0B7PXlJMZZiMYuPAuCyiyDyx8iw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/web-extension-utils@3.3.2':
@@ -7959,9 +7963,13 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.0.15
 
-  '@dvcol/base-http-client@1.10.0':
+  '@dvcol/base-http-client@1.12.2':
     dependencies:
       '@dvcol/common-utils': 1.9.0
+
+  '@dvcol/common-utils@1.10.0':
+    dependencies:
+      pretty-bytes: 6.1.1
 
   '@dvcol/common-utils@1.9.0':
     dependencies:
@@ -8021,15 +8029,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dvcol/tmdb-http-client@1.2.3':
+  '@dvcol/tmdb-http-client@1.3.3':
     dependencies:
-      '@dvcol/base-http-client': 1.10.0
+      '@dvcol/base-http-client': 1.12.2
       '@dvcol/common-utils': 1.9.0
 
-  '@dvcol/trakt-http-client@1.4.5':
+  '@dvcol/trakt-http-client@1.4.6':
     dependencies:
-      '@dvcol/base-http-client': 1.10.0
-      '@dvcol/common-utils': 1.9.0
+      '@dvcol/base-http-client': 1.12.2
+      '@dvcol/common-utils': 1.10.0
 
   '@dvcol/web-extension-utils@3.3.2':
     dependencies:
