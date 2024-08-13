@@ -14,6 +14,9 @@ importers:
       '@dvcol/common-utils':
         specifier: ^1.9.0
         version: 1.9.0
+      '@dvcol/mal-http-client':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@dvcol/tmdb-http-client':
         specifier: ^1.3.3
         version: 1.3.3
@@ -1129,6 +1132,10 @@ packages:
         optional: true
       vue:
         optional: true
+
+  '@dvcol/mal-http-client@1.1.0':
+    resolution: {integrity: sha512-ZTYMrC/vwtgK1jFK3Q38db3YQpBGSAZDjtxq6gxQ2tNMxdn5ePlhJa62tYX6D8ybeNqUzpgooAx+jdQ8BOftvg==}
+    engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/stylelint-plugin-presets@2.1.2':
     resolution: {integrity: sha512-18TGAY/71+6+hwQK5Gw9mYrpppKhufnLbt+XOsLs33XZ8oeBJ00X8Co7a86HJsXJiWIRORhLC4LsqE6cXcNpSQ==}
@@ -8004,6 +8011,11 @@ snapshots:
       eslint-plugin-vue: 9.19.2(eslint@8.56.0)
       eslint-plugin-vuejs-accessibility: 2.2.0(eslint@8.56.0)
       vue: 3.4.14(typescript@5.4.2)
+
+  '@dvcol/mal-http-client@1.1.0':
+    dependencies:
+      '@dvcol/base-http-client': 1.12.2
+      '@dvcol/common-utils': 1.10.0
 
   '@dvcol/stylelint-plugin-presets@2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.4.2))':
     dependencies:

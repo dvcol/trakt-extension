@@ -2,6 +2,7 @@ import { type BaseCacheOption, type CacheResponse } from '@dvcol/base-http-clien
 
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { DateUtils } from '@dvcol/common-utils/common/date';
+import { MalClient } from '@dvcol/mal-http-client';
 import { TmdbClient } from '@dvcol/tmdb-http-client';
 
 import {
@@ -22,6 +23,7 @@ import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
+import type { MalApiResponse } from '@dvcol/mal-http-client/models';
 import type {
   TraktApiResponse,
   TraktAuthentication,
@@ -64,6 +66,8 @@ import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import { ErrorService } from '~/services/error.service';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { Logger } from '~/services/logger.service';
+import { malUsedApi } from '~/settings/mal-used.api';
+import { malClientSettings } from '~/settings/mal.api';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { tmdbUsedApi } from '~/settings/tmdb.used.api';
 import { traktUsedApi } from '~/settings/trakt-used.api';
@@ -97,10 +101,12 @@ const imageResponseEmpty = (payload: ImagePayload) => {
 export class TraktService {
   private static traktClient: TraktClient;
   private static tmdbClient: TmdbClient;
+  private static malClient: MalClient;
 
   private static caches: {
     trakt: ChromeCacheStore<TraktApiResponse>;
     tmdb: ChromeCacheStore<TmdbApiResponse>;
+    mal: ChromeCacheStore<MalApiResponse>;
   };
 
   static get auth() {
@@ -124,10 +130,15 @@ export class TraktService {
         prefix: CachePrefix.Tmdb,
         retention: CacheRetention.Year,
       }),
+      mal: new ChromeCacheStore<MalApiResponse>({
+        prefix: CachePrefix.Tmdb,
+        retention: CacheRetention.Week,
+      }),
     };
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktUsedApi);
     this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbUsedApi);
+    this.malClient = new MalClient({ ...malClientSettings, cacheStore: this.caches.mal }, {}, malUsedApi);
   }
 
   static changeUser(user: string) {

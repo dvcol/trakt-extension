@@ -4,5 +4,6 @@ export const WebConfig = {
     Trakt: 'trakt',
     ApiTrakt: 'api-trakt',
     Tmdb: 'tmdb',
+    ApiMal: 'api-mal',
   },
 };

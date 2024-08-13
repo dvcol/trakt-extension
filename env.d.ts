@@ -17,5 +17,8 @@ interface ImportMeta {
     VITE_TMDB_READ_TOKEN: string;
 
     VITE_TVDB_API_KEY: string;
+
+    VITE_MAL_CLIENT_ID: string;
+    VITE_MAL_CLIENT_SECRET: string;
   };
 }
