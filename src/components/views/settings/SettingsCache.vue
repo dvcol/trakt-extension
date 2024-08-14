@@ -78,6 +78,7 @@ const evictScopes = [
   { label: i18n('evict_movies'), click: TraktService.evict.movies },
   { label: i18n('evict_people'), click: TraktService.evict.people },
   { label: i18n('evict_ratings'), click: TraktService.evict.ratings },
+  { label: i18n('evict_stats'), click: TraktService.evict.stats },
   {
     label: i18n('evict_trakt'),
     click: TraktService.evict.trakt,

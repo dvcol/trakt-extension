@@ -585,6 +585,13 @@ export class TraktService {
     },
   };
 
+  static stats = {
+    user: async (username: string) => {
+      const response = await TraktService.traktClient.users.stats.cached({ id: username }, undefined, { retention: CacheRetention.Day });
+      return response.json();
+    },
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
@@ -654,7 +661,8 @@ export class TraktService {
         ]),
       movie: TraktService.traktClient.sync.collection.get.cached.evict,
     },
-    ratings: () => TraktService.traktClient.sync.ratings.get.cached.evict(),
+    ratings: TraktService.traktClient.sync.ratings.get.cached.evict,
+    stats: TraktService.traktClient.users.stats.cached.evict,
   };
 
   static export = {
