@@ -82,8 +82,8 @@ const onClick = () => {
           </NIcon>
         </NButton>
 
-        <NFlex class="names" size="large" :wrap="false">
-          <NFlex vertical class="column-1" justify="center">
+        <NFlex class="names" size="large" wrap>
+          <NFlex vertical class="column" justify="center">
             <TextField
               :label="i18n('username')"
               :value="user?.username"
@@ -98,7 +98,7 @@ const onClick = () => {
             />
             <TextField :label="i18n('joined')" :value="joinDate" label-width="4.5rem" />
           </NFlex>
-          <NFlex vertical class="column-2" justify="center">
+          <NFlex vertical class="column" justify="center">
             <TextField
               :label="i18n('private')"
               :value="user?.private"
@@ -131,26 +131,37 @@ const onClick = () => {
     </NCard>
 
     <NCard class="account-card" :style="{ '--n-border-color': 'var(--border-color)' }">
-      <NFlex class="limits" size="large">
-        <TextField
-          :label="i18n('watchlist_max')"
-          :value="limits?.watchlist?.item_count"
-        />
-        <TextField
-          :label="i18n('recommendations_max')"
-          :value="limits?.recommendations?.item_count"
-          grow
-        />
-        <TextField
-          :label="i18n('favorites_max')"
-          :value="limits?.favorites?.item_count"
-        />
-        <TextField :label="i18n('user_lists_maximum')" :value="limits?.list?.count" />
-        <TextField
-          :label="i18n('user_lists_max_items')"
-          :value="limits?.list?.item_count"
-          grow
-        />
+      <NFlex class="limits" size="large" wrap>
+        <NFlex vertical class="column">
+          <TextField
+            :label="i18n('user_lists_maximum')"
+            :value="limits?.list?.count"
+            label-width="9.75rem"
+          />
+          <TextField
+            :label="i18n('user_lists_max_items')"
+            :value="limits?.list?.item_count"
+            label-width="9.75rem"
+          />
+        </NFlex>
+        <NFlex vertical class="column">
+          <TextField
+            :label="i18n('watchlist_max')"
+            :value="limits?.watchlist?.item_count"
+          />
+          <TextField
+            :label="i18n('favorites_max')"
+            :value="limits?.favorites?.item_count"
+          />
+        </NFlex>
+        <NFlex vertical class="column">
+          <TextField
+            :label="i18n('recommendations_max')"
+            :value="limits?.recommendations?.item_count"
+            label-width="9.75rem"
+            grow
+          />
+        </NFlex>
       </NFlex>
     </NCard>
   </NFlex>
@@ -195,19 +206,14 @@ const onClick = () => {
 
   .names {
     flex: 1 1 auto;
+    min-width: fit-content;
     max-width: calc(100% - 128px - 2rem); // 100% - image - (margin + gap)
     margin-left: 1rem;
+  }
 
-    .column-1 {
-      flex: 1 1 auto;
-      min-width: max-content;
-    }
-
-    .column-2 {
-      flex: 1 0 auto;
-      min-width: max-content;
-      margin-left: 1rem;
-    }
+  .column {
+    flex: 1 1 auto;
+    min-width: max-content;
   }
 }
 
