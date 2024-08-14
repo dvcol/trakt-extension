@@ -77,6 +77,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
         TraktService.evict.progress.show();
         TraktService.evict.history();
         TraktService.evict.calendar();
+        TraktService.evict.stats();
         Logger.info('Evicted show progress, history and calendar');
       }
 
@@ -84,6 +85,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
         TraktService.evict.progress.movie();
         TraktService.evict.history();
         TraktService.evict.calendar();
+        TraktService.evict.stats();
         Logger.info('Evicted movie progress, history and calendar');
       }
 
@@ -105,11 +107,13 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       if (changed?.episodes?.collected_at) {
         TraktService.evict.collection.show();
         TraktService.evict.calendar();
+        TraktService.evict.stats();
         Logger.info('Evicted show collection');
       }
       if (changed?.movies?.collected_at) {
         TraktService.evict.collection.movie();
         TraktService.evict.calendar();
+        TraktService.evict.stats();
         Logger.info('Evicted movie collection');
       }
       if (changed?.favorites?.updated_at) {
@@ -122,6 +126,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       }
       if (changed.movies.rated_at || changed.shows.rated_at || changed.seasons.rated_at || changed.episodes.rated_at) {
         TraktService.evict.ratings();
+        TraktService.evict.stats();
         Logger.info('Evicted ratings');
       }
     });

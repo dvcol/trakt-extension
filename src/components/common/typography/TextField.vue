@@ -12,6 +12,10 @@ defineProps({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: false,
+  },
   labelWidth: {
     type: String,
     required: false,
@@ -89,7 +93,7 @@ const { openTab } = useLinksStore();
       <span class="prefix">{{ label }}</span>
     </slot>
     <slot>
-      <NFlex v-if="array" wrap align="center">
+      <NFlex v-if="array" wrap align="center" :title="title">
         <template v-if="values !== undefined">
           <TagLinkComponent
             v-for="(tag, i) of values"
@@ -105,7 +109,9 @@ const { openTab } = useLinksStore();
         </template>
       </NFlex>
       <template v-else>
-        <span v-if="value !== undefined" class="value" :class="{ pre }">{{ value }}</span>
+        <span v-if="value !== undefined" class="value" :class="{ pre }" :title="title">
+          {{ value }}
+        </span>
         <NSkeleton v-else :repeat="pre ? 3 : 0" round v-bind="skeleton" />
       </template>
     </slot>

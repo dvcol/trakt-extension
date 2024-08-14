@@ -2,6 +2,8 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, watch } from 'vue';
 
+import type { TraktStats } from '@dvcol/trakt-http-client/models';
+
 import type { UserSetting } from '~/models/trakt-service.model';
 
 import { Logger } from '~/services/logger.service';
@@ -9,6 +11,13 @@ import { TraktService } from '~/services/trakt.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
 type UserSettings = Record<string, UserSetting>;
+type UserStats = Record<string, TraktStats>;
+
+type LoadingDictionary = Record<string, boolean>;
+type LoadingDictionaries = {
+  settings?: LoadingDictionary;
+  stats?: LoadingDictionary;
+};
 
 export const defaultUser = 'default';
 
@@ -19,11 +28,16 @@ const UserStoreConstants = {
 
 export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => {
   const userSettings = reactive<UserSettings>({});
+  const userStats = reactive<UserStats>({});
   const user = ref<string>(defaultUser);
 
-  const loading = reactive<Record<string, boolean>>({});
+  const loading = reactive<LoadingDictionaries>({});
 
   const userSetting = computed(() => userSettings[user.value]);
+  const userStat = computed(() => userStats[user.value]);
+
+  const userSettingLoading = computed(() => loading.settings?.[user.value]);
+  const userStatLoading = computed(() => loading.stats?.[user.value]);
 
   /**
    * Save the current user settings to chrome storage
@@ -110,20 +124,42 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
   };
 
   const refreshUserSettings = async () => {
-    if (loading[user.value]) {
+    if (loading.settings?.[user.value]) {
       Logger.warn('User settings are already loading', { user: user.value });
       return;
     }
 
     Logger.debug('Refreshing user settings', { user: user.value });
 
-    loading[user.value] = true;
+    if (!loading.settings) loading.settings = {};
+    loading.settings[user.value] = true;
     try {
       await setUserSetting(await TraktService.getUserSettings());
     } catch (err) {
       Logger.error('Failed to refresh user settings', { user: user.value, err });
     } finally {
-      loading[user.value] = false;
+      loading.settings[user.value] = false;
+    }
+  };
+
+  const fetchUserStats = async (_user = user.value) => {
+    if (!_user) throw new Error('User is not set');
+    if (loading.stats?.[_user]) {
+      Logger.warn('User stats are already loading', { user: _user });
+      return;
+    }
+
+    Logger.debug('Fetching user stats', { user: _user });
+
+    if (!loading.stats) loading.stats = {};
+    loading.stats[_user] = true;
+
+    try {
+      userStats[_user] = await TraktService.stats.user(_user);
+    } catch (err) {
+      Logger.error('Failed to fetch user stats', { user: _user, err });
+    } finally {
+      loading.stats[_user] = false;
     }
   };
 
@@ -133,7 +169,22 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
     TraktService.changeUser(_user);
   });
 
-  return { user, userSettings, userSetting, setUserSetting, syncSetUser, syncRestoreUser, syncRestoreAllUsers, setCurrentUser, refreshUserSettings };
+  return {
+    user,
+    userStats,
+    userStat,
+    userStatLoading,
+    userSettings,
+    userSetting,
+    userSettingLoading,
+    setUserSetting,
+    syncSetUser,
+    syncRestoreUser,
+    syncRestoreAllUsers,
+    setCurrentUser,
+    refreshUserSettings,
+    fetchUserStats,
+  };
 });
 
 export const useUserSettingsStoreRefs = () => storeToRefs(useUserSettingsStore());

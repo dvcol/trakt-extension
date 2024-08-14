@@ -54,5 +54,61 @@
   "settings__account__user_lists_max_items": {
     "message": "User lists max items",
     "description": "User lists max items label in account settings tab."
+  },
+  "settings__account__user_stats_episodes_watched": {
+    "message": "Episodes watched",
+    "description": "Episodes watched label in account settings tab."
+  },
+  "settings__account__user_stats_shows_watched": {
+    "message": "Shows watched",
+    "description": "Shows watched label in account settings tab."
+  },
+  "settings__account__user_stats_movies_watched": {
+    "message": "Movies watched",
+    "description": "Movies watched label in account settings tab."
+  },
+  "settings__account__user_stats_total_time": {
+    "message": "Total play time",
+    "description": "Total time label in account settings tab."
+  },
+  "settings__account__user_stats_minutes": {
+    "message": "minutes",
+    "description": "Minutes label in account settings tab."
+  },
+  "settings__account__user_stats_episodes_time": {
+    "message": "Episodes play time",
+    "description": "Episodes play time label in account settings tab."
+  },
+  "settings__account__user_stats_movies_time": {
+    "message": "Movies play time",
+    "description": "Movies play time label in account settings tab."
+  },
+  "settings__account__user_stats_episodes_collected": {
+    "message": "Episodes collected",
+    "description": "Episodes collected label in account settings tab."
+  },
+  "settings__account__user_stats_movies_collected": {
+    "message": "Movies collected",
+    "description": "Movies collected label in account settings tab."
+  },
+  "settings__account__user_stats_ratings": {
+    "message": "Total Ratings",
+    "description": "Total ratings label in account settings tab."
+  },
+  "settings__account__user_stats_episodes_ratings": {
+    "message": "Episodes ratings",
+    "description": "Episodes ratings label in account settings tab."
+  },
+  "settings__account__user_stats_show_ratings": {
+    "message": "Show ratings",
+    "description": "Show ratings label in account settings tab."
+  },
+  "settings__account__user_stats_movie_ratings": {
+    "message": "Movie ratings",
+    "description": "Movie ratings label in account settings tab."
+  },
+  "settings__account__user_stats_watched_time": {
+    "message": "Watched time",
+    "description": "Watched time label in account settings tab."
   }
 }
