@@ -46,6 +46,12 @@ const userData = computed<UserSetting['user'] | undefined>(() => {
   };
 });
 
+const settingsLoading = computed(() => {
+  if (user.value === defaultUser) return true;
+  if (user.value === userData.value?.username) return false;
+  return userSettingLoading.value;
+});
+
 const limits = computed<UserSetting['limits']>(() => userSetting.value?.limits);
 const episodeMinutes = computed(() => userStat.value?.episodes?.minutes);
 const episodeWatchTime = computed(() => {
@@ -129,21 +135,21 @@ onDeactivated(() => {
             <TextField
               :label="i18n('username')"
               :value="userData?.username"
-              :loading="userSettingLoading"
+              :loading="settingsLoading"
               grow
               label-width="4.5rem"
             />
             <TextField
               :label="i18n('display')"
               :value="userData?.name"
-              :loading="userSettingLoading"
+              :loading="settingsLoading"
               grow
               label-width="4.5rem"
             />
             <TextField
               :label="i18n('joined')"
               :value="joinDate"
-              :loading="userSettingLoading"
+              :loading="settingsLoading"
               label-width="4.5rem"
             />
           </NFlex>
@@ -151,13 +157,13 @@ onDeactivated(() => {
             <TextField
               :label="i18n('private')"
               :value="userData?.private"
-              :loading="userSettingLoading"
+              :loading="settingsLoading"
               label-width="3.25rem"
             />
             <TextField
               :label="i18n('vip')"
               :value="userData?.vip"
-              :loading="userSettingLoading"
+              :loading="settingsLoading"
               label-width="3.25rem"
             />
           </NFlex>
@@ -174,13 +180,13 @@ onDeactivated(() => {
         <TextField
           :label="i18n('location')"
           :value="userData?.location"
-          :loading="userSettingLoading"
+          :loading="settingsLoading"
           label-width="3.25rem"
         />
         <TextField
           :label="i18n('about')"
           :value="userData?.about"
-          :loading="userSettingLoading"
+          :loading="settingsLoading"
           label-width="3.25rem"
           pre
         />
@@ -193,13 +199,13 @@ onDeactivated(() => {
           <TextField
             :label="i18n('user_lists_maximum')"
             :value="limits?.list?.count"
-            :loading="userSettingLoading"
+            :loading="settingsLoading"
             label-width="9.75rem"
           />
           <TextField
             :label="i18n('user_lists_max_items')"
             :value="limits?.list?.item_count"
-            :loading="userSettingLoading"
+            :loading="settingsLoading"
             label-width="9.75rem"
           />
         </NFlex>
@@ -207,19 +213,19 @@ onDeactivated(() => {
           <TextField
             :label="i18n('watchlist_max')"
             :value="limits?.watchlist?.item_count"
-            :loading="userSettingLoading"
+            :loading="settingsLoading"
           />
           <TextField
             :label="i18n('favorites_max')"
             :value="limits?.favorites?.item_count"
-            :loading="userSettingLoading"
+            :loading="settingsLoading"
           />
         </NFlex>
         <NFlex vertical class="flex-column">
           <TextField
             :label="i18n('recommendations_max')"
             :value="limits?.recommendations?.item_count"
-            :loading="userSettingLoading"
+            :loading="settingsLoading"
             label-width="9.75rem"
             grow
           />
