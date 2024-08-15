@@ -24,6 +24,11 @@ defineProps({
     type: [String, Number, Boolean],
     required: false,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   flex: {
     type: String,
     required: false,
@@ -62,7 +67,7 @@ defineProps({
   align: {
     type: String,
     required: false,
-    default: 'baseline',
+    default: 'center',
   },
   size: {
     type: String as PropType<'small' | 'medium' | 'large'>,
@@ -94,7 +99,7 @@ const { openTab } = useLinksStore();
     </slot>
     <slot>
       <NFlex v-if="array" wrap align="center" :title="title">
-        <template v-if="values !== undefined">
+        <template v-if="!loading && values !== undefined">
           <TagLinkComponent
             v-for="(tag, i) of values"
             :key="i"
@@ -109,7 +114,12 @@ const { openTab } = useLinksStore();
         </template>
       </NFlex>
       <template v-else>
-        <span v-if="value !== undefined" class="value" :class="{ pre }" :title="title">
+        <span
+          v-if="!loading && value !== undefined"
+          class="value"
+          :class="{ pre }"
+          :title="title"
+        >
           {{ value }}
         </span>
         <NSkeleton v-else :repeat="pre ? 3 : 0" round v-bind="skeleton" />

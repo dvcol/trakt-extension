@@ -26,7 +26,7 @@ import { useI18n } from '~/utils/i18n.utils';
 const i18n = useI18n('settings', 'account');
 
 const { fetchUserStats } = useUserSettingsStore();
-const { userSetting, user, userSettingLoading, userStat, userStatLoading } =
+const { userSetting, user, userStat, userSettingLoading, userStatLoading } =
   useUserSettingsStoreRefs();
 const { logout } = useLogout();
 
@@ -188,8 +188,8 @@ onDeactivated(() => {
     </NCard>
 
     <NCard class="account-card" :style="{ '--n-border-color': 'var(--border-color)' }">
-      <NFlex class="data-card" size="large" wrap>
-        <NFlex vertical class="flex-column">
+      <NFlex class="limit-card" size="large" wrap>
+        <NFlex vertical class="flex-column" style="flex-basis: 16rem">
           <TextField
             :label="i18n('user_lists_maximum')"
             :value="limits?.list?.count"
@@ -203,7 +203,7 @@ onDeactivated(() => {
             label-width="9.75rem"
           />
         </NFlex>
-        <NFlex vertical class="flex-column">
+        <NFlex vertical class="flex-column" style="flex-basis: 12rem">
           <TextField
             :label="i18n('watchlist_max')"
             :value="limits?.watchlist?.item_count"
@@ -229,14 +229,13 @@ onDeactivated(() => {
   </NFlex>
 
   <NCard class="account-card" :style="{ '--n-border-color': 'var(--border-color)' }">
-    <NFlex class="data-card" size="large" vertical wrap>
+    <NFlex class="stats-card" size="large" vertical wrap>
       <NFlex class="flex-auto" wrap>
         <TextField
           :label="i18n('user_stats_movies_watched')"
           :value="userStat?.movies?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
 
         <TextField
@@ -247,7 +246,6 @@ onDeactivated(() => {
           :value="movieWatchTime"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
       <NFlex class="flex-auto" wrap>
@@ -256,7 +254,6 @@ onDeactivated(() => {
           :value="userStat?.episodes?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
         <TextField
           :label="i18n('user_stats_episodes_time')"
@@ -266,7 +263,6 @@ onDeactivated(() => {
           :value="episodeWatchTime"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
 
@@ -276,56 +272,50 @@ onDeactivated(() => {
           :value="userStat?.shows?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
         <TextField
           :label="i18n('user_stats_total_time')"
           :value="totalWatchTime"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
     </NFlex>
   </NCard>
 
   <NCard class="account-card" :style="{ '--n-border-color': 'var(--border-color)' }">
-    <NFlex class="data-card" size="large" vertical wrap>
+    <NFlex class="stats-card" size="large" vertical wrap>
       <NFlex class="flex-auto" wrap>
         <TextField
           :label="i18n('user_stats_episodes_collected')"
           :value="userStat?.episodes?.collected ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
         <TextField
           :label="i18n('user_stats_movies_collected')"
           :value="userStat?.movies?.collected ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
     </NFlex>
   </NCard>
 
   <NCard class="account-card" :style="{ '--n-border-color': 'var(--border-color)' }">
-    <NFlex class="data-card" size="large" vertical wrap>
+    <NFlex class="stats-card" size="large" vertical wrap>
       <NFlex class="flex-auto" wrap>
         <TextField
           :label="i18n('user_stats_show_ratings')"
           :value="userStat?.shows?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
         <TextField
           :label="i18n('user_stats_episodes_ratings')"
           :value="userStat?.episodes?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
 
@@ -335,14 +325,12 @@ onDeactivated(() => {
           :value="userStat?.movies?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
         <TextField
           :label="i18n('user_stats_ratings')"
           :value="userStat?.ratings?.total"
           :loading="userStatLoading"
           label-width="8rem"
-          grow
         />
       </NFlex>
     </NFlex>
@@ -405,12 +393,20 @@ onDeactivated(() => {
     @extend %flex-auto;
 
     min-width: max-content;
+    height: 100%;
   }
 }
 
-.data-card {
+.limit-card {
   :deep(.detail) {
     flex-basis: 31%;
+    min-width: max-content;
+  }
+}
+
+.stats-card {
+  :deep(.detail) {
+    flex-basis: 42%;
     min-width: max-content;
   }
 }
