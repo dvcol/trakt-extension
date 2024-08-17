@@ -27,6 +27,11 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  progressStep: {
+    type: Number,
+    required: false,
+    default: 10,
+  },
   duration: {
     type: Number,
     required: false,
@@ -80,7 +85,16 @@ const progressRef = ref<InstanceType<typeof NProgress>>();
 const containerRef = computed(() => container?.value ?? progressRef.value?.$el);
 
 const editing = ref(false);
-const angleProgress = ref(0);
+const angleProgress = ref(_progress.value);
+
+const emitProgress = computed(() => {
+  if (!transform?.value || typeof transform.value !== 'function') {
+    return angleProgress.value;
+  }
+  return transform.value(angleProgress.value);
+});
+
+const dirtyProgress = computed(() => emitProgress.value !== _progress.value);
 
 const debounceEmitProgress = debounce(
   () => emit('onEditProgress', angleProgress.value),
@@ -88,7 +102,7 @@ const debounceEmitProgress = debounce(
 );
 
 const editProgress = computed(() => {
-  if (!editing.value) return _progress.value;
+  if (!dirtyProgress.value) return _progress.value;
   debounceEmitProgress();
   return angleProgress.value;
 });
@@ -104,17 +118,14 @@ const color = computed(() => {
   return 'color-primary';
 });
 
-const emitProgress = computed(() => {
-  if (!transform?.value || typeof transform.value !== 'function') {
-    return angleProgress.value;
-  }
-  return transform.value(angleProgress.value);
-});
-
-const isMouse = (event: MouseEvent | TouchEvent): event is MouseEvent =>
-  event.type === 'mousemove' || event.type === 'mousedown' || event.type === 'mouseup';
+const isMouse = (event: MouseEvent | TouchEvent | PointerEvent): event is MouseEvent =>
+  event.type === 'mousemove' ||
+  event.type === 'mousedown' ||
+  event.type === 'mouseup' ||
+  event.type === 'click';
 
 const listener = (event: MouseEvent | TouchEvent) => {
+  if (!editing.value) return;
   if (!progressRef.value?.$el) return;
   // Get the bounding rectangle of the tracking box
   const rect = progressRef.value?.$el.getBoundingClientRect();
@@ -134,13 +145,44 @@ const listener = (event: MouseEvent | TouchEvent) => {
   angleProgress.value = Math.round(degrees / 3.6);
 };
 
-const onClick = (event: MouseEvent | TouchEvent) => {
+const onProgress = (value: number) => {
+  if (!editable.value) return;
+  if (editing.value) return;
+  angleProgress.value = value < 0 ? 0 : value;
+};
+
+const onEdit = (value: number = emitProgress.value) => {
+  if (value === _progress.value) return;
+  emit('onEdit', value);
+};
+
+const onEnter = (event: KeyboardEvent) => {
+  if (!editable.value) return;
+  if (editing.value) {
+    editing.value = !editing.value;
+    return emit('onEditing', editing.value);
+  }
+  if (emitProgress.value === _progress.value) {
+    editing.value = !editing.value;
+    emit('onEditing', editing.value);
+    return progressRef.value?.$el?.focus();
+  }
+  return onEdit();
+};
+
+const onClick = async (event: MouseEvent | TouchEvent) => {
   if (!editable.value) return;
   editing.value = !editing.value;
   emit('onEditing', editing.value);
-  if (!editing.value) return emit('onEdit', emitProgress.value);
+  if (!editing.value) return onEdit();
   progressRef.value?.$el?.focus();
-  listener(event);
+  setTimeout(() => listener(event), 100);
+};
+
+const onBlur = () => {
+  editing.value = false;
+  emit('onEditing', editing.value);
+  angleProgress.value = _progress.value;
 };
 
 onMounted(async () => {
@@ -149,6 +191,7 @@ onMounted(async () => {
     async val => {
       await wait(delay.value);
       _progress.value = val;
+      if (!editing.value) angleProgress.value = val;
     },
     { immediate: true },
   );
@@ -188,15 +231,18 @@ onBeforeUnmount(() => {
     type="circle"
     :percentage="editProgress"
     :style="{
-      '--duration': `${ progressDuration }ms`,
-      '--custom-progress-color': `var(--${ color })`,
+      '--duration': `${progressDuration}ms`,
+      '--custom-progress-color': `var(--${color})`,
     }"
     :tabindex="editable ? 0 : undefined"
     @click="onClick"
-    @keydown.enter="onClick"
+    @keydown.enter="onEnter"
+    @keydown.up.prevent="onProgress(emitProgress + progressStep)"
+    @keydown.down.prevent="onProgress(emitProgress - progressStep)"
+    @keydown.esc="onBlur"
     @touchstart="onClick"
     @touchend="onClick"
-    @blur="editing = false"
+    @blur="onBlur"
   >
     <span v-if="editing">{{ emitProgress }}</span>
     <AnimatedNumber
@@ -227,10 +273,6 @@ onBeforeUnmount(() => {
 
 .custom-color {
   --n-fill-color: var(--custom-progress-color, var(--color-info)) !important;
-
-  &:focus-visible {
-    outline: -webkit-focus-ring-color auto 1px;
-  }
 }
 
 .spin {
@@ -245,6 +287,13 @@ onBeforeUnmount(() => {
 
 .progress {
   width: var(--progress-size);
+  border: 2px solid transparent;
+  border-radius: 50%;
+  outline: none;
+
+  &:focus-visible {
+    border: 2px solid var(--custom-progress-color, var(--color-info));
+  }
 
   :deep(path.n-progress-graph-circle-fill) {
     transition:
