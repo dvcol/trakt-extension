@@ -293,6 +293,8 @@ const onClick = () => {
     &.watching {
       height: 1.75rem;
 
+      &:active,
+      &:focus-within,
       &:hover {
         height: 3rem;
         color: var(--white);

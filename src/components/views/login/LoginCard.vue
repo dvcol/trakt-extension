@@ -218,6 +218,8 @@ onMounted(() => {
     }
   }
 
+  &:active,
+  &:focus-within,
   &:hover {
     .title:not(&.progress) {
       --color: rgb(99 226 184 / 9%);

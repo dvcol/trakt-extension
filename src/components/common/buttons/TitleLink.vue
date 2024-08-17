@@ -29,7 +29,12 @@ const onTitleClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <a class="anchor-link" :title="label" @click="onTitleClick">
+  <a
+    class="anchor-link"
+    :class="{ 'has-link': !!$attrs.href }"
+    :title="label"
+    @click="onTitleClick"
+  >
     <component :is="component" class="content" :class="{ 'hover-link': !!$attrs.href }">
       <slot />
     </component>
@@ -43,18 +48,32 @@ const onTitleClick = (e: MouseEvent) => {
   z-index: layers.$in-front;
   color: inherit;
   text-decoration: none;
-
-  .content {
-    margin: 0;
-  }
-}
-
-.hover-link {
+  outline: none;
   transition: color 0.3s var(--n-bezier);
   will-change: color;
 
-  &:hover {
+  &:focus-visible:not(.has-link) {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+
+  .hover-link {
+    transition: color 0.3s var(--n-bezier);
+    will-change: color;
+
+    &:active,
+    &:focus-within,
+    &:hover {
+      color: var(--trakt-red);
+    }
+  }
+
+  &:focus-visible.has-link .hover-link {
     color: var(--trakt-red);
+  }
+
+  .content {
+    margin: 0;
   }
 }
 </style>

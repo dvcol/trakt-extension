@@ -128,6 +128,16 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
     margin-top: 0.5rem;
   }
 
+  :deep(.anchor-link .external-link) {
+    padding: 0;
+    border-width: 2px;
+    border-radius: 50%;
+
+    &:focus-visible {
+      border-width: 2px;
+    }
+  }
+
   @media (width <= 725px) {
     padding: 0.5rem 10%;
   }
