@@ -362,6 +362,8 @@ onDeactivated(() => {
   margin-bottom: 1.5rem;
   background: var(--bg-black-soft);
 
+  &:active,
+  &:focus-within,
   &:hover {
     --border-color: var(--white-15);
   }
@@ -375,6 +377,8 @@ onDeactivated(() => {
     border-radius: 50%;
     transition: box-shadow 0.5s var(--n-bezier);
 
+    &:active,
+    &:focus-within,
     &:hover {
       box-shadow: var(--image-box-shadow);
     }

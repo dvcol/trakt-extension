@@ -69,6 +69,8 @@ defineProps({
     text-align: start;
   }
 
+  &:active,
+  &:focus-within,
   &:hover {
     .from-label {
       color: var(--white-mute);

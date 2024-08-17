@@ -239,6 +239,8 @@ onBeforeMount(() => addCustomProgressProperty());
   -webkit-backdrop-filter: blur(var(--bg-blur));
   backdrop-filter: blur(var(--bg-blur));
 
+  &:active,
+  &:focus-within,
   &:hover {
     background: var(--custom-bg-color-hover, var(--bg-black-90));
     // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari

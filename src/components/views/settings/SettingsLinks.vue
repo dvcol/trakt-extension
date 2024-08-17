@@ -295,6 +295,8 @@ const containerRef = ref<HTMLDivElement>();
 
   background: var(--bg-black-soft);
 
+  &:active,
+  &:focus-within,
   &:hover {
     --border-color: var(--white-15);
   }

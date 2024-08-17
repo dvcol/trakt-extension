@@ -155,8 +155,16 @@ const i18n = useI18n('panel', 'picker');
     font-weight: 600;
     text-decoration: none;
     transition: color 0.3s var(--n-bezier);
+
+    &:focus-visible {
+      text-decoration: underline;
+      outline: none;
+      text-underline-offset: 0.2rem;
+    }
   }
 
+  .row:active,
+  .row:focus-within,
   .row:hover {
     .prefix {
       color: var(--white-70);

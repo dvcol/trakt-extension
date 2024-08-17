@@ -48,21 +48,6 @@ const { openTab } = useLinksStore();
 <style lang="scss" scoped>
 @use '~/styles/z-index' as layers;
 
-.anchor-link {
-  z-index: layers.$in-front;
-  color: inherit;
-  text-decoration: none;
-}
-
-.hover-link {
-  transition: color 0.3s var(--n-bezier);
-  will-change: color;
-
-  &:hover {
-    color: var(--trakt-red);
-  }
-}
-
 .overview {
   width: 100%;
 

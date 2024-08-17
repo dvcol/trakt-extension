@@ -27,6 +27,7 @@ const onClick = (e: MouseEvent) => {
 
 <template>
   <a
+    class="anchor"
     :href="tag?.url"
     :title="tag?.title ?? tag?.url"
     :data-tag="JSON.stringify(tag)"
@@ -47,8 +48,19 @@ const onClick = (e: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
-.tag {
-  width: fit-content;
+.anchor {
+  outline: none;
+
+  .tag {
+    width: fit-content;
+    border: 1px solid transparent;
+  }
+
+  &:focus-visible {
+    .tag {
+      border: 1px solid var(--n-color-checked);
+    }
+  }
 }
 
 .link {
@@ -62,6 +74,8 @@ const onClick = (e: MouseEvent) => {
     padding-left: 0.15rem;
   }
 
+  &:active,
+  &:focus-within,
   &:hover {
     background-color: color-mix(
       in srgb,

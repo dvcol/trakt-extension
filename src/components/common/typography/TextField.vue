@@ -163,6 +163,8 @@ const { openTab } = useLinksStore();
     }
   }
 
+  &:active .prefix,
+  &:focus-within .prefix,
   &:hover .prefix {
     color: var(--white-70);
   }

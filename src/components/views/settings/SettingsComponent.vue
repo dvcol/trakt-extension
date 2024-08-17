@@ -107,6 +107,8 @@ onDeactivated(() => {
         :title="i18n(section.title)"
         @mouseenter="onEnter(section)"
         @mouseleave="onLeave(section)"
+        @focusin="onEnter(section)"
+        @focusout="onLeave(section)"
       >
         <component :is="section.component" />
       </NCard>
@@ -135,6 +137,8 @@ onDeactivated(() => {
       margin-bottom: 1rem;
     }
 
+    &:active,
+    &:focus-within,
     &:hover {
       z-index: var(--length);
     }

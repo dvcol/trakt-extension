@@ -14,6 +14,7 @@
   will-change: color, background, background-color, backdrop-filter, box-shadow,
     border-color, scale, opacity, backdrop-filter;
 
+  &:active,
   &:hover {
     background: $to;
     // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
@@ -29,6 +30,7 @@
 ) {
   background: $from;
 
+  &:active,
   &:hover {
     background: $to;
   }

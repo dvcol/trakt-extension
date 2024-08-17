@@ -43,7 +43,7 @@ const anchor = ref();
   >
     <span>{{ label }}</span>
     <template #trigger>
-      <a ref="anchor" class="anchor-link" :href="href" :title="title">
+      <a ref="anchor" class="anchor-link" :href="href" :title="title" tabindex="-1">
         <NButton
           tertiary
           class="external-link"
@@ -71,6 +71,11 @@ const anchor = ref();
   .external-link {
     height: unset;
     min-height: var(--n-height);
+    border: 1px solid transparent;
+
+    &:focus-visible {
+      border: var(--n-border-focus);
+    }
   }
 
   .external-link:not(.slotted) {

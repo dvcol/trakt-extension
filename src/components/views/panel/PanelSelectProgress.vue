@@ -199,6 +199,8 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
       filter 0.3s var(--n-bezier),
       --progress 0.3s var(--n-bezier);
 
+    &:active,
+    &:focus-within,
     &:hover {
       filter: brightness(1.2);
     }
