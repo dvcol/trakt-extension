@@ -146,8 +146,10 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
     if (restored?.badgeMode !== undefined) badgeMode.value = restored.badgeMode;
   };
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const sendBadgeUpdate = async () => {
     if (!enableBadge.value) return cleanCalendarBadge();
+    if (!isAuthenticated.value) return cleanCalendarBadge();
     if (loading.value) {
       Logger.warn('Already loading badge data');
       return;
@@ -174,7 +176,6 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
 
   const { isProgressEnabled } = useExtensionSettingsStoreRefs();
   const { user } = useUserSettingsStoreRefs();
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const initBadgeStore = async () => {
     await restoreState();
 
@@ -193,7 +194,6 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
     });
 
     watch(user, async () => {
-      if (!isAuthenticated.value) return cleanCalendarBadge();
       await sendBadgeUpdate();
     });
 
