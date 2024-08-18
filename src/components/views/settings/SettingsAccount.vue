@@ -372,6 +372,7 @@ onDeactivated(() => {
     --n-avatar-size-override: 8rem;
 
     flex: 0 0 auto;
+    margin-right: 1rem;
     overflow: hidden;
     background: var(--bg-black-softer);
     border-radius: 50%;
@@ -388,7 +389,6 @@ onDeactivated(() => {
     flex: 1 1 auto;
     min-width: fit-content;
     max-width: calc(100% - 128px - 2rem); // 100% - image - (margin + gap)
-    margin-left: 1rem;
   }
 
   %flex-auto {
