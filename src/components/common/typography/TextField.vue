@@ -20,6 +20,10 @@ defineProps({
     type: String,
     required: false,
   },
+  valueWidth: {
+    type: String,
+    required: false,
+  },
   value: {
     type: [String, Number, Boolean],
     required: false,
@@ -88,7 +92,11 @@ const { openTab } = useLinksStore();
   <NFlex
     class="detail"
     :class="{ grow, array, disabled, vertical }"
-    :style="{ '--prefix-min-width': labelWidth, '--text-flex': flex }"
+    :style="{
+      '--prefix-min-width': labelWidth,
+      '--text-flex': flex,
+      '--value-min-width': valueWidth,
+    }"
     :align="align"
     :wrap="wrap"
     :vertical="vertical"
@@ -131,7 +139,7 @@ const { openTab } = useLinksStore();
 <style lang="scss" scoped>
 .prefix {
   flex: 0 0 auto;
-  align-self: center;
+  align-self: baseline;
   min-width: var(--prefix-min-width, 4rem);
   color: var(--white-50);
   font-weight: 600;
@@ -141,7 +149,7 @@ const { openTab } = useLinksStore();
 .value {
   flex: 1 1 auto;
   align-self: center;
-  min-width: max-content;
+  min-width: var(--value-min-width, max-content);
 }
 
 .disabled {
@@ -153,12 +161,13 @@ const { openTab } = useLinksStore();
 .detail {
   flex: var(--text-flex);
   align-items: baseline;
-  min-width: max-content;
+  min-width: var(--value-min-width, max-content);
 
   &.vertical {
     width: 100%;
 
     .prefix {
+      align-self: center;
       min-width: var(--prefix-min-width, max-content);
     }
   }
@@ -176,7 +185,7 @@ const { openTab } = useLinksStore();
   &.array {
     flex: 1 1 auto;
     width: 100%;
-    min-width: fit-content;
+    min-width: var(--value-min-width, fit-content);
 
     .prefix {
       align-self: baseline;
