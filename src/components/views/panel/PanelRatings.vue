@@ -7,7 +7,7 @@ import type { DropdownOption } from 'naive-ui';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelRating from '~/components/views/panel/PanelRating.vue';
-import { getIconFromSource } from '~/utils/icon.utils';
+import { getIconFromSource } from '~/models/source.model';
 
 const props = defineProps({
   ratings: {

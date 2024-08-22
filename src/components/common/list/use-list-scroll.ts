@@ -252,7 +252,6 @@ export const useBufferedListScroll = <T extends ListScrollSourceItemWithDate<D>,
   return {
     paused,
     list: computed<ListScrollItem[]>(() => {
-      console.info('paused', paused.value, { previous, list: list.value });
       if (paused.value) return previous;
       return list.value;
     }),

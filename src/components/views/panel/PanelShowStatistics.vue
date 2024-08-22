@@ -12,6 +12,7 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
+import { DataSource } from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 
@@ -19,7 +20,6 @@ import { useShowStore } from '~/stores/data/show.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { DataSource } from '~/utils/icon.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -178,6 +178,8 @@ const ratings = computed<RatingItem[]>(() => {
         votes: value.votes,
         rating: value.rating,
         loading: simklShowLoading.value,
+        url:
+          key === 'mal' ? `https://myanimelist.net/anime/${simklShow.value}` : undefined,
       },
     });
   });
