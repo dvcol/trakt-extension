@@ -37,5 +37,5 @@ export type RatingProp = {
 export type RatingItem = {
   name: string;
   rating: RatingProp;
-  icon?: Component;
+  icon?: Component | string;
 };

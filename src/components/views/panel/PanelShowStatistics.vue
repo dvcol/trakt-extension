@@ -11,17 +11,15 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { RatingItem } from '~/models/rating.model';
 
-import IconIMDb from '~/components/icons/IconIMDb.vue';
-import IconMyAnimeList from '~/components/icons/IconMyAnimeList.vue';
-import IconSimkl from '~/components/icons/IconSimkl.vue';
-import IconTrakt from '~/components/icons/IconTrakt.vue';
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 
 import { useShowStore } from '~/stores/data/show.store';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { DataSource } from '~/utils/icon.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -146,36 +144,46 @@ const rating = computed(() => {
   return show?.value?.rating;
 });
 
-const ratings = computed<RatingItem[]>(
-  () =>
-    [
-      {
-        name: i18n('trakt', 'common', 'source', 'name'),
-        icon: IconTrakt,
-        rating: {
-          votes: votes.value,
-          rating: rating.value,
-          url: ratingUrl.value,
-          loading: ratingLoading.value,
-        },
+const { getShowOrAnime, getShowOrAnimeLoading } = useSimklStore();
+
+const simklShow = computed(() => {
+  if (!show?.value?.ids?.imdb) return;
+  return getShowOrAnime(show.value.ids.imdb).value;
+});
+
+const simklShowLoading = computed(() => {
+  if (!show?.value?.ids?.imdb) return;
+  return getShowOrAnimeLoading(show.value.ids.imdb).value;
+});
+
+const ratings = computed<RatingItem[]>(() => {
+  const _ratings: RatingItem[] = [];
+  _ratings.push({
+    name: i18n('trakt', 'common', 'source', 'name'),
+    icon: DataSource.Trakt,
+    rating: {
+      votes: votes.value,
+      rating: rating.value,
+      url: ratingUrl.value,
+      loading: ratingLoading.value,
+    },
+  });
+  if (!simklShow.value?.ratings) return _ratings;
+  if (mode.value !== 'show') return _ratings;
+  Object.entries(simklShow.value.ratings).forEach(([key, value]) => {
+    _ratings.push({
+      name: i18n(key, 'common', 'source', 'name'),
+      icon: key,
+      rating: {
+        votes: value.votes,
+        rating: value.rating,
+        loading: simklShowLoading.value,
       },
-      {
-        name: i18n('simkl', 'common', 'source', 'name'),
-        icon: IconSimkl,
-        rating: { votes: 125846, rating: 5.2 },
-      },
-      {
-        name: i18n('mal', 'common', 'source', 'name'),
-        icon: IconMyAnimeList,
-        rating: { votes: 250, rating: 2.45 },
-      },
-      {
-        name: i18n('imdb', 'common', 'source', 'name'),
-        icon: IconIMDb,
-        rating: { votes: 326579, rating: 8.45 },
-      },
-    ] satisfies RatingItem[],
-);
+    });
+  });
+
+  return _ratings;
+});
 
 const onScoreEdit = async (_score: TraktSyncRatingValue) => {
   if (!show?.value?.ids?.trakt) return;

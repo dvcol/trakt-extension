@@ -19,6 +19,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useSimklStore, useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
@@ -154,6 +155,8 @@ export const useShowStore = defineStore('data.show', () => {
     clearProgressState();
   };
 
+  const { simklEnabled } = useSimklStoreRefs();
+  const { fetchShow: fetchSimklShow, fetchAnime: fetchSimklAnime } = useSimklStore();
   const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchShow = async (id: string) => {
     if (!isAuthenticated.value) {
@@ -170,6 +173,12 @@ export const useShowStore = defineStore('data.show', () => {
     showsLoading[id] = true;
     try {
       shows[id] = await TraktService.show.summary(id);
+
+      if (simklEnabled.value && shows[id].ids.imdb) {
+        if (shows[id].genres.includes('anime')) await fetchSimklAnime(shows[id].ids.imdb);
+        else await fetchSimklShow(shows[id].ids.imdb);
+      }
+
       delete showsError[id];
     } catch (e) {
       Logger.error('Failed to fetch show', id);

@@ -7,6 +7,7 @@ import type { DropdownOption } from 'naive-ui';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelRating from '~/components/views/panel/PanelRating.vue';
+import { getIconFromSource } from '~/utils/icon.utils';
 
 const props = defineProps({
   ratings: {
@@ -17,18 +18,21 @@ const props = defineProps({
 
 const { ratings } = toRefs(props);
 
+const getIcon = (icon: RatingItem['icon']): DropdownOption['icon'] => {
+  if (!icon) return undefined;
+  return () =>
+    h(NIcon, {
+      style: { marginRight: '-0.25rem' },
+      component: typeof icon === 'string' ? getIconFromSource(icon) : icon,
+    });
+};
+
 const options = computed<DropdownOption[]>(() => {
   if (!ratings?.value) return [];
   return ratings.value.map((rating, index) => ({
     label: rating.name,
     key: index,
-    icon: rating.icon
-      ? () =>
-          h(NIcon, {
-            style: { marginRight: '-0.25rem' },
-            component: rating.icon,
-          })
-      : undefined,
+    icon: getIcon(rating.icon),
   }));
 });
 
