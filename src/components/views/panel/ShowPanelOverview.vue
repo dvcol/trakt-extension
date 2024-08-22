@@ -9,7 +9,6 @@ import type {
 } from '@dvcol/trakt-http-client/models';
 
 import PanelOverview from '~/components/views/panel/PanelOverview.vue';
-import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -29,6 +28,10 @@ const props = defineProps({
     type: String as PropType<'show' | 'season' | 'episode'>,
     required: false,
     default: 'episode',
+  },
+  url: {
+    type: String,
+    required: false,
   },
 });
 
@@ -50,31 +53,6 @@ const title = computed(() => {
   if (!episode?.value) return;
   if (!episode?.value?.title) return '-';
   return deCapitalise(episode.value?.title);
-});
-
-const url = computed(() => {
-  if (mode.value === 'show') {
-    if (!show?.value?.ids?.trakt) return;
-    return ResolveExternalLinks.search({
-      type: 'show',
-      source: 'trakt',
-      id: show.value.ids.trakt,
-    });
-  }
-  if (mode.value === 'season') {
-    if (!season?.value?.ids?.trakt) return;
-    return ResolveExternalLinks.search({
-      type: 'season',
-      source: 'trakt',
-      id: season.value.ids.trakt,
-    });
-  }
-  if (!episode?.value?.ids?.trakt) return;
-  return ResolveExternalLinks.search({
-    type: 'episode',
-    source: 'trakt',
-    id: episode.value.ids.trakt,
-  });
 });
 
 const label = computed(() => i18n(`open_${mode.value}_in_trakt`, 'common', 'tooltip'));

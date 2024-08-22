@@ -49,3 +49,13 @@
                   $rail 100%
   );
 }
+
+@mixin hover-box-shadow($transition: 0.5s var(--n-bezier), $box-shadow: var(--image-box-shadow-hover)) {
+  transition: box-shadow $transition;
+
+  &:active,
+  &:focus-within,
+  &:hover {
+    box-shadow: $box-shadow;
+  }
+}

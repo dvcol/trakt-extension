@@ -12,7 +12,6 @@ import PersonPanelOverview from '~/components/views/panel/PersonPanelOverview.vu
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { usePersonStore } from '~/stores/data/person.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -62,8 +61,6 @@ const titleUrl = computed(() => {
     id: person.value.ids.trakt,
   });
 });
-
-const { openTab } = useLinksStore();
 </script>
 
 <template>
@@ -73,7 +70,6 @@ const { openTab } = useLinksStore();
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_in_trakt', 'common', 'tooltip')"
-      @on-click="openTab"
     >
       {{ title }}
     </TitleLink>
@@ -84,7 +80,7 @@ const { openTab } = useLinksStore();
       round
     />
 
-    <PanelPoster :tmdb="person?.ids.tmdb" mode="person" portait />
+    <PanelPoster :tmdb="person?.ids.tmdb" mode="person" portait :link="titleUrl" />
 
     <PersonPanelDetails :person="person" />
 

@@ -361,6 +361,8 @@ useWatchActivated(
   }
 
   .avatar {
+    @include mixin.hover-box-shadow;
+
     --n-avatar-size-override: 8rem;
 
     flex: 0 0 auto;
@@ -368,13 +370,6 @@ useWatchActivated(
     overflow: hidden;
     background: var(--bg-black-softer);
     border-radius: 50%;
-    transition: box-shadow 0.5s var(--n-bezier);
-
-    &:active,
-    &:focus-within,
-    &:hover {
-      box-shadow: var(--image-box-shadow);
-    }
   }
 
   .names {

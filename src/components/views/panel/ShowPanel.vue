@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
-import {
-  TraktRatingType,
-  type TraktRatingTypes,
-  type TraktSyncRatingValue,
-} from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, onMounted, toRefs, watch } from 'vue';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
+import PanelShowStatistics from '~/components/views/panel/PanelShowStatistics.vue';
 import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
 import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
 import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
@@ -31,11 +26,9 @@ import {
   useListsStoreRefs,
   useListStore,
 } from '~/stores/data/list.store';
-import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
   isWatchingShow,
@@ -62,9 +55,6 @@ const { showId, seasonNumber, episodeNumber } = toRefs(props);
 
 const {
   getShow,
-  getShowLoading,
-  getSeasonsLoading,
-  getEpisodesLoading,
   fetchShow,
   fetchShowProgress,
   fetchShowCollectionProgress,
@@ -191,7 +181,7 @@ const {
   isItemListLoading,
   fetchAll,
 } = useListStore();
-const { loadLists, loadListsPageSize, enableRatings } = useExtensionSettingsStoreRefs();
+const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
 
 const shouldFetchLists = computed(() => {
   if (!myLists.value?.length) return false;
@@ -255,6 +245,31 @@ const titleUrl = computed(() => {
     type: 'show',
     source: 'trakt',
     id: show.value.ids.trakt,
+  });
+});
+
+const detailUrl = computed(() => {
+  if (panelType.value === 'show') {
+    if (!show?.value?.ids?.trakt) return;
+    return ResolveExternalLinks.search({
+      type: 'show',
+      source: 'trakt',
+      id: show.value.ids.trakt,
+    });
+  }
+  if (panelType.value === 'season') {
+    if (!season?.value?.ids?.trakt) return;
+    return ResolveExternalLinks.search({
+      type: 'season',
+      source: 'trakt',
+      id: season.value.ids.trakt,
+    });
+  }
+  if (!episode?.value?.ids?.trakt) return;
+  return ResolveExternalLinks.search({
+    type: 'episode',
+    source: 'trakt',
+    id: episode.value.ids.trakt,
   });
 });
 
@@ -356,137 +371,6 @@ const onCheckin = async (cancel: boolean) => {
   await fetchShowProgress(showId.value, { force: true });
 };
 
-const { loadRatings, getRatings, getLoading, addRating, removeRating } =
-  useRatingsStore();
-
-const ratingLoading = computed(() => {
-  if (panelType.value === 'episode') {
-    if (!showId?.value || seasonNb.value === undefined || episodeNb.value === undefined)
-      return false;
-    return getEpisodesLoading(showId.value, seasonNb.value, episodeNb.value).value;
-  }
-  if (panelType.value === 'season') {
-    if (!showId?.value) return false;
-    return getSeasonsLoading(showId.value).value;
-  }
-  if (!showId?.value) return false;
-  return getShowLoading(showId.value).value;
-});
-
-const scoreLoading = computed(() => {
-  if (!showId?.value) return false;
-  if (panelType.value === 'season') return getLoading(TraktRatingType.Seasons);
-  if (panelType.value === 'episode') return getLoading(TraktRatingType.Episodes);
-  return getLoading(TraktRatingType.Shows);
-});
-
-const score = computed(() => {
-  if (!showId?.value) return null;
-
-  let id: string;
-  let type: TraktRatingTypes;
-
-  if (panelType.value === 'show') {
-    id = showId.value;
-    type = TraktRatingType.Shows;
-  } else if (panelType.value === 'season') {
-    if (!season.value?.ids.trakt) return null;
-    id = `${showId.value}-${season.value.ids.trakt}`;
-    type = TraktRatingType.Seasons;
-  } else if (panelType.value === 'episode') {
-    if (!episode.value?.ids.trakt) return null;
-    id = `${showId.value}-${episode.value.ids.trakt}`;
-    type = TraktRatingType.Episodes;
-  } else {
-    return null;
-  }
-  if (enableRatings.value) loadRatings(type, id);
-  return getRatings(type, id);
-});
-
-const ratingUrl = computed(() => {
-  if (!show.value?.ids?.slug) return;
-  if (panelType.value === 'episode') {
-    if (!episodeNb.value || !seasonNb.value) return;
-    return ResolveExternalLinks.trakt.item({
-      type: 'episode',
-      slug: show.value.ids.slug,
-      episode: episodeNb.value,
-      season: seasonNb.value,
-      suffix: '/stats',
-    });
-  }
-  if (panelType.value === 'season') {
-    if (!seasonNb.value) return;
-    return ResolveExternalLinks.trakt.item({
-      type: 'season',
-      slug: show.value.ids.slug,
-      season: seasonNb.value,
-      suffix: '/stats',
-    });
-  }
-  return ResolveExternalLinks.trakt.item({
-    type: 'shows',
-    slug: show.value.ids.slug,
-    suffix: '/stats',
-  });
-});
-
-const votes = computed(() => {
-  if (panelType.value === 'episode') return episode.value?.votes;
-  if (panelType.value === 'season') return season.value?.votes;
-  return show.value?.votes;
-});
-
-const rating = computed(() => {
-  if (panelType.value === 'episode') return episode.value?.rating;
-  if (panelType.value === 'season') return season.value?.rating;
-  return show.value?.rating;
-});
-
-const onScoreEdit = async (_score: TraktSyncRatingValue) => {
-  if (!show.value?.ids?.trakt) return;
-  const addOrRemove = _score ? addRating : removeRating;
-  if (panelType.value === 'episode') {
-    if (!episode.value?.ids?.trakt) return;
-    return addOrRemove(
-      TraktRatingType.Episodes,
-      {
-        episodes: [
-          {
-            ids: episode.value.ids,
-            rating: _score,
-          },
-        ],
-      },
-      show.value.ids.trakt,
-    );
-  }
-  if (panelType.value === 'season') {
-    if (!season.value?.ids?.trakt) return;
-    return addOrRemove(
-      TraktRatingType.Seasons,
-      {
-        seasons: [
-          {
-            ids: season.value.ids,
-            rating: _score,
-          },
-        ],
-      },
-      show.value.ids.trakt,
-    );
-  }
-  return addOrRemove(TraktRatingType.Shows, {
-    shows: [
-      {
-        ids: show.value.ids,
-        rating: _score,
-      },
-    ],
-  });
-};
-
 onMounted(() => {
   watch(
     [showId, seasonNb, episodeNb],
@@ -518,8 +402,6 @@ onMounted(() => {
     { immediate: true },
   );
 });
-
-const { openTab } = useLinksStore();
 </script>
 
 <template>
@@ -529,7 +411,6 @@ const { openTab } = useLinksStore();
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_show_in_trakt', 'common', 'tooltip')"
-      @on-click="openTab"
     >
       {{ title }}
     </TitleLink>
@@ -540,14 +421,11 @@ const { openTab } = useLinksStore();
       round
     />
 
-    <PanelStatistics
-      :rating="rating"
-      :votes="votes"
-      :score="score?.rating"
-      :url="ratingUrl"
-      :loading-score="scoreLoading"
-      :loading-rating="ratingLoading"
-      @on-score-edit="onScoreEdit"
+    <PanelShowStatistics
+      :mode="panelType"
+      :show="show"
+      :season="season"
+      :episode="episode"
     >
       <PanelPoster
         :tmdb="show?.ids.tmdb"
@@ -555,8 +433,9 @@ const { openTab } = useLinksStore();
         :portait="panelType === 'season'"
         :season-number="seasonNb"
         :episode-number="episodeNb"
+        :link="detailUrl"
       />
-    </PanelStatistics>
+    </PanelShowStatistics>
 
     <ShowPanelDetails
       :show="show"
@@ -598,6 +477,7 @@ const { openTab } = useLinksStore();
       :season="season"
       :show="show"
       :mode="panelType"
+      :url="detailUrl"
     />
   </NFlex>
 </template>

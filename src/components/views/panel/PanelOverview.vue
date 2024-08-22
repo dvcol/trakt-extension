@@ -2,7 +2,6 @@
 import { NFlex, NH4, NSkeleton } from 'naive-ui';
 
 import TitleLink from '~/components/common/buttons/TitleLink.vue';
-import { useLinksStore } from '~/stores/settings/links.store';
 
 defineProps({
   title: {
@@ -22,20 +21,11 @@ defineProps({
     required: false,
   },
 });
-
-const { openTab } = useLinksStore();
 </script>
 
 <template>
   <NFlex justify="center" align="center" vertical class="overview">
-    <TitleLink
-      v-if="title"
-      class="title"
-      :href="url"
-      :title="label"
-      :component="NH4"
-      @on-click="openTab"
-    >
+    <TitleLink v-if="title" class="title" :href="url" :title="label" :component="NH4">
       {{ title }}
     </TitleLink>
     <NSkeleton v-else class="title-skeleton" style="width: var(--height-40-dvh)" round />
