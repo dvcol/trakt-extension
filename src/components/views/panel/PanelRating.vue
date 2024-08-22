@@ -122,6 +122,7 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
   --duration: 1000ms;
 
   flex: 1 0 6rem;
+  max-width: 24rem;
 
   .rating-skeleton {
     width: 2.125rem;

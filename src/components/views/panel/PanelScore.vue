@@ -107,6 +107,7 @@ const containerRef = ref<InstanceType<typeof TextField>>();
   --duration: 1000ms;
 
   flex: 1 0 6rem;
+  max-width: 24rem;
 
   .score-label {
     align-self: center;
