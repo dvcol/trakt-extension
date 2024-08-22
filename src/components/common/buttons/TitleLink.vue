@@ -3,6 +3,8 @@ import { NH2 } from 'naive-ui';
 
 import { type Component, type PropType, useAttrs } from 'vue';
 
+import { useLinksStore } from '~/stores/settings/links.store';
+
 defineProps({
   component: {
     type: Object as PropType<Component>,
@@ -15,16 +17,14 @@ defineProps({
   },
 });
 
-const emit = defineEmits<{
-  (e: 'onClick', href?: string): void;
-}>();
-
 const attrs = useAttrs() as Record<keyof HTMLAnchorElement, string> | undefined;
+
+const { openTab } = useLinksStore();
 
 const onTitleClick = (e: MouseEvent) => {
   e.preventDefault();
   e.stopPropagation();
-  emit('onClick', attrs?.href);
+  openTab(attrs?.href);
 };
 </script>
 

@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
-
-import {
-  TraktRatingType,
-  type TraktSyncRatingValue,
-} from '@dvcol/trakt-http-client/models';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
@@ -12,8 +7,8 @@ import TitleLink from '~/components/common/buttons/TitleLink.vue';
 import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
 import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
+import PanelMovieStatistics from '~/components/views/panel/PanelMovieStatistics.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
@@ -30,10 +25,8 @@ import {
   useListStore,
 } from '~/stores/data/list.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
-import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
   isWatchingMovie,
@@ -103,7 +96,7 @@ const {
   fetchAll,
 } = useListStore();
 
-const { loadLists, loadListsPageSize, enableRatings } = useExtensionSettingsStoreRefs();
+const { loadLists, loadListsPageSize } = useExtensionSettingsStoreRefs();
 
 const shouldFetchLists = computed(() => {
   if (!myLists.value?.length) return false;
@@ -256,48 +249,8 @@ const onCheckin = async (cancel: boolean) => {
   await fetchMovieWatched(true);
 };
 
-const { openTab } = useLinksStore();
-
-const { loadRatings, getRatings, getLoading, addRating, removeRating } =
-  useRatingsStore();
-
-const scoreLoading = computed(() => getLoading(TraktRatingType.Movies));
-
-const score = computed(() => {
-  if (!movieId.value) return;
-  return getRatings(TraktRatingType.Movies, movieId.value);
-});
-
-const ratingUrl = computed(() => {
-  if (!movie.value?.ids?.slug) return;
-  return ResolveExternalLinks.trakt.item({
-    type: 'movies',
-    slug: movie.value.ids.slug,
-    suffix: '/stats',
-  });
-});
-
-const onScoreEdit = async (_score: TraktSyncRatingValue) => {
-  if (!movie.value?.ids?.trakt) return;
-  return (_score ? addRating : removeRating)(TraktRatingType.Movies, {
-    movies: [
-      {
-        ids: movie.value.ids,
-        rating: _score,
-      },
-    ],
-  });
-};
-
 onMounted(() => {
-  watch(
-    movieId,
-    id => {
-      fetchMovie(id);
-      if (enableRatings.value) loadRatings(TraktRatingType.Movies, id);
-    },
-    { immediate: true },
-  );
+  watch(movieId, id => fetchMovie(id), { immediate: true });
   fetchMovieWatched();
   fetchMovieCollected();
 
@@ -321,7 +274,6 @@ onMounted(() => {
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_in_trakt', 'common', 'tooltip')"
-      @on-click="openTab"
     >
       {{ title }}
     </TitleLink>
@@ -332,17 +284,9 @@ onMounted(() => {
       round
     />
 
-    <PanelStatistics
-      :rating="movie?.rating"
-      :votes="movie?.votes"
-      :score="score?.rating"
-      :loading-score="scoreLoading"
-      :loading-rating="movieLoading"
-      :url="ratingUrl"
-      @on-score-edit="onScoreEdit"
-    >
-      <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" />
-    </PanelStatistics>
+    <PanelMovieStatistics :movie="movie" :movie-loading="movieLoading">
+      <PanelPoster :tmdb="movie?.ids.tmdb" mode="movie" :link="titleUrl" />
+    </PanelMovieStatistics>
 
     <MoviePanelDetails
       :movie="movie"

@@ -63,6 +63,8 @@
   --bg-black-softer-50: rgba(34 34 34 / 50%);
   --bg-black-softer-55: rgba(34 34 34 / 55%);
   --bg-black-softer-60: rgba(34 34 34 / 60%);
+  --bg-black-softer-80: rgba(34 34 34 / 80%);
+  --bg-black-softer-90: rgba(34 34 34 / 90%);
   --bg-black-softest: rgb(40 40 40);
   --bg-red: rgba(255 222 223);
   --bg-red-20: rgba(255 222 223 / 20%);
@@ -132,6 +134,7 @@
 
   /* Bow shadows */
   --image-box-shadow: 0 0 20px 9px rgb(255 255 255 / 10%);
+  --image-box-shadow-hover: 0 0 20px 9px rgb(255 255 255 / 18%);
   --card-box-shadow: 0 1px 2px -2px rgb(0 0 0 / 24%), 0 3px 6px 0 rgb(0 0 0 / 18%), 0 5px 12px 4px rgb(0 0 0 / 12%);
 
   /* semantic color variables for this project */

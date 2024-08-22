@@ -10,6 +10,10 @@ import TextField from '~/components/common/typography/TextField.vue';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
+  label: {
+    type: String,
+    required: false,
+  },
   rating: {
     type: Number,
     required: false,
@@ -37,6 +41,10 @@ const props = defineProps({
     required: false,
   },
   url: {
+    type: String,
+    required: false,
+  },
+  urlLabel: {
     type: String,
     required: false,
   },
@@ -92,15 +100,14 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
 
     <!--  Rating progress  -->
     <TextField
-      :label="i18n('label_rating')"
+      :label="label ?? i18n('label_rating')"
       vertical
       flex="0 1 auto"
       align="center"
-      style="padding-bottom: 1.5rem"
     >
       <ButtonLinkExternal
         :href="url"
-        :title="i18n('calendar', 'common', 'link')"
+        :title="urlLabel ?? i18n('rating', 'common', 'link')"
         :tertiary="false"
         :bordered="false"
         :icon="null"
@@ -120,9 +127,6 @@ const _rating = computed(() => (rating?.value ?? 0) * 10);
 <style lang="scss" scoped>
 .rating-container {
   --duration: 1000ms;
-
-  flex: 1 0 6rem;
-  max-width: 24rem;
 
   .rating-skeleton {
     width: 2.125rem;

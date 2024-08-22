@@ -1,0 +1,26 @@
+{
+  "common__source__name__trakt": {
+    "message": "Trakt",
+    "description": "Trakt source name"
+  },
+  "common__source__name__mal": {
+    "message": "Mal",
+    "description": "MyAnimeList source name"
+  },
+  "common__source__name__simkl": {
+    "message": "Simkl",
+    "description": "Simkl source name"
+  },
+  "common__source__name__tmdb": {
+    "message": "TMDb",
+    "description": "The Movie Database source name"
+  },
+  "common__source__name__tvdb": {
+    "message": "TVDb",
+    "description": "The TV Database source name"
+  },
+  "common__source__name__imdb": {
+    "message": "IMDb",
+    "description": "IMDb source name"
+  }
+}

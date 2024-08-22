@@ -1,47 +1,36 @@
 <script setup lang="ts">
 import { NFlex } from 'naive-ui';
 
-import type { TraktSyncRatingValue } from '@dvcol/trakt-http-client/models';
+import type { PropType } from 'vue';
+import type { RatingItem, RatingValue } from '~/models/rating.model';
 
-import PanelRating from '~/components/views/panel/PanelRating.vue';
+import PanelRatings from '~/components/views/panel/PanelRatings.vue';
 import PanelScore from '~/components/views/panel/PanelScore.vue';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { watchMedia } from '~/utils/window.utils';
 
 defineProps({
-  rating: {
-    type: Number,
-    required: false,
-  },
-  votes: {
-    type: Number,
+  ratings: {
+    type: Array as PropType<RatingItem[]>,
     required: false,
   },
   score: {
     type: Number,
     required: false,
   },
-  loadingRating: {
-    type: Boolean,
-    required: false,
-  },
   loadingScore: {
     type: Boolean,
-    required: false,
-  },
-  url: {
-    type: String,
     required: false,
   },
 });
 
 const emit = defineEmits<{
-  (e: 'onScoreEdit', progress: TraktSyncRatingValue): void;
+  (e: 'onScoreEdit', progress: RatingValue): void;
 }>();
 
 const { enableRatings } = useExtensionSettingsStoreRefs();
 
-const onScoreEdit = (progress: TraktSyncRatingValue) => emit('onScoreEdit', progress);
+const onScoreEdit = (progress: RatingValue) => emit('onScoreEdit', progress);
 
 const isCompact = watchMedia('(max-width: 725px)');
 </script>
@@ -49,13 +38,7 @@ const isCompact = watchMedia('(max-width: 725px)');
 <template>
   <NFlex class="statistics-container" justify="center">
     <slot v-if="isCompact" />
-    <PanelRating
-      v-if="enableRatings"
-      :loading="loadingRating"
-      :votes="votes"
-      :rating="rating"
-      :url="url"
-    />
+    <PanelRatings v-if="enableRatings" :ratings="ratings" />
     <slot v-if="!isCompact" />
     <PanelScore
       v-if="enableRatings"

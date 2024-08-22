@@ -6,6 +6,10 @@ import type { PosterItem } from '~/models/poster.model';
 import type { ImageQuery, ImageStoreTypes } from '~/stores/data/image.store';
 
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
+import { useLinksStore } from '~/stores/settings/links.store';
+import { useI18n } from '~/utils/i18n.utils';
+
+const i18n = useI18n('common', 'tooltip');
 
 const props = defineProps({
   tmdb: {
@@ -28,9 +32,13 @@ const props = defineProps({
     type: Number,
     required: false,
   },
+  link: {
+    type: String,
+    required: false,
+  },
 });
 
-const { tmdb, mode, seasonNumber, episodeNumber } = toRefs(props);
+const { tmdb, mode, seasonNumber, episodeNumber, link } = toRefs(props);
 
 const size = computed(() => window?.innerWidth ?? 800 / 2);
 
@@ -61,11 +69,24 @@ const key = computed(() => {
   if (tmdb?.value !== undefined) return `tmdb-${tmdb?.value}`;
   return `placeholder`;
 });
+
+const label = computed(() => {
+  if (!link?.value?.length) return undefined;
+  return i18n(`open_${mode.value}_in_trakt`, 'common', 'tooltip');
+});
+
+const { openTab } = useLinksStore();
 </script>
 
 <template>
   <Transition v-if="posterItem" name="scale" mode="out-in">
-    <NFlex :key="key" class="poster-container" :class="{ landscape: !portait }">
+    <NFlex
+      :key="key"
+      class="poster-container"
+      :class="{ landscape: !portait, link }"
+      :title="label"
+      @click="openTab(link)"
+    >
       <PosterComponent :item="posterItem" :size="size" :backdrop="!portait" />
     </NFlex>
   </Transition>
@@ -77,12 +98,19 @@ const key = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/mixin' as mixin;
 @use '~/styles/transition' as transition;
 @include transition.scale;
 
 .poster-container {
   --poster-height: calc(min(var(--half-width), var(--height-70-dvh)) * (9 / 16));
   --poster-width: calc(var(--poster-height) * (2 / 3));
+
+  &.link {
+    @include mixin.hover-box-shadow;
+
+    cursor: pointer;
+  }
 
   &.landscape {
     --poster-width: min(var(--half-width), var(--height-70-dvh));
