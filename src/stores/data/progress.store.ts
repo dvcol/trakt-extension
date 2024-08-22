@@ -114,7 +114,7 @@ export const useProgressStore = defineStore('data.progress', () => {
 
     Logger.debug('Fetching progress');
     loading.value = true;
-    const timeout = debounceLoading(progress, loadingPlaceholder, true);
+    const { clearLoading } = debounceLoading(progress, loadingPlaceholder, true);
     try {
       progress.value = await fetchProgressData();
       evicted.progress = false;
@@ -132,7 +132,7 @@ export const useProgressStore = defineStore('data.progress', () => {
       NotificationService.error('Failed to fetch progress', error);
       throw error;
     } finally {
-      clearTimeout(timeout);
+      clearLoading();
       loading.value = false;
     }
   };
