@@ -6,7 +6,7 @@ import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import {
   addLoadMore,
-  useListScroll,
+  useBufferedListScroll,
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
@@ -49,9 +49,10 @@ const { active } = watchUserChange({
   clear: clearState,
 });
 
-const list = useListScroll<AnyList, AnyListDateTypes>(
+const { list } = useBufferedListScroll<AnyList, AnyListDateTypes>(
   filteredListItems,
   anyListDateGetter,
+  panelOpen,
 );
 
 const listItems = addLoadMore(list, pagination, searchList);

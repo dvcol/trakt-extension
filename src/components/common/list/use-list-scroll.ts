@@ -1,6 +1,6 @@
 import { type TraktClientPagination, TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
 
-import { computed, isRef, ref } from 'vue';
+import { computed, isRef, ref, watch } from 'vue';
 
 import type { Ref } from 'vue';
 
@@ -181,6 +181,48 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
   return tags;
 };
 
+export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
+  array: T[],
+  dateFn?: D | ((item: T) => T[D]),
+): ListScrollItem[] =>
+  array.map((item, index) => {
+    const _item: ListScrollItem<ListScrollItemMeta> = {
+      ...item,
+      index,
+      key: `${index}-${item.id}`,
+      loading: (typeof item.id === 'number' && item.id < 0) || item.type === ListScrollItemType.loading,
+    };
+
+    if (!_item.type) _item.type = getType(item);
+    if (!_item.title) _item.title = getTitle(item);
+    if (!_item.content) _item.content = getContent(item);
+    if (!_item.posterRef) _item.posterRef = ref<string>();
+    if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
+    if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
+    if (!_item.tags) _item.tags = getTags(item, _item.type);
+
+    _item.date = getDate(item, array, index, dateFn);
+    _item.meta = {
+      source: item,
+      ids: {
+        movie: item.movie?.ids,
+        show: item.show?.ids,
+        season: item.season?.ids,
+        episode: item.episode?.ids,
+        person: item.person?.ids,
+      },
+    };
+
+    if (_item.type === 'episode' || _item.type === 'season') {
+      _item.meta!.number = {
+        season: item.episode?.season ?? item.season?.number,
+        episode: item.episode?.number,
+      };
+    }
+
+    return _item;
+  });
+
 export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
   items: Ref<T[]>,
   dateFn?: D | ((item: T) => T[D]),
@@ -188,44 +230,33 @@ export const useListScroll = <T extends ListScrollSourceItemWithDate<D>, D exten
   return computed<ListScrollItem[]>(() => {
     const array = items.value;
     if (!array.length) return [];
-    return array.map((item, index) => {
-      const _item: ListScrollItem<ListScrollItemMeta> = {
-        ...item,
-        index,
-        key: `${index}-${item.id}`,
-        loading: (typeof item.id === 'number' && item.id < 0) || item.type === ListScrollItemType.loading,
-      };
-
-      if (!_item.type) _item.type = getType(item);
-      if (!_item.title) _item.title = getTitle(item);
-      if (!_item.content) _item.content = getContent(item);
-      if (!_item.posterRef) _item.posterRef = ref<string>();
-      if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
-      if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
-      if (!_item.tags) _item.tags = getTags(item, _item.type);
-
-      _item.date = getDate(item, array, index, dateFn);
-      _item.meta = {
-        source: item,
-        ids: {
-          movie: item.movie?.ids,
-          show: item.show?.ids,
-          season: item.season?.ids,
-          episode: item.episode?.ids,
-          person: item.person?.ids,
-        },
-      };
-
-      if (_item.type === 'episode' || _item.type === 'season') {
-        _item.meta!.number = {
-          season: item.episode?.season ?? item.season?.number,
-          episode: item.episode?.number,
-        };
-      }
-
-      return _item;
-    });
+    return computeNewArray(array, dateFn);
   });
+};
+
+export const useBufferedListScroll = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
+  items: Ref<T[]>,
+  dateFn?: D | ((item: T) => T[D]),
+  paused: Ref<boolean> = ref(false),
+): {
+  paused: Ref<boolean>;
+  list: Ref<ListScrollItem[]>;
+} => {
+  const list: Ref<ListScrollItem[]> = useListScroll(items, dateFn);
+  let previous: ListScrollItem[] = [];
+  watch([list, paused], () => {
+    if (paused.value) return;
+    previous = list.value;
+  });
+
+  return {
+    paused,
+    list: computed<ListScrollItem[]>(() => {
+      console.info('paused', paused.value, { previous, list: list.value });
+      if (paused.value) return previous;
+      return list.value;
+    }),
+  };
 };
 
 export const useListScrollEvents = (
