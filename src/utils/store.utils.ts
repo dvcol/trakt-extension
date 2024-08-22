@@ -4,7 +4,7 @@ import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { ListScrollSourceItemWithDate } from '~/components/common/list/use-list-scroll';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { debounce } from '~/utils/debounce.utils';
 
 const codesRegex = /[sS]?\d+([eExX])\d+/g;
@@ -70,9 +70,9 @@ export const watchUserChange = ({
   mounted?: () => void | Promise<void>;
   activated?: (changed?: boolean) => void | Promise<void>;
   deactivated?: () => void | Promise<void>;
-  userChange?: (active: boolean, user: string) => void | Promise<void>;
+  userChange?: ({ active, user, authenticated }: { active: boolean; user: string; authenticated: boolean }) => void | Promise<void>;
 }) => {
-  const { user } = useUserSettingsStoreRefs();
+  const { isAuthenticated, user } = useAuthSettingsStoreRefs();
 
   const active = ref(false);
   const changed = ref(false);
@@ -97,14 +97,14 @@ export const watchUserChange = ({
       async _user => {
         if (!active.value) changed.value = true;
 
-        if (userChange) return userChange(active.value, _user);
-        if (active.value) await fetch?.();
+        if (userChange) return userChange({ active: active.value, user: _user, authenticated: isAuthenticated.value });
+        if (active.value && isAuthenticated.value) await fetch?.();
         else clear?.();
       },
     );
   });
 
-  return { active, user };
+  return { active, user, isAuthenticated };
 };
 
 export const useDebouncedSearch = (search: Ref<string>, delay = 350, disabled?: Ref<boolean>) => {
@@ -131,3 +131,21 @@ export const debounceLoading = <T>(data: Ref<T[]>, placeholder: Ref<T[]>, clear?
   setTimeout(() => {
     data.value = clear ? placeholder.value : [...data.value, ...placeholder.value];
   }, 100);
+
+export const useWaitReady = () => {
+  let resolve: (value: boolean) => void;
+  const isReady = ref(false);
+  const waitReady = ref<Promise<boolean>>(
+    new Promise(_resolve => {
+      resolve = _resolve;
+    }),
+  );
+
+  const setReady = (ready = true) => {
+    resolve(ready);
+    waitReady.value = Promise.resolve(ready);
+    isReady.value = ready;
+  };
+
+  return { waitReady, setReady, isReady };
+};

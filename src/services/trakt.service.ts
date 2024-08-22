@@ -2,6 +2,7 @@ import { type BaseCacheOption, type CacheResponse } from '@dvcol/base-http-clien
 
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { DateUtils } from '@dvcol/common-utils/common/date';
+import { SimklClient } from '@dvcol/simkl-http-client';
 import { TmdbClient } from '@dvcol/tmdb-http-client';
 
 import {
@@ -17,11 +18,12 @@ import { TraktClient } from '@dvcol/trakt-http-client';
 
 import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
-import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
 import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
+
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
+import type { SimklApiResponse, SimklUserSettings } from '@dvcol/simkl-http-client/models';
 import type {
   TraktApiResponse,
   TraktAuthentication,
@@ -64,10 +66,14 @@ import type { SettingsAuth, UserSetting } from '~/models/trakt-service.model';
 import { ErrorService } from '~/services/error.service';
 import { LoadingBarService } from '~/services/loading-bar.service';
 import { Logger } from '~/services/logger.service';
+import { simklClientSettings } from '~/settings/simkl.api';
+import { simklUsedApi } from '~/settings/simkl.used.api';
 import { tmdbClientSettings } from '~/settings/tmdb.api';
 import { tmdbUsedApi } from '~/settings/tmdb.used.api';
 import { traktUsedApi } from '~/settings/trakt-used.api';
-import { traktClientSettings } from '~/settings/traktv.api';
+import { traktClientSettings } from '~/settings/trakt.api';
+import { useAppStateStore } from '~/stores/app-state.store';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
@@ -94,18 +100,24 @@ const imageResponseEmpty = (payload: ImagePayload) => {
     .every(v => !v?.length);
 };
 
+type SettingsAndAuth = { auth: SettingsAuth; settings: { trakt: UserSetting; simkl?: SimklUserSettings } };
+type SettingsCaches = {
+  trakt: ChromeCacheStore<TraktApiResponse>;
+  simkl: ChromeCacheStore<SimklApiResponse>;
+  tmdb: ChromeCacheStore<TmdbApiResponse>;
+};
+
 export class TraktService {
   private static traktClient: TraktClient;
   private static tmdbClient: TmdbClient;
+  private static simklClient: SimklClient;
 
-  private static caches: {
-    trakt: ChromeCacheStore<TraktApiResponse>;
-    tmdb: ChromeCacheStore<TmdbApiResponse>;
-  };
+  private static caches: SettingsCaches;
 
-  static get auth() {
+  static get auth(): SettingsAuth {
     return {
       trakt: this.traktClient.auth,
+      simkl: this.simklClient.auth,
       tmdb: this.tmdbClient.auth,
     };
   }
@@ -116,73 +128,69 @@ export class TraktService {
 
   static {
     this.caches = {
-      trakt: new ChromeCacheStore<TraktApiResponse>({
-        prefix: CachePrefix.Trakt,
-        retention: CacheRetention.Week,
-      }),
-      tmdb: new ChromeCacheStore<TmdbApiResponse>({
-        prefix: CachePrefix.Tmdb,
-        retention: CacheRetention.Year,
-      }),
+      trakt: new ChromeCacheStore<TraktApiResponse>({ prefix: CachePrefix.Trakt, retention: CacheRetention.Week }),
+      simkl: new ChromeCacheStore<SimklApiResponse>({ prefix: CachePrefix.Simkl, retention: CacheRetention.Week }),
+      tmdb: new ChromeCacheStore<TmdbApiResponse>({ prefix: CachePrefix.Tmdb, retention: CacheRetention.Year }),
     };
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktUsedApi);
+    this.simklClient = new SimklClient({ ...simklClientSettings, cacheStore: this.caches.simkl }, {}, simklUsedApi);
     this.tmdbClient = new TmdbClient({ ...tmdbClientSettings, cacheStore: this.caches.tmdb }, {}, tmdbUsedApi);
   }
 
   static changeUser(user: string) {
     this.caches.trakt.prefix = `trakt-cache-${user}`;
+    this.caches.simkl.prefix = `simkl-cache-${user}`;
   }
 
   static async getUserSettings() {
-    const response = await this.traktClient.users.settings();
+    const response = await this.traktClient.users.settings.cached(undefined, undefined, {
+      cacheKey: (_key: string) => `${_key}-${this.auth.trakt?.access_token}`,
+    });
     return response.json();
   }
 
-  static changeRetention({ trakt, tmdb }: { trakt?: number; tmdb?: number }) {
+  static changeRetention({ trakt, tmdb, simkl }: Record<keyof SettingsCaches, number>) {
     if (trakt !== undefined) this.caches.trakt.retention = trakt;
     if (tmdb !== undefined) this.caches.tmdb.retention = tmdb;
+    if (simkl !== undefined) this.caches.simkl.retention = simkl;
   }
 
   private static async saveAuth(
     auth: SettingsAuth = this.auth,
     prev: SettingsAuth = useAuthSettingsStore().auth,
-  ): Promise<{ auth: SettingsAuth; settings: UserSetting }> {
-    if (JSON.stringify(auth) === JSON.stringify(prev)) return { settings: useUserSettingsStore().userSetting, auth };
+  ): Promise<{ auth: SettingsAuth; settings: { trakt: UserSetting; simkl?: SimklUserSettings } }> {
+    const _settings = { trakt: useUserSettingsStore().userSetting, simkl: useSimklStore().userSetting };
 
     if (auth.trakt?.access_token && auth.trakt?.access_token !== prev?.trakt?.access_token) {
-      const settingsResponse = await this.traktClient.users.settings();
-      const settings: UserSetting = await settingsResponse.json();
-      settings.isStaging = this.traktClient.isStaging;
-      await useUserSettingsStore().setUserSetting(settings);
-      await useAuthSettingsStore().setAuth(auth);
-      return { settings, auth };
+      const userSettings = await useUserSettingsStore().fetchUserSettings();
+      await useAuthSettingsStore().setCurrentUser(userSettings?.user?.name, false);
+    }
+    if (auth.simkl?.access_token && auth.simkl?.access_token !== prev?.simkl?.access_token) {
+      await useSimklStore().fetchUserSettings();
     }
 
     await useAuthSettingsStore().setAuth(auth);
-    return { settings: useUserSettingsStore().userSetting, auth };
+
+    return { auth, settings: _settings };
   }
 
-  static async importAuthentication({ trakt, tmdb }: SettingsAuth = {}): Promise<{
-    auth: SettingsAuth;
-    settings: UserSetting;
-  }> {
-    const promises = [];
-    if (trakt) promises.push(this.traktClient.importAuthentication(trakt));
+  static async importAuthentication({ trakt, simkl, tmdb }: SettingsAuth = {}): Promise<SettingsAndAuth> {
+    if (trakt) await this.traktClient.importAuthentication(trakt);
+    if (simkl) this.simklClient.importAuthentication(simkl);
     if (tmdb) this.tmdbClient.importAuthentication(tmdb);
-    await Promise.all(promises);
-    return this.saveAuth({ trakt, tmdb });
+    return this.saveAuth({ trakt, tmdb, simkl });
   }
 
   static async approve(params: TraktAuthenticationApprove = {}) {
     const url = this.traktClient
       .redirectToAuthenticationUrl(params)
       .replace(`${traktClientSettings.corsProxy}/${traktClientSettings.corsPrefix}`, traktClientSettings.endpoint);
-    if (chromeRuntimeId) return createTab({ url });
+    if (useAppStateStore().isPopup) return createTab({ url });
     window.location.href = url;
   }
 
-  static async login(token: string): Promise<{ auth: SettingsAuth; settings: UserSetting }> {
+  static async login(token: string): Promise<SettingsAndAuth> {
     const trakt = await this.traktClient.exchangeCodeForToken(token);
     return this.saveAuth({ trakt });
   }
@@ -198,6 +206,7 @@ export class TraktService {
   static async logout(account?: string) {
     await useAuthSettingsStore().setAuth(undefined, account);
     await useUserSettingsStore().setUserSetting(undefined, account);
+    return this.traktClient.importAuthentication({});
   }
 
   static async loadingBar<T>(query: Promise<T> | CancellablePromise<T>) {
@@ -221,6 +230,19 @@ export class TraktService {
     this.traktClient.onCall(async call => {
       Logger.debug('TraktClient.onCall', call);
       await this.loadingBar(call.query);
+    });
+
+    this.simklClient.onAuthChange(async _auth => {
+      Logger.debug('SimklClient.onAuthChange', { ..._auth });
+    });
+
+    this.simklClient.onCall(async call => {
+      Logger.debug('SimklClient.onCall', call);
+      try {
+        await call.query;
+      } catch (error) {
+        ErrorService.registerError(error);
+      }
     });
 
     this.tmdbClient.onAuthChange(async _auth => {
@@ -592,9 +614,32 @@ export class TraktService {
     },
   };
 
+  static simkl = {
+    client: this.simklClient,
+    settings: async () => {
+      const response = await this.simklClient.user.settings();
+      return response.json();
+    },
+    authorize: () => {
+      const url = this.simklClient.resolveAuthorizeUrl();
+      if (useAppStateStore().isPopup) return createTab({ url });
+      window.location.href = url;
+    },
+    login: async (code: string): Promise<SettingsAndAuth> => {
+      const simkl = await this.simklClient.exchangeCodeForToken({ code });
+      return this.saveAuth({ simkl });
+    },
+    logout: async (account?: string) => {
+      await useAuthSettingsStore().setAuth({ simkl: null }, account);
+      await useSimklStore().setUserSetting(undefined, account);
+      return this.simklClient.importAuthentication({});
+    },
+  };
+
   static evict = {
     tmdb: () => TraktService.tmdbClient.clearCache(),
     trakt: () => TraktService.traktClient.clearCache(),
+    simkl: () => TraktService.simklClient.clearCache(),
     images: () =>
       Promise.all([
         TraktService.tmdbClient.v3.configuration.details.cached.evict(),
@@ -663,6 +708,7 @@ export class TraktService {
     },
     ratings: TraktService.traktClient.sync.ratings.get.cached.evict,
     stats: TraktService.traktClient.users.stats.cached.evict,
+    settings: TraktService.traktClient.users.settings.cached.evict,
   };
 
   static export = {

@@ -1,25 +1,27 @@
 import { useRouter } from 'vue-router';
 
 import { Route } from '~/models/router.model';
+import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { useAuthSettingsStore } from '~/stores/settings/auth.store';
-import { defaultUser, useUserSettingsStore, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStore, useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 export const useLogout = () => {
   const router = useRouter();
-  const { user } = useUserSettingsStoreRefs();
-  const { setCurrentUser } = useUserSettingsStore();
-  const { syncRestoreAuth } = useAuthSettingsStore();
+  const { loading, user } = useAuthSettingsStoreRefs();
+  const { setCurrentUser } = useAuthSettingsStore();
 
   const loadUser = async (account: string) => {
-    const auth = await syncRestoreAuth(account);
-    return TraktService.importAuthentication(auth);
+    if (loading.value) {
+      NotificationService.message.warning('User is still loading, please wait.');
+      return;
+    }
+    return setCurrentUser(account);
   };
 
-  const logout = async () => {
-    await TraktService.logout();
+  const logout = async (account: string = user.value) => {
+    await TraktService.logout(account);
+    await TraktService.simkl.logout(account);
     await setCurrentUser();
-    if (user.value !== defaultUser) return loadUser(user.value);
     return router.push(Route.Login);
   };
 

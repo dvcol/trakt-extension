@@ -14,6 +14,7 @@ import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 
 import { TraktService } from '~/services/trakt.service';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { ErrorCount } from '~/utils/retry.utils';
@@ -113,7 +114,12 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
 
   const loadingPlaceholder = useLoadingPlaceholder<SearchResult>(pageSize);
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchSearchResults = async ({ page, limit = pageSize.value }: { page?: number; limit?: number } = {}) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch search results, user is not authenticated');
+      return;
+    }
     if (!search.value?.trim()) {
       pagination.value = undefined;
       searchResults.value = [];

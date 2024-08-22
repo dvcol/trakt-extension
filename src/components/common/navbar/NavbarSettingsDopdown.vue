@@ -25,6 +25,7 @@ import { Logger } from '~/services/logger.service';
 import { NavbarService } from '~/services/navbar.service';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import { defaultUser, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
@@ -34,7 +35,8 @@ import { useI18n } from '~/utils/i18n.utils';
 const i18n = useI18n('navbar', 'settings');
 const router = useRouter();
 
-const { userSetting, userSettings } = useUserSettingsStoreRefs();
+const { auths } = useAuthSettingsStoreRefs();
+const { userSetting, userSettings, userSettingLoading } = useUserSettingsStoreRefs();
 const { enabledRoutes } = useExtensionSettingsStoreRefs();
 
 const avatar = computed(() => userSetting.value?.user?.images?.avatar?.full);
@@ -55,7 +57,8 @@ defineProps({
 
 const users = computed(() => {
   return Object.entries(userSettings.value).filter(
-    ([key, value]) => value && key !== username.value && key !== defaultUser,
+    ([key, value]) =>
+      value && auths.value?.[key] && key !== username.value && key !== defaultUser,
   );
 });
 
@@ -63,10 +66,12 @@ const toOption = (
   key: string,
   icon: Component | string,
   label?: string,
+  disabled?: boolean,
 ): ArrayElement<DropdownProps['options']> => {
   return {
     label: label ?? i18n(key),
     key,
+    disabled,
     icon: () => {
       if (typeof icon === 'string') {
         return h(NAvatar, { src: icon, size: 16, round: true });
@@ -87,21 +92,19 @@ const options = computed<DropdownProps['options']>(() => {
     toOption('logout', IconLogOut),
   ];
 
-  if (users.value.length) {
-    return [
-      ...users.value.map(([key, value]) =>
-        toOption(
-          `user-${key}`,
-          (chromeRuntimeId && value?.user?.images?.avatar?.full) || IconAccount,
-          key,
-        ),
+  if (!users.value.length) return baseOptions;
+  return [
+    ...users.value.map(([key, value]) =>
+      toOption(
+        `user-${key}`,
+        (chromeRuntimeId && value?.user?.images?.avatar?.full) || IconAccount,
+        key,
+        userSettingLoading.value,
       ),
-      { type: 'divider', key: 'users-divider' },
-      ...baseOptions,
-    ];
-  }
-
-  return baseOptions;
+    ),
+    { type: 'divider', key: 'users-divider' },
+    ...baseOptions,
+  ];
 });
 
 const { loadUser, logout } = useLogout();

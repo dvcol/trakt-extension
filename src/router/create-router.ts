@@ -1,14 +1,11 @@
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { watch } from 'vue';
-import { createRouter as createVueRouter, createWebHashHistory, type LocationQueryRaw } from 'vue-router';
+import { createRouter as createVueRouter, createWebHashHistory } from 'vue-router';
 
-import { isLoginAuthResponseSuccess } from '~/models/login/login-auth-response';
 import { Route } from '~/models/router.model';
 import { routes } from '~/router/routes';
-import { Logger } from '~/services/logger.service';
-import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
-import { useRouterStore, useRouterStoreRefs } from '~/stores/router.store';
+import { useRouterStore } from '~/stores/router.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStore, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 
@@ -17,8 +14,7 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   const { restoreRoute, restorePanel, defaultTab } = useExtensionSettingsStoreRefs();
   const { initExtensionSettingsStore } = useExtensionSettingsStore();
 
-  const { setBaseName, setBaseUrl, setRouteParam } = useRouterStore();
-  const { routeParam } = useRouterStoreRefs();
+  const { setBaseName, setBaseUrl } = useRouterStore();
 
   setBaseName(baseName);
   setBaseUrl(baseUrl);
@@ -53,29 +49,18 @@ export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL
   });
 
   const { waitAppReady } = useAppStateStoreRefs();
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
+  const { isAuthenticated, waitAuthReady } = useAuthSettingsStoreRefs();
   router.beforeResolve(async to => {
-    const query: LocationQueryRaw = { ...routeParam.value };
-    if (routeParam.value) setRouteParam(undefined);
     if (!chromeRuntimeId && to.name === Route.Progress) return defaultTab.value;
-
-    if (isLoginAuthResponseSuccess(query)) {
-      try {
-        await TraktService.login(query.code);
-      } catch (error) {
-        Logger.error('Failed to login with Trakt.tv');
-        Logger.error(error);
-      }
-    }
 
     if (!to.path.startsWith(baseName)) return;
 
+    await waitAuthReady.value;
     await waitAppReady.value;
 
     if (!isAuthenticated.value && to.name !== Route.Login) {
-      query.redirect = to.name?.toString();
       // redirect the user to the login page
-      return { name: Route.Login, query };
+      return { name: Route.Login, query: { redirect: to.name?.toString() } };
     }
   });
 

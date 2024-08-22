@@ -9,7 +9,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -49,7 +49,12 @@ export const useMovieStore = defineStore('data.movie', () => {
     clearProxy(movieErrors);
   };
 
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchMovie = async (id: string | number) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch movie, user is not authenticated');
+      return;
+    }
     if (loading[id]) {
       Logger.warn('Already fetching movie', id);
       return;
@@ -76,6 +81,10 @@ export const useMovieStore = defineStore('data.movie', () => {
   const getMovie = (id: string | number) => computed(() => movies[id.toString()]);
 
   const fetchMovieWatched = async (force?: boolean) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch watched movies, user is not authenticated');
+      return;
+    }
     if (loadingWatched.value) {
       Logger.warn('Already fetching watched movies');
       return;
@@ -118,6 +127,10 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const fetchMovieCollected = async (force?: boolean) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch collected movies, user is not authenticated');
+      return;
+    }
     if (loadingCollected.value) {
       Logger.warn('Already fetching collected movies');
       return;
@@ -158,7 +171,6 @@ export const useMovieStore = defineStore('data.movie', () => {
     return fetchMovieCollected();
   };
 
-  const { user } = useUserSettingsStoreRefs();
   const initMovieStore = () => {
     watch(user, () => {
       clearProgressState();

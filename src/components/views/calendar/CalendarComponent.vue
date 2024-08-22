@@ -6,11 +6,14 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const i18n = useI18n('calendar');
 
@@ -30,16 +33,29 @@ const { listRef, onClick, onScrollTop, onScrollBottom, reload } = useCalendar({
   fetchData: fetchCalendar,
 });
 
-watch(center, () => reload());
+watch(center, (_is, _was) => {
+  if (new Date(_is).toLocaleDateString() === new Date(_was).toLocaleDateString()) return;
+  reload();
+});
+
+const { getEvicted } = useActivityStore();
+useWatchActivated(
+  watch(getEvicted(Route.Calendar), async _evicted => {
+    if (!_evicted) return;
+    if (scrolledOut.value) return;
+    await reload();
+  }),
+);
 
 watchUserChange({
   mounted: reload,
   activated: async changed => {
     if (changed) await reload();
   },
-  userChange: async active => {
+  userChange: async ({ active, authenticated }) => {
     clearState();
-    if (active) await reload();
+    if (!active || !authenticated) return;
+    await reload();
   },
 });
 

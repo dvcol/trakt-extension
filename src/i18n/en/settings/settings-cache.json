@@ -3,6 +3,10 @@
     "message": "Cache retention for Trakt data",
     "description": "Label for the cache retention setting for Trakt data"
   },
+  "settings__cache__label_retention_simkl": {
+    "message": "Cache retention for Simkl data",
+    "description": "Label for the cache retention setting for Simkl data"
+  },
   "settings__cache__label_retention_images": {
     "message": "Cache retention for images",
     "description": "Label for the cache retention setting for images"
@@ -63,9 +67,17 @@
     "message": "Evict stats data from cache",
     "description": "Label for the evict stats data button"
   },
+  "settings__cache__evict_settings": {
+    "message": "Evict settings data from cache",
+    "description": "Label for the evict settings data button"
+  },
   "settings__cache__evict_trakt": {
     "message": "Evict Trakt data from cache",
     "description": "Label for the evict Trakt data button"
+  },
+  "settings__cache__evict_simkl": {
+    "message": "Evict Simkl data from cache",
+    "description": "Label for the evict Simkl data button"
   },
   "settings__cache__evict_tmdb": {
     "message": "Evict TMDb data from cache",

@@ -3,7 +3,7 @@ import { formatTime } from '@dvcol/common-utils/common/format';
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NAvatar, NButton, NCard, NFlex, NIcon } from 'naive-ui';
 
-import { computed, onActivated, onDeactivated, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import type { UserSetting } from '~/models/trakt-service.model';
 
@@ -13,6 +13,7 @@ import IconAccount from '~/components/icons/IconAccount.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 import { Logger } from '~/services/logger.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import {
@@ -22,11 +23,12 @@ import {
 } from '~/stores/settings/user.store';
 
 import { useI18n } from '~/utils/i18n.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const i18n = useI18n('settings', 'account');
 
 const { fetchUserStats } = useUserSettingsStore();
-const { userSetting, user, userStat, userSettingLoading, userStatLoading } =
+const { userSetting, userStat, userSettingLoading, userStatLoading } =
   useUserSettingsStoreRefs();
 const { logout } = useLogout();
 
@@ -44,12 +46,6 @@ const userData = computed<UserSetting['user'] | undefined>(() => {
     username: _user.username || '-',
     name: _user.name || '-',
   };
-});
-
-const settingsLoading = computed(() => {
-  if (user.value === defaultUser) return true;
-  if (user.value === userData.value?.username) return false;
-  return userSettingLoading.value;
 });
 
 const limits = computed<UserSetting['limits']>(() => userSetting.value?.limits);
@@ -88,9 +84,9 @@ const onClick = () => {
   openTab(ResolveExternalLinks.trakt.account(userData.value.username));
 };
 
-const sub = ref<() => void>();
-onActivated(() => {
-  sub.value = watch(
+const { user } = useAuthSettingsStoreRefs();
+useWatchActivated(
+  watch(
     user,
     async _user => {
       if (!_user || _user === defaultUser) return;
@@ -99,12 +95,8 @@ onActivated(() => {
     {
       immediate: true,
     },
-  );
-});
-
-onDeactivated(() => {
-  sub.value?.();
-});
+  ),
+);
 </script>
 
 <template>
@@ -135,21 +127,21 @@ onDeactivated(() => {
             <TextField
               :label="i18n('username')"
               :value="userData?.username"
-              :loading="settingsLoading"
+              :loading="userSettingLoading"
               grow
               label-width="4.5rem"
             />
             <TextField
               :label="i18n('display')"
               :value="userData?.name"
-              :loading="settingsLoading"
+              :loading="userSettingLoading"
               grow
               label-width="4.5rem"
             />
             <TextField
               :label="i18n('joined')"
               :value="joinDate"
-              :loading="settingsLoading"
+              :loading="userSettingLoading"
               label-width="4.5rem"
             />
           </NFlex>
@@ -157,13 +149,13 @@ onDeactivated(() => {
             <TextField
               :label="i18n('private')"
               :value="userData?.private"
-              :loading="settingsLoading"
+              :loading="userSettingLoading"
               label-width="3.25rem"
             />
             <TextField
               :label="i18n('vip')"
               :value="userData?.vip"
-              :loading="settingsLoading"
+              :loading="userSettingLoading"
               label-width="3.25rem"
             />
           </NFlex>
@@ -180,13 +172,13 @@ onDeactivated(() => {
         <TextField
           :label="i18n('location')"
           :value="userData?.location"
-          :loading="settingsLoading"
+          :loading="userSettingLoading"
           label-width="3.25rem"
         />
         <TextField
           :label="i18n('about')"
           :value="userData?.about"
-          :loading="settingsLoading"
+          :loading="userSettingLoading"
           label-width="3.25rem"
           pre
         />
@@ -199,13 +191,13 @@ onDeactivated(() => {
           <TextField
             :label="i18n('user_lists_maximum')"
             :value="limits?.list?.count"
-            :loading="settingsLoading"
+            :loading="userSettingLoading"
             label-width="9.75rem"
           />
           <TextField
             :label="i18n('user_lists_max_items')"
             :value="limits?.list?.item_count"
-            :loading="settingsLoading"
+            :loading="userSettingLoading"
             label-width="9.75rem"
           />
         </NFlex>
@@ -213,19 +205,19 @@ onDeactivated(() => {
           <TextField
             :label="i18n('watchlist_max')"
             :value="limits?.watchlist?.item_count"
-            :loading="settingsLoading"
+            :loading="userSettingLoading"
           />
           <TextField
             :label="i18n('favorites_max')"
             :value="limits?.favorites?.item_count"
-            :loading="settingsLoading"
+            :loading="userSettingLoading"
           />
         </NFlex>
         <NFlex vertical class="flex-column">
           <TextField
             :label="i18n('recommendations_max')"
             :value="limits?.recommendations?.item_count"
-            :loading="settingsLoading"
+            :loading="userSettingLoading"
             label-width="9.75rem"
             grow
           />

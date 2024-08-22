@@ -13,7 +13,6 @@ import { fetchCalendarData } from '~/stores/data/calendar.store';
 import { fetchProgressData } from '~/stores/data/progress.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { Colors } from '~/styles/colors.style';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
@@ -146,7 +145,7 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
     if (restored?.badgeMode !== undefined) badgeMode.value = restored.badgeMode;
   };
 
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const sendBadgeUpdate = async () => {
     if (!enableBadge.value) return cleanCalendarBadge();
     if (!isAuthenticated.value) return cleanCalendarBadge();
@@ -175,7 +174,6 @@ export const useBadgeStore = defineStore(BadgeStoreConstants.Store, () => {
   };
 
   const { isProgressEnabled } = useExtensionSettingsStoreRefs();
-  const { user } = useUserSettingsStoreRefs();
   const initBadgeStore = async () => {
     await restoreState();
 

@@ -26,7 +26,7 @@ import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useActivityStore } from '~/stores/data/activity.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
@@ -125,9 +125,13 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     clearProxy(listsErrors);
   };
 
-  const { user } = useUserSettingsStoreRefs();
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
 
   const fetchLists = async () => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch lists, user is not authenticated');
+      return;
+    }
     if (!firstLoad.value && loading.value) {
       Logger.warn('Already fetching lists');
       return;
@@ -292,7 +296,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const loadingPlaceholder = useLoadingPlaceholder<AnyList>(pageSize);
   const filteredListItems = useSearchFilter<AnyListDateTypes, AnyList>(listItems, searchList, anyListDateGetter);
 
-  const { user } = useUserSettingsStoreRefs();
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
 
   const fetchItems = async (list: ListEntity, query: ListItemQuery = {}) => {
     let _query = { ...query };
@@ -325,7 +329,12 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     return response;
   };
 
+  const { evicted } = useActivityStore();
   const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch list, user is not authenticated');
+      return;
+    }
     if (!firstLoad.value && !parallel && loading.value) {
       Logger.warn('Already fetching list');
       return;
@@ -348,6 +357,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       });
       pagination.value = response.pagination;
       listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
+      evicted.watchlist = false;
     } catch (e) {
       Logger.error('Failed to fetch list');
       NotificationService.error(`Failed to fetch list '${list}'`, e);
@@ -395,6 +405,11 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     if (listType === ListType.List || listType === ListType.Collaboration) {
       if (listId === undefined) throw new Error('List ID is missing');
       if (userId === undefined) throw new Error('User ID is missing');
+    }
+
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot adding item to list, user is not authenticated');
+      return;
     }
 
     if (typeItemLoading[listType]?.[itemType]?.[itemIds.trakt.toString()]) {

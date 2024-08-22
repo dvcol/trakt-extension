@@ -9,7 +9,7 @@ import type { RouterOptions } from '~/router';
 import { createRouter } from '~/router';
 import { initServices } from '~/web/init-services';
 
-export type InitVueAppOption = RouterOptions;
+export type InitVueAppOption = RouterOptions & { view?: { option?: boolean; popup?: boolean; web?: boolean } };
 export const initVueApp = (component: Component, options: InitVueAppOption = {}) => {
   const app = createApp(component);
 
@@ -22,13 +22,13 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
   if (!router) router = createRouter(options);
   app.use(router);
 
-  initServices().catch(error => console.error('Failed to initialized services.', error));
+  initServices(options.view).catch(error => console.error('Failed to initialized services.', error));
 
   return app;
 };
 
-export const mountVueApp = (id = '#app', component: Component): App => {
-  const app = initVueApp(component);
+export const mountVueApp = (id = '#app', component: Component, options?: InitVueAppOption): App => {
+  const app = initVueApp(component, options);
 
   app.mount(id);
 

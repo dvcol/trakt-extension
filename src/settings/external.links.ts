@@ -8,6 +8,7 @@ export const ExternaLinks = {
   tmdb: 'https://www.themoviedb.org/',
   imdb: 'https://www.imdb.com/',
   tvdb: 'https://thetvdb.com/',
+  simkl: 'https://simkl.com/',
   omdb: 'https://www.omdbapi.com/',
   fanart: 'https://fanart.tv/',
   justwatch: 'https://www.justwatch.com/',
@@ -111,4 +112,7 @@ export const ResolveExternalLinks = {
   twitter: (id: string) => `${ExternaLinks.twitter}${id}`,
   instagram: (id: string) => `${ExternaLinks.instagram}${id}`,
   wikipedia: (id: string) => `${ExternaLinks.wikipedia}wiki/${id}`,
+  simkl: {
+    settings: `${ExternaLinks.simkl}/settings/`,
+  },
 };

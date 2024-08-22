@@ -11,7 +11,9 @@ import {
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 
+import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useActivityStore } from '~/stores/data/activity.store';
 import {
   type AnyList,
   anyListDateGetter,
@@ -22,6 +24,7 @@ import {
 } from '~/stores/data/list.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const i18n = useI18n('list');
 
@@ -60,6 +63,15 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
   belowThreshold,
   active,
 });
+
+const { getEvicted } = useActivityStore();
+useWatchActivated(
+  watch(getEvicted(Route.Watchlist), async _evicted => {
+    if (!_evicted) return;
+    if (scrolled.value) return;
+    await fetchListItems();
+  }),
+);
 
 onMounted(() => {
   watch(panelOpen, async value => {

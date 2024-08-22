@@ -1,3 +1,6 @@
+import { Config as SimklConfig } from '@dvcol/simkl-http-client/config';
+import { Config as TmdbConfig } from '@dvcol/tmdb-http-client/config';
+import { Config as TraktConfig } from '@dvcol/trakt-http-client/config';
 import fs from 'fs-extra';
 
 import pkg from '../package.json';
@@ -6,17 +9,22 @@ import { getDirName, isDev, port, resolveParent } from './utils';
 
 import type { Manifest } from 'webextension-polyfill';
 
-export const Endpoints = {
-  trakt: {
-    Domain: 'https://trakt.tv',
+const Endpoints = {
+  Trakt: {
+    Domain: TraktConfig.Website.Production,
+    StagingDomain: TraktConfig.Website.Staging,
     SubDomain: 'https://*.trakt.tv',
-    Production: 'https://api.trakt.tv',
-    Staging: 'https://api-staging.trakt.tv',
+    Api: TraktConfig.Endpoint.Production,
+    StagingApi: TraktConfig.Endpoint.Staging,
   },
-  tvdb: 'https://api4.thetvdb.co',
-  tmdb: {
-    api: 'https://api.themoviedb.org',
-    redirect: 'https://www.themoviedb.org',
+  Tmdb: {
+    Api: TmdbConfig.Endpoint,
+    Domain: TmdbConfig.Website,
+  },
+  Simkl: {
+    Api: SimklConfig.Endpoint,
+    Data: SimklConfig.Data,
+    Domain: SimklConfig.Website,
   },
 } as const;
 
@@ -48,16 +56,26 @@ export const manifest: Manifest.WebExtensionManifest = {
   web_accessible_resources: [
     {
       resources: ['/views/options/index.html'],
-      matches: [`${Endpoints.trakt.Production}/*`, `${Endpoints.trakt.Staging}/*`, `${Endpoints.tvdb}/*`, `${Endpoints.tmdb.redirect}/*`],
+      matches: [
+        `${Endpoints.Trakt.Api}/*`,
+        `${Endpoints.Trakt.StagingApi}/*`,
+        `${Endpoints.Trakt.Domain}/*`,
+        `${Endpoints.Trakt.StagingDomain}/*`,
+        `${Endpoints.Tmdb.Domain}/*`,
+        `${Endpoints.Simkl.Domain}/*`,
+      ],
     },
   ],
   host_permissions: [
-    `${Endpoints.trakt.Domain}/*`,
-    `${Endpoints.trakt.SubDomain}/*`,
-    `${Endpoints.trakt.Production}/*`,
-    `${Endpoints.trakt.Staging}/*`,
-    `${Endpoints.tvdb}/*`,
-    `${Endpoints.tmdb.api}/*`,
+    `${Endpoints.Trakt.Domain}/*`,
+    `${Endpoints.Trakt.SubDomain}/*`,
+    `${Endpoints.Trakt.Api}/*`,
+    `${Endpoints.Trakt.StagingApi}/*`,
+    `${Endpoints.Tmdb.Api}/*`,
+    `${Endpoints.Tmdb.Domain}/*`,
+    `${Endpoints.Simkl.Api}/*`,
+    `${Endpoints.Simkl.Data}/*`,
+    `${Endpoints.Simkl.Domain}/*`,
   ],
   content_security_policy: {
     // Adds localhost for vite hot reload

@@ -1,0 +1,14 @@
+{
+  "settings__connect__username": {
+    "message": "Username",
+    "description": "Username label"
+  },
+  "settings__connect__joined": {
+    "message": "Joined",
+    "description": "Joined label"
+  },
+  "settings__connect__bio": {
+    "message": "Biography",
+    "description": "Biography label"
+  }
+}

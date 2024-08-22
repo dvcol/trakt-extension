@@ -10,7 +10,6 @@ import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -40,7 +39,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
 
   const i18n = useI18n('watching');
 
-  const { user } = useUserSettingsStoreRefs();
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
 
   const saveState = () =>
     storage.local.set<WatchingState>(WatchingStoreConstants.Store, {
@@ -56,6 +55,10 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
   };
 
   const fetchWatching = async () => {
+    if (!isAuthenticated.value) {
+      Logger.warn('User not authenticated, skipping watch polling');
+      return;
+    }
     if (loading.watching) {
       Logger.warn('Already fetching watching state');
       return;
@@ -79,6 +82,10 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
   };
 
   const cancel = async (action: TraktWatching['action'] = watching.value?.action ?? 'checkin') => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot cancel, user is not authenticated');
+      return;
+    }
     if (loading.cancel) {
       Logger.warn('Already cancelling');
     }
@@ -101,6 +108,10 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
   };
 
   const checkin = async (query: TraktCheckinRequest, _override = override.value) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot check in, user is not authenticated');
+      return;
+    }
     if (loading.checkin) {
       Logger.warn('Already checking in');
     }
@@ -134,7 +145,6 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }
   };
 
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const interval = ref<ReturnType<typeof setInterval>>();
   const initWatchingStore = async () => {
     await restoreState();

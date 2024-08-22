@@ -41,9 +41,9 @@ watchUserChange({
   activated: async changed => {
     if (changed) await reload();
   },
-  userChange: async active => {
+  userChange: async ({ active, authenticated }) => {
     clearState();
-    if (active) await reload();
+    if (active && authenticated) await reload();
   },
 });
 

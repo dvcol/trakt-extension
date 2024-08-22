@@ -3,9 +3,9 @@ import { Config as TmdbConfig } from '@dvcol/tmdb-http-client/config';
 import type { TmdbClientSettings } from '@dvcol/tmdb-http-client/models';
 
 export const Config = {
-  endpoint: TmdbConfig.endpoint,
-  requestTokenTTL: TmdbConfig.requestTokenTTL,
-  requestTokenUrl: TmdbConfig.requestTokenUrl,
+  endpoint: TmdbConfig.Endpoint,
+  requestTokenTTL: TmdbConfig.RequestTokenTTL,
+  requestTokenUrl: TmdbConfig.RequestTokenUrl,
   UserAgent: `${import.meta.env.PKG_NAME}/${import.meta.env.PKG_VERSION}`,
   apiKey: import.meta.env.VITE_TMDB_API_KEY,
   readToken: import.meta.env.VITE_TMDB_READ_TOKEN,

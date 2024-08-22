@@ -4,5 +4,7 @@ export const WebConfig = {
     Trakt: 'trakt',
     ApiTrakt: 'api-trakt',
     Tmdb: 'tmdb',
+    Simkl: 'simkl',
+    ApiSimkl: 'api-simkl',
   },
 };
