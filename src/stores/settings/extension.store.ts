@@ -9,16 +9,20 @@ import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { type ListEntity } from '~/stores/data/list.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 type CacheRetentionState = {
   trakt: number;
+  simkl: number;
   tmdb: number;
 };
 
 const DefaultCacheRetention: CacheRetentionState = {
   trakt: CacheRetention.Week,
+  simkl: CacheRetention.Week,
   tmdb: CacheRetention.Year,
 } as const;
 
@@ -38,7 +42,7 @@ type ExtensionSettings = {
   enabledRoutes: RouteDictionary;
   restoreRoute: boolean;
   restorePanel: boolean;
-  loadLists: ListEntity[];
+  loadLists: Record<string, ListEntity[]>;
   loadListsPageSize: number;
   progressType: ProgressTypes;
   enableRatings: boolean;
@@ -54,7 +58,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const routeDictionary = reactive<ExtensionSettings['enabledRoutes']>(DefaultRoutes);
   const restoreRoute = ref<ExtensionSettings['restoreRoute']>(true);
   const restorePanel = ref<ExtensionSettings['restorePanel']>(false);
-  const loadLists = ref<ExtensionSettings['loadLists']>([]);
+  const loadLists = reactive<ExtensionSettings['loadLists']>({});
   const loadListsPageSize = ref<ExtensionSettings['loadListsPageSize']>(PageSize.p500);
   const defaultTab = ref<Route>(Route.Calendar);
   const initialized = ref<Promise<boolean>>();
@@ -66,8 +70,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     Object.assign(routeDictionary, DefaultRoutes);
     restoreRoute.value = true;
     restorePanel.value = false;
-    loadLists.value = [];
     progressType.value = ProgressType.Show;
+    clearProxy(loadLists);
   };
 
   const saveState = debounce(
@@ -77,7 +81,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         enabledRoutes: toRaw(routeDictionary),
         restoreRoute: restoreRoute.value,
         restorePanel: restorePanel.value,
-        loadLists: loadLists.value,
+        loadLists,
         loadListsPageSize: loadListsPageSize.value,
         progressType: progressType.value,
         enableRatings: enableRatings.value,
@@ -88,8 +92,15 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const setRetention = (retention: Partial<CacheRetentionState>, persist = true) => {
     if (retention.trakt !== undefined) cacheRetention.trakt = retention.trakt;
     if (retention.tmdb !== undefined) cacheRetention.tmdb = retention.tmdb;
+    if (retention.simkl !== undefined) cacheRetention.simkl = retention.simkl;
     TraktService.changeRetention(cacheRetention);
     if (persist) saveState().catch(err => Logger.error('Failed to save extension settings', { retention, err }));
+  };
+
+  const { user } = useAuthSettingsStoreRefs();
+  const setLoadLists = (value: ListEntity[], _user = user.value) => {
+    if (!loadLists[_user]) loadLists[_user] = value;
+    else Object.assign(loadLists[_user], value);
   };
 
   const restoreState = async () => {
@@ -99,10 +110,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.enabledRoutes !== undefined) Object.assign(routeDictionary, restored.enabledRoutes);
     if (restored?.restoreRoute !== undefined) restoreRoute.value = restored.restoreRoute;
     if (restored?.restorePanel !== undefined) restorePanel.value = restored.restorePanel;
-    if (restored?.loadLists !== undefined) loadLists.value = Object.values(restored.loadLists);
     if (restored?.loadListsPageSize !== undefined) loadListsPageSize.value = restored.loadListsPageSize;
     if (restored?.progressType !== undefined) progressType.value = restored.progressType;
     if (restored?.enableRatings !== undefined) enableRatings.value = restored.enableRatings;
+    if (restored?.loadLists !== undefined) {
+      Object.entries(restored.loadLists).forEach(([key, value]) => {
+        setLoadLists(Object.values(value), key);
+      });
+    }
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -153,9 +168,9 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       },
     }),
     loadLists: computed({
-      get: () => loadLists.value,
+      get: () => loadLists[user.value] ?? [],
       set: (value: ListEntity[]) => {
-        loadLists.value = value;
+        setLoadLists(value);
         saveState().catch(err => Logger.error('Failed to save load lists extension settings', { value, err }));
       },
     }),
@@ -182,6 +197,10 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     traktCacheRetention: computed({
       get: () => cacheRetention.trakt,
       set: (value: number) => setRetention({ trakt: value }),
+    }),
+    simklCacheRetention: computed({
+      get: () => cacheRetention.simkl,
+      set: (value: number) => setRetention({ simkl: value }),
     }),
     tmdbCacheRetention: computed({
       get: () => cacheRetention.tmdb,

@@ -15,7 +15,7 @@ import {
   useListsStoreRefs,
   useListStoreRefs,
 } from '~/stores/data/list.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
 
@@ -26,7 +26,7 @@ const { pageSize, searchList, listLoading } = useListStoreRefs();
 const { listsLoading, lists, activeList } = useListsStoreRefs();
 const { fetchLists, clearState, getIcon } = useListsStore();
 
-const { user } = useUserSettingsStoreRefs();
+const { user } = useAuthSettingsStoreRefs();
 
 const external = computed(() => {
   switch (activeList.value.type) {
@@ -80,9 +80,9 @@ defineProps({
 
 watchUserChange({
   fetch: fetchLists,
-  userChange: active => {
+  userChange: ({ active, authenticated }) => {
     clearState();
-    if (active) fetchLists();
+    if (active && authenticated) fetchLists();
   },
 });
 

@@ -24,12 +24,11 @@ import {
   type ListTypes,
   useListsStoreRefs,
 } from '~/stores/data/list.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'export');
-const { user, userSetting } = useUserSettingsStoreRefs();
-
+const { user } = useAuthSettingsStoreRefs();
 const { lists } = useListsStoreRefs();
 
 const loading = reactive<Record<string | number, boolean>>({});

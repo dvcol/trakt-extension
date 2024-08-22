@@ -19,7 +19,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -154,7 +154,12 @@ export const useShowStore = defineStore('data.show', () => {
     clearProgressState();
   };
 
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchShow = async (id: string) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show, user is not authenticated');
+      return;
+    }
     if (showsLoading[id]) {
       Logger.warn('Already fetching show', id);
       return;
@@ -177,6 +182,10 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowProgress = async (id: string, cacheOption?: BaseCacheOption) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show progress, user is not authenticated');
+      return;
+    }
     if (showWatchedProgressLoading[id]) {
       Logger.warn('Already fetching show progress', id);
       return;
@@ -198,6 +207,10 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowCollectionProgress = async (id: string, cacheOption?: BaseCacheOption) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show collection progress, user is not authenticated');
+      return;
+    }
     if (showCollectionProgressLoading[id]) {
       Logger.warn('Already fetching show collection progress', id);
       return;
@@ -219,6 +232,10 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowSeasons = async (id: string) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show seasons, user is not authenticated');
+      return;
+    }
     if (showsSeasonsLoading[id]) {
       Logger.warn('Already fetching show seasons', id);
       return;
@@ -245,6 +262,10 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowSeasonEpisodes = async (id: string, season: number) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show season episodes, user is not authenticated');
+      return;
+    }
     if (showsSeasonEpisodesLoading[id]?.[season]) {
       Logger.warn('Already fetching show season episodes', id, season);
       return;
@@ -273,6 +294,10 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const fetchShowEpisode = async (id: string, season: number, episode: number) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch show episodes, user is not authenticated');
+      return;
+    }
     if (showsEpisodesLoading[id]?.[season]?.[episode]) {
       Logger.warn('Already fetching show episodes', id, season, episode);
       return;
@@ -367,7 +392,6 @@ export const useShowStore = defineStore('data.show', () => {
     });
   };
 
-  const { user } = useUserSettingsStoreRefs();
   const initShowStore = () => {
     watch(user, () => {
       clearProgressState();

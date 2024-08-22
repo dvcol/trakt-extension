@@ -47,6 +47,10 @@
     "message": "Logout",
     "description": "Button to logout."
   },
+  "common__button__login": {
+    "message": "Login",
+    "description": "Button to login."
+  },
   "common__button__export": {
     "message": "Export my data",
     "description": "Button to export data."

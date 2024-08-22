@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { NAnchor, NAnchorLink, NCard, NLayout, NLayoutSider } from 'naive-ui';
 
-import { type Component, onDeactivated, type Ref, ref } from 'vue';
+import { type Component, computed, onDeactivated, type Ref, ref } from 'vue';
 
 import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
 import SettingsActivity from '~/components/views/settings/SettingsActivity.vue';
 import SettingsBadge from '~/components/views/settings/SettingsBadge.vue';
 import SettingsCache from '~/components/views/settings/SettingsCache.vue';
+import SettingsConnect from '~/components/views/settings/SettingsConnect.vue';
 import SettingsExport from '~/components/views/settings/SettingsExport.vue';
 import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
 import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
@@ -14,6 +15,7 @@ import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
 import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
 import SettingsWatching from '~/components/views/settings/SettingsWatching.vue';
 
+import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings');
@@ -22,20 +24,30 @@ type Section = {
   title: string;
   reference: Ref<[InstanceType<typeof NCard>] | undefined>;
   component?: Component;
+  disabled?: boolean;
 };
 
-const sections: Section[] = [
-  { title: 'menu__account', reference: ref(), component: SettingsAccount },
-  { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
-  { title: 'menu__links', reference: ref(), component: SettingsLinks },
-  { title: 'menu__menus', reference: ref(), component: SettingsMenus },
-  { title: 'menu__watching', reference: ref(), component: SettingsWatching },
-  { title: 'menu__activity', reference: ref(), component: SettingsActivity },
-  { title: 'menu__badge', reference: ref(), component: SettingsBadge },
-  { title: 'menu__cache', reference: ref(), component: SettingsCache },
-  { title: 'menu__export', reference: ref(), component: SettingsExport },
-  { title: 'menu__logs', reference: ref(), component: SettingsLogs },
-];
+const { simklEnabled } = useSimklStoreRefs();
+const sections = computed<Section[]>(() =>
+  [
+    { title: 'menu__account', reference: ref(), component: SettingsAccount },
+    {
+      title: 'menu__connect',
+      reference: ref(),
+      component: SettingsConnect,
+      disabled: simklEnabled.value,
+    },
+    { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
+    { title: 'menu__links', reference: ref(), component: SettingsLinks },
+    { title: 'menu__menus', reference: ref(), component: SettingsMenus },
+    { title: 'menu__watching', reference: ref(), component: SettingsWatching },
+    { title: 'menu__activity', reference: ref(), component: SettingsActivity },
+    { title: 'menu__badge', reference: ref(), component: SettingsBadge },
+    { title: 'menu__cache', reference: ref(), component: SettingsCache },
+    { title: 'menu__export', reference: ref(), component: SettingsExport },
+    { title: 'menu__logs', reference: ref(), component: SettingsLogs },
+  ].filter(Boolean),
+);
 
 const focus = ref();
 const target = ref();
@@ -96,22 +108,23 @@ onDeactivated(() => {
         padding: '1rem',
       }"
     >
-      <NCard
-        v-for="(section, index) in sections"
-        :id="section.title"
-        :ref="section.reference"
-        :key="section.title"
-        class="card"
-        :class="{ target: focus?.title === section.title }"
-        :style="{ '--length': sections.length, '--index': index }"
-        :title="i18n(section.title)"
-        @mouseenter="onEnter(section)"
-        @mouseleave="onLeave(section)"
-        @focusin="onEnter(section)"
-        @focusout="onLeave(section)"
-      >
-        <component :is="section.component" />
-      </NCard>
+      <template v-for="(section, index) in sections" :key="section.title">
+        <NCard
+          v-if="!section.disabled"
+          :id="section.title"
+          :ref="section.reference"
+          class="card"
+          :class="{ target: focus?.title === section.title }"
+          :style="{ '--length': sections.length, '--index': index }"
+          :title="i18n(section.title)"
+          @mouseenter="onEnter(section)"
+          @mouseleave="onLeave(section)"
+          @focusin="onEnter(section)"
+          @focusout="onLeave(section)"
+        >
+          <component :is="section.component" />
+        </NCard>
+      </template>
     </NLayout>
   </NLayout>
 </template>

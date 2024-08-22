@@ -6,7 +6,6 @@ import { MessageType } from '~/models/message/message-type.model';
 
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
-import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
 import { useCalendarStore } from '~/stores/data/calendar.store';
@@ -17,6 +16,7 @@ import { useMovieStore } from '~/stores/data/movie.store';
 import { useReleasesStore } from '~/stores/data/releases.store';
 import { useSearchStore } from '~/stores/data/search.store';
 import { useShowStore } from '~/stores/data/show.store';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useWatchingStore } from '~/stores/data/watching.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useBadgeStore } from '~/stores/settings/badge.store';
@@ -36,24 +36,13 @@ const onVersionUpdate = async () => {
   await storage.local.remove(MessageType.VersionUpdate);
 };
 
-export const initServices = async () => {
+export const initServices = async (options: { option?: boolean; popup?: boolean; web?: boolean } = {}) => {
   await useLogStore().initLogStore();
 
   const { setAppReady } = useAppStateStore();
-  const { syncRestoreAuth } = useAuthSettingsStore();
-  const { syncRestoreUser, syncRestoreAllUsers } = useUserSettingsStore();
 
-  const restoredSettings = await syncRestoreUser();
-  const restoredAuth = await syncRestoreAuth(restoredSettings?.user?.username);
-
-  try {
-    await TraktService.importAuthentication(restoredAuth);
-  } catch (error) {
-    Logger.error('Failed to import authentication', error);
-    await TraktService.logout();
-  }
-
-  TraktService.listen();
+  await useAuthSettingsStore().initAuthStore();
+  await useUserSettingsStore().initUserStore();
 
   await Promise.all([
     // init custom links
@@ -67,7 +56,6 @@ export const initServices = async () => {
   await useActivityStore().initActivityStore();
 
   await Promise.all([
-    syncRestoreAllUsers(),
     useImageStore().initImageStore(),
     useListsStore().initListsStore(),
     useListStore().initListStore(),
@@ -79,12 +67,13 @@ export const initServices = async () => {
     useMovieStore().initMovieStore(),
     useContextMenuStore().initContextMenuStore(),
     useWatchingStore().initWatchingStore(),
+    useSimklStore().initSimklStore(),
   ]);
 
   // requires calendarStore to be init
   await useBadgeStore().initBadgeStore();
 
-  setAppReady(true).catch(Logger.error);
+  setAppReady(true, options).catch(Logger.error);
 
   Logger.info(...Logger.colorize(LoggerColor.Success, Logger.timestamp, 'All services initialized!'));
 

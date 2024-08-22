@@ -3,6 +3,10 @@
     "message": "Account",
     "description": "Account menu item"
   },
+  "settings__menu__connect": {
+    "message": "Connect",
+    "description": "Connect menu item"
+  },
   "settings__menu__cache": {
     "message": "Cache",
     "description": "Cache menu item"

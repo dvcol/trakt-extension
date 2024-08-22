@@ -11,6 +11,7 @@ import { type ProgressItem } from '~/models/progress.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { debounceLoading, useLoadingPlaceholder } from '~/utils/store.utils';
 
 export type ProgressListItem = Omit<
@@ -103,6 +104,7 @@ export const useProgressStore = defineStore('data.progress', () => {
 
   const loadingPlaceholder = useLoadingPlaceholder<ProgressListItem>(ref(10));
 
+  const { evicted } = useActivityStore();
   const fetchProgress = async () => {
     if (!firstLoad.value && loading.value) {
       Logger.warn('Already fetching list');
@@ -115,6 +117,7 @@ export const useProgressStore = defineStore('data.progress', () => {
     const timeout = debounceLoading(progress, loadingPlaceholder, true);
     try {
       progress.value = await fetchProgressData();
+      evicted.progress = false;
     } catch (error) {
       progress.value = [];
       loading.value = false;

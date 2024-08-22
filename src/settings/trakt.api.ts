@@ -13,14 +13,14 @@ export const Config = {
 export const Production = {
   ID: import.meta.env.VITE_TRAKT_PRODUCTION_ID,
   Secret: import.meta.env.VITE_TRAKT_PRODUCTION_SECRET,
-  TraktEndpoint: TraktConfig.endpoint.Production,
+  TraktEndpoint: TraktConfig.Endpoint.Production,
   RedirectionUrl: `chrome-extension://${chromeRuntimeId}/views/options/index.html`,
 } as const;
 
 export const Staging = {
   ID: import.meta.env.VITE_TRAKT_STAGING_ID,
   Secret: import.meta.env.VITE_TRAKT_STAGING_SECRET,
-  TraktEndpoint: TraktConfig.endpoint.Staging,
+  TraktEndpoint: TraktConfig.Endpoint.Staging,
   RedirectionUrl: `chrome-extension://${chromeRuntimeId}/views/options/index.html`,
 } as const;
 

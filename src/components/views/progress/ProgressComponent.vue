@@ -8,15 +8,18 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 
 import LoginCard from '~/components/views/login/LoginCard.vue';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { Route } from '~/models/router.model';
 import { NotificationService } from '~/services/notification.service';
 import { ExternaLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
 import { getSessionUser } from '~/utils/trakt-service.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const i18n = useI18n('progress');
 
@@ -25,6 +28,9 @@ const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 const { progress, loading, loggedOut } = useProgressStoreRefs();
 const { fetchProgress, clearState } = useProgressStore();
 const { isWatching } = useWatchingStoreRefs();
+
+const { scrolled, listRef, onClick } = useBackToTop();
+const { onItemClick } = usePanelItem();
 
 onMounted(() => {
   watch(panelOpen, async value => {
@@ -36,9 +42,18 @@ onMounted(() => {
   });
 });
 
-const { user } = useUserSettingsStoreRefs();
+const { user } = useAuthSettingsStoreRefs();
 const unSub = ref<() => void>();
 const notification = ref<NotificationReactive>();
+
+const { getEvicted } = useActivityStore();
+useWatchActivated(
+  watch(getEvicted(Route.Progress), async _evicted => {
+    if (!_evicted) return;
+    if (scrolled.value) return;
+    await fetchProgress();
+  }),
+);
 
 watchUserChange({
   fetch: fetchProgress,
@@ -63,9 +78,6 @@ watchUserChange({
     notification.value?.destroy();
   },
 });
-
-const { scrolled, listRef, onClick } = useBackToTop();
-const { onItemClick } = usePanelItem();
 </script>
 
 <template>

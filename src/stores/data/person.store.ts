@@ -11,6 +11,7 @@ import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 
 import { TraktService } from '~/services/trakt.service';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount } from '~/utils/retry.utils';
 import { asyncRefGetter, clearProxy } from '~/utils/vue.utils';
 
@@ -30,7 +31,12 @@ export const usePersonStore = defineStore('data.person', () => {
     clearProxy(peopleErrors);
   };
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchPerson = async (id: string | number) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch person, user is not authenticated');
+      return;
+    }
     if (loading[id]) {
       Logger.warn('Already fetching person', id);
       return;

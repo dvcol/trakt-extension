@@ -11,7 +11,7 @@ import IconLoop from '~/components/icons/IconLoop.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
-import { useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
@@ -24,7 +24,7 @@ const { setHistoryRange } = useHistoryStore();
 
 const debouncedSearch = useDebouncedSearch(searchHistory);
 
-const { user } = useUserSettingsStoreRefs();
+const { user } = useAuthSettingsStoreRefs();
 const external = computed(() =>
   ResolveExternalLinks.trakt.history({
     user: user.value,

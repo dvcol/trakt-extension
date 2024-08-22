@@ -10,11 +10,14 @@ import {
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchUserChange } from '~/utils/store.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
@@ -44,6 +47,15 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchHistory, {
   belowThreshold,
   active,
 });
+
+const { getEvicted } = useActivityStore();
+useWatchActivated(
+  watch(getEvicted(Route.History), async _evicted => {
+    if (!_evicted) return;
+    if (scrolled.value) return;
+    await fetchHistory();
+  }),
+);
 
 onMounted(() => {
   watch(panelOpen, async value => {

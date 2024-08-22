@@ -1,21 +1,28 @@
 import { compareDateObject, toDateObject } from '@dvcol/common-utils/common/date';
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import type { RecursiveType } from '@dvcol/common-utils/common';
 import type { TraktSyncActivities } from '@dvcol/trakt-http-client/models';
 
 import { PollingIntervals } from '~/models/polling.model';
+import { Route } from '~/models/router.model';
+
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { useUserSettingsStore, useUserSettingsStoreRefs } from '~/stores/settings/user.store';
+import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { debounce } from '~/utils/debounce.utils';
+
+type Evicted = Record<Route, boolean>;
+const defaultEvicted: Evicted = Object.fromEntries(Object.values(Route).map(route => [route, false])) as Evicted;
+type Changed = RecursiveType<RecursiveType<TraktSyncActivities, Date>, boolean>;
 
 type ActivityStoreState = {
-  activity?: TraktSyncActivities;
+  activity: Record<string, TraktSyncActivities>;
   polling?: number;
 };
 
@@ -26,32 +33,45 @@ const ActivityStoreConstants = {
 } as const;
 
 export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => {
-  const activity = ref<TraktSyncActivities>();
+  const activity = ref<ActivityStoreState['activity']>({});
   const loading = ref(false);
   const polling = ref(ActivityStoreConstants.DefaultPolling);
 
   const clearState = () => {
-    activity.value = undefined;
+    activity.value = {};
   };
 
-  const saveState = async () =>
+  const saveState = debounce(() =>
     storage.local.set<ActivityStoreState>(ActivityStoreConstants.Store, {
       activity: activity.value,
       polling: polling.value,
-    });
+    }),
+  );
+
   const restoreState = async () => {
     const state = await storage.local.get<ActivityStoreState>(ActivityStoreConstants.Store);
     if (state?.activity) activity.value = state.activity;
     if (state?.polling !== undefined) polling.value = state.polling;
   };
 
+  const setActivity = (user: string, data: TraktSyncActivities) => {
+    if (!user) throw new Error('User is required');
+    activity.value = { ...activity.value, [user]: data };
+    return saveState();
+  };
+
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchActivity = async () => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch activity, user is not authenticated');
+      return;
+    }
     Logger.debug('Fetching activity');
     loading.value = true;
 
     try {
-      activity.value = await TraktService.activity();
-      await saveState();
+      const _activity = await TraktService.activity();
+      return setActivity(user.value, _activity);
     } catch (error) {
       Logger.error('Failed to fetch activity', error);
       NotificationService.error('Failed to fetch activity', error);
@@ -61,74 +81,104 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
     }
   };
 
-  const { refreshUserSettings } = useUserSettingsStore();
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
-  const { user } = useUserSettingsStoreRefs();
+  const { fetchUserSettings } = useUserSettingsStore();
   const interval = ref<ReturnType<typeof setInterval>>();
+
+  const evicted = reactive<Evicted>({ ...defaultEvicted });
+  const getEvicted = (route: Route) => computed(() => evicted[route]);
+  const evictChanges = (_changed?: Changed): Evicted => {
+    const _evicted: Evicted = { ...defaultEvicted };
+    if (!_changed?.all) return _evicted;
+    const promises: Promise<unknown>[] = [];
+    if (_changed?.episodes?.watched_at || _changed?.shows?.hidden_at || _changed?.seasons?.hidden_at) {
+      promises.push(TraktService.evict.progress.show());
+      _evicted.progress = true;
+      promises.push(TraktService.evict.calendar());
+      _evicted.calendar = true;
+      promises.push(TraktService.evict.history());
+      _evicted.history = true;
+      promises.push(TraktService.evict.stats());
+      _evicted.settings = true;
+      Logger.info('Evicted show progress, history and calendar');
+    }
+
+    if (_changed?.movies?.watched_at || _changed?.movies?.hidden_at) {
+      promises.push(TraktService.evict.progress.movie());
+      _evicted.progress = true;
+      promises.push(TraktService.evict.history());
+      _evicted.history = true;
+      promises.push(TraktService.evict.calendar());
+      _evicted.calendar = true;
+      promises.push(TraktService.evict.stats());
+      _evicted.settings = true;
+      Logger.info('Evicted movie progress, history and calendar');
+    }
+
+    if (
+      _changed?.watchlist?.updated_at ||
+      _changed?.episodes?.watchlisted_at ||
+      _changed?.seasons?.watchlisted_at ||
+      _changed?.shows?.watchlisted_at ||
+      _changed?.movies?.watchlisted_at
+    ) {
+      promises.push(TraktService.evict.watchlist());
+      _evicted.watchlist = true;
+      promises.push(TraktService.evict.calendar());
+      _evicted.calendar = true;
+      Logger.info('Evicted watchlist');
+    }
+    if (_changed?.collaborations?.updated_at || _changed?.lists?.updated_at) {
+      promises.push(TraktService.evict.lists());
+      _evicted.watchlist = true;
+      Logger.info('Evicted lists');
+    }
+    if (_changed?.episodes?.collected_at) {
+      promises.push(TraktService.evict.collection.show());
+      _evicted.watchlist = true;
+      promises.push(TraktService.evict.calendar());
+      _evicted.calendar = true;
+      promises.push(TraktService.evict.stats());
+      _evicted.settings = true;
+      Logger.info('Evicted show collection');
+    }
+    if (_changed?.movies?.collected_at) {
+      promises.push(TraktService.evict.collection.movie());
+      _evicted.watchlist = true;
+      promises.push(TraktService.evict.calendar());
+      _evicted.calendar = true;
+      promises.push(TraktService.evict.stats());
+      _evicted.settings = true;
+      Logger.info('Evicted movie collection');
+    }
+    if (_changed?.favorites?.updated_at) {
+      promises.push(TraktService.evict.favorites());
+      _evicted.watchlist = true;
+      Logger.info('Evicted favorites');
+    }
+    if (_changed?.account?.settings_at) {
+      promises.push(TraktService.evict.settings());
+      promises.push(fetchUserSettings());
+      _evicted.settings = true;
+      Logger.info('Evicted account');
+    }
+    if (_changed.movies.rated_at || _changed.shows.rated_at || _changed.seasons.rated_at || _changed.episodes.rated_at) {
+      promises.push(TraktService.evict.ratings());
+      promises.push(TraktService.evict.stats());
+      _evicted.settings = true;
+      Logger.info('Evicted ratings');
+    }
+    Promise.all(promises).catch(e => Logger.error('Failed to evict changes', e));
+    return _evicted;
+  };
 
   const initActivityStore = async () => {
     await restoreState();
 
     watch(activity, (next, prev) => {
-      if (!prev) return;
-      const changed: RecursiveType<RecursiveType<TraktSyncActivities, Date>, boolean> = compareDateObject(toDateObject(prev), toDateObject(next));
-
-      if (changed?.episodes?.watched_at || changed?.shows?.hidden_at || changed?.seasons?.hidden_at) {
-        TraktService.evict.progress.show();
-        TraktService.evict.history();
-        TraktService.evict.calendar();
-        TraktService.evict.stats();
-        Logger.info('Evicted show progress, history and calendar');
-      }
-
-      if (changed?.movies?.watched_at || changed?.movies?.hidden_at) {
-        TraktService.evict.progress.movie();
-        TraktService.evict.history();
-        TraktService.evict.calendar();
-        TraktService.evict.stats();
-        Logger.info('Evicted movie progress, history and calendar');
-      }
-
-      if (
-        changed?.watchlist?.updated_at ||
-        changed?.episodes?.watchlisted_at ||
-        changed?.seasons?.watchlisted_at ||
-        changed?.shows?.watchlisted_at ||
-        changed?.movies?.watchlisted_at
-      ) {
-        TraktService.evict.watchlist();
-        TraktService.evict.calendar();
-        Logger.info('Evicted watchlist');
-      }
-      if (changed?.collaborations?.updated_at || changed?.lists?.updated_at) {
-        TraktService.evict.lists();
-        Logger.info('Evicted lists');
-      }
-      if (changed?.episodes?.collected_at) {
-        TraktService.evict.collection.show();
-        TraktService.evict.calendar();
-        TraktService.evict.stats();
-        Logger.info('Evicted show collection');
-      }
-      if (changed?.movies?.collected_at) {
-        TraktService.evict.collection.movie();
-        TraktService.evict.calendar();
-        TraktService.evict.stats();
-        Logger.info('Evicted movie collection');
-      }
-      if (changed?.favorites?.updated_at) {
-        TraktService.evict.favorites();
-        Logger.info('Evicted favorites');
-      }
-      if (changed?.account?.settings_at) {
-        refreshUserSettings();
-        Logger.info('Evicted account');
-      }
-      if (changed.movies.rated_at || changed.shows.rated_at || changed.seasons.rated_at || changed.episodes.rated_at) {
-        TraktService.evict.ratings();
-        TraktService.evict.stats();
-        Logger.info('Evicted ratings');
-      }
+      const _prev = prev?.[user.value];
+      const _next = next?.[user.value];
+      const _changed = compareDateObject(toDateObject(_prev), toDateObject(_next));
+      Object.assign(evicted, evictChanges(_changed));
     });
 
     watch(
@@ -159,6 +209,8 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
 
   return {
     activity,
+    evicted,
+    getEvicted,
     polling: computed({
       get: () => polling.value,
       set: (value: number = ActivityStoreConstants.DefaultPolling) => {

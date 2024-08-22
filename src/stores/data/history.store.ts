@@ -12,6 +12,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useActivityStore } from '~/stores/data/activity.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
@@ -89,12 +90,18 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const loadingPlaceholder = useLoadingPlaceholder<TraktHistory>(pageSize);
   const filteredHistory = useSearchFilter(history, searchHistory, 'watched_at');
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
+  const { evicted } = useActivityStore();
   const fetchHistory = async ({
     page,
     limit = pageSize.value,
     start = historyStart.value,
     end = historyEnd.value,
   }: { page?: number; limit?: number; start?: Date; end?: Date } = {}) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch history, user is not authenticated');
+      return;
+    }
     if (!firstLoad.value && loading.value) {
       Logger.warn('Already fetching history');
       return;
@@ -115,6 +122,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
       pagination.value = response.pagination;
       history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
       delete historyErrors[JSON.stringify(query)];
+      evicted.history = false;
     } catch (e) {
       Logger.error('Failed to fetch history');
       NotificationService.error('Failed to fetch history', e);
@@ -138,7 +146,6 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const getMovieHistory = (id: number) => getHistory(id, 'movie');
   const getEpisodeHistory = (id: number) => getHistory(id, 'episode');
 
-  const { isAuthenticated } = useAuthSettingsStoreRefs();
   const initHistoryStore = async () => {
     await restoreState();
 

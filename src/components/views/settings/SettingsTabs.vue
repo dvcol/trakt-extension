@@ -2,7 +2,7 @@
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
 
-import { type Component, computed, h, onBeforeMount, ref } from 'vue';
+import { type Component, computed, h, onBeforeMount, ref, watch } from 'vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
@@ -19,11 +19,14 @@ import {
 } from '~/stores/data/list.store';
 import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import {
   useExtensionSettingsStore,
   useExtensionSettingsStoreRefs,
 } from '~/stores/settings/extension.store';
+import { defaultUser } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { useWatchActivated } from '~/utils/watching.utils';
 
 const i18n = useI18n('settings', 'tabs');
 
@@ -75,6 +78,14 @@ const renderLabel = (option: ListOption) => [
 onBeforeMount(() => {
   fetchLists();
 });
+
+const { user } = useAuthSettingsStoreRefs();
+useWatchActivated(
+  watch(user, async _user => {
+    if (!_user || _user === defaultUser) return;
+    await fetchLists();
+  }),
+);
 
 const { pageSize: historyPageSize, init } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();

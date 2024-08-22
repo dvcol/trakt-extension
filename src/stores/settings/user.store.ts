@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 
 import type { TraktStats } from '@dvcol/trakt-http-client/models';
 
@@ -8,14 +8,16 @@ import type { UserSetting } from '~/models/trakt-service.model';
 
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
+import { debounce } from '~/utils/debounce.utils';
 
 type UserSettings = Record<string, UserSetting>;
 type UserStats = Record<string, TraktStats>;
 
 type LoadingDictionary = Record<string, boolean>;
 type LoadingDictionaries = {
-  settings?: LoadingDictionary;
+  settings?: boolean;
   stats?: LoadingDictionary;
 };
 
@@ -23,126 +25,80 @@ export const defaultUser = 'default';
 
 const UserStoreConstants = {
   Store: 'settings.user',
-  SyncLastUser: 'settings.last-user',
 };
 
 export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => {
   const userSettings = reactive<UserSettings>({});
   const userStats = reactive<UserStats>({});
-  const user = ref<string>(defaultUser);
 
   const loading = reactive<LoadingDictionaries>({});
 
+  const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const userSetting = computed(() => userSettings[user.value]);
   const userStat = computed(() => userStats[user.value]);
 
-  const userSettingLoading = computed(() => loading.settings?.[user.value]);
   const userStatLoading = computed(() => loading.stats?.[user.value]);
+  const userSettingLoading = computed(() => loading.settings);
 
   /**
-   * Save the current user settings to chrome storage
-   * @param _settings
-   * @param account
+   * Save a specific userSettings to chrome storage
+   * @param setting
    */
-  const syncSetUser = (_settings: UserSetting = userSetting.value, account: string = _settings?.user?.username ?? user.value) => {
-    const _lastUser = storage.sync.set(UserStoreConstants.SyncLastUser, account);
-    const _setting = storage.sync.set(`${UserStoreConstants.Store}.${encodeURIComponent(account)}`, _settings);
-    return Promise.all([_lastUser, _setting]);
-  };
-
-  /**
-   * Clear the last user from chrome storage
-   */
-  const syncClearLastUser = () => storage.sync.remove(UserStoreConstants.SyncLastUser);
+  const syncSetUserSettings = debounce((setting: UserSetting) => {
+    if (!setting?.user?.name) return;
+    return storage.sync.set(`${UserStoreConstants.Store}.${encodeURIComponent(setting.user.name)}`, setting);
+  });
 
   /**
    * Clear a specific user from chrome storage
    * @param account
    */
-  const syncClearUser = (account?: string) => {
+  const syncClearUserSettings = debounce((account?: string) => {
     return storage.sync.remove(`${UserStoreConstants.Store}${account ? `.${encodeURIComponent(account)}` : ''}`);
-  };
-
-  /**
-   * Restore a specific user from chrome storage
-   * @param account
-   */
-  const syncRestoreUser = async (account: string = user.value) => {
-    if (account === defaultUser) account = await storage.sync.get<string>(UserStoreConstants.SyncLastUser);
-    if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser) ?? defaultUser;
-    user.value = account;
-    const _setting = await storage.sync.get<UserSetting>(`${UserStoreConstants.Store}.${encodeURIComponent(account)}`);
-    if (!userSettings[account]) userSettings[account] = {};
-    if (_setting) Object.assign(userSettings[account], _setting);
-    return _setting;
-  };
+  });
 
   /**
    * Change the current user settings for a specific account
    * @param _settings
    * @param account
    */
-  const setUserSetting = async (_settings: UserSetting = {}, account: string = _settings?.user?.username ?? user.value) => {
+  const setUserSetting = async (_settings: UserSetting = {}, account: string = _settings?.user?.username) => {
+    if (!account) throw new Error('Account is not set');
     if (Object.keys(_settings).length < 1) {
       delete userSettings[account];
-      user.value = defaultUser;
-      return Promise.all([syncClearLastUser(), syncClearUser(account)]);
+      syncClearUserSettings(account).catch(err => Logger.error('Failed to clear user settings', { account, err }));
+      return _settings;
     }
 
     if (!userSettings[account]) userSettings[account] = {};
     Object.assign(userSettings[account], _settings);
-    user.value = account;
-    return syncSetUser(userSettings[account], account);
+    syncSetUserSettings(userSettings[account]).catch(err => Logger.error('Failed to set user settings', { account, err }));
+    return _settings;
   };
 
-  /**
-   * Restore all users from chrome storage
-   */
-  const syncRestoreAllUsers = async () => {
-    const restored = await storage.sync.getAll<UserSettings>(`${UserStoreConstants.Store}.`);
-
-    Object.entries(restored).forEach(([account, settings]) => {
-      const _account = decodeURIComponent(account.replace(`${UserStoreConstants.Store}.`, ''));
-      if (_account === defaultUser) return;
-      if (userSettings[_account]) return;
-      if (!settings) return;
-      userSettings[_account] = {};
-      Object.assign(userSettings[_account], settings);
-    });
-  };
-
-  /**
-   * Change the current user
-   * @param account
-   */
-  const setCurrentUser = (account?: string) => {
-    if (!account) account = Object.keys(userSettings).find(_account => _account !== defaultUser);
-    if (!account) return;
-
-    if (!userSettings[account]) throw new Error(`User ${account} does not exist`);
-    return setUserSetting(userSettings[account], account);
-  };
-
-  const refreshUserSettings = async () => {
-    if (loading.settings?.[user.value]) {
+  const fetchUserSettings = async (isStaging: boolean = TraktService.isStaging) => {
+    if (loading.settings) {
       Logger.warn('User settings are already loading', { user: user.value });
-      return;
     }
 
-    Logger.debug('Refreshing user settings', { user: user.value });
+    Logger.debug('Fetching user settings', { user: user.value });
 
-    if (!loading.settings) loading.settings = {};
-    loading.settings[user.value] = true;
+    loading.settings = true;
     try {
-      await setUserSetting(await TraktService.getUserSettings());
+      const _settings = await TraktService.getUserSettings();
+      return await setUserSetting({ ..._settings, isStaging });
     } catch (err) {
       Logger.error('Failed to refresh user settings', { user: user.value, err });
     } finally {
-      loading.settings[user.value] = false;
+      loading.settings = false;
     }
   };
 
   const fetchUserStats = async (_user = user.value) => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch user stats, user is not authenticated');
+      return;
+    }
     if (!_user) throw new Error('User is not set');
     if (loading.stats?.[_user]) {
       Logger.warn('User stats are already loading', { user: _user });
@@ -163,14 +119,33 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
     }
   };
 
-  // Propagate user change to http service
-  watch(user, _user => {
-    Logger.info('User changed', { user: _user });
-    TraktService.changeUser(_user);
-  });
+  /**
+   * Restore all users from chrome storage
+   */
+  const syncRestoreAllUsers = async () => {
+    const restored = await storage.sync.getAll<UserSettings>(`${UserStoreConstants.Store}.`);
+
+    Object.entries(restored).forEach(([account, settings]) => {
+      const _account = decodeURIComponent(account.replace(`${UserStoreConstants.Store}.`, ''));
+      if (!settings) return;
+      if (userSettings[_account]) return;
+      if (_account === defaultUser) return;
+      userSettings[_account] = {};
+      Object.assign(userSettings[_account], settings);
+    });
+  };
+
+  const initUserStore = async () => {
+    await syncRestoreAllUsers();
+
+    // Propagate user change to http service
+    watch([user, isAuthenticated], async ([_user, _isAuthenticated]) => {
+      if (_user === defaultUser || !_isAuthenticated) return;
+      await fetchUserSettings();
+    });
+  };
 
   return {
-    user,
     userStats,
     userStat,
     userStatLoading,
@@ -178,12 +153,9 @@ export const useUserSettingsStore = defineStore(UserStoreConstants.Store, () => 
     userSetting,
     userSettingLoading,
     setUserSetting,
-    syncSetUser,
-    syncRestoreUser,
-    syncRestoreAllUsers,
-    setCurrentUser,
-    refreshUserSettings,
+    fetchUserSettings,
     fetchUserStats,
+    initUserStore,
   };
 });
 

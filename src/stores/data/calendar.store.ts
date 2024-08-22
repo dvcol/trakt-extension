@@ -8,6 +8,8 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useActivityStore } from '~/stores/data/activity.store';
+import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { type CalendarItem, getEmptyWeeks, getLoadingPlaceholder, spaceDate } from '~/utils/calendar.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
@@ -84,7 +86,13 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     if (restored?.center) clearState(new Date(restored.center), false);
   };
 
+  const { isAuthenticated } = useAuthSettingsStoreRefs();
+  const { evicted } = useActivityStore();
   const fetchCalendar = async (mode: 'start' | 'end' | 'reload' = 'reload') => {
+    if (!isAuthenticated.value) {
+      Logger.error('Cannot fetch calendar, user is not authenticated');
+      return;
+    }
     if (!firstLoad.value && loading.value) {
       Logger.warn('Already fetching calendar');
       return;
@@ -130,6 +138,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       } else if (mode === 'end') {
         calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
       }
+      evicted.calendar = false;
     } catch (e) {
       Logger.error('Failed to fetch calendar');
       NotificationService.error('Failed to fetch calendar', e);

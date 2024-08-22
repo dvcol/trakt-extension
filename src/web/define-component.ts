@@ -2,7 +2,7 @@ export enum WebComponents {
   TraktExtension = 'wc-trakt-extension',
 }
 
-export type DefineOption = { baseName?: string; baseUrl?: string };
+export type DefineOption = { baseName?: string; baseUrl?: string; view?: { option?: boolean; popup?: boolean; web?: boolean } };
 export type DefineComponent = (options?: DefineOption, component?: WebComponents) => void;
 
 export const defineComponent = async (options: DefineOption = {}, component: WebComponents = WebComponents.TraktExtension) => {
