@@ -142,12 +142,15 @@ const activeLists = computed(() => {
     .map(list => list.id);
 });
 
+const { panelDirty } = useAppStateStoreRefs();
+
 const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   if (!movie.value?.ids) return;
 
   const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
+  panelDirty.value = true;
   await addToOrRemoveFromList({
     list: _list,
     itemType: 'movie',
@@ -157,8 +160,6 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
 };
 
 const releaseDate = computed(() => movie.value?.released);
-
-const { panelDirty } = useAppStateStoreRefs();
 
 const onCollectionUpdate = async (
   value: PanelButtonsOptions,
