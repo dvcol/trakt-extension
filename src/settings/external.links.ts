@@ -9,6 +9,7 @@ export const ExternaLinks = {
   imdb: 'https://www.imdb.com/',
   tvdb: 'https://thetvdb.com/',
   simkl: 'https://simkl.com/',
+  mal: 'https://myanimelist.net/',
   omdb: 'https://www.omdbapi.com/',
   fanart: 'https://fanart.tv/',
   justwatch: 'https://www.justwatch.com/',
@@ -93,7 +94,7 @@ export const ResolveExternalLinks = {
     id: string | number;
     season?: string | number;
     episode?: string | number;
-    type: 'movie' | 'show' | 'season' | 'episode' | 'person';
+    type: 'movie' | 'show' | 'season' | 'episode' | 'person' | string;
   }) => {
     if (type === 'person') return `${ExternaLinks.tmdb}person/${id}`;
     if (type === 'movie') return `${ExternaLinks.tmdb}movie/${id}`;
@@ -101,18 +102,24 @@ export const ResolveExternalLinks = {
     if (type === 'season') return `${ExternaLinks.tmdb}tv/${id}/season/${season}`;
     if (type === 'episode') return `${ExternaLinks.tmdb}tv/${id}/season/${season}/episode/${episode}`;
   },
-  tvdb: (id: string | number, type: 'movie' | 'show' | 'season' | 'episode' | 'person') => {
+  tvdb: (id: string | number, type: 'movie' | 'show' | 'season' | 'episode' | 'person' | string) => {
     if (type === 'person') return `${ExternaLinks.tvdb}dereferrer/people/${id}`;
     if (type === 'movie') return `${ExternaLinks.tvdb}dereferrer/movies/${id}`;
     if (type === 'show') return `${ExternaLinks.tvdb}dereferrer/series/${id}`;
     if (type === 'season') return `${ExternaLinks.tvdb}dereferrer/season/${id}`;
     if (type === 'episode') return `${ExternaLinks.tvdb}dereferrer/episode/${id}`;
   },
+  mal: (id: number | string) => `${ExternaLinks.mal}anime/${id}`,
   facebook: (id: string) => `${ExternaLinks.facebook}${id}`,
   twitter: (id: string) => `${ExternaLinks.twitter}${id}`,
   instagram: (id: string) => `${ExternaLinks.instagram}${id}`,
   wikipedia: (id: string) => `${ExternaLinks.wikipedia}wiki/${id}`,
   simkl: {
     settings: `${ExternaLinks.simkl}/settings/`,
+    item: (id: string | number, type: 'movie' | 'show' | 'anime' | string) => {
+      if (type === 'movie') return `${ExternaLinks.simkl}movies/${id}`;
+      if (type === 'show') return `${ExternaLinks.simkl}tv/${id}`;
+      if (type === 'anime') return `${ExternaLinks.simkl}anime/${id}`;
+    },
   },
 };

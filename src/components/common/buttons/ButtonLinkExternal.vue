@@ -26,6 +26,11 @@ defineProps({
     required: false,
     default: IconExternalLinkRounded,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const anchor = ref();
@@ -34,7 +39,7 @@ const anchor = ref();
 <template>
   <NTooltip
     class="button-link-external-tooltip"
-    :disabled="!label"
+    :disabled="disabled || !label || !href"
     :show-arrow="false"
     placement="bottom"
     :delay="300"
@@ -46,8 +51,10 @@ const anchor = ref();
       <a ref="anchor" class="anchor-link" :href="href" :title="title" tabindex="-1">
         <NButton
           tertiary
+          :disabled="disabled"
+          :focusable="!!href?.length"
           class="external-link"
-          :class="{ slotted: $slots.default }"
+          :class="{ slotted: $slots.default, 'no-link': !href?.length }"
           v-bind="$attrs"
         >
           <slot />
@@ -67,6 +74,10 @@ const anchor = ref();
   z-index: layers.$in-front;
   color: inherit;
   text-decoration: none;
+
+  .no-link {
+    cursor: default;
+  }
 
   .external-link {
     height: unset;

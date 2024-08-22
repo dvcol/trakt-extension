@@ -10,12 +10,12 @@ import { computed, onMounted, type PropType, toRefs, watch } from 'vue';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
+import { DataSource, getUrlFromSource } from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { DataSource } from '~/utils/icon.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -85,6 +85,7 @@ const ratings = computed<RatingItem[]>(() => {
         votes: value.votes,
         rating: value.rating,
         loading: simklMovieLoading.value,
+        url: getUrlFromSource(key, simklMovie?.value?.ids, { type: 'movie' }),
       },
     });
   });
