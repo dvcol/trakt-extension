@@ -99,8 +99,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const { user } = useAuthSettingsStoreRefs();
   const setLoadLists = (value: ListEntity[], _user = user.value) => {
-    if (!loadLists[_user]) loadLists[_user] = value;
-    else Object.assign(loadLists[_user], value);
+    loadLists[_user] = value;
   };
 
   const restoreState = async () => {

@@ -1,3 +1,4 @@
+import { anime } from '@dvcol/simkl-http-client/api/anime';
 import { minimalSimklApi } from '@dvcol/simkl-http-client/api/minimal';
 import { movie } from '@dvcol/simkl-http-client/api/movie';
 import { show } from '@dvcol/simkl-http-client/api/show';
@@ -7,5 +8,6 @@ export const simklUsedApi = {
   ...minimalSimklApi,
   user,
   show,
+  anime,
   movie,
 };

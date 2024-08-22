@@ -35,7 +35,7 @@ const sections = computed<Section[]>(() =>
       title: 'menu__connect',
       reference: ref(),
       component: SettingsConnect,
-      disabled: simklEnabled.value,
+      disabled: !simklEnabled.value,
     },
     { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
     { title: 'menu__links', reference: ref(), component: SettingsLinks },

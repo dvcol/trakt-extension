@@ -89,7 +89,7 @@ const evictScopes = computed(() =>
     {
       label: i18n('evict_simkl'),
       click: TraktService.evict.simkl,
-      disabled: simklEnabled.value,
+      disabled: !simklEnabled.value,
     },
     {
       label: i18n('evict_all'),
