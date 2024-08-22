@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type FormItemGiProps, NFormItem } from 'naive-ui';
+import { type FormItemGiProps, NFlex, NFormItem } from 'naive-ui';
 
 import type { PropType } from 'vue';
 
@@ -20,7 +20,7 @@ defineProps({
 </script>
 
 <template>
-  <div>
+  <NFlex class="flex-auto" wrap justify="space-between" align="center">
     <NFormItem
       class="form-row"
       label-placement="left"
@@ -35,10 +35,14 @@ defineProps({
     <div class="form-warning" :class="{ show: !!warning }">
       <span v-if="warning">{{ warning }}</span>
     </div>
-  </div>
+  </NFlex>
 </template>
 
 <style lang="scss" scoped>
+.flex-auto {
+  flex: 1 1 auto;
+}
+
 .from-label {
   color: var(--white-70);
   font-weight: 600;

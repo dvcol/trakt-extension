@@ -27,7 +27,7 @@ type Section = {
   disabled?: boolean;
 };
 
-const { simklEnabled } = useSimklStoreRefs();
+const { simklAllowed } = useSimklStoreRefs();
 const sections = computed<Section[]>(() =>
   [
     { title: 'menu__account', reference: ref(), component: SettingsAccount },
@@ -35,7 +35,7 @@ const sections = computed<Section[]>(() =>
       title: 'menu__connect',
       reference: ref(),
       component: SettingsConnect,
-      disabled: !simklEnabled.value,
+      disabled: !simklAllowed.value,
     },
     { title: 'menu__tabs', reference: ref(), component: SettingsTabs },
     { title: 'menu__links', reference: ref(), component: SettingsLinks },
