@@ -47,7 +47,7 @@ const isCompact = watchMedia('(max-width: 725px)');
 </script>
 
 <template>
-  <NFlex class="statistics-container" justify="space-around">
+  <NFlex class="statistics-container" justify="center">
     <slot v-if="isCompact" />
     <PanelRating
       v-if="enableRatings"

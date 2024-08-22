@@ -67,7 +67,7 @@ const { openTab } = useLinksStore();
 </script>
 
 <template>
-  <NFlex justify="center" align="center" vertical>
+  <NFlex class="panel-container" justify="center" align="center" vertical>
     <TitleLink
       v-if="title"
       class="show-title"
@@ -93,8 +93,16 @@ const { openTab } = useLinksStore();
 </template>
 
 <style lang="scss" scoped>
-.show-title-skeleton {
-  height: 1.5rem;
-  margin-top: 0.625rem;
+.panel-container {
+  & > div:nth-child(n + 3) {
+    @media (width > 1200px) {
+      max-width: min(var(--half-width), var(--height-70-dvh));
+    }
+  }
+
+  .show-title-skeleton {
+    height: 1.5rem;
+    margin-top: 0.625rem;
+  }
 }
 </style>

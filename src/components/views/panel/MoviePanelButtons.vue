@@ -223,9 +223,9 @@ onMounted(() => fetchLists());
 .panel-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.25rem;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
   margin: 0.75rem 1rem 1.25rem;
 
@@ -233,12 +233,6 @@ onMounted(() => fetchLists());
     i {
       margin-left: calc(0% - var(--n-icon-margin));
     }
-  }
-}
-
-@media (width > 800px) {
-  .panel-buttons {
-    gap: 1.25rem 3rem;
   }
 }
 

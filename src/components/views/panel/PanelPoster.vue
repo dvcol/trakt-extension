@@ -81,11 +81,11 @@ const key = computed(() => {
 @include transition.scale;
 
 .poster-container {
-  --poster-height: calc(50dvw * (9 / 16));
+  --poster-height: calc(min(var(--half-width), var(--height-70-dvh)) * (9 / 16));
   --poster-width: calc(var(--poster-height) * (2 / 3));
 
   &.landscape {
-    --poster-width: 50dvw;
+    --poster-width: min(var(--half-width), var(--height-70-dvh));
     --poster-height: calc(var(--poster-width) * (9 / 16));
   }
 
