@@ -127,10 +127,15 @@ export const useDebouncedSearch = (search: Ref<string>, delay = 350, disabled?: 
   return debouncedSearch;
 };
 
-export const debounceLoading = <T>(data: Ref<T[]>, placeholder: Ref<T[]>, clear?: boolean) =>
-  setTimeout(() => {
+export const debounceLoading = <T>(data: Ref<T[]>, placeholder: Ref<T[]>, clear?: boolean, time = 100) => {
+  const timeout = setTimeout(() => {
     data.value = clear ? placeholder.value : [...data.value, ...placeholder.value];
-  }, 100);
+  }, time);
+  return {
+    timeout,
+    clearLoading: () => clearTimeout(timeout),
+  };
+};
 
 export const useWaitReady = () => {
   let resolve: (value: boolean) => void;

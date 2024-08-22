@@ -134,7 +134,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     Logger.debug('Fetching search results', { types: types.value, query: query.value, search: search.value });
 
     loading.value = true;
-    const timeout = debounceLoading(searchResults, loadingPlaceholder, !page);
+    const { clearLoading } = debounceLoading(searchResults, loadingPlaceholder, !page);
     const request: TraktSearch = {
       type: types.value,
       escape: !query.value,
@@ -159,7 +159,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       searchErrors[JSON.stringify(request)] = ErrorCount.fromDictionary(searchErrors, JSON.stringify(request), e);
       throw e;
     } finally {
-      clearTimeout(timeout);
+      clearLoading();
       loading.value = false;
     }
   };
