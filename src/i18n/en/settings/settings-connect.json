@@ -10,5 +10,9 @@
   "settings__connect__bio": {
     "message": "Biography",
     "description": "Biography label"
+  },
+  "settings__connect__label_enable": {
+    "message": "Enable Simkl integration",
+    "description": "Enable Simkl label"
   }
 }

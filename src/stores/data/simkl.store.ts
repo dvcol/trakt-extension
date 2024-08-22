@@ -27,6 +27,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
 
   const loading = reactive<LoadingDictionary>({});
 
+  const simklAllowed = computed(() => ['dvcol', 'Anshur'].includes(user.value));
   const userSetting = computed(() => userSettings[user.value]);
   const userSettingLoading = computed(() => loading?.[user.value]);
 
@@ -91,8 +92,9 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     userSettingLoading,
     fetchUserSettings,
     setUserSetting,
+    simklAllowed,
     simklEnabled: computed({
-      get: () => simklEnabled.value || user.value === 'dvcol',
+      get: () => simklAllowed.value && simklEnabled.value,
       set: (value: boolean) => {
         simklEnabled.value = value;
         saveState().catch(err => Logger.error('Failed to save simkl state', { value, err }));
