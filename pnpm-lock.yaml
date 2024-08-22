@@ -15,8 +15,8 @@ importers:
         specifier: ^1.11.1
         version: 1.11.1
       '@dvcol/simkl-http-client':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
       '@dvcol/tmdb-http-client':
         specifier: ^1.3.4
         version: 1.3.4
@@ -1133,8 +1133,8 @@ packages:
       vue:
         optional: true
 
-  '@dvcol/simkl-http-client@1.1.0':
-    resolution: {integrity: sha512-AzRzDewAboejhasD7rrY0V//t/x5D0lbbrtYDVPU5AQzJtoyGtFnXBKWtN+W/AVh44Hg+Ik9G3ZmfKqfJ1/grw==}
+  '@dvcol/simkl-http-client@1.1.1':
+    resolution: {integrity: sha512-6bk2JjrP/ygQgHqvuvM7ueoU1OAicM2a4qJGN9PqfeoIDVEkPU4zMFo5l7DVFVFXO7zeCzstb1O6zIN73g8hKw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/stylelint-plugin-presets@2.1.2':
@@ -8012,7 +8012,7 @@ snapshots:
       eslint-plugin-vuejs-accessibility: 2.2.0(eslint@8.56.0)
       vue: 3.4.14(typescript@5.4.2)
 
-  '@dvcol/simkl-http-client@1.1.0':
+  '@dvcol/simkl-http-client@1.1.1':
     dependencies:
       '@dvcol/base-http-client': 1.14.0
       '@dvcol/common-utils': 1.11.1

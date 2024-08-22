@@ -9,12 +9,13 @@ import { computed, onMounted, type PropType, toRefs, watch } from 'vue';
 
 import type { RatingItem } from '~/models/rating.model';
 
-import IconTrakt from '~/components/icons/IconTrakt.vue';
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { DataSource } from '~/utils/icon.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -53,21 +54,43 @@ const ratingUrl = computed(() => {
   });
 });
 
-const ratings = computed<RatingItem[]>(
-  () =>
-    [
-      {
-        name: i18n('trakt', 'common', 'source', 'name'),
-        icon: IconTrakt,
-        rating: {
-          votes: movie?.value?.votes,
-          rating: movie?.value?.rating,
-          url: ratingUrl.value,
-          loading: movieLoading.value,
-        },
+const { getMovie, getMovieLoading } = useSimklStore();
+const simklMovie = computed(() => {
+  if (!movie?.value?.ids?.imdb) return;
+  return getMovie(movie.value.ids.imdb).value;
+});
+const simklMovieLoading = computed(() => {
+  if (!movie?.value?.ids?.imdb) return;
+  return getMovieLoading(movie.value.ids.imdb).value;
+});
+
+const ratings = computed<RatingItem[]>(() => {
+  const _ratings: RatingItem[] = [];
+  _ratings.push({
+    name: i18n('trakt', 'common', 'source', 'name'),
+    icon: DataSource.Trakt,
+    rating: {
+      votes: movie?.value?.votes,
+      rating: movie?.value?.rating,
+      url: ratingUrl.value,
+      loading: movieLoading.value,
+    },
+  });
+  if (!simklMovie.value?.ratings) return _ratings;
+  Object.entries(simklMovie.value.ratings).forEach(([key, value]) => {
+    _ratings.push({
+      name: i18n(key, 'common', 'source', 'name'),
+      icon: key,
+      rating: {
+        votes: value.votes,
+        rating: value.rating,
+        loading: simklMovieLoading.value,
       },
-    ] satisfies RatingItem[],
-);
+    });
+  });
+
+  return _ratings;
+});
 
 const onScoreEdit = async (_score: TraktSyncRatingValue) => {
   if (!movie?.value?.ids?.trakt) return;

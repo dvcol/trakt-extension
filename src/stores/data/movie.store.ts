@@ -9,6 +9,7 @@ import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { useSimklStore, useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
@@ -49,6 +50,8 @@ export const useMovieStore = defineStore('data.movie', () => {
     clearProxy(movieErrors);
   };
 
+  const { simklEnabled } = useSimklStoreRefs();
+  const { fetchMovie: fetchSimklMovie } = useSimklStore();
   const { user, isAuthenticated } = useAuthSettingsStoreRefs();
   const fetchMovie = async (id: string | number) => {
     if (!isAuthenticated.value) {
@@ -66,6 +69,7 @@ export const useMovieStore = defineStore('data.movie', () => {
 
     try {
       movies[id] = await TraktService.movie(id);
+      if (simklEnabled.value && movies[id]?.ids?.imdb) await fetchSimklMovie(movies[id].ids.imdb);
       delete movieErrors[id.toString()];
     } catch (error) {
       Logger.error('Failed to fetch movie', id);

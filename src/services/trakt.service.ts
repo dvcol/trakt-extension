@@ -634,6 +634,24 @@ export class TraktService {
       await useSimklStore().setUserSetting(undefined, account);
       return this.simklClient.importAuthentication({});
     },
+    show: async (id: string | number, extended = true) => {
+      const response = await this.simklClient.show.id.cached({ id, extended });
+      const data = await response.json();
+      if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
+      return data;
+    },
+    anime: async (id: string | number, extended = true) => {
+      const response = await this.simklClient.anime.id.cached({ id, extended });
+      const data = await response.json();
+      if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
+      return data;
+    },
+    movie: async (id: string | number, extended = true) => {
+      const response = await this.simklClient.movie.id.cached({ id, extended });
+      const data = await response.json();
+      if (shouldEvict(response?.cache, data?.released)) response.cache?.evict?.();
+      return data;
+    },
   };
 
   static evict = {
