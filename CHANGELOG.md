@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.23.0](https://github.com/dvcol/trakt-extension/compare/v1.22.0...v1.23.0) (2024-08-23)
+
+
+### Features
+
+* **list:** adds show link for list items ([a8c43d0](https://github.com/dvcol/trakt-extension/commit/a8c43d08a0aaa85df87656b5213f1f68d82b1ce2))
+* **panel:** adds external links & studio support ([d109336](https://github.com/dvcol/trakt-extension/commit/d109336af925dfd79df9c7d91f5f87af66f79a94))
+* **panel:** adds multi rating support & rework linking ([55dfa9f](https://github.com/dvcol/trakt-extension/commit/55dfa9f370a3fed31af3fa7bae038a8fb941fc84))
+* **panel:** adds trailer support ([191946c](https://github.com/dvcol/trakt-extension/commit/191946c6f4e5043fb24930052f0896fb0380cf80))
+* **rating:** adds url to external ratings ([fd8e3e3](https://github.com/dvcol/trakt-extension/commit/fd8e3e3141102c00eb6f3ab6a8df8845bf129ab0))
+* **settings:** adds stats in settings ([95e4054](https://github.com/dvcol/trakt-extension/commit/95e40543431ca724dfa31539c1c530477499327d))
+* **simkl:** add simkl ratings for show & movies ([58aeddb](https://github.com/dvcol/trakt-extension/commit/58aeddb66c1f52bf0c307404281c3caa997ec8d6))
+* **simkl:** adds toggle ([bbe1c13](https://github.com/dvcol/trakt-extension/commit/bbe1c133ae74b1a00d6ee0284b5908cfbbfa3942))
+* **simkl:** big rework of account management & adding simkl auth ([5bd3253](https://github.com/dvcol/trakt-extension/commit/5bd3253e19d984dc395a04740f450d2b8fd7387b))
+
+
+### Bug Fixes
+
+* **badge:** check if user is authenticated before sending update ([1c28d52](https://github.com/dvcol/trakt-extension/commit/1c28d5297d19d023e2df5dca959dea6d8a1c24f8))
+* **ci:** adds api keys for simkl ([4cbea70](https://github.com/dvcol/trakt-extension/commit/4cbea708d50ce78f0e0e9cc0d78957efcc16f40d))
+* **common:** adds loading prop to text-fields and change default align ([6db6954](https://github.com/dvcol/trakt-extension/commit/6db695451ab0b3b519a1ac599e0cff7158359682))
+* **common:** update textfield css ([ebbeacd](https://github.com/dvcol/trakt-extension/commit/ebbeacdd6c41b9a3a1993f9029f35d7f597d8566))
+* **css:** make panels and buttons more responsive ([8bbf577](https://github.com/dvcol/trakt-extension/commit/8bbf577f862b090a6a506ea2c7fc2433d8657771))
+* **css:** update hover and focus to make the ui more accessible ([19c0e6a](https://github.com/dvcol/trakt-extension/commit/19c0e6a235a7a504cc15bbe90b5a834d19c56be4))
+* **list:** pause list render on panel open to prevent flicker ([ce7cd14](https://github.com/dvcol/trakt-extension/commit/ce7cd14efeaee9cb8e7667b3b137d268f74b9b61))
+* **loading:** rework util to make it composable ([666b14b](https://github.com/dvcol/trakt-extension/commit/666b14b3b62912d4c7002275a2b6502e5258fa10))
+* **progress:** fix error on click and rework keyboard inputs ([06e1c7a](https://github.com/dvcol/trakt-extension/commit/06e1c7aa36f1bba54e3975da7f1bb556b6e58dad))
+* **settings:** skip loading when persisting cache ([67b4361](https://github.com/dvcol/trakt-extension/commit/67b4361c5b1d3360d3cd0446b459f54a43716034))
+* **settings:** update css to make settings responsive ([f371952](https://github.com/dvcol/trakt-extension/commit/f371952d1a57339a2ad279054ab51d1c519477d1))
+* **simkl:** correctly assign simkl account to user ([a43ed3d](https://github.com/dvcol/trakt-extension/commit/a43ed3d85655df0068a59eb88c183815ec88c403))
+* **simkl:** correctly return simkl enabled based on active user ([422c374](https://github.com/dvcol/trakt-extension/commit/422c374274758ab0594012d8e8f7a12c60409173))
+* **simkl:** update api and fix toggle ([c552b6f](https://github.com/dvcol/trakt-extension/commit/c552b6fac0abfe0b4b230df5233a62f2df8fbe17))
+* **web:** disable simkl for web ([1e7611c](https://github.com/dvcol/trakt-extension/commit/1e7611cfe481059bad4bc1fecf15305711c70a30))
+
 ## [1.22.0](https://github.com/dvcol/trakt-extension/compare/v1.21.0...v1.22.0) (2024-08-13)
 
 
