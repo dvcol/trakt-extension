@@ -2,9 +2,7 @@ import { useRouter } from 'vue-router';
 
 import type { ListScrollItem } from '~/models/list-scroll.model';
 
-export const usePanelItem = () => {
-  const { push, currentRoute } = useRouter();
-
+export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
   const onItemClick = ({
     type,
     id,

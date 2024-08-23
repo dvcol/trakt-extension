@@ -1,6 +1,9 @@
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { watch } from 'vue';
+
 import { createRouter as createVueRouter, createWebHashHistory } from 'vue-router';
+
+import type { Router } from 'vue-router';
 
 import { Route } from '~/models/router.model';
 import { routes } from '~/router/routes';
@@ -10,7 +13,7 @@ import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStore, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 
 export type RouterOptions = { baseName?: string; baseUrl?: string };
-export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions) => {
+export const createRouter = ({ baseName = '', baseUrl = import.meta.env.BASE_URL }: RouterOptions): Router => {
   const { restoreRoute, restorePanel, defaultTab } = useExtensionSettingsStoreRefs();
   const { initExtensionSettingsStore } = useExtensionSettingsStore();
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NFlex, NH4, NSkeleton } from 'naive-ui';
 
-import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 
 defineProps({
   title: {
@@ -25,9 +25,9 @@ defineProps({
 
 <template>
   <NFlex justify="center" align="center" vertical class="overview">
-    <TitleLink v-if="title" class="title" :href="url" :title="label" :component="NH4">
+    <AnchorLink v-if="title" class="title" :href="url" :title="label" :component="NH4">
       {{ title }}
-    </TitleLink>
+    </AnchorLink>
     <NSkeleton v-else class="title-skeleton" style="width: var(--height-40-dvh)" round />
 
     <div v-if="overview">{{ overview }}</div>

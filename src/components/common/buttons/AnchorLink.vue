@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { NH2 } from 'naive-ui';
-
-import { type Component, type PropType, useAttrs } from 'vue';
+import { type Component, type PropType, toRefs, useAttrs } from 'vue';
 
 import { useLinksStore } from '~/stores/settings/links.store';
 
-defineProps({
+const props = defineProps({
   component: {
     type: Object as PropType<Component>,
     required: false,
@@ -15,13 +14,26 @@ defineProps({
     type: String,
     required: false,
   },
+  text: {
+    type: Boolean,
+    required: false,
+  },
+  onClick: {
+    type: Function as PropType<
+      (e: MouseEvent, link: { url?: string; label?: string }) => void
+    >,
+    required: false,
+  },
 });
+
+const { onClick, label } = toRefs(props);
 
 const attrs = useAttrs() as Record<keyof HTMLAnchorElement, string> | undefined;
 
 const { openTab } = useLinksStore();
 
 const onTitleClick = (e: MouseEvent) => {
+  if (onClick?.value) return onClick.value(e, { url: attrs?.href, label: label?.value });
   e.preventDefault();
   e.stopPropagation();
   openTab(attrs?.href);
@@ -30,15 +42,22 @@ const onTitleClick = (e: MouseEvent) => {
 
 <template>
   <a
+    v-if="$attrs?.href || onClick"
     class="anchor-link"
-    :class="{ 'has-link': !!$attrs.href }"
     :title="label"
     @click="onTitleClick"
   >
-    <component :is="component" class="content" :class="{ 'hover-link': !!$attrs.href }">
+    <component :is="component" v-if="!text && component" class="content hover-link">
       <slot />
     </component>
+    <slot v-else />
   </a>
+  <template v-else>
+    <component :is="component" v-if="!text && component" class="content">
+      <slot />
+    </component>
+    <slot v-else />
+  </template>
 </template>
 
 <style lang="scss" scoped>
@@ -49,13 +68,9 @@ const onTitleClick = (e: MouseEvent) => {
   color: inherit;
   text-decoration: none;
   outline: none;
+  cursor: pointer;
   transition: color 0.3s var(--n-bezier);
   will-change: color;
-
-  &:focus-visible:not(.has-link) {
-    text-decoration: underline;
-    text-underline-offset: 0.2rem;
-  }
 
   .hover-link {
     transition: color 0.3s var(--n-bezier);
@@ -63,17 +78,24 @@ const onTitleClick = (e: MouseEvent) => {
 
     &:active,
     &:focus-within,
-    &:hover {
+    &:hover,
+    &:focus-visible {
       color: var(--trakt-red);
     }
   }
 
-  &:focus-visible.has-link .hover-link {
+  &:hover,
+  &:focus-visible .hover-link {
     color: var(--trakt-red);
   }
 
   .content {
     margin: 0;
+  }
+
+  .content:not(.hover-link) {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
   }
 }
 </style>

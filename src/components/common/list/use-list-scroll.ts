@@ -8,8 +8,10 @@ import type { ListScrollItem, ListScrollItemMeta, ListScrollItemTag, ListScrollS
 
 import type { ImageQuery } from '~/stores/data/image.store';
 
+import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 
+import { RouterService } from '~/services/router.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -181,6 +183,18 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
   return tags;
 };
 
+const getContentLink = (item: ListScrollSourceItem): ListScrollItem['contentLink'] => {
+  if (!item?.type || !item.show?.ids?.trakt) return;
+  if (![ListScrollItemType.show, ListScrollItemType.episode].map(String).includes(item.type)) return;
+  return {
+    onClick: event => {
+      event.preventDefault();
+      event.stopPropagation();
+      usePanelItem(RouterService.router).onItemClick({ type: 'show', id: item.show!.ids.trakt });
+    },
+  };
+};
+
 export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D extends string | never = never>(
   array: T[],
   dateFn?: D | ((item: T) => T[D]),
@@ -196,6 +210,7 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
     if (!_item.type) _item.type = getType(item);
     if (!_item.title) _item.title = getTitle(item);
     if (!_item.content) _item.content = getContent(item);
+    if (!_item.contentLink) _item.contentLink = getContentLink(_item);
     if (!_item.posterRef) _item.posterRef = ref<string>();
     if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
     if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);

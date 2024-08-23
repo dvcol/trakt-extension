@@ -5,7 +5,7 @@ import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 
 import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
-import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import PersonPanelDetails from '~/components/views/panel/PersonPanelDetails.vue';
 import PersonPanelOverview from '~/components/views/panel/PersonPanelOverview.vue';
@@ -65,14 +65,14 @@ const titleUrl = computed(() => {
 
 <template>
   <NFlex class="panel-container" justify="center" align="center" vertical>
-    <TitleLink
+    <AnchorLink
       v-if="title"
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_in_trakt', 'common', 'tooltip')"
     >
       {{ title }}
-    </TitleLink>
+    </AnchorLink>
     <NSkeleton
       v-else
       class="show-title-skeleton"

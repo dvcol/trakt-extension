@@ -14,6 +14,7 @@ import {
 import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import TagLink from '~/components/common/buttons/TagLink.vue';
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
@@ -255,20 +256,26 @@ const onTagClick = (url?: string) => {
   >
     <div ref="innerContainer">
       <div class="meta type">
-        <NSkeleton v-if="loading" text style="width: 10%" round />
-        <NEllipsis v-else :line-clamp="1" :tooltip="tooltipOptions">{{ type }}</NEllipsis>
+        <NSkeleton v-if="loading" style="width: 10%" round />
+        <AnchorLink v-else text v-bind="item?.typeLink">
+          <NEllipsis :line-clamp="1" :tooltip="tooltipOptions">{{ type }}</NEllipsis>
+        </AnchorLink>
       </div>
       <div class="title">
         <NSkeleton v-if="loading" text style="width: 70%" round />
-        <NEllipsis v-else :line-clamp="2" :tooltip="tooltipOptions">{{
-          title
-        }}</NEllipsis>
+        <AnchorLink v-else text v-bind="item?.titleLink">
+          <NEllipsis :line-clamp="2" :tooltip="tooltipOptions">
+            {{ title }}
+          </NEllipsis>
+        </AnchorLink>
       </div>
       <div class="content">
         <NSkeleton v-if="loading" text style="width: 60%" round />
-        <NEllipsis v-else :line-clamp="contentHeight" :tooltip="tooltipOptions">{{
-          content
-        }}</NEllipsis>
+        <AnchorLink v-else text v-bind="item?.contentLink">
+          <NEllipsis :line-clamp="contentHeight" :tooltip="tooltipOptions">
+            {{ content }}
+          </NEllipsis>
+        </AnchorLink>
       </div>
       <NFlex
         v-if="(!hideTime && date) || tags?.length || showCollected || showPlayed"
