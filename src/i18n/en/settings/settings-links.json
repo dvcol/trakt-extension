@@ -71,6 +71,22 @@
     "message": "The tvdb ID",
     "description": "Description for the tvdb keyword"
   },
+  "settings__links__template_keywords_simkl": {
+    "message": "simkl (string)",
+    "description": "Label for the simkl keyword"
+  },
+  "settings__links__template_keywords_simkl_description": {
+    "message": "The simkl ID",
+    "description": "Description for the simkl keyword"
+  },
+  "settings__links__template_keywords_mal": {
+    "message": "mal (string)",
+    "description": "Label for the mal keyword"
+  },
+  "settings__links__template_keywords_mal_description": {
+    "message": "The mal ID",
+    "description": "Description for the mal keyword"
+  },
   "settings__links__template_keywords_season": {
     "message": "season (number)",
     "description": "Label for the season keyword"

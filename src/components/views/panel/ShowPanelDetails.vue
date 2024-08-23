@@ -20,6 +20,7 @@ import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -115,9 +116,25 @@ const collectionTime = computed(() => {
   return shortTime(collectionProgress.value.date);
 });
 
+const { getShowOrAnime } = useSimklStore();
+
+const simklShow = computed(() => {
+  if (!show?.value?.ids?.imdb) return;
+  return getShowOrAnime(show.value.ids.imdb).value;
+});
+
 const genres = computed(() => {
   if (!show?.value) return;
-  return show.value?.genres?.map(g => ({ label: capitalizeEachWord(g) }));
+  const _genres = new Set<string>();
+  show.value?.genres?.forEach(g => _genres.add(g.trim().toLowerCase()));
+  simklShow?.value?.genres?.forEach(g => _genres.add(g.trim().toLowerCase()));
+  return [..._genres.values()]?.map(g => ({ label: capitalizeEachWord(g) }));
+});
+
+const studio = computed(() => {
+  if (!simklShow?.value) return;
+  if (!('studios' in simklShow.value)) return;
+  return simklShow.value.studios?.map(s => s.name).join(', ') || '-';
 });
 
 const year = computed(() => {
@@ -168,7 +185,7 @@ const ids = computed(() => {
     };
   }
   if (!show?.value) return;
-  return show.value?.ids;
+  return { ...simklShow.value?.ids, ...show.value?.ids };
 });
 
 const { getAlias } = useLinksStore();
@@ -242,8 +259,17 @@ const title = computed(() =>
       <TextField
         :label="i18n('status')"
         :value="status"
-        grow
+        :grow="mode !== 'show'"
         :skeleton="{ width: '7.5rem' }"
+      />
+
+      <!--  Studio  -->
+      <TextField
+        v-if="mode === 'show' && studio"
+        :label="i18n('studio')"
+        :value="studio"
+        :skeleton="{ width: '3rem' }"
+        grow
       />
     </NFlex>
 

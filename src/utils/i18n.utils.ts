@@ -1,4 +1,4 @@
-import type { Locale, Locales } from '~/models/i18n.model';
+import type { I18nFunction, Locale, Locales } from '~/models/i18n.model';
 
 import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
@@ -29,7 +29,7 @@ export const initLocalI18n = () => {
  * @param roots modules names
  * @see chrome.i18n.getMessage
  */
-export const useI18n = (...roots: string[]): ReturnType<typeof useI18nTranslate> => {
+export const useI18n = (...roots: string[]): I18nFunction => {
   if (!chromeI18n) {
     const { store } = initLocalI18n();
     return (value, ...modules) => store.i18n(value, ...(modules?.length ? modules : roots));

@@ -1,23 +1,27 @@
 <script lang="ts" setup>
 import { computed, type PropType, toRefs } from 'vue';
 
+import type { SimklIdsExtended } from '@dvcol/simkl-http-client/models';
 import type { TraktApiIds } from '@dvcol/trakt-http-client/models';
 import type { TagLink } from '~/models/tag.model';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
-import IconIMDb from '~/components/icons/IconIMDb.vue';
-import IconTMDb from '~/components/icons/IconTMDb.vue';
-import IconTVDb from '~/components/icons/IconTVDb.vue';
-import IconTrakt from '~/components/icons/IconTrakt.vue';
 
-import { ResolveExternalLinks } from '~/settings/external.links';
+import {
+  DataSource,
+  getIconFromSource,
+  getLabelKeyFromSource,
+  getSortedDataSources,
+  getUrlFromSource,
+  isKnownSource,
+} from '~/models/source.model';
 import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
   ids: {
-    type: Object as PropType<Partial<TraktApiIds>>,
+    type: Object as PropType<Partial<TraktApiIds & SimklIdsExtended>>,
     required: false,
   },
   mode: {
@@ -47,15 +51,6 @@ const { ids, mode, season, episode, alias, title } = toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
-const labelKey = computed(() => {
-  const label = ['show', 'episode', 'season'].includes(mode.value)
-    ? `open_${mode.value}_in`
-    : 'open_in';
-  return (source: string) => {
-    return i18n({ key: label, substitutions: [source] }, 'common', 'tooltip');
-  };
-});
-
 const { getLinks } = useLinksStore();
 
 const customLinksTemplate = getLinks(mode);
@@ -77,69 +72,20 @@ const customLinks = computed(() => {
 const links = computed(() => {
   if (!ids?.value) return;
   const _links: TagLink[] = [];
-  if (ids.value.trakt) {
-    _links.push({
-      label: 'Trakt',
-      title: labelKey.value('Trakt.tv'),
-      url: ResolveExternalLinks.search({
-        type: mode.value,
-        source: 'trakt',
-        id: ids.value.trakt,
-      }),
-      icon: IconTrakt,
-      iconProps: {
-        style: {
-          '--trakt-icon-path': 'white',
-          '--trakt-icon-circle': 'transparent',
-        },
-      },
+  getSortedDataSources(ids.value)
+    .filter(isKnownSource)
+    .forEach(key => {
+      _links[key === DataSource.Trakt ? 'unshift' : 'push']({
+        label: i18n(key, 'common', 'source', 'name'),
+        title: getLabelKeyFromSource(i18n, key, mode.value),
+        url: getUrlFromSource(key, ids.value, {
+          type: mode.value,
+          season: season?.value,
+          episode: episode?.value,
+        }),
+        icon: getIconFromSource(key),
+      });
     });
-  }
-  if (ids.value.imdb) {
-    _links.push({
-      label: 'IMDb',
-      title: labelKey.value('IMDb.com'),
-      url: ResolveExternalLinks.imdb(ids.value.imdb),
-      icon: IconIMDb,
-      iconProps: {
-        style: {
-          '--imdb-icon-background': 'white',
-          '--imdb-icon-height': '575',
-        },
-      },
-    });
-  }
-  if (ids.value.tmdb) {
-    _links.push({
-      label: 'TMDb',
-      title: labelKey.value('TheMovieDb.org'),
-      url: ResolveExternalLinks.tmdb({
-        id: ids.value.tmdb,
-        type: mode.value,
-        season: season?.value,
-        episode: episode?.value,
-      }),
-      icon: IconTMDb,
-      iconProps: {
-        style: {
-          '--tmdb-icon-background': 'white',
-        },
-      },
-    });
-  }
-  if (ids.value.tvdb) {
-    _links.push({
-      label: 'TVDb',
-      title: labelKey.value('TheTVDB.com'),
-      url: ResolveExternalLinks.tvdb(ids.value.tvdb, mode.value),
-      icon: IconTVDb,
-      iconProps: {
-        style: {
-          '--tvdb-icon-background': 'white',
-        },
-      },
-    });
-  }
   if (customLinks.value) _links.push(...customLinks.value);
   return _links;
 });

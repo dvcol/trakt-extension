@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { NDropdown, NFlex, NIcon } from 'naive-ui';
+
 import { computed, h, type PropType, ref, toRefs } from 'vue';
 
 import type { DropdownOption } from 'naive-ui';
 
 import type { RatingItem } from '~/models/rating.model';
 
+import IconStarFilledHalf from '~/components/icons/IconStarFilledHalf.vue';
 import PanelRating from '~/components/views/panel/PanelRating.vue';
 import { getIconFromSource } from '~/models/source.model';
 
@@ -23,7 +25,8 @@ const getIcon = (icon: RatingItem['icon']): DropdownOption['icon'] => {
   return () =>
     h(NIcon, {
       style: { marginRight: '-0.25rem' },
-      component: typeof icon === 'string' ? getIconFromSource(icon) : icon,
+      component:
+        typeof icon === 'string' ? getIconFromSource(icon, IconStarFilledHalf) : icon,
     });
 };
 

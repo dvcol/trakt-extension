@@ -10,6 +10,7 @@ import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
 
 import PanelLinks from '~/components/views/panel/PanelLinks.vue';
+import { useSimklStore } from '~/stores/data/simkl.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -66,9 +67,19 @@ const runtime = computed(() => {
   return `${movie.value.runtime} min`;
 });
 
+const { getMovie } = useSimklStore();
+
+const simklMovie = computed(() => {
+  if (!movie?.value?.ids?.imdb) return;
+  return getMovie(movie.value.ids.imdb).value;
+});
+
 const genres = computed(() => {
   if (!movie?.value) return;
-  return movie.value?.genres?.map(g => ({ label: capitalizeEachWord(g) })) ?? [];
+  const _genres = new Set<string>();
+  movie.value?.genres?.forEach(g => _genres.add(g.trim().toLowerCase()));
+  simklMovie.value?.genres?.forEach(g => _genres.add(g.trim().toLowerCase()));
+  return [..._genres.values()]?.map(g => ({ label: capitalizeEachWord(g) }));
 });
 
 const year = computed(() => {
