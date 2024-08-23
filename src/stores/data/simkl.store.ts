@@ -43,6 +43,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
   const simklAllowed = computed(() => ['dvcol', 'Anshur'].includes(user.value));
   const userSetting = computed(() => userSettings[user.value]);
   const userSettingLoading = computed(() => loading?.[user.value]);
+  const userEnabled = computed(() => simklEnabled[user.value]);
 
   const saveState = debounce(() =>
     storage.local.set<SimklStoreState>(SimklStoreConstants.Store, {
@@ -53,6 +54,13 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
   const restoreState = async () => {
     const state = await storage.local.get<SimklStoreState>(SimklStoreConstants.Store);
     if (state?.simklEnabled !== undefined) Object.assign(simklEnabled, state.simklEnabled);
+  };
+
+  const setUserEnabled = (value: boolean, account = user.value) => {
+    if (!account) throw new Error('Account is not set');
+    simklEnabled[account] = value;
+    saveState().catch(err => Logger.error('Failed to save simkl state', { value, err }));
+    return userEnabled.value;
   };
 
   /**
@@ -96,7 +104,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
   };
 
   const fetchShow = async (id: string) => {
-    if (!simklEnabled.value) {
+    if (!userEnabled.value) {
       Logger.error('Cannot fetch show, simkl is not enabled');
       return;
     }
@@ -117,7 +125,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
   };
 
   const fetchAnime = async (id: string) => {
-    if (!simklEnabled.value) {
+    if (!userEnabled.value) {
       Logger.error('Cannot fetch anime, simkl is not enabled');
       return;
     }
@@ -138,7 +146,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
   };
 
   const fetchMovie = async (id: string) => {
-    if (!simklEnabled.value) {
+    if (!userEnabled.value) {
       Logger.error('Cannot fetch movie, simkl is not enabled');
       return;
     }
@@ -180,11 +188,8 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     setUserSetting,
     simklAllowed,
     simklEnabled: computed({
-      get: () => simklAllowed.value && simklEnabled[user.value],
-      set: (value: boolean) => {
-        simklEnabled[user.value] = value;
-        saveState().catch(err => Logger.error('Failed to save simkl state', { value, err }));
-      },
+      get: () => simklAllowed.value && userEnabled.value,
+      set: (value: boolean) => setUserEnabled(value),
     }),
     initSimklStore,
     fetchShow,
