@@ -51,6 +51,10 @@
     "message": "Status",
     "description": "Status label in the panel detail"
   },
+  "panel__detail__Studio": {
+    "message": "Studio",
+    "description": "Studio label in the panel detail"
+  },
   "panel__detail__runtime": {
     "message": "Runtime",
     "description": "Runtime label in the panel detail"

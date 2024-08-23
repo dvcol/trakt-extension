@@ -1,4 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia';
+
 import { computed, reactive, ref } from 'vue';
 
 import type { SimklAnime, SimklMovie, SimklShow, SimklUserSettings } from '@dvcol/simkl-http-client/models';
@@ -21,6 +22,8 @@ type UserSettings = Record<string, SimklUserSettings>;
 type ShowDictionary = Record<string, SimklShow>;
 type MovieDictionary = Record<string, SimklMovie>;
 type AnimeDictionary = Record<string, SimklAnime>;
+
+type SimklShowOrAnime = SimklShow | SimklAnime;
 
 type LoadingDictionary = Record<string, boolean>;
 
@@ -157,7 +160,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
 
   const getShow = (id: string | number) => computed(() => shows[id.toString()]);
   const getAnime = (id: string | number) => computed(() => animes[id.toString()]);
-  const getShowOrAnime = (id: string | number) => computed(() => shows[id.toString()] || animes[id.toString()]);
+  const getShowOrAnime = (id: string | number) => computed<SimklShowOrAnime | undefined>(() => shows[id.toString()] || animes[id.toString()]);
   const getMovie = (id: string | number) => computed(() => movies[id.toString()]);
 
   const getShowLoading = (id: string | number) => computed(() => showLoading[id.toString()]);

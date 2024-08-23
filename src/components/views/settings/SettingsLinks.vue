@@ -24,6 +24,8 @@ import IconConfirm from '~/components/icons/IconConfirm.vue';
 import IconPlus from '~/components/icons/IconPlus.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
+import { AllDataSources, DataSource } from '~/models/source.model';
+import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import {
   AllCustomLinkScopes,
   type CustomLink,
@@ -102,7 +104,18 @@ const getType = (link: CustomLink) => {
   return 'success';
 };
 
-const keywords = ['trakt', 'imdb', 'tmdb', 'tvdb', 'season', 'episode', 'title', 'alias'];
+const { simklEnabled } = useSimklStoreRefs();
+const defaultKeywords = ['season', 'episode', 'title', 'alias'];
+const keywords = computed(() => {
+  if (simklEnabled.value) return [...AllDataSources, ...defaultKeywords];
+  return [
+    DataSource.Trakt,
+    DataSource.Imdb,
+    DataSource.Imdb,
+    DataSource.Tvdb,
+    ...defaultKeywords,
+  ];
+});
 
 const formRef = ref<FormInst>();
 const containerRef = ref<HTMLDivElement>();

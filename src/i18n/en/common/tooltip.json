@@ -7,25 +7,29 @@
     "message": "Open in $1",
     "description": "Label for a link that opens a page in a new tab"
   },
+  "common__tooltip__open_movie_in": {
+    "message": "Open movie in $1",
+    "description": "Label for a movie link that opens a page in a new tab"
+  },
   "common__tooltip__open_show_in": {
     "message": "Open show in $1",
     "description": "Label for a show link that opens a page in a new tab"
-  },
-  "common__tooltip__open_episode_in": {
-    "message": "Open episode in $1",
-    "description": "Label for a episode link that opens a page in a new tab"
   },
   "common__tooltip__open_season_in": {
     "message": "Open season in $1",
     "description": "Label for a season link that opens a page in a new tab"
   },
-  "common__tooltip__open_movie_in": {
-    "message": "Open movie in $1",
-    "description": "Label for a movie link that opens a page in a new tab"
+  "common__tooltip__open_episode_in": {
+    "message": "Open episode in $1",
+    "description": "Label for a episode link that opens a page in a new tab"
   },
   "common__tooltip__open_person_in": {
     "message": "Open person in $1",
     "description": "Label for a person link that opens a page in a new tab"
+  },
+  "common__tooltip__open_anime_in": {
+    "message": "Open anime in $1",
+    "description": "Label for a anime link that opens a page in a new tab"
   },
   "common__tooltip__open_in_trakt": {
     "message": "Open in Trakt.tv",
