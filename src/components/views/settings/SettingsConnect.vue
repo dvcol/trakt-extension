@@ -55,10 +55,10 @@ const loginLogout = () => {
 const { fetchUserSettings } = useSimklStore();
 useWatchActivated(
   watch(
-    user,
-    async _user => {
+    [user, isSimklAuthenticated],
+    async ([_user, _authenticated]) => {
       if (!_user || _user === defaultUser) return;
-      if (!isSimklAuthenticated.value) return;
+      if (!_authenticated) return;
       await fetchUserSettings(_user);
     },
     {
