@@ -12,6 +12,7 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
+import PanelTrailers from '~/components/views/panel/PanelTrailers.vue';
 import { DataSource } from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
@@ -20,6 +21,7 @@ import { useShowStore } from '~/stores/data/show.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { isTrailer } from '~/utils/string.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -156,6 +158,17 @@ const simklShowLoading = computed(() => {
   return getShowOrAnimeLoading(show.value.ids.imdb).value;
 });
 
+const trailers = computed(() => {
+  if (mode.value !== 'show') return;
+  if (!simklShow.value?.trailers?.length) return;
+  return simklShow.value.trailers
+    .filter((t, index) => !!t.youtube && (index < 2 || isTrailer(t.name)))
+    .map(trailer => ({
+      id: trailer.youtube,
+      title: trailer.name ?? simklShow.value?.title,
+    }));
+});
+
 const ratings = computed<RatingItem[]>(() => {
   const _ratings: RatingItem[] = [];
   _ratings.push({
@@ -239,6 +252,8 @@ const onScoreEdit = async (_score: TraktSyncRatingValue) => {
     :loading-score="scoreLoading"
     @on-score-edit="onScoreEdit"
   >
-    <slot />
+    <PanelTrailers :trailers="trailers">
+      <slot />
+    </PanelTrailers>
   </PanelStatistics>
 </template>

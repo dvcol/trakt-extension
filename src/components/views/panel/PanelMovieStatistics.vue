@@ -10,12 +10,14 @@ import { computed, onMounted, type PropType, toRefs, watch } from 'vue';
 import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
+import PanelTrailers from '~/components/views/panel/PanelTrailers.vue';
 import { DataSource, getUrlFromSource } from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { isTrailer } from '~/utils/string.utils';
 
 const i18n = useI18n('panel', 'statistics');
 
@@ -59,9 +61,20 @@ const simklMovie = computed(() => {
   if (!movie?.value?.ids?.imdb) return;
   return getMovie(movie.value.ids.imdb).value;
 });
+
 const simklMovieLoading = computed(() => {
   if (!movie?.value?.ids?.imdb) return;
   return getMovieLoading(movie.value.ids.imdb).value;
+});
+
+const trailers = computed(() => {
+  if (!simklMovie.value?.trailers?.length) return;
+  return simklMovie.value.trailers
+    .filter((t, index) => !!t.youtube && (index < 2 || isTrailer(t.name)))
+    .map(trailer => ({
+      id: trailer.youtube,
+      title: trailer.name ?? simklMovie.value?.title,
+    }));
 });
 
 const ratings = computed<RatingItem[]>(() => {
@@ -121,6 +134,8 @@ onMounted(() => {
     :loading-score="scoreLoading"
     @on-score-edit="onScoreEdit"
   >
-    <slot />
+    <PanelTrailers :trailers="trailers">
+      <slot />
+    </PanelTrailers>
   </PanelStatistics>
 </template>

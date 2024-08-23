@@ -123,7 +123,9 @@ const { openTab } = useLinksStore();
   }
 
   position: relative;
-  margin: 1.75rem 0;
+  width: var(--poster-width);
+  height: var(--poster-height);
+  margin: 1.25rem auto 1.5rem;
   border: 1px solid var(--border-white);
   border-radius: var(--poster-radius, 8px);
   box-shadow: var(--image-box-shadow);

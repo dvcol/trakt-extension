@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
-
 import { computed, onMounted, toRefs, watch } from 'vue';
 
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
