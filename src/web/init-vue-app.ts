@@ -6,7 +6,7 @@ import type { App, Component } from 'vue';
 
 import type { RouterOptions } from '~/router';
 
-import { createRouter } from '~/router';
+import { RouterService } from '~/services/router.service';
 import { initServices } from '~/web/init-services';
 
 export type InitVueAppOption = RouterOptions & { view?: { option?: boolean; popup?: boolean; web?: boolean } };
@@ -19,7 +19,7 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
   app.use(pinia);
 
   let router = getCurrentInstance()?.appContext?.config?.globalProperties?.$router;
-  if (!router) router = createRouter(options);
+  if (!router) router = RouterService.init(options);
   app.use(router);
 
   initServices(options.view).catch(error => console.error('Failed to initialized services.', error));

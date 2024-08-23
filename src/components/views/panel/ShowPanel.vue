@@ -4,7 +4,7 @@ import { NFlex, NSkeleton } from 'naive-ui';
 
 import { computed, onMounted, toRefs, watch } from 'vue';
 
-import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import PanelShowStatistics from '~/components/views/panel/PanelShowStatistics.vue';
 import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
@@ -406,14 +406,14 @@ onMounted(() => {
 
 <template>
   <NFlex class="panel-container" justify="center" align="center" vertical>
-    <TitleLink
+    <AnchorLink
       v-if="title"
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_show_in_trakt', 'common', 'tooltip')"
     >
       {{ title }}
-    </TitleLink>
+    </AnchorLink>
     <NSkeleton
       v-else
       class="show-title-skeleton"

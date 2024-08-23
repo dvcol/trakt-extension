@@ -103,6 +103,12 @@ export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
   };
 } & T;
 
+export type AnchorLinkUrl = {
+  href?: string;
+  label?: string;
+  onClick?: (event: MouseEvent, link: Omit<AnchorLinkUrl, 'onClick'>) => void;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- meta is intentionally weakly typed
 export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> = Omit<PosterItem, 'type'> & {
   id: string | number;
@@ -110,8 +116,11 @@ export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> =
   key: string;
 
   type?: (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
+  typeLink?: AnchorLinkUrl;
   title?: string;
+  titleLink?: AnchorLinkUrl;
   content?: string;
+  contentLink?: AnchorLinkUrl;
   tags?: ListScrollItemTag[];
 
   progress?: ShowProgress;

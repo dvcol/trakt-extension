@@ -3,7 +3,7 @@ import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
-import TitleLink from '~/components/common/buttons/TitleLink.vue';
+import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
 import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
@@ -269,14 +269,14 @@ onMounted(() => {
 
 <template>
   <NFlex class="panel-container" justify="center" align="center" vertical>
-    <TitleLink
+    <AnchorLink
       v-if="title"
       class="show-title"
       :href="titleUrl"
       :title="i18n('open_in_trakt', 'common', 'tooltip')"
     >
       {{ title }}
-    </TitleLink>
+    </AnchorLink>
     <NSkeleton
       v-else
       class="show-title-skeleton"
