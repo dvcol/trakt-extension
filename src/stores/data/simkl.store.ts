@@ -1,3 +1,4 @@
+import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive } from 'vue';
@@ -188,7 +189,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     setUserSetting,
     simklAllowed,
     simklEnabled: computed({
-      get: () => simklAllowed.value && userEnabled.value,
+      get: () => simklAllowed.value && userEnabled.value && !!chromeRuntimeId,
       set: (value: boolean) => setUserEnabled(value),
     }),
     initSimklStore,

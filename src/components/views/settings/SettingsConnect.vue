@@ -71,7 +71,11 @@ useWatchActivated(
 <template>
   <NFlex align="center">
     <SettingsFormItem :label="i18n('label_enable')" class="flex-auto">
-      <NSwitch v-model:value="simklEnabled" class="form-switch">
+      <NSwitch
+        v-model:value="simklEnabled"
+        :disabled="!chromeRuntimeId"
+        class="form-switch"
+      >
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
