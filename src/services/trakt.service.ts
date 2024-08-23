@@ -615,7 +615,6 @@ export class TraktService {
   };
 
   static simkl = {
-    client: this.simklClient,
     settings: async () => {
       const response = await this.simklClient.user.settings();
       return response.json();

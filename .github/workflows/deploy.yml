@@ -56,6 +56,9 @@ jobs:
 
           tvdb_api_key: ${{ secrets.VITE_TVDB_API_KEY }}
 
+          simkl_client_id: ${{ secrets.VITE_SIMKL_CLIENT_ID }}
+          simkl_client_secret: ${{ secrets.VITE_SIMKL_CLIENT_SECRET }}
+
       - name: 🏗️ Setup Pages
         uses: actions/configure-pages@v5
 

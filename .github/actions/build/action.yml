@@ -31,6 +31,13 @@ inputs:
     description: TVDB API key
     required: true
 
+  simkl_client_id:
+    description: Simkl client ID
+    required: true
+  simkl_client_secret:
+    description: Simkl client secret
+    required: true
+
 
 runs:
   using: composite
@@ -51,6 +58,9 @@ runs:
         VITE_TMDB_READ_TOKEN: ${{ inputs.tmdb_read_token }}
 
         VITE_TVDB_API_KEY: ${{ inputs.tvdb_api_key }}
+
+        VITE_SIMKL_CLIENT_ID: ${{ inputs.simkl_client_id }}
+        VITE_SIMKL_CLIENT_SECRET: ${{ inputs.simkl_client_secret }}
       run: |
         # =================  🚧 Build  =================
         pnpm run ${{ inputs.script }}

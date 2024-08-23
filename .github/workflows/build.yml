@@ -33,6 +33,9 @@ jobs:
 
           tvdb_api_key: ${{ secrets.VITE_TVDB_API_KEY }}
 
+          simkl_client_id: ${{ secrets.VITE_SIMKL_CLIENT_ID }}
+          simkl_client_secret: ${{ secrets.VITE_SIMKL_CLIENT_SECRET }}
+
   build-web:
     name: ☁️ Build Web
     runs-on: ubuntu-latest
@@ -56,6 +59,9 @@ jobs:
           tmdb_read_token: ${{ secrets.VITE_TMDB_READ_TOKEN }}
 
           tvdb_api_key: ${{ secrets.VITE_TVDB_API_KEY }}
+
+          simkl_client_id: ${{ secrets.VITE_SIMKL_CLIENT_ID }}
+          simkl_client_secret: ${{ secrets.VITE_SIMKL_CLIENT_SECRET }}
 
   test:
     name: 🧪 Unit Test
