@@ -177,6 +177,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
     watch(activity, (next, prev) => {
       const _prev = prev?.[user.value];
       const _next = next?.[user.value];
+      if (!_prev || !_next) return;
       const _changed = compareDateObject(toDateObject(_prev), toDateObject(_next));
       Object.assign(evicted, evictChanges(_changed));
     });
