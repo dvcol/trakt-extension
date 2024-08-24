@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.23.1](https://github.com/dvcol/trakt-extension/compare/v1.23.0...v1.23.1) (2024-08-24)
+
+
+### Bug Fixes
+
+* **activity:** add null check to prevent error ([86c27f5](https://github.com/dvcol/trakt-extension/commit/86c27f59559ebf269c5e33d8c9a662676c4a5bfe))
+
 ## [1.23.0](https://github.com/dvcol/trakt-extension/compare/v1.22.0...v1.23.0) (2024-08-23)
 
 
