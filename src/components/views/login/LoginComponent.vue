@@ -16,15 +16,7 @@ import {
   NText,
 } from 'naive-ui';
 
-import {
-  computed,
-  onActivated,
-  onDeactivated,
-  onMounted,
-  ref,
-  Transition,
-  watch,
-} from 'vue';
+import { computed, onActivated, onDeactivated, ref, Transition, watch } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
@@ -52,7 +44,7 @@ const onRedirect = (authenticated = isAuthenticated.value) => {
 
 const show = ref(false);
 
-onMounted(() => {
+onActivated(() => {
   onRedirect();
   watch(isAuthenticated, authenticated => {
     onRedirect(authenticated);
