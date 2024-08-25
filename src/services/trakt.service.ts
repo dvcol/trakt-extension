@@ -206,6 +206,7 @@ export class TraktService {
   static async logout(account?: string) {
     await useAuthSettingsStore().setAuth(undefined, account);
     await useUserSettingsStore().setUserSetting(undefined, account);
+    this.evict.trakt().catch(err => Logger.error('Failed to evict trakt cache', err));
     return this.traktClient.importAuthentication({});
   }
 
@@ -631,6 +632,7 @@ export class TraktService {
     logout: async (account?: string) => {
       await useAuthSettingsStore().setAuth({ simkl: null }, account);
       await useSimklStore().setUserSetting(undefined, account);
+      this.evict.simkl().catch(err => Logger.error('Failed to evict simkl cache', { account, err }));
       return this.simklClient.importAuthentication({});
     },
     show: async (id: string | number, extended = true) => {
@@ -654,9 +656,9 @@ export class TraktService {
   };
 
   static evict = {
-    tmdb: () => TraktService.tmdbClient.clearCache(),
-    trakt: () => TraktService.traktClient.clearCache(),
-    simkl: () => TraktService.simklClient.clearCache(),
+    tmdb: async () => TraktService.tmdbClient.clearCache(),
+    trakt: async () => TraktService.traktClient.clearCache(),
+    simkl: async () => TraktService.simklClient.clearCache(),
     images: () =>
       Promise.all([
         TraktService.tmdbClient.v3.configuration.details.cached.evict(),
