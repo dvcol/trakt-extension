@@ -1,6 +1,8 @@
-import { ref, type Ref, watch } from 'vue';
+import { ref, type Ref, type UnwrapRef, watch, type WatchOptions } from 'vue';
 
-export const promesifyComputed = async <T>(computed: Ref<T>, until: (next?: T, old?: T) => boolean = next => next !== undefined): Promise<T> => {
+import { debounce } from '~/utils/debounce.utils';
+
+export const promisifyComputed = async <T>(computed: Ref<T>, until: (next?: T, old?: T) => boolean = next => next !== undefined): Promise<T> => {
   let unwatch: () => void;
   return new Promise(resolve => {
     unwatch = watch(
@@ -33,4 +35,14 @@ export const clearProxy = (proxy: Record<string, unknown>) => {
   Object.keys(proxy).forEach(key => {
     delete proxy[key];
   });
+};
+
+export const useDebounceRef = <T>(outerRef: Ref<T>, delay = 100, options?: WatchOptions) => {
+  const innerRef = ref<T>(outerRef.value);
+  const setValue = debounce((value: UnwrapRef<T>) => {
+    innerRef.value = value;
+  }, delay);
+
+  const unSubscribe = watch(outerRef, setValue, options);
+  return { value: innerRef, unSubscribe, setValue };
 };
