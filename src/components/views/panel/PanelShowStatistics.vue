@@ -7,7 +7,7 @@ import {
   type TraktShowExtended,
   type TraktSyncRatingValue,
 } from '@dvcol/trakt-http-client/models';
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, onMounted, type PropType, toRefs, watch } from 'vue';
 
 import type { RatingItem } from '~/models/rating.model';
 
@@ -82,27 +82,34 @@ const scoreLoading = computed(() => {
   return getLoading(TraktRatingType.Shows);
 });
 
-const score = computed(() => {
-  if (!showId?.value) return null;
+const scoreIds = computed(() => {
+  if (!enableRatings.value) return {};
 
-  let id: string;
-  let type: TraktRatingTypes;
+  let id: string | undefined;
+  let type: TraktRatingTypes | undefined;
 
+  if (!showId.value) return { id, type };
   if (mode.value === 'show') {
     id = showId.value.toString();
     type = TraktRatingType.Shows;
-  } else if (mode.value === 'season') {
-    if (!seasonId.value) return null;
-    id = `${showId.value}-${seasonId.value}`;
-    type = TraktRatingType.Seasons;
-  } else if (mode.value === 'episode') {
-    if (!episodeId.value) return null;
-    id = `${showId.value}-${episodeId.value}`;
-    type = TraktRatingType.Episodes;
-  } else {
-    return null;
+    return { id, type };
   }
-  if (enableRatings.value) loadRatings(type, id);
+  if (mode.value === 'season') {
+    type = TraktRatingType.Seasons;
+    if (seasonId.value) id = `${showId.value}-${seasonId.value}`;
+    return { id, type };
+  }
+  if (mode.value === 'episode') {
+    type = TraktRatingType.Episodes;
+    if (episodeId.value) id = `${showId.value}-${episodeId.value}`;
+    return { id, type };
+  }
+  return { id, type };
+});
+
+const score = computed(() => {
+  const { id, type } = scoreIds.value;
+  if (!id || !type) return null;
   return getRatings(type, id);
 });
 
@@ -242,6 +249,13 @@ const onScoreEdit = async (_score: TraktSyncRatingValue) => {
     ],
   });
 };
+
+onMounted(() => {
+  watch(scoreIds, ({ id, type }) => {
+    if (!id || !type) return;
+    loadRatings(type, id);
+  });
+});
 </script>
 
 <template>
