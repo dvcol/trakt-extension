@@ -6,6 +6,7 @@ import { MessageType } from '~/models/message/message-type.model';
 
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
+import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
 import { useCalendarStore } from '~/stores/data/calendar.store';
@@ -78,4 +79,5 @@ export const initServices = async (options: { option?: boolean; popup?: boolean;
   Logger.info(...Logger.colorize(LoggerColor.Success, Logger.timestamp, 'All services initialized!'));
 
   onVersionUpdate().catch(Logger.error);
+  TraktService.evict.clean().catch(Logger.error);
 };

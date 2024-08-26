@@ -41,22 +41,30 @@ const parseFlatResponse = <T = unknown>(flat: FlatResponse): TypedResponse<T> =>
 };
 
 export class ChromeCacheStore<T> implements CacheStore<T> {
+  saveRetention?: boolean;
+  saveAccess?: boolean;
   evictOnError?: boolean;
   retention?: number;
   store: StorageArea;
   prefix: string;
 
   constructor({
+    saveRetention = true,
+    saveAccess = false,
     evictOnError = true,
     retention = CacheRetention.Month,
     store = storage.local,
     prefix = 'http-cache',
   }: {
+    saveRetention?: boolean;
+    saveAccess?: boolean;
     evictOnError?: boolean;
     retention?: number;
     store?: StorageArea;
     prefix?: string;
   }) {
+    this.saveRetention = saveRetention;
+    this.saveAccess = saveAccess;
     this.evictOnError = evictOnError;
     this.retention = retention;
     this.store = {

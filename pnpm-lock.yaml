@@ -9,20 +9,20 @@ importers:
   .:
     dependencies:
       '@dvcol/base-http-client':
-        specifier: ^1.16.0
-        version: 1.16.0
+        specifier: ^1.16.1
+        version: 1.16.1
       '@dvcol/common-utils':
-        specifier: ^1.14.0
-        version: 1.14.0
+        specifier: ^1.14.1
+        version: 1.14.1
       '@dvcol/simkl-http-client':
-        specifier: ^1.1.7
-        version: 1.1.7
+        specifier: ^1.1.8
+        version: 1.1.8
       '@dvcol/tmdb-http-client':
-        specifier: ^1.3.9
-        version: 1.3.9
+        specifier: ^1.3.10
+        version: 1.3.10
       '@dvcol/trakt-http-client':
-        specifier: ^1.4.15
-        version: 1.4.15
+        specifier: ^1.4.16
+        version: 1.4.16
       '@dvcol/web-extension-utils':
         specifier: ^3.3.2
         version: 3.3.2
@@ -1048,12 +1048,12 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@dvcol/base-http-client@1.16.0':
-    resolution: {integrity: sha512-SY0FwkBArcMZ8LpeO2/UrX8SNW0LXae8UR1nNjrT+8bfcL/bUepNDyasNu2AnsLzQm5faN39qtiYLg7GIWfeDQ==}
+  '@dvcol/base-http-client@1.16.1':
+    resolution: {integrity: sha512-tHJs1yd3BkJ2LxFWd468IclysBVtmEfPL6IU7Rnf6j1jp6PRclnVewmgyhpnHxpO6jAELfjyBbK834jcv3lx3g==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/common-utils@1.14.0':
-    resolution: {integrity: sha512-qYrb+9W0r1QUAobuH0++ef70sFobOIiZbXru6NJo9I9Ek+KvMcSMzES+7QyZcTjzNNZZBXH3sXlnEobahDEyPA==}
+  '@dvcol/common-utils@1.14.1':
+    resolution: {integrity: sha512-jGvnB1eC0w8wBcaU2UrvBxkAbjZXXUjD/8uHHOpbkLwOzvJ4nmntnvfVilSK7tZXbr9uo+rzOIRwe4P9AJNYOA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/eslint-plugin-presets@1.3.11':
@@ -1132,8 +1132,8 @@ packages:
       vue:
         optional: true
 
-  '@dvcol/simkl-http-client@1.1.7':
-    resolution: {integrity: sha512-LvsuA3SstKyzkVgLuhwyaidT8D9mrjG3OMXVcqlowV/hB/6a1xlQCexbh+t0zE8nTzhWW2E60TI1bDJZVDLKSA==}
+  '@dvcol/simkl-http-client@1.1.8':
+    resolution: {integrity: sha512-HYeH4T4E6j8a0TR2trvwodwUf1RjBN8zaoqnotsoPUDZy6l2akeoqGigZDeQfEBUbBJI8qWTimwFj55ESxCDWA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/stylelint-plugin-presets@2.1.2':
@@ -1156,12 +1156,12 @@ packages:
       postcss-scss:
         optional: true
 
-  '@dvcol/tmdb-http-client@1.3.9':
-    resolution: {integrity: sha512-17D0uGi6ODIGfcVvYM8l/Lcxy39zLHuk3mq0PffRiDNUbl1g3UsdJS9xps+GjYTtR9QZv3do+bxf2oHTPHwPQQ==}
+  '@dvcol/tmdb-http-client@1.3.10':
+    resolution: {integrity: sha512-7oP3pI6g0CwAi6Bs6LyicBynQm3aDFZMJYkHp4pM2hZQwtMJV3okCtcrMcOytu/HX1tfUl4x8zn7CR97kfnKNw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/trakt-http-client@1.4.15':
-    resolution: {integrity: sha512-UGYveJXBznBmEMupcRx/LD0BPOdoZ2nqIyD9f8KH0kv+fRZL+5XBpvrk7ygCSXfflVvcqo6G+RCYlCEVjA2iYQ==}
+  '@dvcol/trakt-http-client@1.4.16':
+    resolution: {integrity: sha512-Eq68U9Y3XDsPhApVdFdjx5SKJQjP8bE6NlXqyyyK2Z9r69FCozXzw8Li34l7Y/sopOs4S4HAWRqAbatIqJM2zw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/web-extension-utils@3.3.2':
@@ -7989,11 +7989,11 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.0.15
 
-  '@dvcol/base-http-client@1.16.0':
+  '@dvcol/base-http-client@1.16.1':
     dependencies:
-      '@dvcol/common-utils': 1.14.0
+      '@dvcol/common-utils': 1.14.1
 
-  '@dvcol/common-utils@1.14.0':
+  '@dvcol/common-utils@1.14.1':
     dependencies:
       pretty-bytes: 6.1.1
 
@@ -8027,10 +8027,10 @@ snapshots:
       eslint-plugin-vuejs-accessibility: 2.2.0(eslint@8.56.0)
       vue: 3.4.14(typescript@5.4.2)
 
-  '@dvcol/simkl-http-client@1.1.7':
+  '@dvcol/simkl-http-client@1.1.8':
     dependencies:
-      '@dvcol/base-http-client': 1.16.0
-      '@dvcol/common-utils': 1.14.0
+      '@dvcol/base-http-client': 1.16.1
+      '@dvcol/common-utils': 1.14.1
 
   '@dvcol/stylelint-plugin-presets@2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.4.2))':
     dependencies:
@@ -8056,19 +8056,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dvcol/tmdb-http-client@1.3.9':
+  '@dvcol/tmdb-http-client@1.3.10':
     dependencies:
-      '@dvcol/base-http-client': 1.16.0
-      '@dvcol/common-utils': 1.14.0
+      '@dvcol/base-http-client': 1.16.1
+      '@dvcol/common-utils': 1.14.1
 
-  '@dvcol/trakt-http-client@1.4.15':
+  '@dvcol/trakt-http-client@1.4.16':
     dependencies:
-      '@dvcol/base-http-client': 1.16.0
-      '@dvcol/common-utils': 1.14.0
+      '@dvcol/base-http-client': 1.16.1
+      '@dvcol/common-utils': 1.14.1
 
   '@dvcol/web-extension-utils@3.3.2':
     dependencies:
-      '@dvcol/common-utils': 1.14.0
+      '@dvcol/common-utils': 1.14.1
       fast-glob: 3.3.2
       fs-extra: 11.2.0
       rxjs: 7.8.1
