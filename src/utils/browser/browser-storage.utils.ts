@@ -207,7 +207,7 @@ export const setStorageWrapper: <T>(key: string, value: T, regex?: string | RegE
   }
 
   try {
-    return area.set(key, value);
+    return await area.set(key, value);
   } catch (error) {
     if (isQuotaExceededError(error)) {
       console.warn('Local storage is full, clearing cache.', { payload, max, inUse, regex, area: area.name });
