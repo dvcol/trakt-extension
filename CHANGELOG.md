@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.24.0](https://github.com/dvcol/trakt-extension/compare/v1.23.1...v1.24.0) (2024-08-26)
+
+
+### Features
+
+* **cache:** clean stale cache on init ([e09d9c7](https://github.com/dvcol/trakt-extension/commit/e09d9c7f38628986b714ebbb524ab9f2c3c33311))
+
+
+### Bug Fixes
+
+* **cache:** evict user cache on logout ([15bdfd8](https://github.com/dvcol/trakt-extension/commit/15bdfd8f63c3a32cef1a0f2a41e7350a3aae9f26))
+* **cache:** logs eviction date by default ([0272c60](https://github.com/dvcol/trakt-extension/commit/0272c601eda0d0602c0d8063a2b3859a4b025803))
+* **loader:** adds full height loader in option & web ([0556716](https://github.com/dvcol/trakt-extension/commit/055671677a36aa6de1e539eb3e5145df161298ad))
+* **login:** show component on activated instead of mounted ([e7aa62a](https://github.com/dvcol/trakt-extension/commit/e7aa62a279c82b7de341995df49e06862fdc1de8))
+* **statistics:** update show ratings on mounted instead of computed ([7e06f4e](https://github.com/dvcol/trakt-extension/commit/7e06f4ee0957b58b3f2143999cff641289d34236))
+
 ### [1.23.1](https://github.com/dvcol/trakt-extension/compare/v1.23.0...v1.23.1) (2024-08-24)
 
 
