@@ -728,6 +728,7 @@ export class TraktService {
     ratings: TraktService.traktClient.sync.ratings.get.cached.evict,
     stats: TraktService.traktClient.users.stats.cached.evict,
     settings: TraktService.traktClient.users.settings.cached.evict,
+    clean: () => Promise.all([TraktService.caches.trakt.clean(), TraktService.caches.simkl.clean(), TraktService.caches.tmdb.clean()]),
   };
 
   static export = {
