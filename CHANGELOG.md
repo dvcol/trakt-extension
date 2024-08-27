@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.1](https://github.com/dvcol/trakt-extension/compare/v1.24.0...v1.24.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* **storage:** await set in wrapper to better handler errors ([3e81ce8](https://github.com/dvcol/trakt-extension/commit/3e81ce8b76e356cd54f06a49a062c23d8b4d35cb))
+
 ## [1.24.0](https://github.com/dvcol/trakt-extension/compare/v1.23.1...v1.24.0) (2024-08-26)
 
 
