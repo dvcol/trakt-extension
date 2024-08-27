@@ -170,36 +170,34 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       />
     </NFlex>
 
-    <NFlex v-if="watchedDate" class="row" size="large">
+    <NFlex class="row hidden" :class="{ show: watchedDate }" size="large">
       <!--  Watched Date  -->
       <TextField
         :label="i18n('watched')"
-        :value="watchedDate.toLocaleDateString()"
+        :value="watchedDate?.toLocaleDateString() ?? '-'"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  watched time  -->
       <TextField
-        v-if="watchedTime"
         :label="i18n('watched_time')"
-        :value="watchedTime"
+        :value="watchedTime ?? '-'"
         :skeleton="{ width: '5.125rem' }"
       />
     </NFlex>
 
-    <NFlex v-if="collectionDate" class="row" size="large">
+    <NFlex class="row hidden" :class="{ show: collectionDate }" size="large">
       <!--  Collection Date  -->
       <TextField
         :label="i18n('collected')"
-        :value="collectionDate.toLocaleDateString()"
+        :value="collectionDate?.toLocaleDateString() ?? '-'"
         :skeleton="{ width: '5.125rem' }"
       />
 
       <!--  Collection time  -->
       <TextField
-        v-if="collectionTime"
         :label="i18n('collected_time')"
-        :value="collectionTime"
+        :value="collectionTime ?? '-'"
         :skeleton="{ width: '5.125rem' }"
       />
     </NFlex>
@@ -207,8 +205,12 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/mixin' as mixin;
+
 .container,
 .row {
+  @include mixin.transition-show-hide-height;
+
   flex: 1 1 auto;
   width: 100%;
 }

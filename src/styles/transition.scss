@@ -34,19 +34,21 @@
 
 
 @mixin height(
-  $height: 20rem,
-  $opacity: 0,
+  $height: 100%,
+  $opacity: 1,
   $transition: 0.25s ease
 ) {
-  .scale-enter-active,
-  .scale-leave-active {
-    transition: all $transition;
+  .height-enter-active,
+  .height-leave-active {
+    max-height: $height;
+    opacity: $opacity;
+    transition: max-height $transition, opacity $transition;
     will-change: transform, opacity;
   }
 
-  .scale-enter-from,
-  .scale-leave-to {
-    max-height: $height;
-    opacity: $opacity;
+  .height-enter-from,
+  .height-leave-to {
+    max-height: 0;
+    opacity: 0;
   }
 }
