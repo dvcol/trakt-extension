@@ -126,7 +126,7 @@ const copyToClipBoard = () => {
 
 const openVerification = () => {
   const _code = auth.value?.user_code;
-  openTab(_code ? Config.Verification.code(_code) : Config.Verification.Url, true);
+  openTab(_code ? Config.Verification.code(_code) : Config.Verification.Url, false);
 };
 
 const onCheckedToggle = (checked: boolean) => {
