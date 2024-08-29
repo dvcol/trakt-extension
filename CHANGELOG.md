@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.3](https://github.com/dvcol/trakt-extension/compare/v1.24.2...v1.24.3) (2024-08-29)
+
+
+### Bug Fixes
+
+* **login:** adjust styles to keep loading indicator placement consistent ([38681cf](https://github.com/dvcol/trakt-extension/commit/38681cff05c75a874330f8dfaa279a2a9bf52e3a))
+* **login:** open code verification in separate tab ([25f422c](https://github.com/dvcol/trakt-extension/commit/25f422cc26582e9f4fb9f7f4082ce3da6ab80904))
+* **navbar:** adjust transparency of the active capsule ([e7cf0d0](https://github.com/dvcol/trakt-extension/commit/e7cf0d0cb41de1ec0e3c9a5832769d7ec3a5eeb1))
+
 ### [1.24.2](https://github.com/dvcol/trakt-extension/compare/v1.24.1...v1.24.2) (2024-08-27)
 
 
