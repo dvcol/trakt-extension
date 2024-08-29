@@ -126,7 +126,7 @@ const navElement = ref<HTMLElement>();
 @use '~/styles/layout' as layout;
 
 nav {
-  --navbar-tab-color: var(--trakt-red-darker);
+  --navbar-tab-color: hsl(from var(--trakt-red-darker) h s l / 80%);
   --navbar-text-color-hover: var(--trakt-red);
   --navbar-text-color-hover-active: var(--white);
   --navbar-text-color-active: var(--white);
@@ -154,6 +154,11 @@ nav {
     display: flex;
     justify-content: center;
     min-height: 2.75rem;
+
+    :deep(.n-tabs-capsule) {
+      height: calc(#{layout.$header-navbar-height} - 0.75rem) !important;
+      border-radius: 0.5rem !important;
+    }
   }
 }
 </style>
