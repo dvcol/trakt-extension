@@ -23,8 +23,8 @@ export type VirtualListProps = {
   itemSize?: number;
   visibleItemsTag?: string | ObjectConstructor;
   visibleItemsProps?: ObjectConstructor;
-  paddingTop?: string | number;
-  paddingBottom?: string | number;
+  paddingTop?: number;
+  paddingBottom?: number;
 };
 export type VirtualListScrollToOptions = Parameters<VirtualListInst['scrollTo']>[0];
 

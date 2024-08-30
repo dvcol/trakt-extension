@@ -2,10 +2,15 @@
 :host {
   /* height */
   --full-height: 100dvh;
-  --full-height-absolute: 100vh;
   --half-height: 50dvh;
   --height-40-dvh: 40dvh;
   --height-70-dvh: 70dvh;
+
+  /** safe area */
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
 
   /** width */
   --full-width: 100dvw;

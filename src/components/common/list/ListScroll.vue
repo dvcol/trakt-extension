@@ -105,7 +105,7 @@ defineExpose({
   list: listRef,
 });
 
-const { items, loading, pagination, scrollThreshold } = toRefs(props);
+const { items, loading, pagination, scrollThreshold, listOptions } = toRefs(props);
 
 const scrolled = ref(false);
 
@@ -141,7 +141,23 @@ const onHover = ({ item, hover }: { item: ListScrollItem; hover: boolean }) => {
 const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number }) => {
   emits('onloadMore', { listRef, ...payload });
 };
+
 const isEmpty = computed(() => !items.value.length && !loading.value);
+const listItemSize = computed(() => listOptions?.value?.itemSize ?? 145);
+
+const topInset = computed(() => {
+  const listElementRef = listRef.value?.$el;
+  if (!listElementRef) return 0;
+  const inset = getComputedStyle(listElementRef).getPropertyValue(
+    '--safe-area-inset-top',
+  );
+  if (!inset) return 0;
+  return parseInt(inset, 10);
+});
+const listPaddingTop = computed(
+  () => topInset.value + (listOptions?.value?.paddingTop ?? 60),
+);
+const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32);
 </script>
 
 <template>
@@ -152,7 +168,7 @@ const isEmpty = computed(() => !items.value.length && !loading.value);
       class="list-scroll"
       :data-length="items.length"
       :data-page-size="pageSize"
-      :item-size="listOptions?.itemSize ?? 145"
+      :item-size="listItemSize"
       :items="items"
       :item-resizable="false"
       ignore-item-resize
@@ -161,8 +177,8 @@ const isEmpty = computed(() => !items.value.length && !loading.value);
         size: 'large',
         ...listOptions?.visibleItemsProps,
       }"
-      :padding-top="listOptions?.paddingTop ?? 60"
-      :padding-bottom="listOptions?.paddingBottom ?? 32"
+      :padding-top="listPaddingTop"
+      :padding-bottom="listPaddingBottom"
       :key-field="'key'"
       @scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
@@ -228,7 +244,7 @@ const isEmpty = computed(() => !items.value.length && !loading.value);
 @include animation.fade-in;
 
 .list-scroll {
-  height: calc(var(--full-height-absolute) - 8px);
+  height: calc(var(--full-height) - 8px);
   margin-top: calc(0% - #{layout.$safe-navbar-height});
   margin-bottom: 8px;
 
