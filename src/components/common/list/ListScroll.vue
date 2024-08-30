@@ -228,8 +228,8 @@ const isEmpty = computed(() => !items.value.length && !loading.value);
 @include animation.fade-in;
 
 .list-scroll {
-  height: calc(var(--full-height) - 8px);
-  margin-top: -#{layout.$header-navbar-height};
+  height: calc(var(--full-height-absolute) - 8px);
+  margin-top: calc(0% - #{layout.$safe-navbar-height});
   margin-bottom: 8px;
 
   .load-more {

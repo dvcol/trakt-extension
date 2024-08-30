@@ -135,7 +135,7 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  top: layout.$header-navbar-height;
+  top: layout.$safe-navbar-height;
 
   &.drawer-visible {
     top: layout.$header-open-drawer-height;
@@ -156,7 +156,7 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  top: calc(#{layout.$header-navbar-height} + 12px);
+  top: calc(#{layout.$safe-navbar-height} + 12px);
 
   &.drawer-visible {
     top: calc(#{layout.$header-open-drawer-height} + 12px);

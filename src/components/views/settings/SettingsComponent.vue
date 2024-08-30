@@ -136,14 +136,14 @@ onDeactivated(() => {
 .container {
   width: 100%;
   height: var(--full-height);
-  margin-top: -#{layout.$header-navbar-height};
+  margin-top: calc(0% - #{layout.$safe-navbar-height});
   background: transparent;
 
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
 
     z-index: var(--length);
-    scroll-margin-top: calc(#{layout.$header-navbar-height} + 1rem);
+    scroll-margin-top: calc(#{layout.$safe-navbar-height} + 1rem);
 
     &:not(:last-child) {
       z-index: calc(var(--length) - var(--index));
@@ -164,7 +164,7 @@ onDeactivated(() => {
   .menu {
     @include mixin.hover-background;
 
-    height: calc(var(--full-height) - #{layout.$header-navbar-height});
+    height: layout.$main-content-height;
     padding: 0.5rem;
   }
 
@@ -175,7 +175,7 @@ onDeactivated(() => {
 
   .menu,
   .content .card:first-child {
-    margin-top: layout.$header-navbar-height;
+    margin-top: layout.$safe-navbar-height;
   }
 }
 </style>

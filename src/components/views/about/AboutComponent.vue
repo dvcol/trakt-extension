@@ -127,7 +127,7 @@ const openRelease = (url?: string) => {
 
 .container {
   width: 100%;
-  height: calc(var(--full-height) - #{layout.$header-navbar-height});
+  height: layout.$main-content-height;
   background: transparent;
 
   .card {

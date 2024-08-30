@@ -183,15 +183,15 @@ const onBack = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: calc(var(--full-height) - #{layout.$header-navbar-height});
-    margin-top: layout.$header-navbar-height;
+    min-height: layout.$main-content-height;
+    margin-top: layout.$safe-navbar-height;
 
     &.full-height {
       min-height: var(--full-height);
       margin-top: 0;
 
       :deep(.loading-container) {
-        padding-top: layout.$header-navbar-height;
+        padding-top: layout.$safe-navbar-height;
       }
     }
   }
@@ -205,7 +205,7 @@ const onBack = () => {
 
   .panel {
     position: relative;
-    max-height: calc(100% - #{layout.$header-navbar-height});
+    max-height: calc(100% - #{layout.$safe-navbar-height});
     overflow: auto;
 
     &-header {
