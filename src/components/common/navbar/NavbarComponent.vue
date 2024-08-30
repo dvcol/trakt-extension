@@ -131,7 +131,7 @@ nav {
   --navbar-text-color-hover-active: var(--white);
   --navbar-text-color-active: var(--white);
 
-  padding: 0 0.25rem;
+  padding: env(safe-area-inset-top) 0.25rem 0;
   font-size: 12px;
   text-align: center;
 
@@ -153,7 +153,7 @@ nav {
   .tabs {
     display: flex;
     justify-content: center;
-    min-height: 2.75rem;
+    min-height: layout.$header-navbar-height;
 
     :deep(.n-tabs-capsule) {
       height: calc(#{layout.$header-navbar-height} - 0.75rem) !important;
