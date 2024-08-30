@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.24.4](https://github.com/dvcol/trakt-extension/compare/v1.24.3...v1.24.4) (2024-08-30)
+
+
+### Bug Fixes
+
+* **panel:** adjust css to make active episode more visible ([d7245af](https://github.com/dvcol/trakt-extension/commit/d7245af928411a45d409d505d2e9c9ed54fdd884))
+* **pwa:** add offset to list-scroll padding ([881749f](https://github.com/dvcol/trakt-extension/commit/881749f26be3eee3105dbde522ecb9dcded71115))
+* **pwa:** adds transparency to status bar ([94687af](https://github.com/dvcol/trakt-extension/commit/94687af08928df33fdde8bba3b2beb0b9353a0c3))
+* **pwa:** force service worker auto-update ([0c647a7](https://github.com/dvcol/trakt-extension/commit/0c647a7bca7ab12d4d94e95dccf9dc4d6b19d486))
+* **pwa:** update header offset ([421fcf5](https://github.com/dvcol/trakt-extension/commit/421fcf5e42a515e203d50e93a36663cb7ff38978))
+
 ### [1.24.3](https://github.com/dvcol/trakt-extension/compare/v1.24.2...v1.24.3) (2024-08-29)
 
 
