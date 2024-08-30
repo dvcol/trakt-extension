@@ -127,7 +127,7 @@ const getPlugins = (_isDev: boolean, _isWeb: boolean): PluginOption[] => {
     plugins.push(
       VitePWA({
         scope: '/trakt-extension/',
-        registerType: 'prompt',
+        registerType: 'autoUpdate',
         includeAssets: ['**/favicon.ico', '**/*.svg', '**/*.png', '**/*.webp', '**/*.json'],
         manifest: {
           name: 'Side Trakt',
