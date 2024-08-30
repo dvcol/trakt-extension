@@ -404,7 +404,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <NFlex class="panel-container" justify="center" align="center" vertical>
+  <NFlex
+    class="panel-container"
+    justify="center"
+    align="center"
+    vertical
+    :data-mode="panelType"
+    :data-show="showId"
+    :data-season="season?.ids?.trakt"
+    :data-episode="episode?.ids?.trakt"
+  >
     <AnchorLink
       v-if="title"
       class="show-title"

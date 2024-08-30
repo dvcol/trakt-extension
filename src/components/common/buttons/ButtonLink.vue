@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { type ButtonProps, NButton } from 'naive-ui';
+import { type PropType } from 'vue';
 import { RouterLink, type RouterLinkProps } from 'vue-router';
-
-import type { PropType } from 'vue';
 
 defineProps({
   link: {
@@ -12,6 +11,11 @@ defineProps({
   button: {
     type: Object as PropType<ButtonProps>,
     required: false,
+  },
+  muted: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 </script>
@@ -27,7 +31,11 @@ defineProps({
       :secondary="isActive"
       :quaternary="!isActive"
       class="button-link"
-      :class="$attrs.class"
+      :class="{
+        muted,
+        'is-active': isActive,
+        'is-exact-active': isExactActive,
+      }"
       :style="$attrs.style"
       round
       size="small"
@@ -46,5 +54,13 @@ defineProps({
   height: 1.5rem;
   margin: 0;
   padding: 0.125rem;
+
+  &.is-active {
+    --n-color: var(--n-color-focus) !important;
+  }
+
+  &.muted:not(.is-active) {
+    opacity: 0.5;
+  }
 }
 </style>

@@ -268,7 +268,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <NFlex class="panel-container" justify="center" align="center" vertical>
+  <NFlex
+    class="panel-container"
+    justify="center"
+    align="center"
+    vertical
+    :data-movie="movieId"
+  >
     <AnchorLink
       v-if="title"
       class="show-title"

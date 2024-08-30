@@ -108,8 +108,8 @@ const i18n = useI18n('panel', 'picker');
             v-for="{ link, number, finished, collected, aired } in seasonsLinks"
             :key="`season-${number}`"
             :link="{ to: link }"
-            :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
-            :style="{ opacity: aired ? 1 : 0.75 }"
+            :button="{ type: finished ? 'primary' : collected ? 'info' : 'default' }"
+            :muted="!aired"
           >
             {{ number }}
           </ButtonLink>
@@ -132,7 +132,7 @@ const i18n = useI18n('panel', 'picker');
             v-slot="{ isActive }"
             :link="{ to: link }"
             :button="{ type: finished ? 'primary' : collected ? 'info' : undefined }"
-            :style="{ opacity: aired ? 1 : 0.75 }"
+            :muted="!aired"
           >
             <span class="label" :class="{ active: isActive }">{{ number }}</span>
           </ButtonLink>
