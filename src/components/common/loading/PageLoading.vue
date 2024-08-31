@@ -20,5 +20,12 @@ import IconLoadingMatrix from '~/components/icons/IconLoadingMatrix.vue';
   width: 100%;
   height: 100%;
   padding-bottom: layout.$header-navbar-height;
+  opacity: 1;
+  transition: opacity 1s ease-in 0.2s;
+
+  /* Adds 0.2s delay and 1s transition to loading indicator to prevent flashing */
+  @starting-style {
+    opacity: 0;
+  }
 }
 </style>

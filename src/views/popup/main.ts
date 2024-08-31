@@ -8,7 +8,7 @@ const resizeContainer = () => {
   root.style.height = `${window.innerHeight}px`;
 };
 
-defineComponent({ baseUrl: import.meta.env.VITE_BASE, view: { popup: true } })
+defineComponent({ baseUrl: import.meta.env.VITE_BASE, view: { popup: true, web: import.meta.env.VITE_WEB } })
   .then(() => {
     resizeContainer();
     console.info('Web Component defined');

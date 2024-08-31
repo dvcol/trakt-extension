@@ -3,7 +3,7 @@ export enum WebComponents {
 }
 
 export type DefineOption = { baseName?: string; baseUrl?: string; view?: { option?: boolean; popup?: boolean; web?: boolean } };
-export type DefineComponent = (options?: DefineOption, component?: WebComponents) => void;
+export type DefineComponent = (options?: DefineOption, component?: WebComponents) => Promise<CustomElementConstructor>;
 
 export const defineComponent = async (options: DefineOption = {}, component: WebComponents = WebComponents.TraktExtension) => {
   if (customElements.get(component)) {
@@ -14,6 +14,7 @@ export const defineComponent = async (options: DefineOption = {}, component: Web
     const TraktExtensionWc = createElementInstance(ContainerComponent, { name: component, ...options });
     customElements.define(component, TraktExtensionWc);
   }
+  return customElements.whenDefined(component);
 };
 
 export default defineComponent;

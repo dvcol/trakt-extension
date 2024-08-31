@@ -216,6 +216,16 @@ const onBack = () => {
     &-content {
       margin-top: -1.125rem;
       padding: 0 3rem 1.25rem;
+
+      :deep(.n-skeleton) {
+        opacity: 1;
+        transition: opacity 0.1s ease-in 0.1s;
+
+        /* Adds 0.2s delay and 1s transition to loading indicator to prevent flashing */
+        @starting-style {
+          opacity: 0;
+        }
+      }
     }
   }
 }

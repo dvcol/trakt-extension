@@ -257,9 +257,11 @@
 </html>
 
 <style>
+  html,
   body {
     overscroll-behavior: none;
     display: flex;
+    flex-direction: column;
     margin: 0;
     color: rgb(235 235 235 / 64%);
     font-size: 1rem;
@@ -284,6 +286,13 @@
       --skeleton-navbar-height: 44px;
       
       height: 100%;
+      opacity: 1;
+      transition: opacity 1s ease-in 0.2s;
+
+      /* Adds 0.2s delay and 1s transition to loading indicator to prevent flashing */
+      @starting-style {
+          opacity: 0;
+      }
   }
 
   #app-skeleton-navbar {
