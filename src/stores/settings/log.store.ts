@@ -2,7 +2,7 @@ import { LogLevel } from '@dvcol/common-utils/common/logger';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
-import type { StorageChangeCallback } from '~/utils/browser/browser-storage.utils';
+import type { StorageChangeCallback } from '@dvcol/web-extension-utils/chrome/storage';
 
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';

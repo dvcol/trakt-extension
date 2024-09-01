@@ -76,7 +76,7 @@ import { useAppStateStore } from '~/stores/app-state.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
-import { CachePrefix, ChromeCacheStore } from '~/utils/cache.utils';
+import { CachePrefix, TraktChromeCacheStore } from '~/utils/cache.utils';
 import { cancellablePaginatedWriteJson, getCachedProgressEndpoint, getSessionUser } from '~/utils/trakt-service.utils';
 
 const shouldEvict = (cache?: CacheResponse<unknown>, date?: string | number | Date): boolean => {
@@ -102,9 +102,9 @@ const imageResponseEmpty = (payload: ImagePayload) => {
 
 type SettingsAndAuth = { auth: SettingsAuth; settings: { trakt: UserSetting; simkl?: SimklUserSettings } };
 type SettingsCaches = {
-  trakt: ChromeCacheStore<TraktApiResponse>;
-  simkl: ChromeCacheStore<SimklApiResponse>;
-  tmdb: ChromeCacheStore<TmdbApiResponse>;
+  trakt: TraktChromeCacheStore<TraktApiResponse>;
+  simkl: TraktChromeCacheStore<SimklApiResponse>;
+  tmdb: TraktChromeCacheStore<TmdbApiResponse>;
 };
 
 export class TraktService {
@@ -128,9 +128,9 @@ export class TraktService {
 
   static {
     this.caches = {
-      trakt: new ChromeCacheStore<TraktApiResponse>({ prefix: CachePrefix.Trakt, retention: CacheRetention.Week }),
-      simkl: new ChromeCacheStore<SimklApiResponse>({ prefix: CachePrefix.Simkl, retention: CacheRetention.Week }),
-      tmdb: new ChromeCacheStore<TmdbApiResponse>({ prefix: CachePrefix.Tmdb, retention: CacheRetention.Year }),
+      trakt: new TraktChromeCacheStore<TraktApiResponse>({ prefix: CachePrefix.Trakt, retention: CacheRetention.Week }),
+      simkl: new TraktChromeCacheStore<SimklApiResponse>({ prefix: CachePrefix.Simkl, retention: CacheRetention.Week }),
+      tmdb: new TraktChromeCacheStore<TmdbApiResponse>({ prefix: CachePrefix.Tmdb, retention: CacheRetention.Year }),
     };
 
     this.traktClient = new TraktClient({ ...traktClientSettings, cacheStore: this.caches.trakt }, {}, traktUsedApi);
