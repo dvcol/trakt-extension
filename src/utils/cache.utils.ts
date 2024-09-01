@@ -2,6 +2,9 @@ import { ChromeCacheStore } from '@dvcol/web-extension-utils/chrome/cache';
 
 import type { ResponseOrTypedResponse, TypedResponse } from '@dvcol/base-http-client';
 import type { CacheStoreEntity } from '@dvcol/common-utils/common';
+import type { StorageAreaWrapper } from '@dvcol/web-extension-utils/chrome/storage';
+
+import { storage } from '~/utils/browser/browser-storage.utils';
 
 type FlatResponse<T extends Response = ResponseOrTypedResponse> = Record<keyof T, unknown>;
 
@@ -39,6 +42,31 @@ const parseFlatResponse = <T = unknown>(flat: FlatResponse): TypedResponse<T> =>
 };
 
 export class TraktChromeCacheStore<T> extends ChromeCacheStore<T> {
+  constructor({
+    saveRetention,
+    saveAccess,
+    evictOnError,
+    retention,
+    store,
+    prefix,
+  }: {
+    saveRetention?: boolean;
+    saveAccess?: boolean;
+    evictOnError?: boolean;
+    retention?: number;
+    store?: StorageAreaWrapper;
+    prefix?: string;
+  }) {
+    super({
+      saveRetention,
+      saveAccess,
+      evictOnError,
+      retention,
+      store: store ?? storage.local,
+      prefix,
+    });
+  }
+
   async get(key: string) {
     const restored = await this.store.get<CacheStoreEntity<T>>(`${this.prefix}:${key}`);
     if (restored?.type === 'response') {
