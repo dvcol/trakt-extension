@@ -167,7 +167,7 @@ onActivated(() => {
 </script>
 
 <template>
-  <NFlex class="row" align="center" justify="center" :vertical="false">
+  <NFlex class="row" align="center" justify="space-evenly" :wrap="false">
     <NSelect
       v-model:value="selectedValues"
       v-model:show="open"
@@ -308,13 +308,17 @@ onActivated(() => {
 .row {
   width: 100%;
   padding: 0 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   .types-select {
     flex: 0 1 12rem;
+    min-width: fit-content;
   }
 
   .search-input {
     flex: 1 1 30%;
+    min-width: 12rem;
   }
 }
 </style>

@@ -86,6 +86,7 @@ const navElement = ref<HTMLElement>();
     >
       <template v-for="_route in enabledRoutes" :key="_route">
         <NTab
+          class="tab"
           :style="
             _route === activeRoute
               ? { '--n-tab-text-color-hover': 'var(--navbar-text-color-hover-active)' }
@@ -158,6 +159,10 @@ nav {
     :deep(.n-tabs-capsule) {
       height: calc(#{layout.$header-navbar-height} - 0.75rem) !important;
       border-radius: 0.5rem !important;
+    }
+
+    :deep(.tab) {
+      padding: 0 0.25rem;
     }
   }
 }

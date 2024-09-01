@@ -394,16 +394,23 @@ useWatchActivated(
   }
 }
 
+.limit-card,
+.stats-card {
+  overflow: auto;
+
+  :deep(.detail) {
+    min-width: max-content;
+  }
+}
+
 .limit-card {
   :deep(.detail) {
     flex-basis: 31%;
-    min-width: max-content;
   }
 }
 
 .stats-card {
   :deep(.detail) {
-    flex-basis: 42%;
     min-width: max-content;
   }
 }

@@ -50,7 +50,7 @@ const open = ref(false);
 </script>
 
 <template>
-  <NFlex class="row" align="center" justify="space-evenly" :vertical="false">
+  <NFlex class="row" align="center" justify="space-evenly" :wrap="false">
     <NDatePicker
       v-model:show="open"
       v-model:value="pickerValue"
@@ -98,13 +98,17 @@ const open = ref(false);
 .row {
   width: 100%;
   padding: 0 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   .date-picker {
     flex: 0 1 33%;
+    min-width: fit-content;
   }
 
   .search-input {
     flex: 1 1 33%;
+    min-width: 12rem;
   }
 }
 </style>

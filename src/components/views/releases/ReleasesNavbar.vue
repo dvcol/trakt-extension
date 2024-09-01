@@ -51,7 +51,7 @@ onBeforeMount(() => fetchRegions());
 </script>
 
 <template>
-  <NFlex class="row" align="center" justify="space-evenly" :vertical="false">
+  <NFlex class="row" align="center" justify="space-evenly" :wrap="false">
     <NSelect
       v-model:value="releaseType"
       class="type-select"
@@ -92,17 +92,22 @@ onBeforeMount(() => fetchRegions());
 .row {
   width: 100%;
   padding: 0 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   .type-select {
     flex: 0 0 10rem;
+    min-width: fit-content;
   }
 
   .region-select {
     flex: 1 0 10rem;
+    min-width: fit-content;
   }
 
   .date-picker {
     flex: 2 1 48%;
+    min-width: fit-content;
   }
 }
 </style>

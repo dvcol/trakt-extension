@@ -85,7 +85,7 @@ useWatchActivated(
       :style="{ '--n-border-color': 'var(--border-color)' }"
       hoverable
     >
-      <NFlex align="center" size="large" :wrap="false">
+      <NFlex align="center" size="large" wrap>
         <NButton text @click="onClick">
           <NAvatar
             v-if="avatar"

@@ -102,7 +102,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
 </script>
 
 <template>
-  <NFlex class="row" align="center" justify="center" :vertical="false">
+  <NFlex class="row" align="center" justify="space-evenly" :wrap="false">
     <NSelect
       v-model:value="selectValue"
       v-model:show="open"
@@ -142,13 +142,17 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
 .row {
   width: 100%;
   padding: 0 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   .list-select {
     flex: 0 1 33%;
+    min-width: fit-content;
   }
 
   .search-input {
-    flex: 1 1 calc(56% - 5rem);
+    flex: 1 1 auto;
+    min-width: 12rem;
   }
 }
 </style>
