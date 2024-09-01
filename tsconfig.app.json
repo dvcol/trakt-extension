@@ -7,7 +7,7 @@
     "composite": true,
     "baseUrl": ".",
     "lib": ["DOM", "ESNext", "dom.iterable"],
-    "types": ["naive-ui/volar", "chrome", "@types/chrome", "@types/wicg-file-system-access"],
+    "types": ["naive-ui/volar", "chrome", "@types/chrome"],
     "module": "ESNext",
     "strict": true,
     "esModuleInterop": true,
