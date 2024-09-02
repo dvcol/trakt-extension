@@ -162,6 +162,8 @@ nav {
     }
 
     :deep(.tab) {
+      --n-font-weight-strong: normal;
+
       padding: 0 0.25rem;
     }
   }

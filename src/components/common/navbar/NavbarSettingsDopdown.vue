@@ -146,11 +146,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
   >
     <NFlex justify="space-around" align="center" :wrap="false">
       <NEllipsis
-        style="
-          max-width: calc(100vw / 6 - 0.25rem - 3px - 1.75rem);
-          margin-right: 1.75rem;
-          margin-left: 0.5rem;
-        "
+        style="max-width: calc(100vw / 6 - 0.25rem - 3px - 1.75rem); margin-left: 0.25rem"
         :tooltip="{
           to: parentElement,
           placement: 'left',
@@ -163,10 +159,11 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       <NAvatar
         v-if="!fallback && avatar"
         :src="avatar"
+        class="avatar"
         round
         size="small"
         color="transparent"
-        style="position: absolute; top: 0.125rem; right: 0.5rem; scale: 0.8"
+        :style="{ '--n-avatar-size-override': '1.3125rem' }"
         :on-error="onAvatarError"
       />
       <NIcon v-else style="position: absolute; top: 0.4rem; right: 0.75rem" size="1.5em">
