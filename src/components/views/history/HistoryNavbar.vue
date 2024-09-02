@@ -58,7 +58,7 @@ const open = ref(false);
   <NFlex class="row" align="center" justify="space-evenly" :wrap="false">
     <NDatePicker
       v-model:show="open"
-      class="date-picker"
+      class="date-picker date-range"
       type="daterange"
       :to="parentElement"
       :default-value="[Date.now(), Date.now()]"
@@ -115,13 +115,22 @@ const open = ref(false);
 </style>
 
 <style lang="scss">
+/* stylelint-disable selector-class-pattern -- library class name */
+
+@use '~/styles/layout' as layout;
+
 .n-date-panel {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: min(36.5rem, 100dvw);
   margin-top: 12px;
   margin-left: -16px;
-  scrollbar-width: thin;
+
+  &.n-date-panel--daterange {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: min(36.5rem, 100dvw);
+    max-height: calc(var(--full-height) - #{layout.$header-open-drawer-height});
+    overflow: auto;
+    scrollbar-width: thin;
+  }
 }
 </style>
