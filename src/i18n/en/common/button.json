@@ -51,9 +51,25 @@
     "message": "Login",
     "description": "Button to login."
   },
-  "common__button__export": {
+  "common__button__export_my_data": {
     "message": "Export my data",
+    "description": "Button to export my data."
+  },
+  "common__button__export": {
+    "message": "Export data",
     "description": "Button to export data."
+  },
+  "common__button__exporting": {
+    "message": "Exporting data",
+    "description": "label when exporting data."
+  },
+  "common__button__import": {
+    "message": "Import data",
+    "description": "Button to import data."
+  },
+  "common__button__importing": {
+    "message": "Importing data",
+    "description": "label when importing data."
   },
   "common__button__cancel": {
     "message": "Cancel",

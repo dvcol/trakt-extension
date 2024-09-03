@@ -1,3 +1,4 @@
+import { type JsonWriterOptions, writeJson } from '@dvcol/common-utils/common/save';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, type Ref } from 'vue';
@@ -5,6 +6,7 @@ import { computed, reactive, ref, type Ref } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 
 import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { clearProxy } from '~/utils/vue.utils';
@@ -33,7 +35,7 @@ type CustomLinkSubstitution<T = string | number> = Partial<{
 }>;
 
 export type CustomLink = TagLink & {
-  id: number;
+  id: string | number;
   url: string;
   scopes: CustomLinkScopes[];
   icon?: 'external';
@@ -51,7 +53,7 @@ export const resolveLinkUrl = (url: string, substitutions: CustomLinkSubstitutio
 
 export type AliasScope = 'movie' | 'show';
 
-export type CustomLinkDictionary = Record<number, CustomLink>;
+export type CustomLinkDictionary = Record<CustomLink['id'], CustomLink>;
 type CustomLinkScopeDictionary = Partial<Record<CustomLinkScopes, CustomLinkDictionary>>;
 type AliasDictionary = Partial<Record<AliasScope, Record<string, string>>>;
 
@@ -73,6 +75,8 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
 
   const linkDictionary = reactive<CustomLinkDictionary>({});
   const linkScopeDictionary = reactive<CustomLinkScopeDictionary>({});
+
+  const exporting = ref(false);
 
   const clearState = () => {
     clearProxy(aliasDictionary);
@@ -134,6 +138,33 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     }
   };
 
+  const exportLinks = async (
+    options: JsonWriterOptions = {
+      picker: {
+        suggestedName: `${new Date().toISOString().replace('T', '_').replaceAll(':', '-').split('.').at(0)}_links.json`,
+      },
+    },
+  ) => {
+    if (exporting.value) {
+      Logger.warn('Export already in progress');
+      return false;
+    }
+
+    exporting.value = true;
+    try {
+      return await writeJson(Object.values(linkDictionary), options);
+    } catch (err) {
+      if (err instanceof Error && err?.name === 'AbortError') {
+        Logger.warn('Export cancelled', err);
+        return;
+      }
+      Logger.error('Failed to export links', { err });
+      NotificationService.error('Failed to export links', err);
+    } finally {
+      exporting.value = false;
+    }
+  };
+
   const initLinksStore = async () => {
     await restoreState();
   };
@@ -176,7 +207,20 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     createTab({ url, active: active ?? !openLinkInBackground.value });
   };
 
-  return { initLinksStore, clearState, linkDictionary, addLink, removeLink, getLinks, getAlias, aliasEnabled, openLinkInBackground, openTab };
+  return {
+    initLinksStore,
+    clearState,
+    linkDictionary,
+    addLink,
+    removeLink,
+    getLinks,
+    getAlias,
+    aliasEnabled,
+    openLinkInBackground,
+    openTab,
+    exporting,
+    exportLinks,
+  };
 });
 
 export const useLinksStoreRefs = () => storeToRefs(useLinksStore());

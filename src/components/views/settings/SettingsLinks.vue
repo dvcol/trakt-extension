@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { getUUID } from '@dvcol/common-utils';
 import {
   type FormInst,
+  type FormItemRule,
   NButton,
   NCard,
   NFlex,
@@ -9,6 +11,7 @@ import {
   NIcon,
   NInput,
   NLi,
+  NModal,
   NP,
   NPopconfirm,
   NSelect,
@@ -17,14 +20,19 @@ import {
   NUl,
 } from 'naive-ui';
 
-import { computed, onActivated, reactive, ref, toRaw } from 'vue';
+import { computed, onActivated, reactive, ref, toRaw, watch } from 'vue';
 
 import IconClose from '~/components/icons/IconClose.vue';
 import IconConfirm from '~/components/icons/IconConfirm.vue';
+import IconDownload from '~/components/icons/IconDownload.vue';
+import IconLoadingDots from '~/components/icons/IconLoadingDots.vue';
 import IconPlus from '~/components/icons/IconPlus.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { AllDataSources, DataSource } from '~/models/source.model';
+import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import {
   AllCustomLinkScopes,
@@ -37,13 +45,63 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'links');
 
-const { linkDictionary, aliasEnabled, openLinkInBackground } = useLinksStoreRefs();
-const { addLink, removeLink } = useLinksStore();
+const { linkDictionary, aliasEnabled, openLinkInBackground, exporting } =
+  useLinksStoreRefs();
+const { addLink, removeLink, exportLinks } = useLinksStore();
+
+const { root } = useAppStateStoreRefs();
+const openImport = ref(false);
+const linksImport = ref('');
+
+const isValidLink = (link: unknown): link is CustomLink => {
+  if (typeof link !== 'object' || link === null) return false;
+  if (!('label' in link)) return false;
+  if (typeof link.label !== 'string' || !link.label.trim().length) return false;
+  if (!('scopes' in link)) return false;
+  if (!Array.isArray(link.scopes) || !link.scopes.length) return false;
+  return 'url' in link && typeof link.url === 'string' && !!link.url?.trim().length;
+};
+
+const parseLinkImport = (_links = linksImport.value): CustomLink[] => {
+  const parsed = JSON.parse(_links);
+  if (Array.isArray(parsed)) return parsed;
+  if (isValidLink(parsed)) return [parsed];
+  return Object.values(parsed);
+};
+
+const linksValidator: FormItemRule = {
+  required: true,
+  validator: () => {
+    if (!linksImport.value?.trim()) return true;
+    try {
+      return parseLinkImport(linksImport.value)?.every(isValidLink);
+    } catch (err) {
+      Logger.debug('Error parsing import link JSON', err);
+      return new Error(i18n('import_links_modal_validation_json'));
+    }
+  },
+  message: i18n('import_links_modal_validation_json'),
+  trigger: ['input', 'blur'],
+};
 
 const form = reactive<CustomLinkDictionary>(structuredClone(toRaw(linkDictionary.value)));
 
 onActivated(() => {
-  Object.assign(form, structuredClone(toRaw(linkDictionary.value)));
+  watch(
+    linkDictionary,
+    _dictionary => {
+      const _dirty = structuredClone(toRaw(form));
+      Object.assign(form, structuredClone(toRaw(_dictionary)));
+      Object.entries(form).forEach(([key, value]) => {
+        if (!_dirty[key]) return;
+        form[key] = _dirty[key];
+      });
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  );
 });
 
 const links = computed(() => Object.values(linkDictionary.value));
@@ -52,7 +110,7 @@ const dirty = computed(() =>
   Object.fromEntries(
     Object.entries(form).map(([key, value]) => [
       key,
-      JSON.stringify(value) !== JSON.stringify(linkDictionary.value[Number(key)]),
+      JSON.stringify(value) !== JSON.stringify(linkDictionary.value[key]),
     ]),
   ),
 );
@@ -64,19 +122,42 @@ const restore = (link: CustomLink) => {
 const addOrUpdate = (link?: CustomLink) => {
   if (!link) {
     link = {
-      id: links.value?.length,
+      id: `${links.value?.length ?? 0}-${getUUID()}`,
       label: 'Custom Link All',
       url: 'https://example.com',
       scopes: AllCustomLinkScopes,
-    };
-    form[link.id] = link;
+    } satisfies CustomLink;
   }
   addLink(structuredClone(toRaw(link)));
+  NotificationService.message.success(i18n('link_save_success'));
 };
 
-const remove = (id: number) => {
-  delete form[id];
+const importLinks = () => {
+  try {
+    const length = links.value?.length ?? 0;
+    parseLinkImport()
+      .map((link, index) => ({
+        ...structuredClone(link),
+        id: `${length + index}-${getUUID()}`,
+      }))
+      .forEach(addLink);
+    openImport.value = false;
+    linksImport.value = '';
+    NotificationService.message.success(i18n('import_links_success'));
+  } catch (err) {
+    Logger.error('Error importing links', err);
+    NotificationService.error(i18n('import_links_failure'), err);
+  }
+};
+
+const exportCustomLinks = async () => {
+  if (!(await exportLinks())) return;
+  NotificationService.message.success(i18n('export_links_success'));
+};
+
+const remove = (id: CustomLink['id']) => {
   removeLink(id);
+  NotificationService.message.success(i18n('link_remove_success'));
 };
 
 const scopeOptions = AllCustomLinkScopes.map(scope => ({
@@ -144,8 +225,8 @@ const containerRef = ref<HTMLDivElement>();
 
       <NUl class="keywords-list">
         <NLi v-for="keyword of keywords" :key="keyword" class="item">
-          <span class="keyword">{{ i18n(`template_keywords_${keyword}`) }}</span> -
-          <span>{{ i18n(`template_keywords_${keyword}_description`) }}</span>
+          <span class="keyword">{{ i18n(`template_keywords_${ keyword }`) }}</span> -
+          <span>{{ i18n(`template_keywords_${ keyword }_description`) }}</span>
         </NLi>
       </NUl>
 
@@ -161,6 +242,89 @@ const containerRef = ref<HTMLDivElement>();
       </NP>
     </NP>
 
+    <SettingsFormItem :label="i18n('export_links')">
+      <NButton
+        class="export-button"
+        type="info"
+        secondary
+        :disabled="exporting"
+        @click="exportCustomLinks()"
+      >
+        <span>
+          {{ i18n(exporting ? 'exporting' : 'export', 'common', 'button') }}
+        </span>
+        <template #icon>
+          <NIcon :component="exporting ? IconLoadingDots : IconDownload" />
+        </template>
+      </NButton>
+    </SettingsFormItem>
+
+    <SettingsFormItem :label="i18n('import_links')">
+      <NButton
+        class="export-button"
+        type="info"
+        secondary
+        :disabled="openImport"
+        @click="openImport = true"
+      >
+        <span>
+          {{ i18n(exporting ? 'importing' : 'import', 'common', 'button') }}
+        </span>
+        <template #icon>
+          <NIcon :component="openImport ? IconLoadingDots : IconDownload" />
+        </template>
+      </NButton>
+    </SettingsFormItem>
+
+    <NModal v-model:show="openImport" :to="root" block-scroll>
+      <NCard
+        class="import-card"
+        :style="{ '--n-border-color': 'var(--border-color)' }"
+        :title="i18n('import_links')"
+      >
+        <NFormItem
+          :label="i18n('import_links_modal_label')"
+          class="form-row"
+          :rule="linksValidator"
+        >
+          <NInput
+            v-model:value="linksImport"
+            type="textarea"
+            :placeholder="i18n('import_links_modal_placeholder')"
+            rows="15"
+            autofocus
+          />
+        </NFormItem>
+
+        <NFlex class="form-row" align="center" justify="flex-end">
+          <NButton
+            :disabled="exporting"
+            class="form-button"
+            type="error"
+            secondary
+            @click="openImport = false"
+          >
+            <span>{{ i18n('cancel', 'common', 'button') }}</span>
+            <template #icon>
+              <NIcon :component="IconClose" />
+            </template>
+          </NButton>
+          <NButton
+            :disabled="exporting || !linksImport?.trim()?.length"
+            class="form-button"
+            type="success"
+            secondary
+            @click="importLinks()"
+          >
+            <span>{{ i18n('save', 'common', 'button') }}</span>
+            <template #icon>
+              <NIcon :component="IconConfirm" />
+            </template>
+          </NButton>
+        </NFlex>
+      </NCard>
+    </NModal>
+
     <!--  Content  -->
     <NForm ref="formRef" :model="form">
       <TransitionGroup
@@ -170,58 +334,58 @@ const containerRef = ref<HTMLDivElement>();
         :style="{ '--length': links?.length }"
       >
         <NCard
-          v-for="(link, index) in links"
-          :key="index"
+          v-for="link in links"
+          :key="link.id"
           class="link-card"
           :style="{ '--n-border-color': 'var(--border-color)' }"
         >
           <NFormItem
             :label="i18n('label_name')"
-            :path="`[${ index }].label`"
+            :path="`[${ link.id }].label`"
             :rule="{
               required: true,
-              message: `Please input a unique name.`,
+              message: i18n('validation_unique_name'),
               trigger: ['input', 'blur'],
             }"
           >
-            <NInput v-model:value="form[index].label" clearable />
+            <NInput v-model:value="form[link.id].label" clearable />
           </NFormItem>
 
           <NFormItem
             :label="i18n('label_template')"
             class="form-row"
-            :path="`[${ index }].url`"
+            :path="`[${ link.id }].url`"
             :rule="{
               required: true,
-              message: `Please input a template url.`,
+              message: i18n('validation_template_required'),
               trigger: ['input', 'blur'],
             }"
           >
-            <NInput v-model:value="form[index].url" clearable />
+            <NInput v-model:value="form[link.id].url" clearable />
           </NFormItem>
           <NFormItem
             :label="i18n('label_label')"
             class="form-row"
-            :path="`[${ index }].url`"
+            :path="`[${ link.id }].url`"
           >
             <NInput
-              v-model:value="form[index].title"
-              placeholder="Defaults to the link url if empty."
+              v-model:value="form[link.id].title"
+              :placeholder="i18n('link_placeholder')"
               clearable
             />
           </NFormItem>
 
-          <NFormItem :label="i18n('label_scopes')" :path="`[${ index }].scopes`">
+          <NFormItem :label="i18n('label_scopes')" :path="`[${ link.id }].scopes`">
             <NSelect
-              v-model:value="form[index].scopes"
+              v-model:value="form[link.id].scopes"
               multiple
               :to="containerRef"
               :options="
                 scopeOptions.map(option => ({
                   ...option,
                   disabled:
-                    form[index].scopes?.length === 1 &&
-                    form[index].scopes[0] === option.value,
+                    form[link.id].scopes?.length === 1 &&
+                    form[link.id].scopes[0] === option.value,
                 }))
               "
             />
@@ -246,7 +410,7 @@ const containerRef = ref<HTMLDivElement>();
               </template>
             </NPopconfirm>
             <NButton
-              :disabled="!isDirty(form[index])"
+              :disabled="!isDirty(form[link.id])"
               class="form-button"
               type="info"
               secondary
@@ -258,11 +422,11 @@ const containerRef = ref<HTMLDivElement>();
               </template>
             </NButton>
             <NButton
-              :disabled="isDisabled(form[index])"
+              :disabled="isDisabled(form[link.id])"
               class="form-button"
-              :type="getType(form[index])"
+              :type="getType(form[link.id])"
               secondary
-              @click="addOrUpdate(form[index])"
+              @click="addOrUpdate(form[link.id])"
             >
               <span>{{ i18n('save', 'common', 'button') }}</span>
               <template #icon>
@@ -303,6 +467,15 @@ const containerRef = ref<HTMLDivElement>();
   transition-delay: 0.45s;
 }
 
+.import-card {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 3rem);
+  max-width: 75%;
+  transform: translate(-50%, -50%);
+}
+
+.import-card,
 .link-card {
   --border-color: var(--white-10);
 

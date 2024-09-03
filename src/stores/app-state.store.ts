@@ -14,6 +14,7 @@ export const useAppStateStore = defineStore('app.state', () => {
   const isOption = ref(false);
   const isPopup = ref(false);
   const isWeb = ref(false);
+  const root = ref<HTMLElement>();
 
   const { waitReady, setReady } = useWaitReady();
 
@@ -28,7 +29,7 @@ export const useAppStateStore = defineStore('app.state', () => {
     return sendMessage({ type: MessageType.AppReady, payload: ready });
   };
 
-  return { isAppReady, setAppReady, waitAppReady: waitReady, panelOpen, panelDirty, footerOpen, isOption, isPopup, isWeb };
+  return { isAppReady, setAppReady, waitAppReady: waitReady, panelOpen, panelDirty, footerOpen, isOption, isPopup, isWeb, root };
 });
 
 export const useAppStateStoreRefs = () => storeToRefs(useAppStateStore());

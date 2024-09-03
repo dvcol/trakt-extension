@@ -15,6 +15,7 @@ import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
 import { NavbarService } from '~/services/navbar.service';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { lazyComponent } from '~/utils/lazy.utils';
 import { addCustomProgressProperty } from '~/utils/style.utils';
@@ -30,8 +31,7 @@ const override: GlobalThemeOverrides = {
 
 const { drawer, open, dropdown } = NavbarService;
 const { enabledRoutes } = useExtensionSettingsStoreRefs();
-
-const root = ref<HTMLElement>();
+const { root } = useAppStateStoreRefs();
 
 onBeforeMount(() => addCustomProgressProperty());
 </script>

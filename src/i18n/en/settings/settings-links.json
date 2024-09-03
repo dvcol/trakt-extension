@@ -134,5 +134,57 @@
   "settings__links__template_example_result": {
     "message": "https://www.my-url.com/search/s01e05+my-alias",
     "description": "Result for the example template for the trakt keyword"
+  },
+  "settings__links__validation_unique_name": {
+    "message": "Please input a unique name.",
+    "description": "Validation message for unique name"
+  },
+  "settings__links__validation_template_required": {
+    "message": "Please input a template url.",
+    "description": "Validation message for required template"
+  },
+  "settings__links__link_placeholder": {
+    "message": "Defaults to the link url if empty.",
+    "description": "Placeholder for the link field"
+  },
+  "settings__links__export_links": {
+    "message": "Export custom links",
+    "description": "Label for the export links button"
+  },
+  "settings__links__import_links": {
+    "message": "Import custom links",
+    "description": "Label for the import links button"
+  },
+  "settings__links__import_links_modal_label": {
+    "message": "JSON links to import",
+    "description": "Label for the import links section"
+  },
+  "settings__links__import_links_modal_placeholder": {
+    "message": "{\n  \"0\": {\n    \"id\": 0,\n    \"label\": \"Custom Link All\",\n    \"scopes\": [\n      \"movie\",\n      \"show\",\n      \"season\",\n      \"episode\",\n      \"person\"\n    ],\n    \"title\": \"My link title\",\n    \"url\": \"https://example.com\"\n  }\n}",
+    "description": "Label for the import links placeholder"
+  },
+  "settings__links__import_links_modal_validation_json": {
+    "message": "Invalid JSON format.",
+    "description": "Error message for invalid JSON format"
+  },
+  "settings__links__import_links_success": {
+    "message": "Links imported successfully.",
+    "description": "Success message for imported links"
+  },
+  "settings__links__import_links_failure": {
+    "message": "Failed to import links.",
+    "description": "Error message for failed import links"
+  },
+  "settings__links__export_links_success": {
+    "message": "Links exported successfully.",
+    "description": "Success message for exported links"
+  },
+  "settings__links__link_remove_success": {
+    "message": "Link removed successfully.",
+    "description": "Success message for removed link"
+  },
+  "settings__links__link_save_success": {
+    "message": "Link saved successfully.",
+    "description": "Success message for saved link"
   }
 }

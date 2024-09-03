@@ -178,7 +178,9 @@ const container = ref();
         @click="click"
       >
         <span>
-          {{ i18n(fetching[index] ? 'export_cancel' : 'export', 'common', 'button') }}
+          {{
+            i18n(fetching[index] ? 'export_cancel' : 'export_my_data', 'common', 'button')
+          }}
         </span>
         <template #icon>
           <NIcon :component="loading[index] ? IconLoadingDots : IconDownload" />
