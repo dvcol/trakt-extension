@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.25.0](https://github.com/dvcol/trakt-extension/compare/v1.24.4...v1.25.0) (2024-09-03)
+
+
+### Features
+
+* **links:** adds export/import mechanism ([115848c](https://github.com/dvcol/trakt-extension/commit/115848c69cc8f10f0519b65c568191a461073fa6))
+
+
+### Bug Fixes
+
+* **cache:** default storage area to custom local ([af71738](https://github.com/dvcol/trakt-extension/commit/af71738da9e9d9d91f103cf3ae5e20ec2c8a89c4))
+* **css:** fix reactive view for small screens ([e80d937](https://github.com/dvcol/trakt-extension/commit/e80d937df4145f35a0ba81d30fcd6bc6f04a2449))
+* **navbar:** fix responsive css for date picker date-range mode ([b69276a](https://github.com/dvcol/trakt-extension/commit/b69276ac2f29b248624f356903fc4a688bc1b9f2))
+* **navbar:** resize avatar img to fit in navbar ([0c6b1e4](https://github.com/dvcol/trakt-extension/commit/0c6b1e4a1c5f8b05df2705f71f0af6f8a2631aa0))
+* **shell:** adds loading indicator delay to shell skeleton ([6d65a6c](https://github.com/dvcol/trakt-extension/commit/6d65a6c97102dfa5c124d7ef89ffee518b3b6592))
+* **web:** adds hardcoded background-color to prevent flashing ([0796f36](https://github.com/dvcol/trakt-extension/commit/0796f36756c3d37a64f24b19670f09716a9828a4))
+
 ### [1.24.4](https://github.com/dvcol/trakt-extension/compare/v1.24.3...v1.24.4) (2024-08-30)
 
 
