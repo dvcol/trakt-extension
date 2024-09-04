@@ -166,7 +166,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
         :style="{ '--n-avatar-size-override': '1.3125rem' }"
         :on-error="onAvatarError"
       />
-      <NIcon v-else style="position: absolute; top: 0.4rem; right: 0.75rem" size="1.5em">
+      <NIcon v-else style="margin-left: -0.25rem" size="1.25em">
         <IconAccount />
       </NIcon>
     </NFlex>
