@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.25.1](https://github.com/dvcol/trakt-extension/compare/v1.25.0...v1.25.1) (2024-09-04)
+
+
+### Bug Fixes
+
+* **navbar:** adjust avatar fallback css ([cb57d4d](https://github.com/dvcol/trakt-extension/commit/cb57d4d2d4bebf37151c3adecc0af3dc0de52be9))
+* **release:** await region loading when loading releases ([b172331](https://github.com/dvcol/trakt-extension/commit/b172331ca4c9b60c72417bb88b6c9171929710fd))
+
 ## [1.25.0](https://github.com/dvcol/trakt-extension/compare/v1.24.4...v1.25.0) (2024-09-03)
 
 
