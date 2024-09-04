@@ -76,6 +76,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const endCalendar = ref<Date>(DateUtils.weeks.next(weeks.value, center.value));
 
   const regionLoading = ref(true);
+  const regionLoadingPromise = ref<Promise<TmdbConfigurationCounty[]>>();
   const regions = ref<TmdbConfigurationCounty[]>([]);
   const region = ref<TmdbConfigurationCounty | undefined>();
   const releaseType = ref<TmdbMovieReleaseTypes>(TmdbMovieReleaseType.Theatrical);
@@ -119,13 +120,15 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const fetchRegions = async () => {
     regionLoading.value = true;
     try {
-      regions.value = await TraktService.providers.regions();
+      regionLoadingPromise.value = TraktService.providers.regions();
+      regions.value = await regionLoadingPromise.value;
       if (!region.value) region.value = getLocaleRegion();
     } catch (e) {
       Logger.error('Failed to fetch regions');
       NotificationService.error('Failed to fetch regions', e);
     } finally {
       regionLoading.value = false;
+      regionLoadingPromise.value = undefined;
     }
   };
 
@@ -135,8 +138,13 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       return;
     }
 
+    if (regionLoading.value && regionLoadingPromise.value) {
+      Logger.warn('Waiting for region to load...');
+      await regionLoadingPromise.value;
+    }
+
     if (!region.value) {
-      Logger.warn('Region not selected');
+      Logger.warn('Region not selected', { region: region.value, regions: [...regions.value], regionLoading: regionLoading.value });
       return;
     }
 

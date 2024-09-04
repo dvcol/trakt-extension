@@ -2,7 +2,7 @@
 import { TmdbMovieReleaseType } from '@dvcol/tmdb-http-client/models';
 import { NDatePicker, NFlex, NIcon, NSelect, type SelectOption } from 'naive-ui';
 
-import { computed, defineProps, onBeforeMount, ref } from 'vue';
+import { computed, defineProps, onActivated, ref } from 'vue';
 
 import IconCalendar from '~/components/icons/IconCalendar.vue';
 import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
@@ -47,7 +47,7 @@ const regionOptions = computed<SelectOption[]>(() =>
 
 const open = ref(false);
 
-onBeforeMount(() => fetchRegions());
+onActivated(() => fetchRegions());
 </script>
 
 <template>
