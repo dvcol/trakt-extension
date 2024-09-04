@@ -38,7 +38,7 @@
     "dev": "cross-env NODE_ENV=development run-p dist vite:serve",
     "build": "cross-env NODE_ENV=production run-s dist type:check 'vite:build {@}' --",
     "build:web": "VITE_WEB=true VITE_BASE=/trakt-extension/ pnpm run build",
-    "serve:web": "VITE_SOURCEMAP=true VITE_WEB=true run-s build vite:preview",
+    "serve:web": "VITE_SOURCEMAP=true VITE_WEB=true VITE_BASE=/web-extension-template/ run-s build vite:preview",
     "analyse": "vite-bundle-visualizer",
     "test:unit": "vitest run --coverage --mode testing",
     "test:watch": "vitest --mode testing",

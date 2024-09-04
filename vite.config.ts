@@ -171,7 +171,7 @@ export default defineConfig(() => ({
     'import.meta.env.PKG_NAME': JSON.stringify(pkg.name),
   },
   plugins: getPlugins(isDev, isWeb),
-  base: './',
+  base: process.env.VITE_BASE || './',
   server: {
     port,
     hmr: {

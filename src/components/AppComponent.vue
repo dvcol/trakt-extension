@@ -126,7 +126,7 @@ const onBack = () => {
 
                 <!--  Content  -->
                 <div class="panel-content">
-                  <component :is="PanelComponent" />
+                  <component :is="PanelComponent ?? PageLoading" />
                 </div>
               </NDrawerContent>
             </NDrawer>

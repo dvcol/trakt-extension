@@ -1,22 +1,48 @@
 <script lang="ts" setup>
 import { NAnchor, NAnchorLink, NCard, NLayout, NLayoutSider } from 'naive-ui';
 
-import { type Component, computed, onDeactivated, type Ref, ref } from 'vue';
+import { computed, onDeactivated, ref } from 'vue';
 
-import SettingsAccount from '~/components/views/settings/SettingsAccount.vue';
-import SettingsActivity from '~/components/views/settings/SettingsActivity.vue';
-import SettingsBadge from '~/components/views/settings/SettingsBadge.vue';
-import SettingsCache from '~/components/views/settings/SettingsCache.vue';
-import SettingsConnect from '~/components/views/settings/SettingsConnect.vue';
-import SettingsExport from '~/components/views/settings/SettingsExport.vue';
-import SettingsLinks from '~/components/views/settings/SettingsLinks.vue';
-import SettingsLogs from '~/components/views/settings/SettingsLogs.vue';
-import SettingsMenus from '~/components/views/settings/SettingsMenus.vue';
-import SettingsTabs from '~/components/views/settings/SettingsTabs.vue';
-import SettingsWatching from '~/components/views/settings/SettingsWatching.vue';
+import type { Component, Ref } from 'vue';
 
+import PageLoading from '~/components/common/loading/PageLoading.vue';
 import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useI18n } from '~/utils/i18n.utils';
+import lazyComponent from '~/utils/lazy.utils';
+
+const SettingsAccount = lazyComponent(
+  () => import('~/components/views/settings/SettingsAccount.vue'),
+);
+const SettingsActivity = lazyComponent(
+  () => import('~/components/views/settings/SettingsActivity.vue'),
+);
+const SettingsBadge = lazyComponent(
+  () => import('~/components/views/settings/SettingsBadge.vue'),
+);
+const SettingsCache = lazyComponent(
+  () => import('~/components/views/settings/SettingsCache.vue'),
+);
+const SettingsConnect = lazyComponent(
+  () => import('~/components/views/settings/SettingsConnect.vue'),
+);
+const SettingsExport = lazyComponent(
+  () => import('~/components/views/settings/SettingsExport.vue'),
+);
+const SettingsLinks = lazyComponent(
+  () => import('~/components/views/settings/SettingsLinks.vue'),
+);
+const SettingsLogs = lazyComponent(
+  () => import('~/components/views/settings/SettingsLogs.vue'),
+);
+const SettingsMenus = lazyComponent(
+  () => import('~/components/views/settings/SettingsMenus.vue'),
+);
+const SettingsTabs = lazyComponent(
+  () => import('~/components/views/settings/SettingsTabs.vue'),
+);
+const SettingsWatching = lazyComponent(
+  () => import('~/components/views/settings/SettingsWatching.vue'),
+);
 
 const i18n = useI18n('settings');
 
@@ -122,7 +148,12 @@ onDeactivated(() => {
           @focusin="onEnter(section)"
           @focusout="onLeave(section)"
         >
-          <component :is="section.component" />
+          <Suspense>
+            <component :is="section.component" />
+            <template #fallback>
+              <PageLoading />
+            </template>
+          </Suspense>
         </NCard>
       </template>
     </NLayout>
