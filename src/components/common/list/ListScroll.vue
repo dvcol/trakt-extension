@@ -268,5 +268,9 @@ const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
     animation: fade-in 0.5s forwards;
     animation-delay: 0.25s;
   }
+
+  :deep(.v-vl) {
+    overscroll-behavior: none;
+  }
 }
 </style>
