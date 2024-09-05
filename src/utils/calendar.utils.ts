@@ -165,16 +165,20 @@ export const useCalendar = ({
     const first = list.value[0];
     const fetching = fetchData('start');
 
+    // offset the scroll by 1 item if a placeholder is added
+    let placeholder = 0;
     const timeout = setTimeout(() => {
       listRef.value?.list.scrollTo({ top: 145 });
+      placeholder = 1;
     }, defaultDebounceLoadingDelay); // default debounceLoading delay
 
     await fetching;
 
     clearTimeout(timeout);
     listRef.value?.list.scrollTo({
-      top: list.value.findIndex(item => item.id === first.id) * 145,
+      top: (list.value.findIndex(item => item.id === first.id) - placeholder) * 145,
     });
+    placeholder = 0;
   };
 
   const onScrollBottom = async () => {
