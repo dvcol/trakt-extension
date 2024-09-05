@@ -29,7 +29,7 @@ type ActivityStoreState = {
 const ActivityStoreConstants = {
   Store: 'data.activity',
   /** 30 seconds */
-  DefaultPolling: PollingIntervals.ThirtySeconds,
+  DefaultPolling: PollingIntervals.OneMinute,
 } as const;
 
 export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => {

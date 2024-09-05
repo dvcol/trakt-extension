@@ -16,7 +16,7 @@ import { useI18n } from '~/utils/i18n.utils';
 const WatchingStoreConstants = {
   Store: 'data.watching',
   /** 10 seconds */
-  DefaultPolling: PollingIntervals.TenSeconds,
+  DefaultPolling: PollingIntervals.ThirtySeconds,
 } as const;
 
 type WatchingState = {
