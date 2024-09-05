@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.25.3](https://github.com/dvcol/trakt-extension/compare/v1.25.2...v1.25.3) (2024-09-05)
+
+
+### Bug Fixes
+
+* **list-scroll:** supports scroll boundary ([5e72b36](https://github.com/dvcol/trakt-extension/commit/5e72b3606b1d367461636d386e236165d926ed42))
+* **loading:** add minimum height to settings loader ([15a9f1e](https://github.com/dvcol/trakt-extension/commit/15a9f1e8a4f0e3fac451171b0f005b96b51f9bee))
+* **loading:** only offset placeholder if passed timeout ([c24c8ac](https://github.com/dvcol/trakt-extension/commit/c24c8acb8f485918f10a5aa960586084043581a5))
+
 ### [1.25.2](https://github.com/dvcol/trakt-extension/compare/v1.25.1...v1.25.2) (2024-09-05)
 
 
