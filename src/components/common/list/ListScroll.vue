@@ -56,6 +56,13 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  overscroll: {
+    type: String as PropType<
+      'auto' | 'contain' | 'none' | 'initial' | 'unset' | 'inherit'
+    >,
+    required: false,
+    default: 'auto',
+  },
   contentHeight: {
     type: Number,
     required: false,
@@ -179,6 +186,7 @@ const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
       v-if="!isEmpty"
       ref="listRef"
       class="list-scroll"
+      :style="{ '--overscroll-behavior': overscroll }"
       :data-length="items.length"
       :data-page-size="pageSize"
       :item-size="listItemSize"
@@ -270,7 +278,7 @@ const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
   }
 
   :deep(.v-vl) {
-    overscroll-behavior: none;
+    overscroll-behavior: var(--overscroll-behavior, auto);
   }
 }
 </style>

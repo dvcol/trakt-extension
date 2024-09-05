@@ -71,6 +71,7 @@ const { onItemClick } = usePanelItem();
       backdrop
       show-played
       show-collected
+      overscroll="none"
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-item-click="onItemClick"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"

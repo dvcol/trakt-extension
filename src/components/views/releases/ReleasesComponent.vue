@@ -70,6 +70,7 @@ const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
       :loading="loading"
       :content-height="3"
       hide-time
+      overscroll="none"
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-item-click="onMovieClick"
       @on-scroll-into-view="e => onScrollIntoOutOfView(false, e.ref)"
