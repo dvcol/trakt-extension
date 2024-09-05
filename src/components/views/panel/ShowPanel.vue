@@ -425,7 +425,7 @@ onMounted(() => {
     <NSkeleton
       v-else
       class="show-title-skeleton"
-      style="width: var(--half-height)"
+      style="width: min(var(--half-width), var(--height-70-dvh))"
       round
     />
 
@@ -492,6 +492,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .panel-container {
+  // everything under the poster
   & > div:nth-child(n + 3) {
     @media (width > 1200px) {
       max-width: min(var(--half-width), var(--height-70-dvh));

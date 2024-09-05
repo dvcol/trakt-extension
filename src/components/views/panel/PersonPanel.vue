@@ -82,7 +82,7 @@ const titleUrl = computed(() => {
     <NSkeleton
       v-else
       class="show-title-skeleton"
-      style="width: var(--half-height)"
+      style="width: min(var(--half-width), var(--height-70-dvh))"
       round
     />
 
@@ -96,6 +96,7 @@ const titleUrl = computed(() => {
 
 <style lang="scss" scoped>
 .panel-container {
+  // everything under the posters
   & > div:nth-child(n + 3) {
     @media (width > 1200px) {
       max-width: min(var(--half-width), var(--height-70-dvh));
