@@ -12,6 +12,7 @@ import {
   type VirtualListRef,
   type VirtualListScrollToOptions,
 } from '~/models/list-scroll.model';
+import { defaultDebounceLoadingDelay } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
   id: ListScrollItem['id'];
@@ -29,7 +30,7 @@ export const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `em
 export const getLoadingPlaceholder = (date: Date) =>
   ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.loading }) as CalendarItem;
 
-export const getEmptyWeeks = ({ startDate, loading = false, days = 14 }: { startDate: Date; loading?: boolean; days?: number }) => {
+export const getEmptyWeeks = ({ startDate, loading = false, days = 14 }: { startDate: Date; loading?: boolean; days?: number }): CalendarItem[] => {
   return Array(days)
     .fill(CalendarPlaceholder)
     .map((_, index) => {
@@ -162,10 +163,17 @@ export const useCalendar = ({
 
   const onScrollTop = async () => {
     const first = list.value[0];
-    await fetchData('start');
+    const fetching = fetchData('start');
 
+    const timeout = setTimeout(() => {
+      listRef.value?.list.scrollTo({ top: 145 });
+    }, defaultDebounceLoadingDelay); // default debounceLoading delay
+
+    await fetching;
+
+    clearTimeout(timeout);
     listRef.value?.list.scrollTo({
-      top: (list.value.findIndex(item => item.id === first.id) - 1) * 145,
+      top: list.value.findIndex(item => item.id === first.id) * 145,
     });
   };
 

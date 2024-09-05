@@ -114,7 +114,7 @@ export const useProgressStore = defineStore('data.progress', () => {
 
     Logger.debug('Fetching progress');
     loading.value = true;
-    const { clearLoading } = debounceLoading(progress, loadingPlaceholder, true);
+    const { clearLoading } = debounceLoading(progress, loadingPlaceholder, { clear: true });
     try {
       progress.value = await fetchProgressData();
       evicted.progress = false;

@@ -134,7 +134,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     Logger.debug('Fetching search results', { types: types.value, query: query.value, search: search.value });
 
     loading.value = true;
-    const { clearLoading } = debounceLoading(searchResults, loadingPlaceholder, !page);
+    const { clearLoading } = debounceLoading(searchResults, loadingPlaceholder, { clear: !page });
     const request: TraktSearch = {
       type: types.value,
       escape: !query.value,

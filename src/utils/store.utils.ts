@@ -127,9 +127,19 @@ export const useDebouncedSearch = (search: Ref<string>, delay = 350, disabled?: 
   return debouncedSearch;
 };
 
-export const debounceLoading = <T>(data: Ref<T[]>, placeholder: Ref<T[]>, clear?: boolean, time = 100) => {
+export const defaultDebounceLoadingDelay = 100;
+export type DebounceLoadingOptions<T> = { clear?: boolean; time?: number; splice?: (_data: T[], _placeholder: T[]) => T[] };
+export const debounceLoading = <T>(
+  data: Ref<T[]>,
+  placeholder: Ref<T[]>,
+  {
+    clear,
+    time = defaultDebounceLoadingDelay,
+    splice = (_data: T[], _placeholder: T[]) => [..._data, ..._placeholder],
+  }: DebounceLoadingOptions<T> = {},
+) => {
   const timeout = setTimeout(() => {
-    data.value = clear ? placeholder.value : [...data.value, ...placeholder.value];
+    data.value = clear ? placeholder.value : splice(data.value, placeholder.value);
   }, time);
   return {
     timeout,

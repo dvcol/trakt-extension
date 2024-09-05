@@ -346,7 +346,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     if (!parallel) loading.value = true;
     typeLoading[list.type] = true;
     listDictionaryLoading[list.id.toString()] = true;
-    const { clearLoading } = debounceLoading(listItems, loadingPlaceholder, !page, 1000);
+    const { clearLoading } = debounceLoading(listItems, loadingPlaceholder, { clear: !page, time: 1000 });
 
     try {
       const response = await fetchItems(list, { pagination: { page, limit } });

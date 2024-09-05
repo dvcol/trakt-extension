@@ -110,7 +110,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
 
     Logger.debug('Fetching History', { page, limit, start, end });
     loading.value = true;
-    const { clearLoading } = debounceLoading(history, loadingPlaceholder, !page);
+    const { clearLoading } = debounceLoading(history, loadingPlaceholder, { clear: !page });
     const query: TraktHistoryGetQuery = {
       pagination: { page, limit },
       start_at: start?.toISOString(),
