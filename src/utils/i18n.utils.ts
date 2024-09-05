@@ -4,16 +4,19 @@ import { useI18nStore } from '~/stores/i18n.store';
 import { useRouterStore } from '~/stores/router.store';
 import { chromeI18n, useI18nTranslate } from '~/utils/browser/browser-i18n.utils';
 
+let promise: Promise<Locales | void> | undefined;
+let hotReload = false;
 export const initLocalI18n = () => {
   const store = useI18nStore();
   const router = useRouterStore();
-  let promise: Promise<Locales | void> | undefined;
+  if (hotReload || promise) return { store, router, promise };
   if (import.meta.hot) {
     console.debug('Listening to i18n HMR changes');
     import.meta.hot.send('fetch:i18n');
     import.meta.hot.on('update:i18n', (data: { lang: string; locale: Locale }[]) => {
       data?.forEach(({ lang, locale }) => store.addLocale(locale, lang, true));
     });
+    hotReload = true;
   } else if (!store.locales?.[store.lang]) {
     promise = fetch(new URL(`${router.baseUrl ?? './'}_locales/${store.lang}/messages.json`, new URL(import.meta.url).origin))
       .then(r => r.json())
