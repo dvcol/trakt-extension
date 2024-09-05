@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.25.2](https://github.com/dvcol/trakt-extension/compare/v1.25.1...v1.25.2) (2024-09-05)
+
+
+### Bug Fixes
+
+* **activity:** prevent duplicate calls ([512c3ef](https://github.com/dvcol/trakt-extension/commit/512c3ef8ef7d2ded009dcdc5c0c86654cca231e8))
+* **css:** fix loading skeleton width on small screens ([546d8f1](https://github.com/dvcol/trakt-extension/commit/546d8f189c8c74982bb5220d1641077247895e2d))
+* **i18n:** prevent infinite hmr loop ([3330adb](https://github.com/dvcol/trakt-extension/commit/3330adb8ff9a7fdc4f66ee1f9749d10b5ddb3937))
+* **loading:** fix calendar loading indicator ([4979193](https://github.com/dvcol/trakt-extension/commit/49791930db0151e70345510a9130ac71707946ab))
+* **polling:** increase default polling ([0ffb8ae](https://github.com/dvcol/trakt-extension/commit/0ffb8ae13e56bce721f56db58092b70b91e0c38b))
+* **pwa:** disable pinch to zoom in pwa mode ([0696c57](https://github.com/dvcol/trakt-extension/commit/0696c57213b4f6c17df1f27c7d4a113498526d84))
+* **responsive:** handle compact screen sizes ([ac01921](https://github.com/dvcol/trakt-extension/commit/ac019214c304e4813a40c0ad4473bc4655ed029b))
+* **scroll:** disable over-scroll on virtual list ([0b5f1a0](https://github.com/dvcol/trakt-extension/commit/0b5f1a0965244095dc2c5264013a8bf49d15928d))
+* **scroll:** parametrize overscroll ([0238c60](https://github.com/dvcol/trakt-extension/commit/0238c60549086f30885b107d1f8b90be10b5629c))
+* **web:** constrain scalability but allow it ([f915df9](https://github.com/dvcol/trakt-extension/commit/f915df949ae7b485b87f5032fdac14238bcbf104))
+
 ### [1.25.1](https://github.com/dvcol/trakt-extension/compare/v1.25.0...v1.25.1) (2024-09-04)
 
 
