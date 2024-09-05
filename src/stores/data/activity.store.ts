@@ -66,6 +66,10 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       Logger.error('Cannot fetch activity, user is not authenticated');
       return;
     }
+    if (loading.value) {
+      Logger.warn('Already fetching activity');
+      return;
+    }
     Logger.debug('Fetching activity');
     loading.value = true;
 
