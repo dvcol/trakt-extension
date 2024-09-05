@@ -77,6 +77,11 @@ const props = defineProps({
     required: false,
     default: 300,
   },
+  scrollBoundary: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
   showProgress: {
     type: Boolean,
     required: false,
@@ -117,17 +122,37 @@ defineExpose({
   list: listRef,
 });
 
-const { items, loading, pagination, scrollThreshold, listOptions, backdrop, hidePoster } =
-  toRefs(props);
+const {
+  items,
+  loading,
+  pagination,
+  scrollThreshold,
+  listOptions,
+  backdrop,
+  hidePoster,
+  scrollBoundary,
+} = toRefs(props);
 
 const scrolled = ref(false);
+
+const isCompact = watchMedia('(max-width: 600px)');
+const showBackdrop = computed(() => backdrop?.value && !isCompact.value);
+
+const isTiny = watchMedia('(max-width: 350px)');
+const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
+
+const defaultSize = computed(() => (showPoster.value ? 145 : 130));
+const listItemSize = computed(() => listOptions?.value?.itemSize ?? defaultSize.value);
+const scrollBoundarySize = computed(
+  () => (scrollBoundary?.value ?? 0) * listItemSize.value,
+);
 
 const onScrollHandler = async (e: Event) => {
   if (loading.value) return;
   if (!e?.target) return;
   const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement;
   if (scrollHeight === clientHeight) return;
-  if (!scrollTop) {
+  if (!scrollTop || scrollTop < scrollBoundarySize.value) {
     scrolled.value = false;
     return emits('onScrollTop', listRef);
   }
@@ -135,7 +160,8 @@ const onScrollHandler = async (e: Event) => {
     emits('onScroll', listRef);
     scrolled.value = true;
   }
-  if (scrollHeight !== scrollTop + clientHeight) return;
+  const scrollBottom = scrollTop + clientHeight + scrollBoundarySize.value;
+  if (scrollHeight > scrollBottom) return;
   if (pagination?.value && pagination?.value?.page === pagination?.value?.pageCount) {
     return;
   }
@@ -156,8 +182,6 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
 };
 
 const isEmpty = computed(() => !items.value.length && !loading.value);
-const defaultSize = computed(() => (hidePoster.value ? 130 : 145));
-const listItemSize = computed(() => listOptions?.value?.itemSize ?? defaultSize.value);
 
 const topInset = computed(() => {
   const listElementRef = listRef.value?.$el;
@@ -172,12 +196,6 @@ const listPaddingTop = computed(
   () => topInset.value + (listOptions?.value?.paddingTop ?? 60),
 );
 const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32);
-
-const isCompact = watchMedia('(max-width: 600px)');
-const showBackdrop = computed(() => backdrop?.value && !isCompact.value);
-
-const isTiny = watchMedia('(max-width: 350px)');
-const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
 </script>
 
 <template>
