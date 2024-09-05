@@ -134,10 +134,14 @@ export const useCalendar = ({
   list,
   centerItem,
   fetchData,
+  itemSize = 145,
+  placeholders = 1,
 }: {
   list: Ref<ListScrollItem[]>;
   centerItem: Ref<ListScrollItem | undefined>;
   fetchData: (mode?: 'start' | 'end' | 'reload') => Promise<unknown>;
+  itemSize?: number;
+  placeholders?: number;
 }) => {
   const listRef = ref<{ list: VirtualListRef }>();
   const scrollTo = (options?: VirtualListScrollToOptions, index = centerItem.value?.index) => {
@@ -169,14 +173,14 @@ export const useCalendar = ({
     let placeholder = 0;
     const timeout = setTimeout(() => {
       listRef.value?.list.scrollTo({ top: 145 });
-      placeholder = 1;
+      placeholder = placeholders;
     }, defaultDebounceLoadingDelay); // default debounceLoading delay
 
     await fetching;
 
     clearTimeout(timeout);
     listRef.value?.list.scrollTo({
-      top: (list.value.findIndex(item => item.id === first.id) - placeholder) * 145,
+      top: (list.value.findIndex(item => item.id === first.id) - placeholder) * itemSize,
     });
     placeholder = 0;
   };

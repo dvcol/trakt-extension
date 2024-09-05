@@ -145,7 +145,10 @@ onDeactivated(() => {
           :ref="section.reference"
           class="card"
           :class="{ target: focus?.title === section.title }"
-          :style="{ '--length': sections.length, '--index': index }"
+          :style="{
+            '--length': sections.length,
+            '--index': index,
+          }"
           :title="i18n(section.title)"
           @mouseenter="onEnter(section)"
           @mouseleave="onLeave(section)"
@@ -155,7 +158,7 @@ onDeactivated(() => {
           <Suspense>
             <component :is="section.component" />
             <template #fallback>
-              <PageLoading />
+              <PageLoading min-height="var(--height-40-dvh)" />
             </template>
           </Suspense>
         </NCard>
