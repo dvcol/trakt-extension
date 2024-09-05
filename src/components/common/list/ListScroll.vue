@@ -15,6 +15,7 @@ import {
   type VirtualListProps,
   type VirtualListRef,
 } from '~/models/list-scroll.model';
+import { watchMedia } from '~/utils/window.utils';
 
 const listRef = ref<VirtualListRef>();
 
@@ -40,6 +41,10 @@ const props = defineProps({
     required: false,
   },
   backdrop: {
+    type: Boolean,
+    required: false,
+  },
+  hidePoster: {
     type: Boolean,
     required: false,
   },
@@ -105,7 +110,8 @@ defineExpose({
   list: listRef,
 });
 
-const { items, loading, pagination, scrollThreshold, listOptions } = toRefs(props);
+const { items, loading, pagination, scrollThreshold, listOptions, backdrop, hidePoster } =
+  toRefs(props);
 
 const scrolled = ref(false);
 
@@ -143,7 +149,8 @@ const onLoadMore = (payload: { page: number; pageCount: number; pageSize: number
 };
 
 const isEmpty = computed(() => !items.value.length && !loading.value);
-const listItemSize = computed(() => listOptions?.value?.itemSize ?? 145);
+const defaultSize = computed(() => (hidePoster.value ? 130 : 145));
+const listItemSize = computed(() => listOptions?.value?.itemSize ?? defaultSize.value);
 
 const topInset = computed(() => {
   const listElementRef = listRef.value?.$el;
@@ -158,6 +165,12 @@ const listPaddingTop = computed(
   () => topInset.value + (listOptions?.value?.paddingTop ?? 60),
 );
 const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32);
+
+const isCompact = watchMedia('(max-width: 600px)');
+const showBackdrop = computed(() => backdrop?.value && !isCompact.value);
+
+const isTiny = watchMedia('(max-width: 350px)');
+const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
 </script>
 
 <template>
@@ -192,7 +205,7 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32
             vertical
             size="small"
             :theme-overrides="{ gapSmall: '0' }"
-            :style="`height: ${listOptions?.itemSize ?? 145}px;`"
+            :style="`height: ${listOptions?.itemSize ?? defaultSize}px;`"
           >
             <ListLoadMore
               :page="pagination?.page"
@@ -206,12 +219,13 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32
           v-else
           :key="item.id"
           :item="item"
-          :height="listOptions?.itemSize ?? 145"
+          :height="listOptions?.itemSize ?? defaultSize"
           :size="items.length"
           :hide-date="hideDate"
           :hide-time="hideTime"
+          :hide-poster="!showPoster"
+          :backdrop="showBackdrop"
           :content-height="contentHeight"
-          :backdrop="backdrop"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"
           :show-progress="showProgress"

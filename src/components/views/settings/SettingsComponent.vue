@@ -9,6 +9,7 @@ import PageLoading from '~/components/common/loading/PageLoading.vue';
 import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useI18n } from '~/utils/i18n.utils';
 import lazyComponent from '~/utils/lazy.utils';
+import { watchMedia } from '~/utils/window.utils';
 
 const SettingsAccount = lazyComponent(
   () => import('~/components/views/settings/SettingsAccount.vue'),
@@ -99,6 +100,8 @@ const onLeave = (section: Section) => {
   }
 };
 
+const isCompact = watchMedia('(max-width: 600px)');
+
 onDeactivated(() => {
   target.value = undefined;
   focus.value = undefined;
@@ -116,6 +119,7 @@ onDeactivated(() => {
       :native-scrollbar="false"
       show-trigger="bar"
       inverted
+      :default-collapsed="isCompact"
     >
       <NAnchor :show-rail="false" type="block">
         <NAnchorLink

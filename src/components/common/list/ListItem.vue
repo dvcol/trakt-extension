@@ -62,6 +62,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  hidePoster: {
+    type: Boolean,
+    required: false,
+  },
   contentHeight: {
     type: Number,
     required: false,
@@ -215,6 +219,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
         </slot>
         <NFlex v-else class="tile" :wrap="false">
           <PosterComponent
+            v-if="!hidePoster"
             :item="item as PosterItem"
             :poster="poster"
             :backdrop="backdrop"
