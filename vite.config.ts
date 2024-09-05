@@ -130,9 +130,9 @@ const getPlugins = (_isDev: boolean, _isWeb: boolean): PluginOption[] => {
         registerType: 'autoUpdate',
         includeAssets: ['**/favicon.ico', '**/*.svg', '**/*.png', '**/*.webp', '**/*.json'],
         manifest: {
-          name: 'Side Trakt',
-          short_name: 'side-trakt',
-          description: 'Side Trakt (companion app for Trakt.tv)',
+          name: pkg.title || pkg.name,
+          short_name: 'Side Trakt',
+          description: pkg.description,
           theme_color: '#80000a',
           background_color: '#ffffff',
           display: 'standalone',
