@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  NButton,
-  NDialogProvider,
-  NDrawer,
-  NDrawerContent,
-  NFlex,
-  NIcon,
-} from 'naive-ui';
+import { NDialogProvider, NDrawer } from 'naive-ui';
 import { onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 
@@ -14,9 +7,8 @@ import GridBackground from '~/components/common/background/GridBackground.vue';
 import DebugProvider from '~/components/common/debug/DebugProvider.vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
 import NavbarComponent from '~/components/common/navbar/NavbarComponent.vue';
-import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
-import IconClose from '~/components/icons/IconClose.vue';
 import CheckinComponent from '~/components/views/checkin/CheckinComponent.vue';
+import PanelContent from '~/components/views/panel/PanelContent.vue';
 import { NavbarService } from '~/services/navbar.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
@@ -113,30 +105,14 @@ onBeforeUnmount(() => {
               :on-after-leave="onAfterLeave"
               :on-after-enter="onAfterEnter"
             >
-              <NDrawerContent v-if="isAuthenticated" :native-scrollbar="false">
-                <!--  Header  -->
-                <NFlex justify="space-between" class="panel-header">
-                  <NButton circle quaternary @click="onBack">
-                    <template #icon>
-                      <NIcon>
-                        <IconChevronLeft />
-                      </NIcon>
-                    </template>
-                  </NButton>
-                  <NButton circle quaternary @click="onClose">
-                    <template #icon>
-                      <NIcon>
-                        <IconClose />
-                      </NIcon>
-                    </template>
-                  </NButton>
-                </NFlex>
-
-                <!--  Content  -->
-                <div class="panel-content">
-                  <component :is="PanelComponent ?? PageLoading" />
-                </div>
-              </NDrawerContent>
+              <PanelContent
+                v-if="isAuthenticated"
+                :native-scrollbar="false"
+                @on-back="onBack"
+                @on-close="onClose"
+              >
+                <component :is="PanelComponent ?? PageLoading" />
+              </PanelContent>
             </NDrawer>
           </RouterView>
         </aside>
@@ -215,26 +191,6 @@ onBeforeUnmount(() => {
     position: relative;
     max-height: calc(100% - #{layout.$safe-navbar-height});
     overflow: auto;
-
-    &-header {
-      position: sticky;
-      top: 1rem;
-    }
-
-    &-content {
-      margin-top: -1.125rem;
-      padding: 0 3rem 1.25rem;
-
-      :deep(.n-skeleton) {
-        opacity: 1;
-        transition: opacity 0.1s ease-in 0.1s;
-
-        /* Adds 0.2s delay and 1s transition to loading indicator to prevent flashing */
-        @starting-style {
-          opacity: 0;
-        }
-      }
-    }
   }
 }
 </style>
