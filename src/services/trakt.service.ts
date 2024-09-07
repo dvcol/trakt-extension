@@ -211,7 +211,7 @@ export class TraktService {
   }
 
   static async loadingBar<T>(query: Promise<T> | CancellablePromise<T>) {
-    const timeout = setTimeout(() => LoadingBarService.start(), 500);
+    const timeout = setTimeout(() => LoadingBarService.start(), 1000);
     try {
       await query;
       LoadingBarService.finish();
