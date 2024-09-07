@@ -17,6 +17,7 @@ import {
   useCancelWatching,
   useWatchingProgress,
 } from '~/utils/watching.utils';
+import { watchMedia } from '~/utils/window.utils';
 
 defineProps({
   parentElement: {
@@ -30,13 +31,19 @@ const i18n = useI18n('watching');
 const { isWatching, watching, cancelling } = useWatchingStoreRefs();
 const { cancel } = useWatchingStore();
 
+const isTiny = watchMedia('(max-width: 600px)');
+
 const icon = computed(() => (watching.value?.type === 'movie' ? IconMovie : IconScreen));
 const title = computed(() => {
   if (!watching.value) return '';
   if (isWatchingMovie(watching.value)) return watching.value.movie.title;
-  if (isWatchingShow(watching.value)) return watching.value.episode.title;
+  if (isWatchingShow(watching.value)) {
+    if (isTiny.value) return watching.value.show.title;
+    return watching.value.episode.title;
+  }
   return '';
 });
+
 const subtitle = computed(() => {
   if (!watching.value) return '';
   if (isWatchingMovie(watching.value)) return watching.value.movie.year;
@@ -47,11 +54,13 @@ const subtitle = computed(() => {
 const episode = computed(() => {
   if (!watching.value) return '';
   if (!isWatchingShow(watching.value)) return '';
-  return `${i18n('season', 'common', 'tag')} ${watching.value.episode.season} ${i18n(
+  const { season, number } = watching.value.episode;
+  if (!season || !number) return '';
+  return `${i18n('season', 'common', 'tag')} ${season} ${i18n(
     'episode',
     'common',
     'tag',
-  )} ${watching.value.episode.number}`;
+  )} ${number}`;
 });
 
 const {
@@ -125,14 +134,14 @@ const onClick = () => {
         <div class="column">
           <div class="top">
             <span class="text primary">{{ title }}</span>
-            <span class="text tertiary">—</span>
-            <span class="text secondary">{{ subtitle }}</span>
+            <span class="text tertiary compact">—</span>
+            <span class="text secondary compact">{{ subtitle }}</span>
             <template v-if="episode">
               <span class="text tertiary">—</span>
               <span class="text secondary">{{ episode }}</span>
             </template>
           </div>
-          <div class="bottom">
+          <div v-if="!isTiny" class="bottom">
             <span class="tertiary">
               {{ type }} {{ action }} {{ i18n('at') }} {{ started }}
             </span>
@@ -141,8 +150,8 @@ const onClick = () => {
       </span>
       <span class="right">
         <span class="text secondary time">{{ elapsed }}</span>
-        <span class="text tertiary">/</span>
-        <span class="text secondary time">{{ duration }}</span>
+        <span class="text tertiary compact">/</span>
+        <span class="text secondary time compact">{{ duration }}</span>
         <NTooltip :show-arrow="false" :delay="260" :to="parentElement">
           <span> {{ i18n('cancel', 'common', 'button') }} </span>
           <template #trigger>
@@ -168,6 +177,7 @@ const onClick = () => {
 <style lang="scss" scoped>
 @use '~/styles/mixin' as mixin;
 @use '~/styles/z-index' as layers;
+@use '~/styles/layout' as layout;
 
 .wrapper {
   position: relative;
@@ -201,8 +211,10 @@ const onClick = () => {
     align-items: center;
     justify-content: space-between;
     height: 0;
+    padding-bottom: layout.$safe-area-inset-bottom;
     overflow: hidden;
     color: var(--white-70);
+    text-wrap: balance;
     cursor: pointer;
 
     .left,
@@ -341,6 +353,12 @@ const onClick = () => {
           color: var(--white-80);
         }
       }
+    }
+  }
+
+  @media (width <= 600px) {
+    .compact {
+      display: none;
     }
   }
 }
