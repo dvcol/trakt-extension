@@ -1,14 +1,17 @@
 <script lang="ts" setup>
 import { NTab, NTabs } from 'naive-ui';
-import { computed, toRefs, useSlots } from 'vue';
+import { computed, ref, toRefs, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
 
 import { Route } from '~/models/router.model';
+import { Logger } from '~/services/logger.service';
 import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
+import { Header } from '~/styles/layout.style';
 import { useI18n } from '~/utils/i18n.utils';
+import { handleSwipe, SwipeDirection } from '~/utils/touch.utils';
 
 const props = defineProps({
   disabled: {
@@ -43,6 +46,21 @@ const activeRoute = computed(() => {
   );
 });
 
+const nextRoute = computed(() => {
+  if (!activeRoute.value) return;
+  const index = activableRoutes.value.indexOf(activeRoute.value);
+  return activableRoutes.value[index + 1] ?? activableRoutes.value[0];
+});
+
+const prevRoute = computed(() => {
+  if (!activeRoute.value) return;
+  const index = activableRoutes.value.indexOf(activeRoute.value);
+  return (
+    activableRoutes.value[index - 1] ??
+    activableRoutes.value[activableRoutes.value.length - 1]
+  );
+});
+
 const { isHover, isFocus, ref: navElement } = NavbarService;
 
 const hasDrawer = computed(() => {
@@ -56,6 +74,39 @@ const showDrawer = computed(() => {
   NavbarService.open.value = show;
   return show;
 });
+
+const touchStart = ref<TouchEvent>();
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStart.value = e;
+};
+
+const onTouchEnd = (e: TouchEvent) => {
+  const _touchStart = touchStart.value?.targetTouches?.[0];
+  const _touchEnd = e.changedTouches?.[0];
+  if (!_touchStart) return;
+  touchStart.value = undefined;
+  const swipe = handleSwipe(_touchStart, _touchEnd, {
+    vertical: Header.totalHeight,
+    up: Header.navbarHeight,
+    left: 50,
+    right: 50,
+  });
+  switch (swipe) {
+    case SwipeDirection.Down:
+      isHover.value = true;
+      return swipe;
+    case SwipeDirection.Up:
+      isHover.value = false;
+      return swipe;
+    case SwipeDirection.Right:
+      return nextRoute.value ? navigate(nextRoute.value) : undefined;
+    case SwipeDirection.Left:
+      return prevRoute.value ? navigate(prevRoute.value) : undefined;
+    default:
+      Logger.warn('Unknown swipe direction:', swipe);
+  }
+};
 </script>
 
 <template>
@@ -63,9 +114,10 @@ const showDrawer = computed(() => {
     ref="navElement"
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
-    @touchstart="isHover = true"
     @focusin="isFocus = true"
     @focusout="isFocus = false"
+    @touchstart="onTouchStart"
+    @touchend="onTouchEnd"
   >
     <NTabs
       :key="enabledRoutes.join('-')"
