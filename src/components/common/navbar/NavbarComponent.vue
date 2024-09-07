@@ -11,7 +11,7 @@ import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { Header } from '~/styles/layout.style';
 import { useI18n } from '~/utils/i18n.utils';
-import { handleSwipe, SwipeDirection } from '~/utils/touch.utils';
+import { handleSwipe, SwipeDirection, type SwipeDirections } from '~/utils/touch.utils';
 
 const props = defineProps({
   disabled: {
@@ -76,37 +76,77 @@ const showDrawer = computed(() => {
 });
 
 const touchStart = ref<TouchEvent>();
+const drawerStart = ref<{
+  scroll: number;
+  width: number;
+}>();
 
+const drawerRef = ref<HTMLElement>();
 const onTouchStart = (e: TouchEvent) => {
   touchStart.value = e;
+
+  const drawer = drawerRef.value?.firstElementChild;
+  // if there is no drawer we can always navigate
+  if (!drawer) return;
+  drawerStart.value = {
+    scroll: drawer.scrollLeft,
+    width: drawer.scrollWidth - drawer.clientWidth,
+  };
+};
+
+const isDrawerNotScrollable = (
+  direction: typeof SwipeDirection.Right | typeof SwipeDirection.Left,
+  start: Touch | undefined = touchStart.value?.targetTouches?.[0],
+) => {
+  // if we start the swipe outside the drawer we can always navigate
+  if (start && start?.clientY < Header.navbarHeight) return true;
+  // if there is no drawer we can always navigate
+  if (!drawerStart.value) return true;
+  const { scroll, width } = drawerStart.value;
+  // if the drawer is already at the end we can navigate right (swipe to the left)
+  if (direction === SwipeDirection.Left) return width === scroll;
+  // if the drawer is already at the start we can navigate left (swipe to the right)
+  return scroll === 0;
+};
+
+const handleSwipeDirection = (swipe: SwipeDirections) => {
+  switch (swipe) {
+    case SwipeDirection.Down:
+      isHover.value = true;
+      break;
+    case SwipeDirection.Up:
+      isHover.value = false;
+      break;
+    case SwipeDirection.Left:
+      if (nextRoute.value && isDrawerNotScrollable(swipe)) navigate(nextRoute.value);
+      break;
+    case SwipeDirection.Right:
+      if (prevRoute.value && isDrawerNotScrollable(swipe)) navigate(prevRoute.value);
+      break;
+    default:
+      Logger.warn('Unknown swipe direction:', swipe);
+  }
 };
 
 const onTouchEnd = (e: TouchEvent) => {
-  const _touchStart = touchStart.value?.targetTouches?.[0];
-  const _touchEnd = e.changedTouches?.[0];
-  if (!_touchStart) return;
-  touchStart.value = undefined;
+  const _start = touchStart.value?.targetTouches?.[0];
+  const _end = e.changedTouches?.[0];
+
+  if (!_start || !_end) return;
+
   const { clientWidth } = navElement.value || {};
-  const swipe = handleSwipe(_touchStart, _touchEnd, {
+  const swipe = handleSwipe(_start, _end, {
     vertical: Header.totalHeight,
     up: Header.navbarHeight,
     left: clientWidth ? Math.min(clientWidth / 2, 200) : 200,
     right: clientWidth ? Math.min(clientWidth / 2, 200) : 200,
   });
-  switch (swipe) {
-    case SwipeDirection.Down:
-      isHover.value = true;
-      return swipe;
-    case SwipeDirection.Up:
-      isHover.value = false;
-      return swipe;
-    case SwipeDirection.Left:
-      return nextRoute.value ? navigate(nextRoute.value) : undefined;
-    case SwipeDirection.Right:
-      return prevRoute.value ? navigate(prevRoute.value) : undefined;
-    default:
-      Logger.warn('Unknown swipe direction:', swipe);
-  }
+
+  if (swipe) handleSwipeDirection(swipe);
+
+  touchStart.value = undefined;
+  drawerStart.value = undefined;
+  return swipe;
 };
 </script>
 
@@ -117,8 +157,8 @@ const onTouchEnd = (e: TouchEvent) => {
     @mouseleave="isHover = false"
     @focusin="isFocus = true"
     @focusout="isFocus = false"
-    @touchstart="onTouchStart"
     @touchend="onTouchEnd"
+    @touchstart="onTouchStart"
   >
     <NTabs
       :key="enabledRoutes.join('-')"
@@ -163,6 +203,7 @@ const onTouchEnd = (e: TouchEvent) => {
       </NTab>
     </NTabs>
     <div
+      ref="drawerRef"
       class="drawer"
       :class="{
         'has-drawer': hasDrawer,
