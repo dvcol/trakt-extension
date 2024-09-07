@@ -86,11 +86,12 @@ const onTouchEnd = (e: TouchEvent) => {
   const _touchEnd = e.changedTouches?.[0];
   if (!_touchStart) return;
   touchStart.value = undefined;
+  const { clientWidth } = navElement.value || {};
   const swipe = handleSwipe(_touchStart, _touchEnd, {
     vertical: Header.totalHeight,
     up: Header.navbarHeight,
-    left: 50,
-    right: 50,
+    left: clientWidth ? Math.min(clientWidth / 2, 200) : 200,
+    right: clientWidth ? Math.min(clientWidth / 2, 200) : 200,
   });
   switch (swipe) {
     case SwipeDirection.Down:

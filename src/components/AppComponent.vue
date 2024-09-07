@@ -191,6 +191,7 @@ onBeforeUnmount(() => {
     position: relative;
     max-height: calc(100% - #{layout.$safe-navbar-height});
     overflow: auto;
+    overscroll-behavior: none;
   }
 }
 </style>
