@@ -211,7 +211,6 @@ const onClick = () => {
     align-items: center;
     justify-content: space-between;
     height: 0;
-    padding-bottom: layout.$safe-area-inset-bottom;
     overflow: hidden;
     color: var(--white-70);
     text-wrap: balance;
@@ -303,12 +302,12 @@ const onClick = () => {
     }
 
     &.watching {
-      height: 1.75rem;
+      height: calc(1.75rem + #{layout.$safe-area-inset-bottom});
 
       &:active,
       &:focus-within,
       &:hover {
-        height: 3rem;
+        height: calc(3rem + #{layout.$safe-area-inset-bottom});
         color: var(--white);
 
         .icon {

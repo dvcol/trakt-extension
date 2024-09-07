@@ -91,7 +91,7 @@
     "message": "Check-in",
     "description": "Button to check-in."
   },
-  "common__button__Watched": {
+  "common__button__watched": {
     "message": "Watched",
     "description": "Button to mark as watched."
   }
