@@ -74,7 +74,7 @@
     scale: 0.95;
 
     &.show {
-      max-height: 100dvh;
+      max-height: var(--full-height, 100dvh);
       margin-top: initial;
       opacity: 1;
       transition:

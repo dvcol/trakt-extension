@@ -18,6 +18,20 @@
   --width-40-dvh: 40dvw;
   --width-70-dvh: 70dvw;
 
+  @media (display-mode: standalone) {
+    /* height */
+    --full-height: 100vh;
+    --half-height: 50vh;
+    --height-40-dvh: 40vh;
+    --height-70-dvh: 70vh;
+
+    /** width */
+    --full-width: 100vw;
+    --half-width: 50vw;
+    --width-40-dvh: 40vw;
+    --width-70-dvh: 70vw;
+  }
+
   /* font variables */
   --font-size-xxs: 0.625rem;
   --font-size-xs: 0.75rem;
