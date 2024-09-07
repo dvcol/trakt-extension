@@ -130,6 +130,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
       Logger.error('Unknown key:', key);
   }
 };
+const { dropdown } = NavbarService;
 </script>
 
 <template>
@@ -141,7 +142,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     size="small"
     class="settings-dropdown"
     :style="{ '--tab-count': enabledRoutes.length + 1 }"
-    :on-update:show="(visible: boolean) => (NavbarService.dropdown.value = visible)"
+    :on-update:show="(visible: boolean) => (dropdown = visible)"
     @select="onSelect"
   >
     <NFlex justify="space-around" align="center" :wrap="false">

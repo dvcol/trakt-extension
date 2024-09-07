@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NTab, NTabs } from 'naive-ui';
-import { computed, ref, toRefs, useSlots } from 'vue';
+import { computed, toRefs, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
@@ -43,8 +43,7 @@ const activeRoute = computed(() => {
   );
 });
 
-const isHover = ref(false);
-const isFocus = ref(false);
+const { isHover, isFocus, ref: navElement } = NavbarService;
 
 const hasDrawer = computed(() => {
   const drawer = !!route.name && !!slots.drawer;
@@ -57,8 +56,6 @@ const showDrawer = computed(() => {
   NavbarService.open.value = show;
   return show;
 });
-
-const navElement = ref<HTMLElement>();
 </script>
 
 <template>
@@ -66,6 +63,7 @@ const navElement = ref<HTMLElement>();
     ref="navElement"
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
+    @touchstart="isHover = true"
     @focusin="isFocus = true"
     @focusout="isFocus = false"
   >

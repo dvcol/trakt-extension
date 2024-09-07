@@ -7,7 +7,7 @@ import {
   NFlex,
   NIcon,
 } from 'naive-ui';
-import { ref, Transition, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 
 import GridBackground from '~/components/common/background/GridBackground.vue';
@@ -17,6 +17,7 @@ import NavbarComponent from '~/components/common/navbar/NavbarComponent.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconClose from '~/components/icons/IconClose.vue';
 import CheckinComponent from '~/components/views/checkin/CheckinComponent.vue';
+import { NavbarService } from '~/services/navbar.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
@@ -27,9 +28,9 @@ const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
 const base = ref();
 
-const appRef = ref();
-const mainRef = ref();
-const footerRef = ref();
+const appRef = ref<HTMLDivElement>();
+const mainRef = ref<HTMLDivElement>();
+const footerRef = ref<HTMLDivElement>();
 
 watch(
   currentRoute,
@@ -59,6 +60,13 @@ const onBack = () => {
   if (window.history.state.back) return back();
   return onClose();
 };
+
+onMounted(() => {
+  mainRef.value?.addEventListener('touchstart', NavbarService.hideDrawer);
+});
+onBeforeUnmount(() => {
+  mainRef.value?.removeEventListener('touchstart', NavbarService.hideDrawer);
+});
 </script>
 
 <template>
