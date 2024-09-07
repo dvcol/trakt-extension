@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { NCarousel } from 'naive-ui';
-import { type PropType } from 'vue';
+import { type CarouselInst, NCarousel } from 'naive-ui';
+import { type PropType, ref } from 'vue';
 
 import type { YoutubePlayerProps } from '~/models/youtube-player.model';
 
 import YoutubePlayer from '~/components/common/video/YoutubePlayer.vue';
+import { handleSwipeLeftRight, SwipeDirection } from '~/utils/touch.utils';
 
 defineProps({
   trailers: {
@@ -17,11 +18,37 @@ defineProps({
     default: false,
   },
 });
+
+const carouselRef = ref<CarouselInst & InstanceType<typeof NCarousel>>();
+const touchStart = ref<TouchEvent>();
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStart.value = e;
+};
+
+const onTouchEnd = (e: TouchEvent) => {
+  const _touchStart = touchStart.value?.targetTouches?.[0];
+  const _touchEnd = e.changedTouches?.[0];
+  if (!_touchStart) return;
+  touchStart.value = undefined;
+  const _ref = carouselRef.value;
+  if (!_ref) return;
+  const { clientWidth, clientHeight } = _ref.$el || {};
+  const swipe = handleSwipeLeftRight(_touchStart, _touchEnd, {
+    vertical: clientHeight ? Math.min(clientHeight / 2, 200) : 200,
+    left: clientWidth ? Math.min(clientWidth / 2, 100) : 100,
+    right: clientWidth ? Math.min(clientWidth / 2, 100) : 100,
+  });
+  if (!swipe) return;
+  if (swipe === SwipeDirection.Right) _ref.next();
+  if (swipe === SwipeDirection.Left) _ref.prev();
+};
 </script>
 
 <template>
   <NCarousel
     v-if="!disabled && trailers?.length"
+    ref="carouselRef"
     class="carousel"
     dot-type="line"
     effect="slide"
@@ -29,6 +56,8 @@ defineProps({
     keyboard
     trigger="hover"
     :space-between="32"
+    @touchstart="onTouchStart"
+    @touchend="onTouchEnd"
   >
     <slot />
     <YoutubePlayer

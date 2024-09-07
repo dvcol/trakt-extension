@@ -30,7 +30,7 @@ const onTouchEnd = (e: TouchEvent) => {
     left: clientWidth ? Math.min(clientWidth / 2, 400) : 400,
     right: clientWidth ? Math.min(clientWidth / 2, 400) : 400,
   });
-  if (swipe === SwipeDirection.Right) emits('onBack', e);
+  if (swipe === SwipeDirection.Right) emits('onClose', e);
 };
 </script>
 
