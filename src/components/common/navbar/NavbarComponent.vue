@@ -99,9 +99,9 @@ const onTouchEnd = (e: TouchEvent) => {
     case SwipeDirection.Up:
       isHover.value = false;
       return swipe;
-    case SwipeDirection.Right:
-      return nextRoute.value ? navigate(nextRoute.value) : undefined;
     case SwipeDirection.Left:
+      return nextRoute.value ? navigate(nextRoute.value) : undefined;
+    case SwipeDirection.Right:
       return prevRoute.value ? navigate(prevRoute.value) : undefined;
     default:
       Logger.warn('Unknown swipe direction:', swipe);
