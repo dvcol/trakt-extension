@@ -71,6 +71,7 @@ const { onItemClick } = usePanelItem();
       backdrop
       show-played
       show-collected
+      show-tag-loader
       overscroll="none"
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"
       @on-item-click="onItemClick"

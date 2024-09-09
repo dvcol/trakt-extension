@@ -94,6 +94,10 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showTagLoader: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const emit = defineEmits<{
@@ -233,6 +237,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
             :show-progress="showProgress"
             :show-played="showPlayed"
             :show-collected="showCollected"
+            :show-tag-loader="showTagLoader"
           >
             <slot :item="item" :loading="loading" />
           </ListItemPanel>

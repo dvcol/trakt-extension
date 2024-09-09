@@ -73,6 +73,10 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showTagLoader: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const { item, hideDate, showProgress, showPlayed, showCollected } = toRefs(props);
@@ -256,13 +260,17 @@ const onTagClick = (url?: string) => {
   >
     <div ref="innerContainer">
       <div class="meta type">
-        <NSkeleton v-if="loading" style="width: 10%" round />
+        <NSkeleton
+          v-if="loading"
+          style="width: 45px; height: 14px; margin-bottom: 0.25rem"
+          round
+        />
         <AnchorLink v-else text v-bind="item?.typeLink">
           <NEllipsis :line-clamp="1" :tooltip="tooltipOptions">{{ type }}</NEllipsis>
         </AnchorLink>
       </div>
       <div class="title">
-        <NSkeleton v-if="loading" text style="width: 70%" round />
+        <NSkeleton v-if="loading" text style="width: 70%; height: 16px" round />
         <AnchorLink v-else text v-bind="item?.titleLink">
           <NEllipsis :line-clamp="2" :tooltip="tooltipOptions">
             {{ title }}
@@ -270,7 +278,12 @@ const onTagClick = (url?: string) => {
         </AnchorLink>
       </div>
       <div class="content">
-        <NSkeleton v-if="loading" text style="width: 60%" round />
+        <NSkeleton
+          v-if="loading"
+          text
+          style="width: 60%; height: 14px; margin: 0.25rem 0"
+          round
+        />
         <AnchorLink v-else text v-bind="item?.contentLink">
           <NEllipsis :line-clamp="contentHeight" :tooltip="tooltipOptions">
             {{ content }}
@@ -278,16 +291,33 @@ const onTagClick = (url?: string) => {
         </AnchorLink>
       </div>
       <NFlex
-        v-if="(!hideTime && date) || tags?.length || showCollected || showPlayed"
+        v-if="
+          (!hideTime && date) ||
+          (loading && showTagLoader) ||
+          tags?.length ||
+          showCollected ||
+          showPlayed
+        "
         size="medium"
         class="tags"
       >
-        <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
-          <NSkeleton v-if="loading" text style="width: 6%" />
-          <TagLink :tag="tag" @on-click="onTagClick" />
+        <template v-if="loading && showTagLoader">
+          <NSkeleton text style="width: 120px; height: 18px" />
         </template>
+        <template v-else>
+          <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
+            <NSkeleton v-if="loading" text style="width: 6%" />
+            <TagLink :tag="tag" @on-click="onTagClick" />
+          </template>
+        </template>
+
         <template v-if="!hideTime && date">
-          <NSkeleton v-if="loading" key="date-loader" text style="width: 8%" />
+          <NSkeleton
+            v-if="loading"
+            key="date-loader"
+            text
+            style="width: 42px; height: 18px"
+          />
           <NTag
             v-else
             key="date"
@@ -300,7 +330,12 @@ const onTagClick = (url?: string) => {
           </NTag>
         </template>
         <template v-if="showCollected && collected">
-          <NSkeleton v-if="loading" key="collected-loader" text style="width: 3%" />
+          <NSkeleton
+            v-if="loading"
+            key="collected-loader"
+            text
+            style="width: 22px; height: 18px"
+          />
           <NTag
             v-else
             key="collected"
@@ -319,7 +354,12 @@ const onTagClick = (url?: string) => {
           </NTag>
         </template>
         <template v-if="showPlayed && played">
-          <NSkeleton v-if="loading" key="played-loader" text style="width: 3%" />
+          <NSkeleton
+            v-if="loading"
+            key="played-loader"
+            text
+            style="width: 22px; height: 18px"
+          />
           <NTag
             v-else
             key="played"
@@ -337,8 +377,20 @@ const onTagClick = (url?: string) => {
           </NTag>
         </template>
       </NFlex>
-      <div v-if="showProgress && !loading" class="panel-progress">
-        <ProgressTooltip :progress="progress" :to="innerContainer" placement="top-end">
+      <div v-if="showProgress" class="panel-progress">
+        <NSkeleton
+          v-if="loading"
+          key="progress-loader"
+          text
+          style="display: flex; width: 100%; height: 4px"
+          round
+        />
+        <ProgressTooltip
+          v-else
+          :progress="progress"
+          :to="innerContainer"
+          placement="top-end"
+        >
           <NProgress
             class="line"
             :data-show-id="progress?.id"

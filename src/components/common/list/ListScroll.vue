@@ -97,6 +97,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showTagLoader: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const emits = defineEmits<{
@@ -257,6 +262,7 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32
           :show-progress="showProgress"
           :show-played="showPlayed"
           :show-collected="showCollected"
+          :show-tag-loader="showTagLoader"
           @on-hover="onHover"
           @on-item-click="(...args) => $emit('onItemClick', ...args)"
           @on-scroll-into-view="(...args) => $emit('onScrollIntoView', ...args)"

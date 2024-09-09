@@ -103,6 +103,7 @@ watchUserChange({
         hide-date
         show-progress
         show-collected
+        show-tag-loader
         @on-scroll="scrolled = true"
         @on-scroll-top="scrolled = false"
         @on-item-click="onItemClick"
