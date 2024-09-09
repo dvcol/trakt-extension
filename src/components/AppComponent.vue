@@ -169,6 +169,8 @@ onBeforeUnmount(() => {
     justify-content: center;
     min-height: layout.$main-content-height;
     margin-top: layout.$safe-navbar-height;
+    padding-right: calc(#{layout.$safe-area-inset-right} / 1.5);
+    padding-left: calc(#{layout.$safe-area-inset-left} / 1.5);
 
     &.full-height {
       min-height: var(--full-height);

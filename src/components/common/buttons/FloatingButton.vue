@@ -55,6 +55,7 @@ const emit = defineEmits<{
 
 <style lang="scss" scoped>
 @use '~/styles/mixin' as mixin;
+@use '~/styles/layout' as layout;
 @use '~/styles/transition' as transition;
 @include transition.scale($scale: 0.6);
 
@@ -68,7 +69,7 @@ const emit = defineEmits<{
   padding: 0.5rem;
 
   &.watching {
-    bottom: 2.5rem;
+    bottom: calc(2.5rem + #{layout.$safe-area-inset-bottom / 1.5});
   }
 
   .text {

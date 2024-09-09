@@ -190,29 +190,6 @@
     --bg-color-hover: var(--bg-black-60);
   }
 
-  /*
-  @media (prefers-color-scheme: light) {
-    !* semantic color variables for this project *!
-    --color-background: var(--white);
-    --color-background-soft: var(--white-soft);
-    --color-background-mute: var(--white-mute);
-    --color-border: var(--vt-c-divider-light-2);
-    --color-border-hover: var(--vt-c-divider-light-1);
-    --color-heading: var(--vt-c-text-light-1);
-    --color-text: var(--vt-c-text-light-1);
-
-    !* ui color variables *!
-    --bg-color-20:  var(--bg-red-20);
-    --bg-color-30: var(--bg-red-30);
-    --bg-color-60: var(--bg-red-60);
-    --bg-color-70: var(--bg-red-70);
-    --bg-color-80: var(--bg-red-80);
-    --bg-color-90: var(--bg-red-90);
-    --bg-color: var(--bg-color-80);
-    --bg-color-hover: var(--bg-red-90);
-  }
-  */
-
   @media (display-mode: standalone) {
     /* height */
     --full-height: 100vh;

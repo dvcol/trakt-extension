@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { formatTime } from '@dvcol/common-utils/common/format';
 import { NButton, NIcon, NTooltip } from 'naive-ui';
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
@@ -19,7 +19,7 @@ import {
 } from '~/utils/watching.utils';
 import { watchMedia } from '~/utils/window.utils';
 
-defineProps({
+const props = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
@@ -32,6 +32,24 @@ const { isWatching, watching, cancelling } = useWatchingStoreRefs();
 const { cancel } = useWatchingStore();
 
 const isTiny = watchMedia('(max-width: 600px)');
+
+const offset = computed(() => {
+  if (!props.parentElement) return;
+  return (
+    Number.parseInt(
+      getComputedStyle(props.parentElement).getPropertyValue('--safe-area-inset-bottom'),
+      10,
+    ) ||
+    Number.parseInt(
+      getComputedStyle(props.parentElement).getPropertyValue('--safe-area-inset-left'),
+      10,
+    ) ||
+    Number.parseInt(
+      getComputedStyle(props.parentElement).getPropertyValue('--safe-area-inset-right'),
+      10,
+    )
+  );
+});
 
 const icon = computed(() => (watching.value?.type === 'movie' ? IconMovie : IconScreen));
 const title = computed(() => {
@@ -128,7 +146,7 @@ const onClick = () => {
 
 <template>
   <div class="wrapper">
-    <div class="container" :class="{ watching: isWatching }" @click="onClick">
+    <div class="container" :class="{ watching: isWatching, offset }" @click="onClick">
       <span class="left">
         <NIcon class="icon" :component="icon" />
         <div class="column">
@@ -302,12 +320,21 @@ const onClick = () => {
     }
 
     &.watching {
-      height: calc(1.75rem + #{layout.$safe-area-inset-bottom});
+      height: calc(1.75rem + #{layout.$safe-area-inset-bottom / 1.5});
+
+      &.offset {
+        padding: 0
+          max(
+            calc(#{layout.$safe-area-inset-left} / 2),
+            calc(#{layout.$safe-area-inset-right} / 2),
+            calc(#{layout.$safe-area-inset-bottom} / 1.5)
+          );
+      }
 
       &:active,
       &:focus-within,
       &:hover {
-        height: calc(3rem + #{layout.$safe-area-inset-bottom});
+        height: calc(3rem + #{layout.$safe-area-inset-bottom} / 2);
         color: var(--white);
 
         .icon {
