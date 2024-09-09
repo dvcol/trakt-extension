@@ -54,11 +54,7 @@ const { onItemClick } = usePanelItem();
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
       @on-item-click="onItemClick"
-    >
-      <template #default>
-        <!-- TODO buttons here-->
-      </template>
-    </ListScroll>
+    />
 
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}

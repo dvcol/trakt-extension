@@ -106,13 +106,8 @@ watchUserChange({
         @on-scroll="scrolled = true"
         @on-scroll-top="scrolled = false"
         @on-item-click="onItemClick"
-      >
-        <template #default>
-          <!-- TODO buttons here-->
-        </template>
-      </ListScroll>
+      />
     </Transition>
-
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>

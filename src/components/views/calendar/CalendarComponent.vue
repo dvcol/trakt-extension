@@ -78,11 +78,7 @@ const { onItemClick } = usePanelItem();
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
       @on-scroll-top="onScrollTop"
       @on-scroll-bottom="onScrollBottom"
-    >
-      <template #default>
-        <!-- TODO buttons here-->
-      </template>
-    </ListScroll>
+    />
     <FloatingButton
       :show="!footerOpen && scrolledOut"
       :width="centerIsToday ? '2.5rem' : '3.5rem'"

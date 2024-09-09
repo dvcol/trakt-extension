@@ -99,12 +99,7 @@ onMounted(() => {
       @on-updated="onUpdated"
       @onload-more="onLoadMore"
       @on-item-click="onItemClick"
-    >
-      <template #default>
-        <!-- TODO buttons here-->
-      </template>
-    </ListScroll>
-
+    />
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>
