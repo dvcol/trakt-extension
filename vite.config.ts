@@ -7,7 +7,7 @@ import MagicString from 'magic-string';
 import { viteVueCE } from 'unplugin-vue-ce';
 
 import { defineConfig } from 'vite';
-import checker from 'vite-plugin-checker';
+import { checker } from 'vite-plugin-checker';
 import dtsPlugin from 'vite-plugin-dts';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -41,10 +41,6 @@ const i18nRegex = /.*src\/i18n\/([a-zA-Z]+)\/.*\.json/;
 
 const getPlugins = (_isDev: boolean, _isWeb: boolean): PluginOption[] => {
   const plugins: PluginOption[] = [
-    dtsPlugin({
-      include: ['index.ts', 'web/**'],
-      outDir: resolveParent('dist/lib'),
-    }),
     vue({
       customElement: true,
     }),
@@ -125,6 +121,11 @@ const getPlugins = (_isDev: boolean, _isWeb: boolean): PluginOption[] => {
 
   if (!_isDev && _isWeb) {
     plugins.push(
+      dtsPlugin({
+        include: ['index.ts', 'web/define-component.ts'],
+        outDir: resolveParent('dist/lib'),
+        entryRoot: resolveParent('src'),
+      }),
       VitePWA({
         scope: '/trakt-extension/',
         registerType: 'autoUpdate',
@@ -188,6 +189,7 @@ export default defineConfig(() => ({
     sourcemap: isDev || sourcemap ? 'inline' : false,
     minify: false,
     rollupOptions: {
+      preserveEntrySignatures: 'allow-extension',
       input: getInput(isDev, isWeb),
       output: {
         minifyInternalExports: false,

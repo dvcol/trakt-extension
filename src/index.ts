@@ -4,7 +4,7 @@ import type { chrome } from 'chrome';
 import type { Component } from 'vue';
 import type { DefineComponent, WebComponents } from '~/web/define-component';
 
-export const baseUrl = 'trakt-extension';
+export const baseUrl = 'trakt-extension' as const;
 
 type TraktExtension = {
   component: Component;
