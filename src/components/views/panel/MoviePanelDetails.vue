@@ -4,7 +4,8 @@ import { capitalizeEachWord, deCapitalise } from '@dvcol/common-utils/common/str
 import { NFlex } from 'naive-ui';
 import { computed, type PropType, toRefs } from 'vue';
 
-import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
+import type { SimklIdsExtended } from '@dvcol/simkl-http-client/models';
+import type { TraktApiIds, TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
 import TextField from '~/components/common/typography/TextField.vue';
 import PanelAlias from '~/components/views/panel/PanelAlias.vue';
@@ -74,6 +75,14 @@ const simklMovie = computed(() => {
   return getMovie(movie.value.ids.imdb).value;
 });
 
+const ids = computed(() => {
+  if (!movie?.value) return;
+  return {
+    ...simklMovie.value?.ids,
+    ...movie.value?.ids,
+  } as Partial<TraktApiIds & SimklIdsExtended>;
+});
+
 const genres = computed(() => {
   if (!movie?.value) return;
   const _genres = new Set<string>();
@@ -117,12 +126,7 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       />
 
       <!--  links  -->
-      <PanelLinks
-        :ids="movie?.ids"
-        mode="movie"
-        :title="movieTitle"
-        :alias="movieAlias"
-      />
+      <PanelLinks mode="movie" :ids="ids" :title="movieTitle" :alias="movieAlias" />
     </NFlex>
 
     <!--  Movie name alias  -->
