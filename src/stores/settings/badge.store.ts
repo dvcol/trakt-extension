@@ -2,6 +2,8 @@ import { DateUtils, dayOfTheWeek, getTodayISOLocal } from '@dvcol/common-utils/c
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
+import type { ProgressListItem } from '~/stores/data/progress.store';
+
 import type { CalendarItem } from '~/utils/calendar.utils';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
@@ -21,10 +23,11 @@ import { debounce } from '~/utils/debounce.utils';
 
 const cleanCalendarBadge = () => sendMessage({ type: MessageType.BadgeUpdate, payload: { text: '', title: '' } });
 
-const getBadgeText = (items: unknown[]) => {
-  if (!items?.length) return '';
-  if (items.length > 99) return '99+';
-  return items.length.toString();
+const getBadgeText = (items?: CalendarItem[] | ProgressListItem[]) => {
+  const _items = items?.filter(item => item.type !== ListScrollItemType.placeholder);
+  if (!_items?.length) return '';
+  if (_items.length > 99) return '99+';
+  return _items.length.toString();
 };
 
 const getSeasonEpisode = (item?: { season?: number; number?: number }) => {
