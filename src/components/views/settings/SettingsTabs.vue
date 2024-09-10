@@ -1,8 +1,18 @@
 <script lang="ts" setup>
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
-import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
+import {
+  NButton,
+  NButtonGroup,
+  NIcon,
+  NSelect,
+  NSwitch,
+  type SelectOption,
+} from 'naive-ui';
 
 import { type Component, computed, h, onBeforeMount, ref, watch } from 'vue';
+
+import IconClose from '~/components/icons/IconCloseSmall.vue';
+import IconPencil from '~/components/icons/IconPencil.vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
@@ -42,6 +52,7 @@ const {
   loadListsPageSize,
   progressType,
   enableRatings,
+  backgroundColor,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -119,10 +130,38 @@ const { extended: calendarExtended } = useCalendarStoreRefs();
 const { extended: historyExtended } = useHistoryStoreRefs();
 
 const container = ref();
+const picker = ref<HTMLInputElement>();
+const onColor = () => {
+  picker.value?.focus();
+  picker.value?.click();
+};
 </script>
 
 <template>
   <div ref="container" class="tabs-container">
+    <!--  Default tab  -->
+    <SettingsFormItem :label="i18n('label_default_tab')">
+      <div class="form-button">
+        <input ref="picker" v-model="backgroundColor" type="color" class="color-picker" />
+        <NButtonGroup
+          class="color-picker-button-group"
+          :style="{ '--color-picker': backgroundColor }"
+        >
+          <NButton round tertiary @click="onColor">
+            Picker
+            <template #icon>
+              <NIcon><IconPencil /></NIcon>
+            </template>
+          </NButton>
+          <NButton circle tertiary type="error" @click="backgroundColor = 'transparent'">
+            <template #icon>
+              <NIcon><IconClose /></NIcon>
+            </template>
+          </NButton>
+        </NButtonGroup>
+      </div>
+    </SettingsFormItem>
+
     <!--  Default tab  -->
     <SettingsFormItem :label="i18n('label_default_tab')">
       <NSelect
@@ -331,6 +370,7 @@ const container = ref();
   flex-direction: column;
   gap: 1.5rem;
 
+  .form-button,
   .form-switch {
     display: flex;
     flex: 1 1 auto;
@@ -377,5 +417,32 @@ const container = ref();
 
 .progress-type {
   width: 6rem;
+}
+
+.color-picker {
+  width: 0;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+
+  &-button-group {
+    button {
+      border: 2px solid var(--color-picker, transparent);
+      transition: border-color 0.3s var(--n-bezier);
+
+      i {
+        margin-left: -2px;
+      }
+    }
+
+    :first-child {
+      border-right: none;
+    }
+
+    :last-child {
+      border-left: none;
+    }
+  }
 }
 </style>

@@ -194,6 +194,11 @@ onDeactivated(() => {
       z-index: var(--length);
     }
 
+    &:active,
+    &:hover {
+      border-color: var(--border-white);
+    }
+
     &.target {
       border-color: var(--n-color-target);
     }

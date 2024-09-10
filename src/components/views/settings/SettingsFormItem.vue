@@ -66,6 +66,7 @@ defineProps({
   display: flex;
   flex: 1 1 auto;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
 
   :deep(label) {

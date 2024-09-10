@@ -46,6 +46,7 @@ type ExtensionSettings = {
   loadListsPageSize: number;
   progressType: ProgressTypes;
   enableRatings: boolean;
+  backgroundColor: string;
 };
 
 const ExtensionSettingsConstants = {
@@ -64,6 +65,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const initialized = ref<Promise<boolean>>();
   const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
   const enableRatings = ref(false);
+  const backgroundColor = ref('transparent');
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -85,6 +87,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         loadListsPageSize: loadListsPageSize.value,
         progressType: progressType.value,
         enableRatings: enableRatings.value,
+        backgroundColor: backgroundColor.value,
       }),
     500,
   );
@@ -117,6 +120,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         setLoadLists(Object.values(value), key);
       });
     }
+    if (restored?.backgroundColor !== undefined) backgroundColor.value = restored.backgroundColor;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -217,6 +221,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: boolean) => {
         enableRatings.value = value;
         saveState().catch(err => Logger.error('Failed to save enable ratings extension settings', { value, err }));
+      },
+    }),
+    backgroundColor: computed({
+      get: () => backgroundColor.value,
+      set: (value: string) => {
+        backgroundColor.value = value;
+        saveState().catch(err => Logger.error('Failed to save background color extension settings', { value, err }));
       },
     }),
   };

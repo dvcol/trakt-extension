@@ -64,4 +64,13 @@ const container = ref();
 .form-select {
   min-width: 8rem;
 }
+
+.form-switch {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 5rem;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+}
 </style>

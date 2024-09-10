@@ -30,7 +30,7 @@ const override: GlobalThemeOverrides = {
 };
 
 const { drawer, open, dropdown } = NavbarService;
-const { enabledRoutes } = useExtensionSettingsStoreRefs();
+const { enabledRoutes, backgroundColor } = useExtensionSettingsStoreRefs();
 const { root } = useAppStateStoreRefs();
 
 onBeforeMount(() => addCustomProgressProperty());
@@ -40,7 +40,10 @@ onBeforeMount(() => addCustomProgressProperty());
   <div
     id="trakt-extension-root"
     ref="root"
-    :style="{ '--tab-count': enabledRoutes.length + 1 }"
+    :style="{
+      '--tab-count': enabledRoutes.length + 1,
+      '--background-color': backgroundColor,
+    }"
   >
     <NConfigProvider :theme="theme" :theme-overrides="override" abstract>
       <AppComponent />
@@ -123,6 +126,8 @@ onBeforeMount(() => addCustomProgressProperty());
 
 #trakt-extension-root {
   height: 100%;
+  background-color: var(--background-color, transparent);
+  transition: background-color 0.5s var(--n-bezier);
 }
 
 .notification-container.n-notification-container.n-notification-container {
@@ -261,5 +266,9 @@ onBeforeMount(() => addCustomProgressProperty());
   .n-anchor .n-anchor-link .n-anchor-link__title {
     padding-right: 0;
   }
+}
+
+.n-card {
+  border-radius: 0.75rem;
 }
 </style>
