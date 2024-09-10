@@ -23,6 +23,8 @@ try {
 try {
   onVersionUpdate(async details => {
     console.debug(`Extension updated`, details);
+    const { previousVersion, nextVersion } = details;
+    if (previousVersion?.split('.').slice(0, 2).join('.') === nextVersion?.split('.').slice(0, 2).join('.')) return;
     await storage.local.set(MessageType.VersionUpdate, { ...details, date: Date.now() });
   });
 } catch (error) {
