@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.26.1](https://github.com/dvcol/trakt-extension/compare/v1.26.0...v1.26.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* **simkl:** adds simkl links to movies ([1ee6a04](https://github.com/dvcol/trakt-extension/commit/1ee6a0444546f16e307ba6aea5ae8d38f9c2cdda))
+
 ## [1.26.0](https://github.com/dvcol/trakt-extension/compare/v1.25.3...v1.26.0) (2024-09-10)
 
 
