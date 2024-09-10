@@ -302,11 +302,15 @@ const onTagClick = (url?: string) => {
         class="tags"
       >
         <template v-if="loading && showTagLoader">
-          <NSkeleton text style="width: 120px; height: 18px" />
+          <NSkeleton text style="width: 120px; height: 18px; border-radius: 2px" />
         </template>
         <template v-else>
           <template v-for="(tag, i) of tags" :key="`${i}-${tag.label}`">
-            <NSkeleton v-if="loading" text style="width: 6%" />
+            <NSkeleton
+              v-if="loading"
+              text
+              style="width: 120px; height: 18px; border-radius: 2px"
+            />
             <TagLink :tag="tag" @on-click="onTagClick" />
           </template>
         </template>
@@ -316,7 +320,7 @@ const onTagClick = (url?: string) => {
             v-if="loading"
             key="date-loader"
             text
-            style="width: 42px; height: 18px"
+            style="width: 42px; height: 18px; border-radius: 2px"
           />
           <NTag
             v-else
@@ -334,7 +338,7 @@ const onTagClick = (url?: string) => {
             v-if="loading"
             key="collected-loader"
             text
-            style="width: 22px; height: 18px"
+            style="width: 22px; height: 18px; border-radius: 2px"
           />
           <NTag
             v-else
@@ -358,7 +362,7 @@ const onTagClick = (url?: string) => {
             v-if="loading"
             key="played-loader"
             text
-            style="width: 22px; height: 18px"
+            style="width: 22px; height: 18px; border-radius: 2px"
           />
           <NTag
             v-else
