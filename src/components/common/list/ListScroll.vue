@@ -224,7 +224,7 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32
       :padding-top="listPaddingTop"
       :padding-bottom="listPaddingBottom"
       :key-field="'key'"
-      @scroll="onScrollHandler"
+      :on-scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item }">
