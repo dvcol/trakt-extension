@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.26.0](https://github.com/dvcol/trakt-extension/compare/v1.25.3...v1.26.0) (2024-09-10)
+
+
+### Features
+
+* **settings:** adds custom background colour option ([725015c](https://github.com/dvcol/trakt-extension/commit/725015cb47a024433a895c629ecf53d90f8a380e))
+* **web:** adds support for swipe to close panel ([2a1b704](https://github.com/dvcol/trakt-extension/commit/2a1b704ce157b38eb369bbe85f49a5fc1620a405))
+* **web:** adds swipe support to panel carousel ([9da0b7e](https://github.com/dvcol/trakt-extension/commit/9da0b7ebb5e41346799fabe4979b142884f76674))
+* **web:** adds touch support ([2be1cc3](https://github.com/dvcol/trakt-extension/commit/2be1cc357252fd4e341ef54cb89287bf08d6d61e))
+* **web:** adds touch swipe support for header ([74256ee](https://github.com/dvcol/trakt-extension/commit/74256eea8f039110a19a5fcdf392fa8cdf5619b5))
+
+
+### Bug Fixes
+
+* **badge:** remove placeholders from badge count ([0e9a03c](https://github.com/dvcol/trakt-extension/commit/0e9a03c8f45a6e1ccd9f191db6716cf37a133991))
+* **css:** disable overscroll in panels ([eb12bcf](https://github.com/dvcol/trakt-extension/commit/eb12bcf2b76067807378e2dfc6261df54a24246c))
+* **loading:** adjust tag loader css ([101a154](https://github.com/dvcol/trakt-extension/commit/101a154a8c44ba365c72de7e8b35cae2817b0e5b))
+* **loading:** improve list loading indicator ([f4427ca](https://github.com/dvcol/trakt-extension/commit/f4427ca284486959d3d31a5c20c642c97e3cdb79))
+* **notification:** only notify on major version update ([74e68bc](https://github.com/dvcol/trakt-extension/commit/74e68bc4e4a54f518c740a40edd6682f993cc957))
+* **pwa:** adds bottom inset to footer ([dcc2be7](https://github.com/dvcol/trakt-extension/commit/dcc2be73b31555781bcb0444903716d86e0b5883))
+* **pwa:** adjust height of watching indicator & fix i18n label ([ce14823](https://github.com/dvcol/trakt-extension/commit/ce148232e646b7492ad6fb44d5e0f7b44b9ffc1a))
+* **pwa:** switch to absolute viewport unit in standalone mode ([c67c380](https://github.com/dvcol/trakt-extension/commit/c67c38049eb595f9b8705c07ab164229117dc32f))
+* **scroll:** use framework scroller handler ([42fe03c](https://github.com/dvcol/trakt-extension/commit/42fe03c23abbc40e0748fbf022d17634d13ab0de))
+* **web:** fix checkin safe inset area padding ([c40e441](https://github.com/dvcol/trakt-extension/commit/c40e441167c0ec6ac81761816fa2c99bdf5ca7ef))
+* **web:** handle scrollable drawer in swipe actions ([125b740](https://github.com/dvcol/trakt-extension/commit/125b740224067b18511a7da807549925e9600bff))
+* **web:** invert swipe direction for navbar ([13d847b](https://github.com/dvcol/trakt-extension/commit/13d847b407898d9034294c6e93eda81dcf4a5de0))
+
 ### [1.25.3](https://github.com/dvcol/trakt-extension/compare/v1.25.2...v1.25.3) (2024-09-05)
 
 
