@@ -1,5 +1,5 @@
 import { DateUtils } from '@dvcol/common-utils/common/date';
-import { computed, ref, type Ref, watch } from 'vue';
+import { computed, nextTick, type Ref, ref, watch } from 'vue';
 
 import type { TraktCalendarMovie, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
 
@@ -179,8 +179,10 @@ export const useCalendar = ({
     await fetching;
 
     clearTimeout(timeout);
+    const currentScrollTop = listRef.value?.list?.$el?.firstElementChild?.scrollTop ?? 0;
+    await nextTick();
     listRef.value?.list.scrollTo({
-      top: (list.value.findIndex(item => item.id === first.id) - placeholder) * itemSize,
+      top: currentScrollTop + (list.value.findIndex(item => item.id === first.id) - placeholder) * itemSize,
     });
     placeholder = 0;
   };
