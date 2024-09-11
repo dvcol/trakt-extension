@@ -206,11 +206,13 @@ useWatchActivated(
             :label="i18n('watchlist_max')"
             :value="limits?.watchlist?.item_count"
             :loading="userSettingLoading"
+            grow
           />
           <TextField
             :label="i18n('favorites_max')"
             :value="limits?.favorites?.item_count"
             :loading="userSettingLoading"
+            grow
           />
         </NFlex>
         <NFlex vertical class="flex-column">
@@ -234,6 +236,7 @@ useWatchActivated(
           :value="userStat?.movies?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
 
         <TextField
@@ -243,7 +246,8 @@ useWatchActivated(
           "
           :value="movieWatchTime"
           :loading="userStatLoading"
-          label-width="8rem"
+          label-width="8.5rem"
+          grow
         />
       </NFlex>
       <NFlex class="flex-auto" wrap>
@@ -252,6 +256,7 @@ useWatchActivated(
           :value="userStat?.episodes?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
         <TextField
           :label="i18n('user_stats_episodes_time')"
@@ -260,7 +265,8 @@ useWatchActivated(
           "
           :value="episodeWatchTime"
           :loading="userStatLoading"
-          label-width="8rem"
+          label-width="8.5rem"
+          grow
         />
       </NFlex>
 
@@ -270,12 +276,14 @@ useWatchActivated(
           :value="userStat?.shows?.watched ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
         <TextField
           :label="i18n('user_stats_total_time')"
           :value="totalWatchTime"
           :loading="userStatLoading"
-          label-width="8rem"
+          label-width="8.5rem"
+          grow
         />
       </NFlex>
     </NFlex>
@@ -289,12 +297,14 @@ useWatchActivated(
           :value="userStat?.episodes?.collected ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
         <TextField
           :label="i18n('user_stats_movies_collected')"
           :value="userStat?.movies?.collected ?? '-'"
           :loading="userStatLoading"
           label-width="8rem"
+          grow
         />
       </NFlex>
     </NFlex>
@@ -308,12 +318,14 @@ useWatchActivated(
           :value="userStat?.shows?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
         <TextField
           :label="i18n('user_stats_episodes_ratings')"
           :value="userStat?.episodes?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
+          grow
         />
       </NFlex>
 
@@ -323,12 +335,14 @@ useWatchActivated(
           :value="userStat?.movies?.ratings"
           :loading="userStatLoading"
           label-width="8rem"
+          value-width="4rem"
         />
         <TextField
           :label="i18n('user_stats_ratings')"
           :value="userStat?.ratings?.total"
           :loading="userStatLoading"
           label-width="8rem"
+          grow
         />
       </NFlex>
     </NFlex>
