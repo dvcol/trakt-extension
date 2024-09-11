@@ -1,0 +1,38 @@
+{
+  "common__loading__hysteresis__disabled": {
+    "message": "Disabled",
+    "description": "The loading bar is disabled"
+  },
+  "common__loading__hysteresis__0": {
+    "message": "Immediate",
+    "description": "The loading bar is Immediate"
+  },
+  "common__loading__hysteresis__100": {
+    "message": "100ms",
+    "description": "The loading bar is delayed by 100ms"
+  },
+  "common__loading__hysteresis__200": {
+    "message": "200ms",
+    "description": "The loading bar is delayed by 200ms"
+  },
+  "common__loading__hysteresis__500": {
+    "message": "500ms",
+    "description": "The loading bar is delayed by 300ms"
+  },
+  "common__loading__hysteresis__1000": {
+    "message": "1 second",
+    "description": "The loading bar is delayed by 1 second"
+  },
+  "common__loading__hysteresis__2000": {
+    "message": "2 seconds",
+    "description": "The loading bar is delayed by 2 seconds"
+  },
+  "common__loading__hysteresis__5000": {
+    "message": "5 seconds",
+    "description": "The loading bar is delayed by 5 seconds"
+  },
+  "common__loading__hysteresis__10000": {
+    "message": "10 seconds",
+    "description": "The loading bar is delayed by 10 seconds"
+  }
+}

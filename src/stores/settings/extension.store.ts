@@ -47,6 +47,7 @@ type ExtensionSettings = {
   progressType: ProgressTypes;
   enableRatings: boolean;
   backgroundColor: string;
+  loadingHysteresis: number;
 };
 
 const ExtensionSettingsConstants = {
@@ -66,6 +67,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
   const enableRatings = ref(false);
   const backgroundColor = ref('transparent');
+  const loadingHysteresis = ref(-1);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -88,6 +90,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         progressType: progressType.value,
         enableRatings: enableRatings.value,
         backgroundColor: backgroundColor.value,
+        loadingHysteresis: loadingHysteresis.value,
       }),
     500,
   );
@@ -121,6 +124,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       });
     }
     if (restored?.backgroundColor !== undefined) backgroundColor.value = restored.backgroundColor;
+    if (restored?.loadingHysteresis !== undefined) loadingHysteresis.value = restored.loadingHysteresis;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -228,6 +232,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: string) => {
         backgroundColor.value = value;
         saveState().catch(err => Logger.error('Failed to save background color extension settings', { value, err }));
+      },
+    }),
+    loadingHysteresis: computed({
+      get: () => loadingHysteresis.value,
+      set: (value: number) => {
+        loadingHysteresis.value = value;
+        saveState().catch(err => Logger.error('Failed to save loading hysteresis extension settings', { value, err }));
       },
     }),
   };

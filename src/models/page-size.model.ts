@@ -10,11 +10,11 @@ export const PageSize: Record<string, number> = {
 } as const;
 
 export const pageSizeOptions: SelectOption[] = [
-  { label: '50', value: 50 },
-  { label: '100', value: 100 },
-  { label: '200', value: 200 },
-  { label: '500', value: 500 },
-  { label: '1000', value: 1000 },
+  { label: '50', value: 50 } as const,
+  { label: '100', value: 100 } as const,
+  { label: '200', value: 200 } as const,
+  { label: '500', value: 500 } as const,
+  { label: '1000', value: 1000 } as const,
 ] as const;
 
 export const pageSizeOptionsWithZero: SelectOption[] = [{ label: '0', value: 0 }, ...pageSizeOptions] as const;

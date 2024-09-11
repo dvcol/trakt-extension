@@ -15,6 +15,7 @@ import IconClose from '~/components/icons/IconCloseSmall.vue';
 import IconPencil from '~/components/icons/IconPencil.vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
+import { loadingHysteresisOptions } from '~/models/loading-hysteresis.model';
 import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
 import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
@@ -53,6 +54,7 @@ const {
   progressType,
   enableRatings,
   backgroundColor,
+  loadingHysteresis,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -72,6 +74,14 @@ const listOptions = computed<ListOption[]>(() =>
     value: list.id,
     source: list,
     icon: getIcon(list),
+  })),
+);
+
+const loadingOption = computed(() =>
+  loadingHysteresisOptions.map(({ label, value }) => ({
+    label:
+      typeof label === 'string' ? i18n(label, 'common', 'loading', 'hysteresis') : label,
+    value,
   })),
 );
 
@@ -141,29 +151,6 @@ const onColor = () => {
   <div ref="container" class="tabs-container">
     <!--  Default tab  -->
     <SettingsFormItem :label="i18n('label_default_tab')">
-      <div class="form-button">
-        <input ref="picker" v-model="backgroundColor" type="color" class="color-picker" />
-        <NButtonGroup
-          class="color-picker-button-group"
-          :style="{ '--color-picker': backgroundColor }"
-        >
-          <NButton round tertiary @click="onColor">
-            Picker
-            <template #icon>
-              <NIcon><IconPencil /></NIcon>
-            </template>
-          </NButton>
-          <NButton circle tertiary type="error" @click="backgroundColor = 'transparent'">
-            <template #icon>
-              <NIcon><IconClose /></NIcon>
-            </template>
-          </NButton>
-        </NButtonGroup>
-      </div>
-    </SettingsFormItem>
-
-    <!--  Default tab  -->
-    <SettingsFormItem :label="i18n('label_default_tab')">
       <NSelect
         v-model:value="defaultTab"
         class="default-tab"
@@ -186,6 +173,38 @@ const onColor = () => {
         :ellipsis-tag-popover-props="{ disabled: true }"
         multiple
       />
+    </SettingsFormItem>
+    <!--  Loading bar  -->
+    <SettingsFormItem :label="i18n('label_loading_bar')">
+      <NSelect
+        v-model:value="loadingHysteresis"
+        class="loading-bar"
+        :to="container"
+        :options="loadingOption"
+      />
+    </SettingsFormItem>
+
+    <!--  Background color  -->
+    <SettingsFormItem :label="i18n('label_background_color')">
+      <div class="form-button">
+        <input ref="picker" v-model="backgroundColor" type="color" class="color-picker" />
+        <NButtonGroup
+          class="color-picker-button-group"
+          :style="{ '--color-picker': backgroundColor }"
+        >
+          <NButton round tertiary @click="onColor">
+            Picker
+            <template #icon>
+              <NIcon><IconPencil /></NIcon>
+            </template>
+          </NButton>
+          <NButton circle tertiary type="error" @click="backgroundColor = 'transparent'">
+            <template #icon>
+              <NIcon><IconClose /></NIcon>
+            </template>
+          </NButton>
+        </NButtonGroup>
+      </div>
     </SettingsFormItem>
 
     <!--  Restore tab  -->
@@ -394,6 +413,10 @@ const onColor = () => {
 
 .form-select {
   min-width: 5.5rem;
+}
+
+.loading-bar {
+  width: 10rem;
 }
 
 .hidden-form-item {

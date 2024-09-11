@@ -75,6 +75,7 @@ import { traktClientSettings } from '~/settings/trakt.api';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useAuthSettingsStore } from '~/stores/settings/auth.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { CachePrefix, TraktChromeCacheStore } from '~/utils/cache.utils';
 import { cancellablePaginatedWriteJson, getCachedProgressEndpoint, getSessionUser } from '~/utils/trakt-service.utils';
@@ -211,15 +212,14 @@ export class TraktService {
   }
 
   static async loadingBar<T>(query: Promise<T> | CancellablePromise<T>) {
-    const timeout = setTimeout(() => LoadingBarService.start(), 1000);
+    const { loadingHysteresis } = useExtensionSettingsStore();
+    if (loadingHysteresis >= 0) LoadingBarService.start(loadingHysteresis);
     try {
       await query;
-      LoadingBarService.finish();
+      if (loadingHysteresis >= 0) LoadingBarService.finish();
     } catch (error) {
-      LoadingBarService.error();
+      if (loadingHysteresis >= 0) LoadingBarService.error();
       ErrorService.registerError(error);
-    } finally {
-      clearTimeout(timeout);
     }
   }
 
@@ -239,11 +239,7 @@ export class TraktService {
 
     this.simklClient.onCall(async call => {
       Logger.debug('SimklClient.onCall', call);
-      try {
-        await call.query;
-      } catch (error) {
-        ErrorService.registerError(error);
-      }
+      await this.loadingBar(call.query);
     });
 
     this.tmdbClient.onAuthChange(async _auth => {

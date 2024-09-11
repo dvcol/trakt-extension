@@ -1,4 +1,12 @@
 {
+  "settings__tabs__label_background_color": {
+    "message": "Background Color",
+    "description": "Label for the 'Background Color' setting"
+  },
+  "settings__tabs__label_loading_bar": {
+    "message": "Loading Bar Hysteresis",
+    "description": "Label for the 'Loading Bar Hysteresis' setting"
+  },
   "settings__tabs__label_default_tab": {
     "message": "Default tab",
     "description": "Label for the 'Default tab' setting"
