@@ -68,7 +68,7 @@ export const useCancelWatching = (cancel: () => unknown, action: TraktWatching['
         style: {
           width: '20rem',
           background: 'var(--bg-black-80)',
-          backdropFilter: 'var(--bg-blur-10)',
+          backdropFilter: 'blur(var(--bg-blur-4))',
           whiteSpace: 'pre-line',
         },
         positiveButtonProps: {

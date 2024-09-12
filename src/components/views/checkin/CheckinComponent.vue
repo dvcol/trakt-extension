@@ -151,16 +151,16 @@ const onClick = () => {
         <NIcon class="icon" :component="icon" />
         <div class="column">
           <div class="top">
-            <span class="text primary">{{ title }}</span>
+            <span class="text primary ellipsis">{{ title }}</span>
             <span class="text tertiary compact">—</span>
-            <span class="text secondary compact">{{ subtitle }}</span>
+            <span class="text secondary compact ellipsis">{{ subtitle }}</span>
             <template v-if="episode">
               <span class="text tertiary">—</span>
-              <span class="text secondary">{{ episode }}</span>
+              <span class="text secondary ellipsis">{{ episode }}</span>
             </template>
           </div>
           <div v-if="!isTiny" class="bottom">
-            <span class="tertiary">
+            <span class="tertiary ellipsis">
               {{ type }} {{ action }} {{ i18n('at') }} {{ started }}
             </span>
           </div>
@@ -199,13 +199,16 @@ const onClick = () => {
 
 .wrapper {
   position: relative;
+  backdrop-filter: blur(var(--bg-blur-4));
+  transition: backdrop-filter 0.5s var(--n-bezier);
+
+  &:active,
+  &:hover {
+    backdrop-filter: blur(var(--bg-blur-10));
+  }
 
   .background {
-    @include mixin.hover-background(
-      $from: var(--bg-trakt-50),
-      $to: var(--bg-trakt-60),
-      $blur-hover: var(--bg-blur-10)
-    );
+    @include mixin.hover-background($from: var(--bg-trakt-50), $to: var(--bg-trakt-60));
 
     position: absolute;
     top: 0;
@@ -218,8 +221,7 @@ const onClick = () => {
   .container {
     @include mixin.hover-background(
       $from: var(--bg-trakt-dark-50),
-      $to: var(--bg-trakt-dark-60),
-      $blur-hover: var(--bg-blur-10)
+      $to: var(--bg-trakt-dark-60)
     );
 
     position: relative;
@@ -240,17 +242,34 @@ const onClick = () => {
     }
 
     .left,
+    .column {
+      overflow: hidden;
+    }
+
+    .left,
     .right,
     .top,
     .bottom {
       display: flex;
       gap: 0.25rem;
       align-items: center;
+      white-space: nowrap;
       transition: gap 0.5s var(--n-bezier);
+    }
+
+    .top,
+    .bottom {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .left {
       flex: 1 1 auto;
+    }
+
+    .ellipsis {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .column {
@@ -258,6 +277,7 @@ const onClick = () => {
       flex: 1 1 auto;
       flex-direction: column;
       gap: 0.125rem;
+      padding-right: 0.5rem;
     }
 
     .bottom {
@@ -304,6 +324,7 @@ const onClick = () => {
     }
 
     .tertiary {
+      overflow: hidden;
       color: var(--white-70);
     }
 
