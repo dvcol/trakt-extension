@@ -175,12 +175,13 @@ export default defineConfig(() => ({
   base: process.env.VITE_BASE || './',
   server: {
     port,
+    open: true,
     hmr: {
       host: 'localhost',
     },
   },
   preview: {
-    port: 3304,
+    port: port + 1,
     cors: true,
     open: true,
   },
