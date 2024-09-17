@@ -48,7 +48,9 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .empty {
-  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
   color: var(--n-text-color);
   transition: color 0.3s var(--n-bezier);
 

@@ -232,7 +232,7 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
         <slot v-if="item.type === ListScrollItemType.LoadMore" name="load-more">
           <NFlex
             class="load-more"
-            justify="center"
+            justify="flex-start"
             align="center"
             vertical
             size="small"
@@ -242,8 +242,29 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
             <ListLoadMore
               :page="pagination?.page"
               :page-count="pagination?.pageCount"
+              :items="items.length > 1 ? items.length - 1 : 0"
+              :item-count="pagination?.itemCount"
               :page-size="pageSize"
               @on-load-more="onLoadMore"
+            />
+          </NFlex>
+        </slot>
+        <slot v-else-if="item.type === ListScrollItemType.AllLoaded" name="empty">
+          <NFlex
+            class="all-loaded"
+            justify="flex-start"
+            align="center"
+            vertical
+            size="small"
+            :theme-overrides="{ gapSmall: '0' }"
+            :style="`height: ${listOptions?.itemSize ?? defaultSize}px;`"
+          >
+            <ListLoadMore
+              :page="pagination?.page"
+              :page-count="pagination?.pageCount"
+              :items="items.length > 1 ? items.length - 1 : 0"
+              :item-count="pagination?.itemCount"
+              :page-size="pageSize"
             />
           </NFlex>
         </slot>
@@ -294,8 +315,8 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
   height: var(--full-height);
   margin-top: calc(0% - #{layout.$safe-navbar-height});
 
+  .all-loaded,
   .load-more {
-    margin-top: 1rem;
     opacity: 0;
     animation: fade-in 0.5s forwards;
     animation-delay: 0.25s;

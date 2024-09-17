@@ -1,23 +1,27 @@
 {
   "list__empty__no_data": {
-    "message": "No data found.",
+    "message": "No data found",
     "description": "Empty message when there is no data to display in the list."
   },
-  "list__more__pages_line_1": {
-    "message": "Searched",
-    "description": "First line of the list empty pagination message."
-  },
-  "list__more__pages_line_2": {
+  "list__more__out_of": {
     "message": "out of",
-    "description": "Second line of the list empty pagination message."
+    "description": "Second line of the list load more pagination message."
   },
-  "list__more__pages_line_3": {
-    "message": "pages.",
-    "description": "Third line of the list empty pagination message."
+  "list__more__pages": {
+    "message": "pages",
+    "description": "Third line of the list load more pagination message."
   },
-  "list__more__current_page_size": {
-    "message": "Current page size is",
-    "description": "Current page size label."
+  "list__more__items": {
+    "message": "items",
+    "description": "Third line of the list load more pagination message."
+  },
+  "list__more__page_size": {
+    "message": "page size",
+    "description": "page size label."
+  },
+  "list__more__load_more": {
+    "message": "Load more Pages",
+    "description": "Load more Pages."
   },
   "list__item__placeholder_empty": {
     "message": "Nothing on this day.",
