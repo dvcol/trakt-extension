@@ -69,6 +69,16 @@ const getOnClick = (scope: ExportScope, index: number) => async () => {
   }
 };
 
+const timeRegex = /:/g;
+const separatorRegex = /[tT]/;
+const getDate = () =>
+  new Date()
+    .toISOString()
+    .split('.')
+    .at(0)
+    ?.replace(separatorRegex, '_')
+    .replace(timeRegex, '-');
+
 const fetchData = (type: ListTypes, name: string, entity?: ListEntity) => {
   const writer = {
     picker: {
@@ -77,7 +87,7 @@ const fetchData = (type: ListTypes, name: string, entity?: ListEntity) => {
           ? i18n(`export_${name}_name`)
           : `${i18n(`export_${type}_name`)}_${name}`,
         user.value,
-        new Date().toISOString(),
+        getDate(),
       ]
         .join('_')
         .replace(' ', '_')
