@@ -200,7 +200,7 @@ const topInset = computed(() => {
 const listPaddingTop = computed(
   () => topInset.value + (listOptions?.value?.paddingTop ?? 60),
 );
-const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32);
+const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8);
 </script>
 
 <template>
@@ -290,9 +290,8 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 32
 @include animation.fade-in;
 
 .list-scroll {
-  height: calc(var(--full-height) - 8px);
+  height: var(--full-height);
   margin-top: calc(0% - #{layout.$safe-navbar-height});
-  margin-bottom: 8px;
 
   .load-more {
     margin-top: 1rem;
