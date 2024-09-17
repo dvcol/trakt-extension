@@ -76,15 +76,16 @@ export type ShowProgress = BaseTraktProgress & {
 };
 
 export const ListScrollItemType = {
-  movie: 'movie',
-  show: 'show',
-  season: 'season',
-  episode: 'episode',
-  person: 'person',
-  list: 'list',
-  loading: 'loading',
-  loadMore: 'load-more',
-  placeholder: 'placeholder',
+  Movie: 'movie',
+  Show: 'show',
+  Season: 'season',
+  Episode: 'episode',
+  Person: 'person',
+  List: 'list',
+  Loading: 'loading',
+  LoadMore: 'load-more',
+  AllLoaded: 'all-loaded',
+  Placeholder: 'placeholder',
 } as const;
 
 export type ListScrollItemMeta<T = { [key: string]: unknown }> = {

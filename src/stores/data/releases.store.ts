@@ -51,11 +51,11 @@ const parseData = ({
     return {
       ...movie,
       date: _date,
-      type: ListScrollItemType.movie,
+      type: ListScrollItemType.Movie,
       title: movie.title,
       content: movie.overview,
       getPosterQuery: () => ({
-        type: ListScrollItemType.movie,
+        type: ListScrollItemType.Movie,
         id: movie.id,
       }),
       tags: [],
@@ -202,14 +202,14 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       if (mode === 'reload') {
         releases.value = [...spacedData];
       } else if (mode === 'start') {
-        releases.value = [...spacedData, ...releases.value.filter(c => c.type !== ListScrollItemType.loading)];
+        releases.value = [...spacedData, ...releases.value.filter(c => c.type !== ListScrollItemType.Loading)];
       } else if (mode === 'end') {
-        releases.value = [...releases.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
+        releases.value = [...releases.value.filter(c => c.type !== ListScrollItemType.Loading), ...spacedData];
       }
     } catch (e) {
       Logger.error('Failed to fetch releases');
       NotificationService.error('Failed to fetch releases', e);
-      releases.value = releases.value.filter(c => c.type !== ListScrollItemType.loading);
+      releases.value = releases.value.filter(c => c.type !== ListScrollItemType.Loading);
       const errorKey = JSON.stringify(query);
       releasesErrors[errorKey] = ErrorCount.fromDictionary(releasesErrors, errorKey, e);
       throw e;

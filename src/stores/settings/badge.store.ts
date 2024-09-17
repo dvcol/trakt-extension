@@ -24,7 +24,7 @@ import { debounce } from '~/utils/debounce.utils';
 const cleanCalendarBadge = () => sendMessage({ type: MessageType.BadgeUpdate, payload: { text: '', title: '' } });
 
 const getBadgeText = (items?: CalendarItem[] | ProgressListItem[]) => {
-  const _items = items?.filter(item => item.type !== ListScrollItemType.placeholder);
+  const _items = items?.filter(item => item.type !== ListScrollItemType.Placeholder);
   if (!_items?.length) return '';
   if (_items.length > 99) return '99+';
   return _items.length.toString();
@@ -72,7 +72,7 @@ const sendCalendarBadge = async (start_date = DateUtils.previous(1), days = 8) =
         `${_day} - ${today === _day ? 'Today' : dayOfTheWeek(_day)}\n`,
         ..._items
           .map(item => {
-            if (item.type === ListScrollItemType.placeholder) return '—';
+            if (item.type === ListScrollItemType.Placeholder) return '—';
             if ('show' in item) return getEpisodeLine(item);
             if ('movie' in item) return `movie |  ${item.movie.title}`;
             return undefined;
@@ -95,7 +95,7 @@ const sendProgressBadge = async () => {
     'Progress',
     items
       .map(item => {
-        if (item.type === ListScrollItemType.placeholder) return '—';
+        if (item.type === ListScrollItemType.Placeholder) return '—';
         if (item.type === 'episode' && item.meta) return getEpisodeLine({ ...item.meta, episode: { ...item?.meta?.episode, title: '' } });
         if (item.type === 'show') return `show  |  ${item.title}`;
         if (item.type === 'movie') return `movie |  ${item.title}`;

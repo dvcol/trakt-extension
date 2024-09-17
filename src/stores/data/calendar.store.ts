@@ -134,15 +134,15 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       if (mode === 'reload') {
         calendar.value = [...spacedData];
       } else if (mode === 'start') {
-        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== ListScrollItemType.loading)];
+        calendar.value = [...spacedData, ...calendar.value.filter(c => c.type !== ListScrollItemType.Loading)];
       } else if (mode === 'end') {
-        calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.loading), ...spacedData];
+        calendar.value = [...calendar.value.filter(c => c.type !== ListScrollItemType.Loading), ...spacedData];
       }
       evicted.calendar = false;
     } catch (e) {
       Logger.error('Failed to fetch calendar');
       NotificationService.error('Failed to fetch calendar', e);
-      calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.loading);
+      calendar.value = calendar.value.filter(c => c.type !== ListScrollItemType.Loading);
       const errorKey = JSON.stringify(query);
       calendarErrors[errorKey] = ErrorCount.fromDictionary(calendarErrors, errorKey, e);
       throw e;

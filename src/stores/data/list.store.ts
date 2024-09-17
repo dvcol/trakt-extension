@@ -38,7 +38,7 @@ export type AnyList =
   | TraktListItem
   | TraktWatchlist
   | TraktFavoriteItem
-  | (TraktCollection & { id: number | string; type?: typeof ListScrollItemType.loading });
+  | (TraktCollection & { id: number | string; type?: typeof ListScrollItemType.Loading });
 
 export const ListType = {
   List: 'list',
@@ -356,12 +356,12 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
         return { ...item, id: `${page}-${index}` };
       });
       pagination.value = response.pagination;
-      listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.loading), ...newData] : newData;
+      listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.Loading), ...newData] : newData;
       evicted.watchlist = false;
     } catch (e) {
       Logger.error('Failed to fetch list');
       NotificationService.error(`Failed to fetch list '${list}'`, e);
-      listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.loading);
+      listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.Loading);
       throw e;
     } finally {
       clearLoading();

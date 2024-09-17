@@ -34,11 +34,11 @@ export const getContent = (media: Pick<ListScrollSourceItem, 'movie' | 'episode'
 
 export const getType = (media: ListScrollSourceItem): ListScrollItem['type'] => {
   if (!media) return;
-  if ('movie' in media) return ListScrollItemType.movie;
-  if ('episode' in media) return ListScrollItemType.episode;
-  if ('season' in media) return ListScrollItemType.season;
-  if ('show' in media) return ListScrollItemType.show;
-  if ('person' in media) return ListScrollItemType.person;
+  if ('movie' in media) return ListScrollItemType.Movie;
+  if ('episode' in media) return ListScrollItemType.Episode;
+  if ('season' in media) return ListScrollItemType.Season;
+  if ('show' in media) return ListScrollItemType.Show;
+  if ('person' in media) return ListScrollItemType.Person;
 };
 
 export const getDate = <D extends string, T extends ListScrollSourceItemWithDate<D>>(
@@ -62,17 +62,17 @@ export const getDate = <D extends string, T extends ListScrollSourceItemWithDate
 };
 
 const isMediaType = (type: ListScrollItem['type']): type is 'movie' | 'show' | 'season' | 'episode' | 'person' =>
-  type === ListScrollItemType.movie ||
-  type === ListScrollItemType.show ||
-  type === ListScrollItemType.season ||
-  type === ListScrollItemType.episode ||
-  type === ListScrollItemType.person;
+  type === ListScrollItemType.Movie ||
+  type === ListScrollItemType.Show ||
+  type === ListScrollItemType.Season ||
+  type === ListScrollItemType.Episode ||
+  type === ListScrollItemType.Person;
 
 export const getPosterQuery =
   (item: ListScrollSourceItem, type: ListScrollItem['type']): ListScrollItem['getPosterQuery'] =>
   () => {
     if (!item || !type) return;
-    if (type === ListScrollItemType.placeholder) return;
+    if (type === ListScrollItemType.Placeholder) return;
     if (!isMediaType(type)) return;
     const _type = ['show', 'episode', 'season'].includes(type) ? 'show' : type;
     const media = item[_type];
@@ -185,7 +185,7 @@ export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, 
 
 const getContentLink = (item: ListScrollSourceItem): ListScrollItem['contentLink'] => {
   if (!item?.type || !item.show?.ids?.trakt) return;
-  if (![ListScrollItemType.show, ListScrollItemType.episode].map(String).includes(item.type)) return;
+  if (![ListScrollItemType.Show, ListScrollItemType.Episode].map(String).includes(item.type)) return;
   return {
     onClick: event => {
       event.preventDefault();
@@ -204,7 +204,7 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
       ...item,
       index,
       key: `${index}-${item.id}`,
-      loading: (typeof item.id === 'number' && item.id < 0) || item.type === ListScrollItemType.loading,
+      loading: (typeof item.id === 'number' && item.id < 0) || item.type === ListScrollItemType.Loading,
     };
 
     if (!_item.type) _item.type = getType(item);
@@ -337,8 +337,8 @@ export const addLoadMore = (
     if (!pagination.value?.page) return array;
     if (!pagination.value?.pageCount) return array;
     if (pagination.value.page === pagination.value.pageCount) return array;
-    if (array.length && array[array.length - 1].type === ListScrollItemType.loadMore) return array;
-    const type = ListScrollItemType.loadMore;
+    if (array.length && array[array.length - 1].type === ListScrollItemType.LoadMore) return array;
+    const type = ListScrollItemType.LoadMore;
     const index = items.value.length;
     const loadMore: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };
     return [...array, loadMore];

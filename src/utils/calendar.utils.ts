@@ -23,12 +23,12 @@ export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<neve
 
 export const CalendarPlaceholder: Partial<CalendarItem> = {
   id: 'empty',
-  type: ListScrollItemType.placeholder,
+  type: ListScrollItemType.Placeholder,
 } as const;
 
 export const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date }) as CalendarItem;
 export const getLoadingPlaceholder = (date: Date) =>
-  ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.loading }) as CalendarItem;
+  ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.Loading }) as CalendarItem;
 
 export const getEmptyWeeks = ({ startDate, loading = false, days = 14 }: { startDate: Date; loading?: boolean; days?: number }): CalendarItem[] => {
   return Array(days)

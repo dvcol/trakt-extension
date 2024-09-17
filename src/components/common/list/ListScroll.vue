@@ -228,7 +228,7 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
       @vue:updated="onUpdatedHandler"
     >
       <template #default="{ item }">
-        <slot v-if="item.type === ListScrollItemType.loadMore" name="load-more">
+        <slot v-if="item.type === ListScrollItemType.LoadMore" name="load-more">
           <NFlex
             class="load-more"
             justify="center"

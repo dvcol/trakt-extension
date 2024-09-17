@@ -216,7 +216,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
           </template>
         </NFlex>
 
-        <slot v-if="item.type === ListScrollItemType.placeholder">
+        <slot v-if="item.type === ListScrollItemType.Placeholder">
           <NFlex class="placeholder" align="center" justify="center" :wrap="false">
             <NEmpty size="large" :description="i18n('placeholder_empty')" />
           </NFlex>

@@ -151,11 +151,11 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       }));
 
       pagination.value = response.pagination;
-      searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.loading), ...data] : data;
+      searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.Loading), ...data] : data;
     } catch (e) {
       Logger.error('Failed to fetch search query');
       NotificationService.error('Failed to fetch search query', e);
-      searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.loading);
+      searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.Loading);
       searchErrors[JSON.stringify(request)] = ErrorCount.fromDictionary(searchErrors, JSON.stringify(request), e);
       throw e;
     } finally {

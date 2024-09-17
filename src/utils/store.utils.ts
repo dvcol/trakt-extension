@@ -53,7 +53,7 @@ export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktC
 export const useLoadingPlaceholder = <T>(pageSize: Ref<number> = ref(50)) =>
   computed<T[]>(() =>
     Array(pageSize.value)
-      .fill({ id: -1, type: ListScrollItemType.loading, loading: true })
+      .fill({ id: -1, type: ListScrollItemType.Loading, loading: true })
       .map((_, i) => ({ ..._, id: -1 * (i + 1) }) as T),
   );
 
