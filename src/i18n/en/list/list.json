@@ -20,8 +20,8 @@
     "description": "page size label."
   },
   "list__more__load_more": {
-    "message": "Load more Pages",
-    "description": "Load more Pages."
+    "message": "Load more",
+    "description": "Load more button."
   },
   "list__item__placeholder_empty": {
     "message": "Nothing on this day.",

@@ -53,17 +53,17 @@ const showButton = computed(() => page.value < pageCount.value);
 
 <template>
   <div v-if="items && itemCount" class="row items" :class="{ offset: !showButton }">
-    <span class="page"> {{ items }} </span> {{ i18n('out_of') }}
-    <span class="page"> {{ itemCount }} </span>
-    {{ i18n('pages') }}
-  </div>
-  <div class="row">
-    <span class="page"> {{ page }} </span> {{ i18n('out_of') }}
-    <span class="page"> {{ pageCount }} </span>
+    <span class="number"> {{ items }} </span> {{ i18n('out_of') }}
+    <span class="number"> {{ itemCount }} </span>
     {{ i18n('items') }}
   </div>
-  <div class="row">
-    {{ i18n('page_size') }} <span class="page"> {{ pageSize }} </span>
+  <div v-if="page && pageCount" class="row">
+    <span class="number"> {{ page }} </span> {{ i18n('out_of') }}
+    <span class="number"> {{ pageCount }} </span>
+    {{ i18n('pages') }}
+  </div>
+  <div v-if="pageSize" class="row">
+    {{ i18n('page_size') }} <span class="number"> {{ pageSize }} </span>
   </div>
   <Transition name="fade">
     <NButton
@@ -84,7 +84,7 @@ const showButton = computed(() => page.value < pageCount.value);
 @include transition.fade;
 
 .row {
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   color: var(--n-text-color);
   transition:
     color 0.3s var(--n-bezier),
@@ -98,7 +98,7 @@ const showButton = computed(() => page.value < pageCount.value);
     }
   }
 
-  .page {
+  .number {
     color: var(--color-primary-disabled);
     font-weight: bold;
   }
