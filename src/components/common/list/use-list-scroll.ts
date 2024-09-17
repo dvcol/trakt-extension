@@ -1,4 +1,4 @@
-import { type TraktClientPagination, TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
+import { TraktEpisodeType, type TraktEpisodeTypes } from '@dvcol/trakt-http-client/models';
 
 import { computed, isRef, ref, watch } from 'vue';
 
@@ -6,6 +6,7 @@ import type { Ref } from 'vue';
 
 import type { ListScrollItem, ListScrollItemMeta, ListScrollItemTag, ListScrollSourceItem, OnScroll, OnUpdated } from '~/models/list-scroll.model';
 
+import type { StorePagination } from '~/models/pagination.model';
 import type { ImageQuery } from '~/stores/data/image.store';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
@@ -283,7 +284,7 @@ export const useListScrollEvents = (
     active,
   }: {
     data: Ref<ListScrollItem[]>;
-    pagination: Ref<TraktClientPagination | undefined>;
+    pagination: Ref<StorePagination>;
     loading: Ref<boolean>;
     belowThreshold?: Ref<boolean>;
     active?: Ref<boolean>;
@@ -325,19 +326,32 @@ export const useListScrollEvents = (
   return { onScroll, onUpdated, onLoadMore };
 };
 
-export const addLoadMore = (
-  items: Ref<ListScrollItem[]>,
-  pagination: Ref<TraktClientPagination | undefined>,
-  search: Ref<string>,
-): Ref<ListScrollItem[]> => {
+export const addAllLoaded = (items: Ref<ListScrollItem[]>, pagination: Ref<StorePagination>) => {
   return computed(() => {
     const array = items.value;
     if (!array.length) return array;
-    if (!search.value) return array;
-    if (!pagination.value?.page) return array;
-    if (!pagination.value?.pageCount) return array;
-    if (pagination.value.page === pagination.value.pageCount) return array;
-    if (array.length && array[array.length - 1].type === ListScrollItemType.LoadMore) return array;
+    const { page, pageCount } = pagination.value ?? {};
+    if (page && pageCount && page < pageCount) return array;
+    // If the last item is already an all loaded item we return the array as is
+    if (array[array.length - 1].type === ListScrollItemType.AllLoaded) return array;
+    const type = ListScrollItemType.AllLoaded;
+    const index = items.value.length;
+    const allLoaded: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };
+    return [...array, allLoaded];
+  });
+};
+
+export const addLoadMore = (items: Ref<ListScrollItem[]>, pagination: Ref<StorePagination>, search: Ref<string>): Ref<ListScrollItem[]> => {
+  return computed(() => {
+    const array = items.value;
+    if (!array.length) return array;
+    // If there is no search value we add the all loaded item or return the array as is
+    if (!search.value) return addAllLoaded(items, pagination).value;
+    const { page, pageCount } = pagination.value ?? {};
+    // If we are on the last page or an un-paginated view we add the all loaded item or return the array as is
+    if (!page || !pageCount || page === pageCount) return addAllLoaded(items, pagination).value;
+    // If the last item is already a load more item we return the array as is
+    if (array[array.length - 1].type === ListScrollItemType.LoadMore) return array;
     const type = ListScrollItemType.LoadMore;
     const index = items.value.length;
     const loadMore: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };

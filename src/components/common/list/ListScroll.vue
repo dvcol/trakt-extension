@@ -3,8 +3,9 @@ import { NFlex, NTimeline, NVirtualList } from 'naive-ui';
 
 import { computed, ref, toRefs } from 'vue';
 
-import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { PropType, Ref, Transition } from 'vue';
+
+import type { StorePagination } from '~/models/pagination.model';
 
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
@@ -29,7 +30,7 @@ const props = defineProps({
     required: true,
   },
   pagination: {
-    type: Object as PropType<TraktClientPagination>,
+    type: Object as PropType<StorePagination>,
     required: false,
   },
   pageSize: {

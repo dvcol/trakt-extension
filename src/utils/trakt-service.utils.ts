@@ -5,13 +5,7 @@ import { getJsonWriter } from '@dvcol/common-utils/common/save';
 
 import { isResponseOk } from '@dvcol/trakt-http-client';
 
-import {
-  TraktApiExtended,
-  type TraktApiParamsExtended,
-  type TraktApiParamsPagination,
-  type TraktApiResponse,
-  type TraktClientPagination,
-} from '@dvcol/trakt-http-client/models';
+import { TraktApiExtended, type TraktApiParamsExtended, type TraktApiParamsPagination, type TraktApiResponse } from '@dvcol/trakt-http-client/models';
 
 import { getCookie } from '@dvcol/web-extension-utils/chrome/cookie';
 
@@ -24,6 +18,8 @@ import type { JsonWriterOptions } from '@dvcol/common-utils/common/save';
 
 import type { CancellablePromise } from '@dvcol/common-utils/http/fetch';
 
+import type { StorePagination } from '~/models/pagination.model';
+
 import type { ProgressItem } from '~/models/progress.model';
 
 import { PageSize } from '~/models/page-size.model';
@@ -31,6 +27,7 @@ import { PageSize } from '~/models/page-size.model';
 import { ExternaLinks } from '~/settings/external.links';
 
 import { WebConfig } from '~/settings/web.config';
+import { clearAssign } from '~/utils/vue.utils';
 
 type PaginatedQuery = TraktApiParamsExtended & TraktApiParamsPagination;
 export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(
@@ -38,12 +35,12 @@ export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQue
   query: Q = { extended: TraktApiExtended.Full, pagination: { limit: PageSize.p1000 } } as Q,
   writerOptions?: JsonWriterOptions,
   cancel?: Ref<boolean>,
-  pagination?: Partial<TraktClientPagination>,
+  pagination?: StorePagination,
 ): Promise<FileSystemFileHandle> => {
   let response$ = fetch(query);
   const writer = await getJsonWriter(writerOptions);
   let response = await response$;
-  if (pagination) Object.assign(pagination, response.pagination);
+  if (pagination) clearAssign(pagination, response.pagination);
   let data = await response.json();
 
   /* eslint-disable no-await-in-loop */
@@ -52,7 +49,7 @@ export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQue
     while (!cancel?.value && response.pagination?.page !== undefined && response.pagination.page < response.pagination.pageCount) {
       response$ = fetch({ ...query, pagination: { ...query.pagination, page: response.pagination.page + 1 } });
       response = await response$;
-      if (pagination) Object.assign(pagination, response.pagination);
+      if (pagination) clearAssign(pagination, response.pagination);
       data = await response.json();
       await writer.write(data);
     }
@@ -63,14 +60,14 @@ export const paginatedWriteJson = async <Q extends PaginatedQuery = PaginatedQue
   return writer.handle;
 };
 
-export type CancellableWritePromise<T> = Promise<T> & { cancel: () => Promise<T>; pagination: Partial<TraktClientPagination> };
+export type CancellableWritePromise<T> = Promise<T> & { cancel: () => Promise<T>; pagination: StorePagination };
 export const cancellablePaginatedWriteJson = <Q extends PaginatedQuery = PaginatedQuery, T extends RecursiveRecord = RecursiveRecord>(
   fetch: (query: Q) => Promise<TraktApiResponse<T>>,
   query: Q = { extended: TraktApiExtended.Full, pagination: { limit: PageSize.p1000 } } as Q,
   writerOptions?: JsonWriterOptions & { separator?: string },
 ): CancellableWritePromise<FileSystemFileHandle> => {
   const cancel = ref(false);
-  const pagination = reactive<Partial<TraktClientPagination>>({});
+  const pagination = reactive<StorePagination>({});
   const promise = paginatedWriteJson(fetch, query, writerOptions, cancel, pagination) as CancellableWritePromise<FileSystemFileHandle>;
   promise.cancel = () => {
     cancel.value = true;

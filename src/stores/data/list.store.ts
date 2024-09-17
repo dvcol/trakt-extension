@@ -3,7 +3,6 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type {
   TraktApiIds,
-  TraktClientPagination,
   TraktCollection,
   TraktCollectionGetQuery,
   TraktFavoriteGetQuery,
@@ -14,6 +13,8 @@ import type {
   TraktWatchlist,
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
+
+import type { StorePagination } from '~/models/pagination.model';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
@@ -236,7 +237,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const firstLoad = ref(true);
   const loading = ref(true);
   const pageSize = ref(PageSize.p100);
-  const pagination = ref<TraktClientPagination>();
+  const pagination = ref<StorePagination>({});
 
   const typeLoading = reactive<ListTypeLoading>({});
   const typeItemLoading = reactive<ListDictionaryItemLoading>({});
@@ -260,7 +261,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const clearState = () => {
     listItems.value = [];
-    pagination.value = undefined;
+    pagination.value = {};
     searchList.value = '';
 
     clearProxy(typeLoading);
@@ -355,7 +356,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
         if ('id' in item) return item;
         return { ...item, id: `${page}-${index}` };
       });
-      pagination.value = response.pagination;
+      pagination.value = response.pagination ?? {};
       listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.Loading), ...newData] : newData;
       evicted.watchlist = false;
     } catch (e) {

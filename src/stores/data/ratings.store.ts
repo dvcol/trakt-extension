@@ -1,6 +1,5 @@
 import {
   type TraktApiIds,
-  type TraktClientPagination,
   type TraktRating,
   type TraktRatingRequest,
   TraktRatingType,
@@ -9,6 +8,8 @@ import {
 } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
+
+import type { StorePagination } from '~/models/pagination.model';
 
 import { PageSize } from '~/models/page-size.model';
 import { ErrorService } from '~/services/error.service';
@@ -33,14 +34,15 @@ type TraktRatingsReturn<T extends TraktRatingTypes> = T extends 'movies'
 
 type RatingsLoadingDictionary = Partial<Record<TraktRatingTypes, boolean>>;
 type RatingsDictionary<T extends TraktRatingTypes = TraktRatingTypes> = Partial<Record<T, Record<string, TraktRatingsReturn<T>>>>;
-type RatingsPaginationDictionary = Partial<Record<TraktRatingTypes, TraktClientPagination>>;
+type RatingsPaginationDictionary = Partial<Record<TraktRatingTypes, StorePagination>>;
 
 const isMovieRating = (rating: TraktRating): rating is TraktRating<'movie'> => rating.type === 'movie';
 const isShowRating = (rating: TraktRating): rating is TraktRating<'show'> => rating.type === 'show';
 const isSeasonRating = (rating: TraktRating): rating is TraktRating<'season'> => rating.type === 'season';
 const isEpisodeRating = (rating: TraktRating): rating is TraktRating<'episode'> => rating.type === 'episode';
 
-const pageLoaded = (pagination?: TraktClientPagination) => pagination && pagination.page >= pagination.pageCount;
+const pageLoaded = (pagination?: StorePagination) =>
+  pagination && pagination?.page && pagination?.pageCount && pagination.page >= pagination.pageCount;
 
 const updateRatings = (rating: TraktRating, score: TraktSyncRatingValue) => {
   rating.rating = score;

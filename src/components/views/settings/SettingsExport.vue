@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import {
-  TraktApiExtended,
-  type TraktClientPagination,
-} from '@dvcol/trakt-http-client/models';
+import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 import { NButton, NIcon, NProgress } from 'naive-ui';
 
 import { reactive, ref } from 'vue';
 
+import type { StorePagination } from '~/models/pagination.model';
 import type { CancellableWritePromise } from '~/utils/trakt-service.utils';
 
 import IconDownload from '~/components/icons/IconDownload.vue';
@@ -36,9 +34,7 @@ const cancelled = reactive<Record<string | number, boolean>>({});
 const fetching = reactive<
   Record<string | number, CancellableWritePromise<unknown> | undefined>
 >({});
-const pagination = reactive<
-  Record<string | number, Partial<TraktClientPagination> | undefined>
->({});
+const pagination = reactive<Record<string | number, StorePagination | undefined>>({});
 
 type ExportScope<T extends Promise<unknown> = CancellableWritePromise<unknown>> = {
   label: string;

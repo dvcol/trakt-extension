@@ -2,8 +2,9 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { reactive, ref, watch } from 'vue';
 
-import type { TraktClientPagination, TraktSearch, TraktSearchResult, TraktSearchType } from '@dvcol/trakt-http-client/models';
+import type { TraktSearch, TraktSearchResult, TraktSearchType } from '@dvcol/trakt-http-client/models';
 
+import type { StorePagination } from '~/models/pagination.model';
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
@@ -44,7 +45,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   ErrorService.registerDictionary('search', searchErrors);
 
   const pageSize = ref(PageSize.p100);
-  const pagination = ref<TraktClientPagination>();
+  const pagination = ref<StorePagination>({});
 
   const loading = ref(false);
   const firstLoad = ref(true);
@@ -70,7 +71,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const clearState = () => {
     types.value = DefaultSearchType;
     query.value = false;
-    pagination.value = undefined;
+    pagination.value = {};
     search.value = '';
     history.value = new Set();
     clearProxy(searchErrors);
@@ -121,7 +122,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       return;
     }
     if (!search.value?.trim()) {
-      pagination.value = undefined;
+      pagination.value = {};
       searchResults.value = [];
       return;
     }
@@ -150,7 +151,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
         id: `${page}-${index}`,
       }));
 
-      pagination.value = response.pagination;
+      pagination.value = response.pagination ?? {};
       searchResults.value = page ? [...searchResults.value.filter(s => s.type !== ListScrollItemType.Loading), ...data] : data;
     } catch (e) {
       Logger.error('Failed to fetch search query');

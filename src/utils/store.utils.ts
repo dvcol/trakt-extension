@@ -1,7 +1,8 @@
 import { computed, onActivated, onDeactivated, onMounted, ref, type Ref, watch } from 'vue';
 
-import type { TraktClientPagination } from '@dvcol/trakt-http-client/models';
 import type { ListScrollSourceItemWithDate } from '~/components/common/list/use-list-scroll';
+
+import type { StorePagination } from '~/models/pagination.model';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
@@ -39,7 +40,7 @@ export const useSearchFilter = <D extends string, T extends ListScrollSourceItem
     });
   });
 
-export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktClientPagination | undefined>) =>
+export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<StorePagination>) =>
   computed(
     () =>
       !!(
@@ -49,6 +50,9 @@ export const useBelowThreshold = (threshold: Ref<number>, pagination: Ref<TraktC
         pagination.value.page < threshold.value
       ),
   );
+
+export const useBelowThreshold2 = (threshold: Ref<number>, pagination: StorePagination) =>
+  computed(() => !!(pagination?.page && pagination?.pageCount && pagination.page !== pagination.pageCount && pagination.page < threshold.value));
 
 export const useLoadingPlaceholder = <T>(pageSize: Ref<number> = ref(50)) =>
   computed<T[]>(() =>

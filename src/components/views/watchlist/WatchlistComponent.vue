@@ -87,7 +87,7 @@ onMounted(() => {
     <ListScroll
       ref="listRef"
       hide-date
-      :items="list"
+      :items="listItems"
       :loading="listLoading"
       :pagination="pagination"
       :page-size="pageSize"

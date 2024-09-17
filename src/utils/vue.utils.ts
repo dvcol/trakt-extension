@@ -35,6 +35,13 @@ export const clearProxy = (proxy: Record<string, unknown>) => {
   Object.keys(proxy).forEach(key => {
     delete proxy[key];
   });
+  return proxy;
+};
+
+export const clearAssign = <T extends Record<string, unknown>>(proxy: T, values?: T) => {
+  clearProxy(proxy);
+  if (values) Object.assign(proxy, values);
+  return proxy;
 };
 
 export const useDebounceRef = <T>(outerRef: Ref<T>, delay = 100, options?: WatchOptions) => {

@@ -3,8 +3,9 @@ import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
 
-import type { TraktClientPagination, TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
+import type { TraktHistory, TraktHistoryGetQuery } from '@dvcol/trakt-http-client/models';
 
+import type { StorePagination } from '~/models/pagination.model';
 import type { ErrorDictionary } from '~/utils/retry.utils';
 
 import { PageSize } from '~/models/page-size.model';
@@ -43,7 +44,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
   const pageSize = ref(PageSize.p100);
   const history = ref<TraktHistory[]>([]);
   const historyDictionary = reactive<HistoryDictionary>({});
-  const pagination = ref<TraktClientPagination>();
+  const pagination = ref<StorePagination>({});
   const extended = ref(false);
   const init = ref(false);
 
@@ -78,7 +79,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
 
   const clearState = () => {
     history.value = [];
-    pagination.value = undefined;
+    pagination.value = {};
     searchHistory.value = '';
     historyStart.value = undefined;
     historyEnd.value = undefined;
@@ -119,7 +120,7 @@ export const useHistoryStore = defineStore(HistoryStoreConstants.Store, () => {
     if (extended.value) query.extended = TraktApiExtended.Full;
     try {
       const response = await TraktService.history(query);
-      pagination.value = response.pagination;
+      pagination.value = response.pagination ?? {};
       history.value = page ? [...history.value.filter(h => h.id >= 0), ...response.data] : response.data;
       delete historyErrors[JSON.stringify(query)];
       evicted.history = false;
