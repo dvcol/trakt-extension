@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { handleSwipeLeftRight, SwipeDirection } from '@dvcol/common-utils/common/touch';
 import { type CarouselInst, NCarousel } from 'naive-ui';
 import { type PropType, ref } from 'vue';
 
 import type { YoutubePlayerProps } from '~/models/youtube-player.model';
 
 import YoutubePlayer from '~/components/common/video/YoutubePlayer.vue';
-import { handleSwipeLeftRight, SwipeDirection } from '~/utils/touch.utils';
 
 defineProps({
   trailers: {

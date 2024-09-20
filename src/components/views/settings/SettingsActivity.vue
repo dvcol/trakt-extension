@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { toSnakeCase } from '@dvcol/common-utils/common/string';
 import { NSelect } from 'naive-ui';
 
 import { ref } from 'vue';
@@ -11,12 +12,6 @@ import { useI18n } from '~/utils/i18n.utils';
 const i18n = useI18n('settings', 'activity');
 
 const { polling } = useActivityStoreRefs();
-
-const toSnakeCase = (str: string) =>
-  str
-    .replace(/([A-Z])/g, '_$1')
-    .toLowerCase()
-    .slice(1);
 
 const options = Object.entries(PollingIntervals).map(([key, value]) => ({
   label: i18n(toSnakeCase(key), 'common', 'polling', 'interval'),

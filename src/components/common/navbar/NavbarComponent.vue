@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import {
+  handleSwipe,
+  SwipeDirection,
+  type SwipeDirections,
+} from '@dvcol/common-utils/common/touch';
 import { NTab, NTabs } from 'naive-ui';
 import { computed, ref, toRefs, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -11,7 +16,6 @@ import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { Header } from '~/styles/layout.style';
 import { useI18n } from '~/utils/i18n.utils';
-import { handleSwipe, SwipeDirection, type SwipeDirections } from '~/utils/touch.utils';
 
 const props = defineProps({
   disabled: {

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { toSnakeCase } from '@dvcol/common-utils/common/string';
 import { NSelect, NSwitch } from 'naive-ui';
 
 import { ref } from 'vue';
@@ -7,7 +8,6 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { PollingIntervals } from '~/models/polling.model';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { toSnakeCase } from '~/utils/string.utils';
 
 const i18n = useI18n('settings', 'watching');
 

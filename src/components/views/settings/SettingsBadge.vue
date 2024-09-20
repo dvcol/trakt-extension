@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { toSnakeCase } from '@dvcol/common-utils/common/string';
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { NSelect, NSwitch } from 'naive-ui';
 
@@ -8,7 +9,6 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { BadgeMode, useBadgeStoreRefs } from '~/stores/settings/badge.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { toSnakeCase } from '~/utils/string.utils';
 
 const i18n = useI18n('settings', 'badge');
 

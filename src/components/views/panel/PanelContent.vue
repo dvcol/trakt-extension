@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { handleSwipeLeftRight, SwipeDirection } from '@dvcol/common-utils/common/touch';
 import { NButton, NDrawerContent, NFlex, NIcon } from 'naive-ui';
 
 import { ref } from 'vue';
 
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconClose from '~/components/icons/IconClose.vue';
-import { handleSwipeLeftRight, SwipeDirection } from '~/utils/touch.utils';
 
 const emits = defineEmits<{
   (name: 'onBack', e: MouseEvent | TouchEvent): void;
