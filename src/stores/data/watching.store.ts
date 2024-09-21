@@ -153,6 +153,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
       async () => {
         if (interval.value) clearInterval(interval.value);
         if (!polling.value) return;
+        if (document.hidden) return;
         if (isAuthenticated.value) await fetchWatching();
         interval.value = setInterval(() => {
           if (!isAuthenticated.value) return;

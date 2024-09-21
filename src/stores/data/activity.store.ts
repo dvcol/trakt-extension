@@ -191,6 +191,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       async () => {
         if (interval.value) clearInterval(interval.value);
         if (!polling.value) return;
+        if (document.hidden) return;
         if (isAuthenticated.value) await fetchActivity();
         interval.value = setInterval(() => {
           if (!isAuthenticated.value) return;
