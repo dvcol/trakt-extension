@@ -33,7 +33,7 @@ const pickerValue = computed({
   set: (value: number) => {
     const newDate = value ? new Date(value) : new Date();
     if (newDate.toLocaleDateString() === center.value.toLocaleDateString()) return;
-    clearState(value ? new Date(value) : undefined);
+    return clearState(newDate);
   },
 });
 

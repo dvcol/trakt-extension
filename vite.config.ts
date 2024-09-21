@@ -176,6 +176,7 @@ export default defineConfig(() => ({
   server: {
     port,
     open: true,
+    host: true,
     hmr: {
       host: 'localhost',
     },
@@ -184,6 +185,7 @@ export default defineConfig(() => ({
     port: port + 1,
     cors: true,
     open: true,
+    host: true,
   },
   build: {
     outDir: resolveParent('dist'),

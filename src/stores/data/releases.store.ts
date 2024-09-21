@@ -71,7 +71,9 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
 
-  const center = ref<Date>(new Date());
+  const _center = ref<Date>();
+  const center = computed(() => _center.value ?? new Date());
+
   const startCalendar = ref<Date>(DateUtils.weeks.previous(weeks.value, center.value));
   const endCalendar = ref<Date>(DateUtils.weeks.next(weeks.value, center.value));
 
@@ -84,9 +86,9 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const releasesErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('releases', releasesErrors);
 
-  const saveState = async (clear = false) =>
+  const saveState = async () =>
     storage.local.set<ReleaseState>(ReleasesStoreConstants.Store, {
-      center: clear ? undefined : center.value.getTime(),
+      center: _center.value?.getTime(),
       weeks: weeks.value,
       region: region.value,
       releaseType: releaseType.value,
@@ -94,11 +96,11 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
 
   const clearState = (date?: Date) => {
     releases.value = [];
-    center.value = date ?? new Date();
+    _center.value = date;
     startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
     endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(releasesErrors);
-    saveState(!date).catch(e => Logger.error('Failed to save calendar state', e));
+    saveState().catch(e => Logger.error('Failed to save calendar state', e));
   };
 
   const restoreState = async () => {
