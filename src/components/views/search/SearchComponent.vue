@@ -17,6 +17,7 @@ import {
   useSearchStoreRefs,
 } from '~/stores/data/search.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { useActiveAndDocumentVisible } from '~/utils/store.utils';
 
 const i18n = useI18n('search');
 
@@ -27,6 +28,10 @@ const { fetchSearchResults } = useSearchStore();
 
 onActivated(async () => {
   await fetchSearchResults();
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchSearchResults,
 });
 
 const list = useListScroll<SearchResult>(searchResults);

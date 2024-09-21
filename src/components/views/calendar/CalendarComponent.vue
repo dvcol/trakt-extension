@@ -12,8 +12,8 @@ import { useActivityStore } from '~/stores/data/activity.store';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
-import { watchUserChange } from '~/utils/store.utils';
-import { useWatchActivated } from '~/utils/watching.utils';
+import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
+import { useWatchActivated } from '~/utils/vue.utils';
 
 const i18n = useI18n('calendar');
 
@@ -57,6 +57,10 @@ watchUserChange({
     if (!active || !authenticated) return;
     await reload();
   },
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchCalendar,
 });
 
 const { onItemClick } = usePanelItem();

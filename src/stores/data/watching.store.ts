@@ -12,6 +12,7 @@ import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
+import { useDocumentVisible } from '~/utils/store.utils';
 
 const WatchingStoreConstants = {
   Store: 'data.watching',
@@ -170,6 +171,8 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
       if (!isAuthenticated.value) return;
       await fetchWatching();
     });
+
+    useDocumentVisible({ onVisible: fetchWatching });
   };
 
   return {

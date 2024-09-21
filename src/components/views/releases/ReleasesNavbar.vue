@@ -8,6 +8,7 @@ import IconCalendar from '~/components/icons/IconCalendar.vue';
 import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
 import { useI18n } from '~/utils/i18n.utils';
+import { useActiveAndDocumentVisible } from '~/utils/store.utils';
 
 defineProps({
   parentElement: {
@@ -48,6 +49,10 @@ const regionOptions = computed<SelectOption[]>(() =>
 const open = ref(false);
 
 onActivated(() => fetchRegions());
+
+useActiveAndDocumentVisible({
+  onVisible: fetchRegions,
+});
 </script>
 
 <template>

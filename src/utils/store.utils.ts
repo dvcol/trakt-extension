@@ -168,3 +168,54 @@ export const useWaitReady = () => {
 
   return { waitReady, setReady, isReady };
 };
+
+export const useDocumentVisible = ({
+  onHidden,
+  onVisible,
+  onVisibilityChange,
+}: {
+  onHidden?: () => void;
+  onVisible?: () => void;
+  onVisibilityChange?: (visible: boolean) => void;
+} = {}) => {
+  const listener = () => {
+    const isVisible = !document.hidden;
+    onVisibilityChange?.(isVisible);
+    if (!isVisible) return onHidden?.();
+    onVisible?.();
+  };
+
+  document.addEventListener('visibilitychange', listener);
+
+  return () => document.removeEventListener('visibilitychange', listener);
+};
+
+export const useActiveAndDocumentVisible = ({
+  visible = ref(!document.hidden),
+  onHidden,
+  onVisible,
+  onVisibilityChange,
+}: {
+  visible?: Ref<boolean>;
+  onHidden?: () => void;
+  onVisible?: () => void;
+  onVisibilityChange?: (visible: boolean) => void;
+} = {}) => {
+  const listener = () => {
+    visible.value = !document.hidden;
+  };
+  const sub = ref<() => void>();
+  onActivated(() => {
+    document.addEventListener('visibilitychange', listener);
+    sub.value = watch(visible, _visible => {
+      onVisibilityChange?.(_visible);
+      if (!visible.value) return onHidden?.();
+      onVisible?.();
+    });
+  });
+  onDeactivated(() => {
+    document.removeEventListener('visibilitychange', listener);
+    sub.value?.();
+  });
+  return visible;
+};

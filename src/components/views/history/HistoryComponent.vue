@@ -16,8 +16,8 @@ import { useActivityStore } from '~/stores/data/activity.store';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { watchUserChange } from '~/utils/store.utils';
-import { useWatchActivated } from '~/utils/watching.utils';
+import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
+import { useWatchActivated } from '~/utils/vue.utils';
 
 const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
 
@@ -65,6 +65,10 @@ onMounted(() => {
     if (panelOpen.value) return;
     await fetchHistory();
   });
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchHistory,
 });
 </script>
 

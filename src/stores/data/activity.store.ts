@@ -16,6 +16,7 @@ import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { useDocumentVisible } from '~/utils/store.utils';
 
 type Evicted = Record<Route, boolean>;
 const defaultEvicted: Evicted = Object.fromEntries(Object.values(Route).map(route => [route, false])) as Evicted;
@@ -208,6 +209,8 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       if (!isAuthenticated.value) return;
       await fetchActivity();
     });
+
+    useDocumentVisible({ onVisible: fetchActivity });
 
     if (polling.value || !isAuthenticated.value) return;
     return fetchActivity();

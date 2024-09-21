@@ -1,4 +1,4 @@
-import { ref, type Ref, type UnwrapRef, watch, type WatchOptions } from 'vue';
+import { onActivated, onDeactivated, ref, type Ref, type UnwrapRef, watch, type WatchOptions } from 'vue';
 
 import { debounce } from '~/utils/debounce.utils';
 
@@ -52,4 +52,15 @@ export const useDebounceRef = <T>(outerRef: Ref<T>, delay = 100, options?: Watch
 
   const unSubscribe = watch(outerRef, setValue, options);
   return { value: innerRef, unSubscribe, setValue };
+};
+
+export const useWatchActivated = (_sub: ReturnType<typeof watch>) => {
+  const sub = ref<() => void>();
+  onActivated(() => {
+    sub.value = _sub;
+  });
+  onDeactivated(() => {
+    sub.value?.();
+  });
+  return { sub };
 };

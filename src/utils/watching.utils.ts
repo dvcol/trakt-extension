@@ -2,7 +2,7 @@ import { elapsedTime } from '@dvcol/common-utils/common/date';
 
 import { useDialog } from 'naive-ui';
 
-import { computed, onActivated, onBeforeMount, onDeactivated, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 
 import type { TraktWatching } from '@dvcol/trakt-http-client/models';
 import type { Ref } from 'vue';
@@ -93,15 +93,4 @@ export const useCancelWatching = (cancel: () => unknown, action: TraktWatching['
       });
     });
   return { onCancel };
-};
-
-export const useWatchActivated = (_sub: ReturnType<typeof watch>) => {
-  const sub = ref<() => void>();
-  onActivated(() => {
-    sub.value = _sub;
-  });
-  onDeactivated(() => {
-    sub.value?.();
-  });
-  return { sub };
 };

@@ -17,9 +17,9 @@ import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.s
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { watchUserChange } from '~/utils/store.utils';
+import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 import { getSessionUser } from '~/utils/trakt-service.utils';
-import { useWatchActivated } from '~/utils/watching.utils';
+import { useWatchActivated } from '~/utils/vue.utils';
 
 const i18n = useI18n('progress');
 
@@ -77,6 +77,10 @@ watchUserChange({
     unSub.value?.();
     notification.value?.destroy();
   },
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchProgress,
 });
 </script>
 

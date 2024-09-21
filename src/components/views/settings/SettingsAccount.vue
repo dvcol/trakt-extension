@@ -23,7 +23,7 @@ import {
 } from '~/stores/settings/user.store';
 
 import { useI18n } from '~/utils/i18n.utils';
-import { useWatchActivated } from '~/utils/watching.utils';
+import { useWatchActivated } from '~/utils/vue.utils';
 
 const i18n = useI18n('settings', 'account');
 

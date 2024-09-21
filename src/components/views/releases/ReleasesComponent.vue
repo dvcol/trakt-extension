@@ -14,7 +14,7 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
-import { watchUserChange } from '~/utils/store.utils';
+import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 
 const i18n = useI18n('releases');
 
@@ -45,6 +45,10 @@ watchUserChange({
     clearState();
     if (active && authenticated) await reload();
   },
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchReleases,
 });
 
 const { onItemClick } = usePanelItem();

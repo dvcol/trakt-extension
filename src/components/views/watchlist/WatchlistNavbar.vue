@@ -17,7 +17,11 @@ import {
 } from '~/stores/data/list.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { useDebouncedSearch, watchUserChange } from '~/utils/store.utils';
+import {
+  useActiveAndDocumentVisible,
+  useDebouncedSearch,
+  watchUserChange,
+} from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'list');
 
@@ -84,6 +88,10 @@ watchUserChange({
     clearState();
     if (active && authenticated) fetchLists();
   },
+});
+
+useActiveAndDocumentVisible({
+  onVisible: fetchLists,
 });
 
 const open = ref(false);
