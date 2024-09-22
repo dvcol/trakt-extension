@@ -203,17 +203,19 @@ const onClick = () => emit('onItemClick', { item: item?.value });
           size="small"
           :theme-overrides="{ gapSmall: '0.25rem' }"
         >
-          <template v-if="date && !noHead && !loading">
-            <NTime class="month" :time="date" format="MMM" />
-            <NTime class="day" :time="date" format="dd" />
-            <NTime class="week" :time="date" format="eee" />
-            <NTime v-if="!sameYear" class="year" :time="date" format="yyyy" />
-          </template>
-          <template v-else-if="loading">
-            <NSkeleton class="loading month" text round />
-            <NSkeleton class="loading day" text round />
-            <NSkeleton class="loading week" text round />
-          </template>
+          <Transition v-if="!noHead && date" name="fade">
+            <div v-if="loading" class="column">
+              <NSkeleton class="loading month" text round />
+              <NSkeleton class="loading day" text round />
+              <NSkeleton class="loading week" text round />
+            </div>
+            <div v-else class="column">
+              <NTime class="month" :time="date" format="MMM" />
+              <NTime class="day" :time="date" format="dd" />
+              <NTime class="week" :time="date" format="eee" />
+              <NTime v-if="!sameYear" class="year" :time="date" format="yyyy" />
+            </div>
+          </Transition>
         </NFlex>
 
         <slot v-if="item.type === ListScrollItemType.Placeholder">
@@ -253,6 +255,8 @@ const onClick = () => emit('onItemClick', { item: item?.value });
 <style lang="scss" scoped>
 @use '~/styles/mixin' as mixin;
 @use '~/styles/z-index' as layers;
+@use '~/styles/transition' as transition;
+@include transition.fade;
 
 .timeline-item {
   height: var(--list-item-height, 145px);
@@ -286,11 +290,13 @@ const onClick = () => emit('onItemClick', { item: item?.value });
     top: 0;
     left: -3.75rem;
     width: 3.5rem;
+    min-height: 5rem;
     color: var(--n-text-color);
     font-size: 14px;
     border-top: 1px solid var(--border-grey);
-    transition: color 0.2s var(--n-bezier);
-    will-change: color;
+    transition:
+      color 0.2s var(--n-bezier),
+      border 0.2s var(--n-bezier);
 
     &.today {
       color: var(--color-warning);
@@ -300,8 +306,16 @@ const onClick = () => emit('onItemClick', { item: item?.value });
       color: var(--trakt-red);
     }
 
-    .month {
+    .column {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
       margin-top: 0.75rem;
+    }
+
+    .month {
       font-weight: bold;
     }
 
@@ -320,17 +334,17 @@ const onClick = () => emit('onItemClick', { item: item?.value });
 
       &.month {
         width: 1.5rem;
-        height: 0.8rem;
+        height: 1rem;
       }
 
       &.day {
         width: 2rem;
-        height: 1rem;
+        height: 1.25rem;
       }
 
       &.week {
         width: 1.6rem;
-        height: 0.75rem;
+        height: 0.9rem;
       }
     }
   }
@@ -373,6 +387,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
     height: 100%;
     margin-left: calc(var(--n-icon-size) + 0.125rem);
     border-top: 1px solid transparent;
+    transition: border 0.2s var(--n-bezier);
 
     &__content {
       height: 100%;

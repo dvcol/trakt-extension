@@ -131,7 +131,7 @@ export const useDebouncedSearch = (search: Ref<string>, delay = 350, disabled?: 
   return debouncedSearch;
 };
 
-export const defaultDebounceLoadingDelay = 100;
+export const defaultDebounceLoadingDelay = 250;
 export type DebounceLoadingOptions<T> = { clear?: boolean; time?: number; splice?: (_data: T[], _placeholder: T[]) => T[] };
 export const debounceLoading = <T>(
   data: Ref<T[]>,

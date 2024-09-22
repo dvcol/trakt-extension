@@ -13,7 +13,7 @@ import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { type CalendarItem, getEmptyWeeks, getLoadingPlaceholder, spaceDate } from '~/utils/calendar.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
-import { useSearchFilter } from '~/utils/store.utils';
+import { defaultDebounceLoadingDelay, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
 const CalendarStoreConstants = {
@@ -123,7 +123,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
       if (mode === 'reload') calendar.value = getEmptyWeeks({ startDate, loading: true, days: days.value });
       else if (mode === 'start') calendar.value = [getLoadingPlaceholder(DateUtils.previous(1, endDate)), ...calendar.value];
       else if (mode === 'end') calendar.value = [...calendar.value, ...getEmptyWeeks({ startDate, loading: true, days: days.value })];
-    }, 100);
+    }, defaultDebounceLoadingDelay);
 
     const query: TraktCalendarQuery = { start_date, days: days.value };
     if (extended.value) query.extended = TraktApiExtended.Full;
