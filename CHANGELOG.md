@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.26.4](https://github.com/dvcol/trakt-extension/compare/v1.26.3...v1.26.4) (2024-09-24)
+
+
+### Bug Fixes
+
+* **progress:** add correct eviction key ([2020746](https://github.com/dvcol/trakt-extension/commit/2020746623be72cf28ea7d6766efc87b87fac8ae))
+
 ### [1.26.3](https://github.com/dvcol/trakt-extension/compare/v1.26.2...v1.26.3) (2024-09-24)
 
 
