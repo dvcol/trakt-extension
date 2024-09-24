@@ -1,4 +1,4 @@
-import { type BaseInit, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
+import { type BaseInit, ExactMatchRegex, getCachedFunction, type TypedResponse } from '@dvcol/base-http-client';
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 
 import { getJsonWriter } from '@dvcol/common-utils/common/save';
@@ -89,6 +89,7 @@ export const getSessionUser = async (): Promise<string | undefined> => {
 export const getCachedProgressEndpoint = (cache: CacheStore<TraktApiResponse>) => {
   const origin = chromeRuntimeId ? undefined : `${WebConfig.CorsProxy}/${WebConfig.CorsPrefix.Trakt}`;
   const url: string = ExternaLinks.trakt.onDeck(origin);
+  const template = { method: 'GET', url };
   const baseInit: BaseInit = { credentials: 'include' };
   return getCachedFunction(
     // @ts-expect-error -- CancellablePromise extends promise
@@ -110,11 +111,12 @@ export const getCachedProgressEndpoint = (cache: CacheStore<TraktApiResponse>) =
       retention: CacheRetention.Hour * 2,
       key: (param, init) => {
         return JSON.stringify({
-          template: { method: 'GET', url },
+          template,
           param,
           init: { ...baseInit, ...init },
         });
       },
+      evictionKey: `{"template":${JSON.stringify(template).replace(ExactMatchRegex, '\\$&')}`,
     },
   );
 };
