@@ -167,6 +167,8 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     loading,
     calendar,
     center,
+    startCalendar,
+    endCalendar,
     filter,
     filteredCalendar,
     extended: computed({
