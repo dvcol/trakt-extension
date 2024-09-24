@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.26.3](https://github.com/dvcol/trakt-extension/compare/v1.26.2...v1.26.3) (2024-09-24)
+
+
+### Bug Fixes
+
+* **store:** fix exports states ([5499c32](https://github.com/dvcol/trakt-extension/commit/5499c3228b1296a3111a6a94138bc4652cdec0ff))
+* **store:** split list & lists store into dedicated files + model ([6d4d3a3](https://github.com/dvcol/trakt-extension/commit/6d4d3a322a117031cd73f69654018e18d466635b))
+
 ### [1.26.2](https://github.com/dvcol/trakt-extension/compare/v1.26.1...v1.26.2) (2024-09-24)
 
 
