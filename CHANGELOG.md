@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.26.2](https://github.com/dvcol/trakt-extension/compare/v1.26.1...v1.26.2) (2024-09-24)
+
+
+### Bug Fixes
+
+* **calendar:** only persist calendar date when set ([f90020b](https://github.com/dvcol/trakt-extension/commit/f90020bd76289c00cebf9621d06357b65b285f43))
+* **checkin:** adds ellipsis and disable wrap ([d4c4266](https://github.com/dvcol/trakt-extension/commit/d4c42664d4a908d88d0adf666681b4cd706fd3a6))
+* **css:** adjust stats value min-width ([b6dae1d](https://github.com/dvcol/trakt-extension/commit/b6dae1d4e1b509614bba4d9a08563cbe8250c91c))
+* **css:** fix background flash on start ([963951e](https://github.com/dvcol/trakt-extension/commit/963951ee53357356da7845bc93cb09f14e1af106))
+* **css:** remove margin from main list container ([617a2b1](https://github.com/dvcol/trakt-extension/commit/617a2b1ed191638b538b864c71bafbf97654f8d3))
+* **export:** fix filename date config ([230d1dc](https://github.com/dvcol/trakt-extension/commit/230d1dcce6831c47c6ab31a3908b6dcbd07a666d))
+* **list:** adds loaded indicator and fix load more ([ca47fc7](https://github.com/dvcol/trakt-extension/commit/ca47fc764f9d3b54c7f8902362e406e67bffddfd))
+* **list:** restore scroll-top if loading with offset ([b9f7118](https://github.com/dvcol/trakt-extension/commit/b9f7118b2d9fb34b17cf792911c9246cc0252d82))
+* **list:** switch correct i18n for pages & items ([8787195](https://github.com/dvcol/trakt-extension/commit/8787195b5631b3020582f268b769644a06c72350))
+* **loading:** increase loading debounce and adjust date loader ([3235dca](https://github.com/dvcol/trakt-extension/commit/3235dca081c1632dda15607d0450c9e270825687))
+* **loading:** make loading hysteresis customisable ([93669c6](https://github.com/dvcol/trakt-extension/commit/93669c6e71717b25ba9a5620771be4afb4f66b7f))
+* **pagination:** switch type and fix reactivity ([5852e8c](https://github.com/dvcol/trakt-extension/commit/5852e8c41dfe8cd34c040fde55042958c838570b))
+* **polling:** disable polling when document is not visible ([b02e141](https://github.com/dvcol/trakt-extension/commit/b02e1412de9de8aae6997a6d12ca8f6ac886d1d3))
+* **visibility:** watch document visibility and refresh view when active ([a5345dc](https://github.com/dvcol/trakt-extension/commit/a5345dcb39d44a31dff0d680ad55a07462c23690))
+
 ### [1.26.1](https://github.com/dvcol/trakt-extension/compare/v1.26.0...v1.26.1) (2024-09-10)
 
 
