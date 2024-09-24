@@ -11,17 +11,17 @@ import IconDownload from '~/components/icons/IconDownload.vue';
 import IconLoadingDots from '~/components/icons/IconLoadingDots.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 
-import { PageSize } from '~/models/page-size.model';
-import { Logger } from '~/services/logger.service';
-import { NotificationService } from '~/services/notification.service';
-import { TraktService } from '~/services/trakt.service';
 import {
   isDefaultList,
   type ListEntity,
   ListType,
   type ListTypes,
-  useListsStoreRefs,
-} from '~/stores/data/list.store';
+} from '~/models/list.model';
+import { PageSize } from '~/models/page-size.model';
+import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
+import { TraktService } from '~/services/trakt.service';
+import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
 

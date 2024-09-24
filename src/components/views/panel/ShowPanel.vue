@@ -14,17 +14,17 @@ import {
   PanelButtonsOption,
   type PanelButtonsOptions,
 } from '~/components/views/panel/use-panel-buttons';
-import { NotificationService } from '~/services/notification.service';
-import { ResolveExternalLinks } from '~/settings/external.links';
-import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   DefaultListId,
   DefaultLists,
   type ListEntity,
   ListType,
-  useListsStoreRefs,
-  useListStore,
-} from '~/stores/data/list.store';
+} from '~/models/list.model';
+import { NotificationService } from '~/services/notification.service';
+import { ResolveExternalLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useListStore } from '~/stores/data/list.store';
+import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';

@@ -15,12 +15,8 @@ import {
   type PanelButtonsOptions,
   usePanelButtons,
 } from '~/components/views/panel/use-panel-buttons';
-import {
-  type ListEntity,
-  ListType,
-  useListsStore,
-  useListsStoreRefs,
-} from '~/stores/data/list.store';
+import { type ListEntity, ListType } from '~/models/list.model';
+import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({

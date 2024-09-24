@@ -3,12 +3,13 @@ import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, toRaw } from 'vue';
 
+import type { ListEntity } from '~/models/list.model';
+
 import { PageSize } from '~/models/page-size.model';
 import { ProgressType, type ProgressTypes } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
-import { type ListEntity } from '~/stores/data/list.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';

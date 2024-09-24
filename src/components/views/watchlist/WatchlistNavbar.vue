@@ -7,14 +7,10 @@ import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.v
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 
+import { type ListEntity, ListType } from '~/models/list.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import {
-  type ListEntity,
-  ListType,
-  useListsStore,
-  useListsStoreRefs,
-  useListStoreRefs,
-} from '~/stores/data/list.store';
+import { useListStoreRefs } from '~/stores/data/list.store';
+import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {

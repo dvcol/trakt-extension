@@ -15,19 +15,15 @@ import IconClose from '~/components/icons/IconCloseSmall.vue';
 import IconPencil from '~/components/icons/IconPencil.vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
+import { type ListEntity, ListType } from '~/models/list.model';
 import { loadingHysteresisOptions } from '~/models/loading-hysteresis.model';
 import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
 import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
 import { useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
-import {
-  type ListEntity,
-  ListType,
-  useListsStore,
-  useListsStoreRefs,
-  useListStoreRefs,
-} from '~/stores/data/list.store';
+import { useListStoreRefs } from '~/stores/data/list.store';
+import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';

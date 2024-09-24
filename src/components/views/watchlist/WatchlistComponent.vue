@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, watch } from 'vue';
 
+import type { AnyList, AnyListDateTypes } from '~/models/list.model';
+
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
@@ -15,13 +17,11 @@ import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
 import {
-  type AnyList,
   anyListDateGetter,
-  type AnyListDateTypes,
-  useListsStoreRefs,
   useListStore,
   useListStoreRefs,
 } from '~/stores/data/list.store';
+import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 import { useWatchActivated } from '~/utils/vue.utils';

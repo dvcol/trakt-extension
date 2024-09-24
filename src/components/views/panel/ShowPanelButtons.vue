@@ -21,12 +21,8 @@ import {
   type SeasonProgress,
   type ShowProgress,
 } from '~/models/list-scroll.model';
-import {
-  type ListEntity,
-  ListType,
-  useListsStore,
-  useListsStoreRefs,
-} from '~/stores/data/list.store';
+import { type ListEntity, ListType } from '~/models/list.model';
+import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
