@@ -135,7 +135,7 @@ const getPlugins = (_isDev: boolean, _isWeb: boolean): PluginOption[] => {
           short_name: 'Side Trakt',
           description: pkg.description,
           theme_color: '#80000a',
-          background_color: '#ffffff',
+          background_color: '#181818',
           display: 'standalone',
           icons: [
             {
