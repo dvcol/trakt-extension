@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
 }
 
 .progress {
-  width: var(--progress-size);
+  width: var(--progress-size) !important;
   border: 2px solid transparent;
   border-radius: 50%;
   outline: none;
