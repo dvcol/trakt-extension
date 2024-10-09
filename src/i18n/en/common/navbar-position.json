@@ -1,0 +1,18 @@
+{
+  "common__navbar_position__top": {
+    "message": "Top",
+    "description": "Top of the screen"
+  },
+  "common__navbar_position__bottom": {
+    "message": "Bottom",
+    "description": "Bottom of the screen"
+  },
+  "common__navbar_position__floating": {
+    "message": "Floating",
+    "description": "Floating on the screen"
+  },
+  "common__navbar_position__auto": {
+    "message": "Auto",
+    "description": "Automatically position the navbar"
+  }
+}

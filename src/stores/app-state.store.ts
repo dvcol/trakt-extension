@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
 import { MessageType } from '~/models/message/message-type.model';
+import { NavbarPosition } from '~/models/navbar-position.model';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { useWaitReady } from '~/utils/store.utils';
@@ -61,17 +62,17 @@ export const useAppStateStore = defineStore('app.state', () => {
     isWeb,
     root,
     reverse: computed(() => {
+      if (navbarPosition.value === NavbarPosition.Bottom) return true;
       if (!isWeb.value) return false;
-      if (navbarPosition.value === 'bottom') return true;
       // web and small screen only
-      return navbarPosition.value === 'auto' && mobile.width;
+      return navbarPosition.value === NavbarPosition.Auto && mobile.width;
     }),
     floating: computed(() => {
-      if (!isWeb.value) return false;
       // if (panelOpen.value) return false;
-      if (navbarPosition.value === 'floating') return true;
+      if (navbarPosition.value === NavbarPosition.Floating) return true;
+      if (!isWeb.value) return false;
       // web & big screen only
-      return navbarPosition.value === 'auto' && tablet.width === false;
+      return navbarPosition.value === NavbarPosition.Auto && tablet.width === false;
     }),
   };
 });

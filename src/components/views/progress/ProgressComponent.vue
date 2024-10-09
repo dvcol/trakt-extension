@@ -32,6 +32,8 @@ const { isWatching } = useWatchingStoreRefs();
 const { scrolled, listRef, onClick } = useBackToTop();
 const { onItemClick } = usePanelItem();
 
+const { reverse } = useAppStateStoreRefs();
+
 onMounted(() => {
   watch(panelOpen, async value => {
     if (!value && panelDirty.value) await fetchProgress();
@@ -103,6 +105,7 @@ useActiveAndDocumentVisible({
         ref="listRef"
         :loading="loading"
         :items="progress"
+        :list-options="reverse ? { paddingBottom: 44 } : {}"
         backdrop
         hide-date
         show-progress

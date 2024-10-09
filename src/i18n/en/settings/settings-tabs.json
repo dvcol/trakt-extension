@@ -11,6 +11,10 @@
     "message": "Default tab",
     "description": "Label for the 'Default tab' setting"
   },
+  "settings__tabs__label_navbar_position": {
+    "message": "Navbar Position",
+    "description": "Label for the 'Navbar Position' setting"
+  },
   "settings__tabs__label_restore_tab": {
     "message": "Restore active tab on startup",
     "description": "Label for the 'Restore active tab on startup' setting"

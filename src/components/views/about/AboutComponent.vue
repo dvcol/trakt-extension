@@ -140,6 +140,10 @@ const openRelease = (url?: string) => {
     padding-top: layout.$floating-navbar-height;
   }
 
+  &.reverse {
+    padding-bottom: layout.$header-navbar-height;
+  }
+
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
   }

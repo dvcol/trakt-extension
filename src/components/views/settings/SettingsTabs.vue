@@ -17,6 +17,7 @@ import IconPencil from '~/components/icons/IconPencil.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { type ListEntity, ListType } from '~/models/list.model';
 import { loadingHysteresisOptions } from '~/models/loading-hysteresis.model';
+import { NavbarPosition } from '~/models/navbar-position.model';
 import { pageSizeOptions, pageSizeOptionsWithZero } from '~/models/page-size.model';
 import { ProgressType } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
@@ -51,6 +52,7 @@ const {
   enableRatings,
   backgroundColor,
   loadingHysteresis,
+  navbarPosition,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -70,6 +72,13 @@ const listOptions = computed<ListOption[]>(() =>
     value: list.id,
     source: list,
     icon: getIcon(list),
+  })),
+);
+
+const navbarOptions = computed<SelectOption[]>(() =>
+  Object.values(NavbarPosition).map(value => ({
+    label: i18n(value, 'common', 'navbar_position'),
+    value,
   })),
 );
 
@@ -145,6 +154,16 @@ const onColor = () => {
 
 <template>
   <div ref="container" class="tabs-container">
+    <!--  Navbar Positon  -->
+    <SettingsFormItem :label="i18n('label_navbar_position')">
+      <NSelect
+        v-model:value="navbarPosition"
+        class="navbar-position"
+        :to="container"
+        :options="navbarOptions"
+      />
+    </SettingsFormItem>
+
     <!--  Default tab  -->
     <SettingsFormItem :label="i18n('label_default_tab')">
       <NSelect
@@ -429,6 +448,7 @@ const onColor = () => {
   }
 }
 
+.navbar-position,
 .default-tab,
 .list-select {
   width: 12.5rem;

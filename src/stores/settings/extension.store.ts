@@ -5,6 +5,8 @@ import { computed, reactive, ref, toRaw } from 'vue';
 
 import type { ListEntity } from '~/models/list.model';
 
+import { NavbarPosition, type NavbarPositions } from '~/models/navbar-position.model';
+
 import { PageSize } from '~/models/page-size.model';
 import { ProgressType, type ProgressTypes } from '~/models/progress-type.model';
 import { Route } from '~/models/router.model';
@@ -38,8 +40,6 @@ const DefaultRoutes: RouteDictionary = {
   [Route.Search]: true,
 };
 
-type NavbarPosition = 'top' | 'bottom' | 'floating' | 'auto';
-
 type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
@@ -51,7 +51,7 @@ type ExtensionSettings = {
   enableRatings: boolean;
   backgroundColor: string;
   loadingHysteresis: number;
-  navbarPosition: NavbarPosition;
+  navbarPosition: NavbarPositions;
 };
 
 const ExtensionSettingsConstants = {
@@ -72,7 +72,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const enableRatings = ref(false);
   const backgroundColor = ref('transparent');
   const loadingHysteresis = ref(-1);
-  const navbarPosition = ref<NavbarPosition>('auto');
+  const navbarPosition = ref<NavbarPositions>(NavbarPosition.Auto);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -250,7 +250,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     }),
     navbarPosition: computed({
       get: () => navbarPosition.value,
-      set: (value: NavbarPosition) => {
+      set: (value: NavbarPositions) => {
         navbarPosition.value = value;
         saveState().catch(err => Logger.error('Failed to save navbar position extension settings', { value, err }));
       },
