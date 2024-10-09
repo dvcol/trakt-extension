@@ -103,7 +103,7 @@ const onLeave = (section: Section) => {
 
 const isCompact = watchMedia('(max-width: 600px)');
 
-const { floating } = useAppStateStoreRefs();
+const { floating, reverse } = useAppStateStoreRefs();
 
 onDeactivated(() => {
   target.value = undefined;
@@ -112,7 +112,7 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <NLayout class="container" :class="{ floating }" has-sider>
+  <NLayout class="container" :class="{ floating, reverse }" has-sider>
     <NLayoutSider
       class="menu"
       bordered
@@ -224,6 +224,22 @@ onDeactivated(() => {
   .menu,
   .content .card:first-child {
     margin-top: layout.$safe-navbar-height;
+  }
+
+  &.reverse {
+    margin-top: 0;
+
+    .menu {
+      margin-top: 0;
+    }
+
+    .content {
+      margin-bottom: layout.$header-navbar-height;
+
+      .card:first-child {
+        margin-top: 0.5rem;
+      }
+    }
   }
 
   &.floating {

@@ -134,7 +134,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
 const { dropdown } = NavbarService;
 const { floating, reverse } = useAppStateStoreRefs();
 const placement = computed(() => {
-  if (reverse.value) return 'top-end';
+  if (reverse.value) return 'top';
   if (floating.value) return 'bottom';
   return 'bottom-start';
 });
@@ -187,14 +187,16 @@ const placement = computed(() => {
   min-width: max(calc(100vw / var(--tab-count)), 8rem);
   max-width: 20rem;
   margin-top: 0.75rem;
+  margin-right: -0.25rem;
   text-align: left;
 
   &.floating {
     min-width: max(calc(var(--max-header-width) / var(--tab-count)), 8rem);
+    margin-right: 0;
   }
 
   &.reverse {
-    margin-right: -1rem;
+    margin-right: -0.5rem;
   }
 }
 </style>

@@ -148,24 +148,28 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  &:not(.reverse) {
-    top: layout.$safe-navbar-height;
+  top: layout.$safe-navbar-height;
+
+  &.drawer-visible {
+    top: layout.$header-open-drawer-height;
+  }
+
+  &.floating {
+    top: layout.$floating-navbar-height;
 
     &.drawer-visible {
-      top: layout.$header-open-drawer-height;
+      top: layout.$floating-open-drawer-height;
     }
+  }
 
-    &.floating {
-      top: layout.$floating-navbar-height;
-
-      &.drawer-visible {
-        top: layout.$floating-open-drawer-height;
-      }
-    }
-
+  &:not(.reverse, .floating) {
     &.dropdown-visible {
       right: max(calc(100vw / var(--tab-count)), 8rem);
     }
+  }
+
+  &.reverse {
+    top: 0.5rem;
   }
 }
 
@@ -179,21 +183,25 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  &:not(.reverse) {
-    top: calc(#{layout.$safe-navbar-height} + 12px);
+  top: calc(#{layout.$safe-navbar-height} + 12px);
+
+  &.drawer-visible {
+    top: calc(#{layout.$header-open-drawer-height} + 12px);
+  }
+
+  &.floating {
+    top: calc(#{layout.$floating-navbar-height} + 12px);
 
     &.drawer-visible {
-      top: calc(#{layout.$header-open-drawer-height} + 12px);
+      top: calc(#{layout.$floating-open-drawer-height} + 12px);
     }
+  }
 
-    &.floating {
-      top: calc(#{layout.$floating-navbar-height} + 12px);
+  &.reverse {
+    top: 0.5rem;
+  }
 
-      &.drawer-visible {
-        top: calc(#{layout.$floating-open-drawer-height} + 12px);
-      }
-    }
-
+  &:not(.reverse, .floating) {
     &.dropdown-visible {
       right: max(calc(100vw / var(--tab-count)), 8rem);
     }

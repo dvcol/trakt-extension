@@ -224,13 +224,14 @@ const onBack = () => {
   &.reverse {
     header {
       top: auto;
-      bottom: 0;
+      bottom: calc(0% - #{layout.$safe-area-inset-bottom});
       flex-direction: column-reverse;
     }
 
     main {
       min-height: layout.$bottom-content-height;
-      margin-top: layout.$safe-area-inset-top;
+      margin-top: 0;
+      margin-bottom: layout.$safe-navbar-height;
     }
 
     footer {

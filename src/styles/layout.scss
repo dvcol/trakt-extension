@@ -19,9 +19,7 @@ $floating-open-drawer-height: calc(#{$floating-navbar-height} + #{$header-drawer
 $floating-content-height: $safe-full-height;
 
 // Bottom Navbar
-$bottom-safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-bottom});
-$bottom-open-drawer-height: calc(#{$bottom-safe-navbar-height} + #{$header-drawer-height});
-$bottom-content-height: $safe-full-height;
+$bottom-content-height: calc(var(--full-height) - #{$header-navbar-height});
 
 // Watching
 $watching-height: 1.75rem;
