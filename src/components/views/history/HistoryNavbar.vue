@@ -128,7 +128,7 @@ const open = ref(false);
     flex-wrap: wrap;
     justify-content: center;
     max-width: min(36.5rem, 100dvw);
-    max-height: calc(var(--full-height) - #{layout.$header-open-drawer-height});
+    max-height: calc(var(--full-height) - #{layout.$safe-header-open-drawer-height});
     overflow: auto;
     scrollbar-width: thin;
   }

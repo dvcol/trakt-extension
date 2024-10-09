@@ -24,6 +24,11 @@ const props = defineProps({
     type: HTMLElement,
     required: false,
   },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const i18n = useI18n('watching');
@@ -146,7 +151,11 @@ const onClick = () => {
 
 <template>
   <div class="wrapper">
-    <div class="container" :class="{ watching: isWatching, offset }" @click="onClick">
+    <div
+      class="container"
+      :class="{ watching: isWatching, offset, reverse }"
+      @click="onClick"
+    >
       <span class="left">
         <NIcon class="icon" :component="icon" />
         <div class="column">
@@ -399,6 +408,17 @@ const onClick = () => {
         .tertiary {
           color: var(--white-80);
         }
+      }
+    }
+
+    &.reverse {
+      height: layout.$watching-height;
+      padding-top: calc(#{layout.$safe-area-inset-top / 1.5});
+
+      &:active,
+      &:focus-within,
+      &:hover {
+        height: layout.$watching-open-height;
       }
     }
   }

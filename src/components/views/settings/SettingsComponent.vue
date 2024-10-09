@@ -237,7 +237,7 @@ onDeactivated(() => {
       margin-bottom: layout.$header-navbar-height;
 
       .card:first-child {
-        margin-top: 0.5rem;
+        margin-top: calc(#{layout.$safe-area-inset-top / 2});
       }
     }
   }

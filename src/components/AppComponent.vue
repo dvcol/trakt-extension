@@ -131,7 +131,11 @@ const onBack = () => {
           @mouseenter="footerOpen = true"
           @mouseleave="footerOpen = false"
         >
-          <CheckinComponent v-if="isAuthenticated" :parent-element="footerRef" />
+          <CheckinComponent
+            v-if="isAuthenticated"
+            :parent-element="footerRef"
+            :reverse="reverse"
+          />
         </footer>
         <DebugProvider />
       </RouterView>

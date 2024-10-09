@@ -6,9 +6,10 @@ $safe-area-inset-left: var(--safe-area-inset-left);
 
 // Element heights
 $header-navbar-height: 2.75rem;
-$safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-top});
 $header-drawer-height: 3.5rem;
-$header-open-drawer-height: calc(#{$safe-navbar-height} + #{$header-drawer-height});
+$header-open-drawer-height: calc(#{$header-navbar-height} + #{$header-drawer-height});
+$safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-top});
+$safe-header-open-drawer-height: calc(#{$safe-navbar-height} + #{$header-drawer-height});
 $safe-content-height: calc(var(--full-height) - #{$safe-navbar-height});
 $safe-full-height: calc(var(--full-height) - #{$safe-area-inset-top});
 
