@@ -149,7 +149,7 @@ const { openTab } = useLinksStore();
 .value {
   flex: 1 1 auto;
   align-self: center;
-  min-width: var(--value-min-width, max-content);
+  min-width: var(--value-min-width, fit-content);
 }
 
 .disabled {
@@ -161,7 +161,7 @@ const { openTab } = useLinksStore();
 .detail {
   flex: var(--text-flex);
   align-items: baseline;
-  min-width: var(--value-min-width, max-content);
+  min-width: var(--value-min-width, fit-content);
 
   &.vertical {
     width: 100%;
