@@ -172,8 +172,8 @@ const onTouchEnd = (e: TouchEvent) => {
     @mouseleave="isHover = false"
     @focusin="isFocus = true"
     @focusout="isFocus = false"
-    @touchend="onTouchEnd"
-    @touchstart="onTouchStart"
+    @touchend.passive="onTouchEnd"
+    @touchstart.passive="onTouchStart"
   >
     <NTabs
       :key="enabledRoutes.join('-')"

@@ -240,8 +240,8 @@ onBeforeUnmount(() => {
     @keydown.up.prevent="onProgress(emitProgress + progressStep)"
     @keydown.down.prevent="onProgress(emitProgress - progressStep)"
     @keydown.esc="onBlur"
-    @touchstart="onClick"
-    @touchend="onClick"
+    @touchstart.passive="onClick"
+    @touchend.passive="onClick"
     @blur="onBlur"
   >
     <span v-if="editing">{{ emitProgress }}</span>

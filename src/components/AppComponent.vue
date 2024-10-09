@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NDialogProvider, NDrawer } from 'naive-ui';
-import { onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue';
+import { ref, Transition, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 
 import GridBackground from '~/components/common/background/GridBackground.vue';
@@ -59,13 +59,6 @@ const onBack = () => {
   if (window.history.state.back) return back();
   return onClose();
 };
-
-onMounted(() => {
-  mainRef.value?.addEventListener('touchstart', NavbarService.hideDrawer);
-});
-onBeforeUnmount(() => {
-  mainRef.value?.removeEventListener('touchstart', NavbarService.hideDrawer);
-});
 </script>
 
 <template>
@@ -96,7 +89,8 @@ onBeforeUnmount(() => {
       <RouterView v-slot="{ Component }">
         <main
           ref="mainRef"
-          :class="{ 'full-height': !isAuthenticated, loading: !Component }"
+          :class="{ 'full-height': !isAuthenticated, 'loading': !Component }"
+          @touchstart.passive="NavbarService.hideDrawer"
         >
           <GridBackground v-if="!Component" :size="20" />
           <Transition name="scale" mode="out-in">

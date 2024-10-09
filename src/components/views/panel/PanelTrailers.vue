@@ -56,8 +56,8 @@ const onTouchEnd = (e: TouchEvent) => {
     keyboard
     trigger="hover"
     :space-between="32"
-    @touchstart="onTouchStart"
-    @touchend="onTouchEnd"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
   >
     <slot />
     <YoutubePlayer

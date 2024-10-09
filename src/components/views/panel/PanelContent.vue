@@ -37,8 +37,8 @@ const onTouchEnd = (e: TouchEvent) => {
 <template>
   <NDrawerContent
     :native-scrollbar="false"
-    @touchstart="onTouchStart"
-    @touchend="onTouchEnd"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
   >
     <!--  Header  -->
     <NFlex justify="space-between" class="panel-header">
