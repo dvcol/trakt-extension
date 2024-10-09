@@ -16,6 +16,9 @@ import {
   type VirtualListProps,
   type VirtualListRef,
 } from '~/models/list-scroll.model';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { Watching } from '~/styles/layout.style';
 import { watchMedia } from '~/utils/window.utils';
 
 const listRef = ref<VirtualListRef>();
@@ -139,6 +142,9 @@ const {
   scrollBoundary,
 } = toRefs(props);
 
+const { floating, reverse } = useAppStateStoreRefs();
+const { isWatching } = useWatchingStoreRefs();
+
 const scrolled = ref(false);
 
 const isCompact = watchMedia('(max-width: 600px)');
@@ -198,10 +204,19 @@ const topInset = computed(() => {
   if (!inset) return 0;
   return parseInt(inset, 10);
 });
-const listPaddingTop = computed(
-  () => topInset.value + (listOptions?.value?.paddingTop ?? 60),
-);
-const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8);
+const listPaddingTop = computed(() => {
+  const offset = topInset.value;
+  if (listOptions?.value?.paddingTop) return offset + listOptions.value.paddingTop;
+  if (floating.value) return offset + 10;
+  if (reverse.value)
+    return isWatching.value ? offset + 16 + Watching.Height : offset + 16;
+  return offset + 60;
+});
+const listPaddingBottom = computed(() => {
+  if (listOptions?.value?.paddingBottom) return listOptions.value.paddingBottom;
+  if (reverse.value) return 8 + 16;
+  return 8;
+});
 </script>
 
 <template>
@@ -210,7 +225,10 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
       v-if="!isEmpty"
       ref="listRef"
       class="list-scroll"
-      :style="{ '--overscroll-behavior': overscroll }"
+      :class="{ floating, reverse }"
+      :style="{
+        '--overscroll-behavior': overscroll,
+      }"
       :data-length="items.length"
       :data-page-size="pageSize"
       :item-size="listItemSize"
@@ -314,6 +332,12 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
 .list-scroll {
   height: var(--full-height);
   margin-top: calc(0% - #{layout.$safe-navbar-height});
+  transition: margin-top 0.5s var(--n-bezier);
+
+  &.floating,
+  &.reverse {
+    margin-top: calc(0% - #{layout.$safe-area-inset-top});
+  }
 
   .all-loaded,
   .load-more {
@@ -324,6 +348,10 @@ const listPaddingBottom = computed(() => listOptions?.value?.paddingBottom ?? 8)
 
   :deep(.v-vl) {
     overscroll-behavior: var(--overscroll-behavior, auto);
+  }
+
+  :deep(.v-vl-items) {
+    transition: padding 0.5s var(--n-bezier);
   }
 }
 </style>

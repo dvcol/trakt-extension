@@ -11,18 +11,25 @@ import CheckinComponent from '~/components/views/checkin/CheckinComponent.vue';
 import PanelContent from '~/components/views/panel/PanelContent.vue';
 import { NavbarService } from '~/services/navbar.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 
 const { isAuthenticated } = useAuthSettingsStoreRefs();
 const { currentRoute, push, back } = useRouter();
 
-const { footerOpen, panelOpen, panelDirty } = useAppStateStoreRefs();
+const {
+  appRef,
+  mainRef,
+  footerRef,
+  footerOpen,
+  panelOpen,
+  panelDirty,
+  floating,
+  reverse,
+} = useAppStateStoreRefs();
+const { isWatching } = useWatchingStoreRefs();
 
 const base = ref();
-
-const appRef = ref<HTMLDivElement>();
-const mainRef = ref<HTMLDivElement>();
-const footerRef = ref<HTMLDivElement>();
 
 watch(
   currentRoute,
@@ -62,11 +69,20 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="appRef" class="app-container">
+  <div
+    ref="appRef"
+    class="app-container"
+    :class="{ reverse, floating, watching: isWatching }"
+  >
     <NDialogProvider :to="appRef">
       <header :class="{ open: panelOpen }">
         <RouterView v-slot="{ Component }" name="navbar">
-          <NavbarComponent v-if="isAuthenticated" :disabled="panelOpen">
+          <NavbarComponent
+            v-if="isAuthenticated"
+            :disabled="panelOpen"
+            :reverse="reverse"
+            :floating="floating"
+          >
             <template v-if="Component" #drawer="{ parentElement }">
               <Transition name="scale" mode="out-in">
                 <KeepAlive>
@@ -99,7 +115,7 @@ onBeforeUnmount(() => {
               v-model:show="panelOpen"
               :to="mainRef"
               width="100%"
-              class="panel"
+              class="root-panel-wrapper"
               close-on-esc
               auto-focus
               :on-after-leave="onAfterLeave"
@@ -137,17 +153,26 @@ onBeforeUnmount(() => {
 @include transition.scale;
 
 .app-container {
+  --max-header-width: 800px;
+
   overflow: hidden;
 
   header {
     position: absolute;
     top: 0;
+    bottom: auto;
+    left: 0;
     z-index: layers.$layer-ui;
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 100%;
     min-height: layout.$header-navbar-height;
+    transition:
+      bottom 0.4s var(--n-bezier),
+      top 0.5s var(--n-bezier),
+      left 0.5s var(--n-bezier),
+      width 0.5s var(--n-bezier);
 
     > :first-child {
       @include mixin.hover-background;
@@ -167,10 +192,13 @@ onBeforeUnmount(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: layout.$main-content-height;
+    min-height: layout.$safe-content-height;
     margin-top: layout.$safe-navbar-height;
     padding-right: calc(#{layout.$safe-area-inset-right} / 1.5);
     padding-left: calc(#{layout.$safe-area-inset-left} / 1.5);
+    transition:
+      min-height 0.5s var(--n-bezier),
+      margin-top 0.5s var(--n-bezier);
 
     &.full-height {
       min-height: var(--full-height);
@@ -189,11 +217,55 @@ onBeforeUnmount(() => {
     width: 100%;
   }
 
-  .panel {
-    position: relative;
-    max-height: calc(100% - #{layout.$safe-navbar-height});
-    overflow: auto;
-    overscroll-behavior: none;
+  :deep(.root-panel-wrapper.n-drawer) {
+    transition: all 0.3s var(--n-bezier);
+  }
+
+  &.watching {
+    :deep(.root-panel-wrapper.n-drawer) {
+      padding-bottom: layout.$safe-watching-height;
+    }
+  }
+
+  &.reverse {
+    header {
+      top: auto;
+      bottom: 0;
+      flex-direction: column-reverse;
+    }
+
+    main {
+      min-height: layout.$bottom-content-height;
+      margin-top: layout.$safe-area-inset-top;
+    }
+
+    footer {
+      top: 0;
+      bottom: auto;
+    }
+
+    &.watching {
+      :deep(.root-panel-wrapper.n-drawer) {
+        padding-top: layout.$top-safe-watching-height;
+      }
+    }
+  }
+
+  &.floating {
+    header {
+      top: 1rem;
+      left: calc(50% - var(--max-header-width) / 2);
+      width: var(--max-header-width);
+    }
+
+    main {
+      min-height: layout.$floating-content-height;
+      margin-top: layout.$safe-area-inset-top;
+    }
+
+    :deep(.root-panel-wrapper.n-drawer) {
+      margin-top: layout.$floating-navbar-height;
+    }
   }
 }
 </style>

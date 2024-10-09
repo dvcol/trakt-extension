@@ -23,9 +23,19 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  floating: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
-const { disabled } = toRefs(props);
+const { disabled, reverse } = toRefs(props);
 
 const i18n = useI18n('route');
 const route = useRoute();
@@ -116,10 +126,10 @@ const isDrawerNotScrollable = (
 const handleSwipeDirection = (swipe: SwipeDirections) => {
   switch (swipe) {
     case SwipeDirection.Down:
-      isHover.value = true;
+      isHover.value = !reverse.value;
       break;
     case SwipeDirection.Up:
-      isHover.value = false;
+      isHover.value = reverse.value;
       break;
     case SwipeDirection.Left:
       if (nextRoute.value && isDrawerNotScrollable(swipe)) navigate(nextRoute.value);
@@ -157,6 +167,7 @@ const onTouchEnd = (e: TouchEvent) => {
 <template>
   <nav
     ref="navElement"
+    :class="{ reverse, floating }"
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
     @focusin="isFocus = true"
@@ -228,9 +239,25 @@ nav {
   --navbar-text-color-hover-active: var(--white);
   --navbar-text-color-active: var(--white);
 
+  display: flex;
+  flex-direction: column;
   padding: env(safe-area-inset-top) 0.25rem 0;
+  overflow-x: unset;
   font-size: 12px;
   text-align: center;
+  transition:
+    border-radius 0.25s var(--n-bezier),
+    padding 0.25s var(--n-bezier);
+
+  &.reverse {
+    flex-direction: column-reverse;
+    padding: 0 0.25rem env(safe-area-inset-bottom);
+  }
+
+  &.floating {
+    padding: 0 0.25rem;
+    border-radius: 1rem;
+  }
 
   .drawer {
     @include layout.navbar-transition;
@@ -260,7 +287,7 @@ nav {
     :deep(.tab) {
       --n-font-weight-strong: normal;
 
-      padding: 0 0.25rem;
+      padding: 0 0.75rem;
     }
   }
 }

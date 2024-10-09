@@ -341,7 +341,7 @@ const onClick = () => {
     }
 
     &.watching {
-      height: calc(1.75rem + #{layout.$safe-area-inset-bottom / 1.5});
+      height: layout.$safe-watching-height;
 
       &.offset {
         padding: 0
@@ -355,7 +355,7 @@ const onClick = () => {
       &:active,
       &:focus-within,
       &:hover {
-        height: calc(3rem + #{layout.$safe-area-inset-bottom} / 2);
+        height: layout.$safe-watching-open-height;
         color: var(--white);
 
         .icon {

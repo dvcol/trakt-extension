@@ -25,6 +25,7 @@ import { Logger } from '~/services/logger.service';
 import { NavbarService } from '~/services/navbar.service';
 import { TraktService } from '~/services/trakt.service';
 import { ExternaLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLogout } from '~/stores/settings/use-logout';
@@ -131,6 +132,12 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
   }
 };
 const { dropdown } = NavbarService;
+const { floating, reverse } = useAppStateStoreRefs();
+const placement = computed(() => {
+  if (reverse.value) return 'top-end';
+  if (floating.value) return 'bottom';
+  return 'bottom-start';
+});
 </script>
 
 <template>
@@ -138,9 +145,10 @@ const { dropdown } = NavbarService;
     trigger="hover"
     :options="options"
     :to="parentElement"
-    placement="bottom"
+    :placement="placement"
     size="small"
     class="settings-dropdown"
+    :class="{ floating, reverse }"
     :style="{ '--tab-count': enabledRoutes.length + 1 }"
     :on-update:show="(visible: boolean) => (dropdown = visible)"
     @select="onSelect"
@@ -179,7 +187,14 @@ const { dropdown } = NavbarService;
   min-width: max(calc(100vw / var(--tab-count)), 8rem);
   max-width: 20rem;
   margin-top: 0.75rem;
-  margin-right: -0.25rem;
   text-align: left;
+
+  &.floating {
+    min-width: max(calc(var(--max-header-width) / var(--tab-count)), 8rem);
+  }
+
+  &.reverse {
+    margin-right: -1rem;
+  }
 }
 </style>

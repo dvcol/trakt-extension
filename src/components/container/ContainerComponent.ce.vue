@@ -31,7 +31,7 @@ const override: GlobalThemeOverrides = {
 
 const { drawer, open, dropdown } = NavbarService;
 const { enabledRoutes, backgroundColor } = useExtensionSettingsStoreRefs();
-const { root } = useAppStateStoreRefs();
+const { root, floating, reverse } = useAppStateStoreRefs();
 
 onBeforeMount(() => addCustomProgressProperty());
 </script>
@@ -59,7 +59,13 @@ onBeforeMount(() => addCustomProgressProperty());
         :to="root"
         :max="2"
         :container-class="
-          ['message-container', drawer ? 'has-drawer' : '', open ? 'drawer-visible' : '']
+          [
+            'message-container',
+            drawer ? 'has-drawer' : '',
+            open ? 'drawer-visible' : '',
+            floating ? 'floating' : '',
+            reverse ? 'reverse' : '',
+          ]
             .filter(Boolean)
             .join(' ')
         "
@@ -76,6 +82,8 @@ onBeforeMount(() => addCustomProgressProperty());
             drawer ? 'has-drawer' : '',
             open ? 'drawer-visible' : '',
             dropdown ? 'dropdown-visible' : '',
+            floating ? 'floating' : '',
+            reverse ? 'reverse' : '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -99,7 +107,7 @@ onBeforeMount(() => addCustomProgressProperty());
   flex: 1 1 auto;
   flex-direction: column;
   height: var(--full-height);
-  overflow: auto;
+  overflow: hidden;
   color: var(--color-text);
   font-weight: normal;
   font-family:
@@ -140,14 +148,24 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  top: layout.$safe-navbar-height;
+  &:not(.reverse) {
+    top: layout.$safe-navbar-height;
 
-  &.drawer-visible {
-    top: layout.$header-open-drawer-height;
-  }
+    &.drawer-visible {
+      top: layout.$header-open-drawer-height;
+    }
 
-  &.dropdown-visible {
-    right: max(calc(100vw / var(--tab-count)), 8rem);
+    &.floating {
+      top: layout.$floating-navbar-height;
+
+      &.drawer-visible {
+        top: layout.$floating-open-drawer-height;
+      }
+    }
+
+    &.dropdown-visible {
+      right: max(calc(100vw / var(--tab-count)), 8rem);
+    }
   }
 }
 
@@ -161,14 +179,24 @@ onBeforeMount(() => addCustomProgressProperty());
     layout.$navbar-transition-delay-visible}
   );
 
-  top: calc(#{layout.$safe-navbar-height} + 12px);
+  &:not(.reverse) {
+    top: calc(#{layout.$safe-navbar-height} + 12px);
 
-  &.drawer-visible {
-    top: calc(#{layout.$header-open-drawer-height} + 12px);
-  }
+    &.drawer-visible {
+      top: calc(#{layout.$header-open-drawer-height} + 12px);
+    }
 
-  &.dropdown-visible {
-    right: max(calc(100vw / var(--tab-count)), 8rem);
+    &.floating {
+      top: calc(#{layout.$floating-navbar-height} + 12px);
+
+      &.drawer-visible {
+        top: calc(#{layout.$floating-open-drawer-height} + 12px);
+      }
+    }
+
+    &.dropdown-visible {
+      right: max(calc(100vw / var(--tab-count)), 8rem);
+    }
   }
 }
 

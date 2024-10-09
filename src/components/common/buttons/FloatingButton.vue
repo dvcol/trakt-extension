@@ -4,6 +4,8 @@ import { NFlex, NFloatButton, NIcon } from 'naive-ui';
 import type { Component, PropType, Transition } from 'vue';
 
 import IconChevronUp from '~/components/icons/IconChevronUp.vue';
+import { NavbarService } from '~/services/navbar.service';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 
 defineProps({
@@ -23,6 +25,8 @@ defineProps({
 });
 
 const { isWatching } = useWatchingStoreRefs();
+const { reverse } = useAppStateStoreRefs();
+const { open } = NavbarService;
 
 const emit = defineEmits<{
   (e: 'onClick'): void;
@@ -34,7 +38,7 @@ const emit = defineEmits<{
     <NFloatButton
       v-if="show"
       class="button"
-      :class="{ watching: isWatching }"
+      :class="{ watching: isWatching, reverse, open }"
       width="fit-content"
       @click="emit('onClick')"
     >
@@ -68,8 +72,24 @@ const emit = defineEmits<{
   flex-direction: row;
   padding: 0.5rem;
 
-  &.watching {
+  &.watching:not(.reverse) {
     bottom: calc(2.5rem + #{layout.$safe-area-inset-bottom / 1.5});
+  }
+
+  &.reverse {
+    $navbar-offset: calc(
+      #{layout.$header-navbar-height} + #{layout.$safe-area-inset-bottom / 1.5}
+    );
+
+    bottom: calc(0.5rem + #{$navbar-offset});
+    transition-delay: 0.5s;
+
+    &.open {
+      $navbar-open-offset: calc(#{layout.$header-drawer-height} + #{$navbar-offset});
+
+      bottom: calc(0.5rem + #{$navbar-open-offset});
+      transition-delay: 0s;
+    }
   }
 
   .text {

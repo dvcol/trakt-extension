@@ -21,7 +21,7 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
   }) => {
     const _type = type ?? item?.type;
     if (!_type) return;
-    const base = currentRoute.value.name?.toString();
+    const base = currentRoute.value.name?.toString()?.split('-')?.at(0);
     if (!base) return;
     const _id = id ?? item?.meta?.ids?.[_type]?.trakt;
     const _showId = showId ?? item?.meta?.ids?.show?.trakt;

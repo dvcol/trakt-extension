@@ -9,7 +9,27 @@ $header-navbar-height: 2.75rem;
 $safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-top});
 $header-drawer-height: 3.5rem;
 $header-open-drawer-height: calc(#{$safe-navbar-height} + #{$header-drawer-height});
-$main-content-height: calc(var(--full-height) - #{$safe-navbar-height});
+$safe-content-height: calc(var(--full-height) - #{$safe-navbar-height});
+$safe-full-height: calc(var(--full-height) - #{$safe-area-inset-top});
+
+// floating navbar
+$floating-navbar-offset: 1rem;
+$floating-navbar-height: calc(#{$floating-navbar-offset} + #{$safe-navbar-height});
+$floating-open-drawer-height: calc(#{$floating-navbar-height} + #{$header-drawer-height});
+$floating-content-height: $safe-full-height;
+
+// Bottom Navbar
+$bottom-safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-bottom});
+$bottom-open-drawer-height: calc(#{$bottom-safe-navbar-height} + #{$header-drawer-height});
+$bottom-content-height: $safe-full-height;
+
+// Watching
+$watching-height: 1.75rem;
+$watching-open-height: 3rem;
+$safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-bottom / 1.5});
+$safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-bottom / 1.5});
+$top-safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-top / 1.5});
+$top-safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-top / 1.5});
 
 // Navbar transition
 $navbar-transition: 0.5s var(--n-bezier);

@@ -4,11 +4,12 @@ import { NCard, NFlex, NH2, NLayout, NP } from 'naive-ui';
 import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import TagLink from '~/components/common/buttons/TagLink.vue';
 import IconAccountAlert from '~/components/icons/IconAccountAlert.vue';
-import IconCoffe from '~/components/icons/IconCoffe.vue';
+import IconCoffee from '~/components/icons/IconCoffee.vue';
 import IconEye from '~/components/icons/IconEye.vue';
 import IconGithub from '~/components/icons/IconGithub.vue';
 import IconStar from '~/components/icons/IconStar.vue';
 import { ExternaLinks, ResolveExternalLinks } from '~/settings/external.links';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -20,6 +21,8 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const { openTab } = useLinksStore();
 
+const { floating, reverse } = useAppStateStoreRefs();
+
 const openRelease = (url?: string) => {
   if (!url) return;
   openTab(url, true);
@@ -29,6 +32,7 @@ const openRelease = (url?: string) => {
 <template>
   <NLayout
     class="container"
+    :class="{ floating, reverse }"
     :content-style="{
       padding: '0.75rem 1rem',
     }"
@@ -111,7 +115,7 @@ const openRelease = (url?: string) => {
         <ButtonLinkExternal
           :href="ExternaLinks.donate"
           :title="i18n('button__donate_label')"
-          :icon="IconCoffe"
+          :icon="IconCoffee"
           type="info"
         >
           {{ i18n('button__donate') }}
@@ -127,8 +131,14 @@ const openRelease = (url?: string) => {
 
 .container {
   width: 100%;
-  height: layout.$main-content-height;
+  height: layout.$safe-content-height;
   background: transparent;
+  transition: padding 0.5s var(--n-bezier);
+
+  &.floating {
+    height: layout.$floating-content-height;
+    padding-top: layout.$floating-navbar-height;
+  }
 
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));

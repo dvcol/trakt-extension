@@ -38,6 +38,8 @@ const DefaultRoutes: RouteDictionary = {
   [Route.Search]: true,
 };
 
+type NavbarPosition = 'top' | 'bottom' | 'floating' | 'auto';
+
 type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
@@ -49,6 +51,7 @@ type ExtensionSettings = {
   enableRatings: boolean;
   backgroundColor: string;
   loadingHysteresis: number;
+  navbarPosition: NavbarPosition;
 };
 
 const ExtensionSettingsConstants = {
@@ -69,6 +72,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const enableRatings = ref(false);
   const backgroundColor = ref('transparent');
   const loadingHysteresis = ref(-1);
+  const navbarPosition = ref<NavbarPosition>('auto');
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -92,6 +96,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         enableRatings: enableRatings.value,
         backgroundColor: backgroundColor.value,
         loadingHysteresis: loadingHysteresis.value,
+        navbarPosition: navbarPosition.value,
       }),
     500,
   );
@@ -126,6 +131,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     }
     if (restored?.backgroundColor !== undefined) backgroundColor.value = restored.backgroundColor;
     if (restored?.loadingHysteresis !== undefined) loadingHysteresis.value = restored.loadingHysteresis;
+    if (restored?.navbarPosition !== undefined) navbarPosition.value = restored.navbarPosition;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -240,6 +246,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: number) => {
         loadingHysteresis.value = value;
         saveState().catch(err => Logger.error('Failed to save loading hysteresis extension settings', { value, err }));
+      },
+    }),
+    navbarPosition: computed({
+      get: () => navbarPosition.value,
+      set: (value: NavbarPosition) => {
+        navbarPosition.value = value;
+        saveState().catch(err => Logger.error('Failed to save navbar position extension settings', { value, err }));
       },
     }),
   };
