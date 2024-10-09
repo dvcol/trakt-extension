@@ -13,8 +13,8 @@ $safe-content-height: calc(var(--full-height) - #{$safe-navbar-height});
 $safe-full-height: calc(var(--full-height) - #{$safe-area-inset-top});
 
 // floating navbar
-$floating-navbar-offset: 1rem;
-$floating-navbar-height: calc(#{$floating-navbar-offset} + #{$safe-navbar-height});
+$floating-navbar-offset: calc(1rem + #{$safe-area-inset-top / 3});
+$floating-navbar-height: calc(#{$floating-navbar-offset} + #{$header-navbar-height});
 $floating-open-drawer-height: calc(#{$floating-navbar-height} + #{$header-drawer-height});
 $floating-content-height: $safe-full-height;
 

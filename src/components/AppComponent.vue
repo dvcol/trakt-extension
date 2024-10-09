@@ -247,7 +247,7 @@ const onBack = () => {
 
   &.floating {
     header {
-      top: 1rem;
+      top: layout.$floating-navbar-offset;
       left: calc(50% - var(--max-header-width) / 2);
       width: var(--max-header-width);
     }

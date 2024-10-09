@@ -176,12 +176,10 @@ onDeactivated(() => {
 
 .container {
   width: 100%;
-  height: layout.$safe-full-height;
+  height: var(--full-height);
   margin-top: calc(0% - #{layout.$safe-navbar-height});
   background: transparent;
-  transition:
-    height 0.5s var(--n-bezier),
-    margin-top 0.5s var(--n-bezier);
+  transition: margin-top 0.5s var(--n-bezier);
 
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
@@ -213,12 +211,10 @@ onDeactivated(() => {
   .menu {
     @include mixin.hover-background;
 
-    height: layout.$safe-content-height;
     padding: 0.5rem;
   }
 
   .content {
-    height: layout.$safe-full-height;
     background: transparent;
     transition:
       height 0.5s var(--n-bezier),
@@ -231,17 +227,14 @@ onDeactivated(() => {
   }
 
   &.floating {
-    height: layout.$floating-content-height;
     margin-top: calc(0% - #{layout.$safe-area-inset-top});
 
-    .content {
-      height: calc(#{layout.$floating-content-height} - 0.75rem);
-      margin-top: calc(0.75rem + #{layout.$safe-area-inset-top});
+    .content .card:first-child {
+      margin-top: layout.$floating-navbar-height;
     }
 
     .menu {
-      height: layout.$floating-content-height;
-      margin-top: layout.$safe-area-inset-top;
+      margin-top: 0;
       padding-top: 1.5rem;
     }
   }

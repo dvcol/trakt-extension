@@ -251,7 +251,7 @@ nav {
 
   &.reverse {
     flex-direction: column-reverse;
-    padding: 0 0.25rem env(safe-area-inset-bottom);
+    padding: 0 0.25rem;
   }
 
   &.floating {
