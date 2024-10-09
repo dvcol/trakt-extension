@@ -81,13 +81,15 @@ const emit = defineEmits<{
       #{layout.$header-navbar-height} + #{layout.$safe-area-inset-bottom / 1.5}
     );
 
-    bottom: calc(0.5rem + #{$navbar-offset});
+    right: 1.5rem;
+    bottom: calc(1rem + #{$navbar-offset});
     transition-delay: 0.5s;
 
     &.open {
       $navbar-open-offset: calc(#{layout.$header-drawer-height} + #{$navbar-offset});
 
-      bottom: calc(0.5rem + #{$navbar-open-offset});
+      right: 1.5rem;
+      bottom: calc(1rem + #{$navbar-open-offset});
       transition-delay: 0s;
     }
   }
