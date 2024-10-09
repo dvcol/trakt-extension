@@ -68,7 +68,7 @@ const selectedLists = computed({
 type ListOption = SelectOption & { source: ListEntity; icon: Component };
 const listOptions = computed<ListOption[]>(() =>
   myLists.value.map((list, i) => ({
-    label: list.type === ListType.Watchlist ? i18n(list.name, 'list') : list.name,
+    label: list.type === ListType.List ? list.name : i18n(list.name, 'list'),
     value: list.id,
     source: list,
     icon: getIcon(list),

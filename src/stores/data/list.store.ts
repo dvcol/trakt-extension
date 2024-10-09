@@ -95,7 +95,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   };
 
   const updateDictionary = (list: ListEntity, item: MinimalItem, remove?: boolean) => {
-    if (![ListType.List, ListType.Watchlist].map(String).includes(list.type)) return;
+    if (![ListType.List, ListType.Watchlist, ListType.Favorites].map(String).includes(list.type)) return;
     const _id = list.id.toString();
 
     if (!listDictionary[_id]) listDictionary[_id] = {};
@@ -154,7 +154,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   };
 
   const { evicted } = useActivityStore();
-  const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false) => {
+  const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false, updateState = true) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch list, user is not authenticated');
       return;
@@ -170,7 +170,9 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     if (!parallel) loading.value = true;
     typeLoading[list.type] = true;
     listDictionaryLoading[list.id.toString()] = true;
-    const { clearLoading } = debounceLoading(listItems, loadingPlaceholder, { clear: !page, time: 1000 });
+
+    let clearLoading: (() => void) | undefined;
+    if (updateState) clearLoading = debounceLoading(listItems, loadingPlaceholder, { clear: !page, time: 1000 }).clearLoading;
 
     try {
       const response = await fetchItems(list, { pagination: { page, limit } });
@@ -179,16 +181,18 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
         if ('id' in item) return item;
         return { ...item, id: `${page}-${index}` };
       });
-      pagination.value = response.pagination ?? {};
-      listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.Loading), ...newData] : newData;
+      if (updateState) {
+        pagination.value = response.pagination ?? {};
+        listItems.value = page ? [...listItems.value.filter(l => l.type !== ListScrollItemType.Loading), ...newData] : newData;
+      }
       evicted.watchlist = false;
     } catch (e) {
       Logger.error('Failed to fetch list');
       NotificationService.error(`Failed to fetch list '${list}'`, e);
-      listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.Loading);
+      if (updateState) listItems.value = listItems.value.filter(l => l.type !== ListScrollItemType.Loading);
       throw e;
     } finally {
-      clearLoading();
+      clearLoading?.();
       if (!parallel) loading.value = false;
       typeLoading[list.type] = false;
       listDictionaryLoading[list.id.toString()] = false;
@@ -198,7 +202,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   const fetchAll = async (lists: ListEntity[], query?: Omit<ListQuery, 'list'>) => {
     if (!lists.length) return;
     loading.value = true;
-    await Promise.all(lists.map(list => fetchListItems({ list, ...query }, true)));
+    await Promise.all(lists.map(list => fetchListItems({ list, ...query }, true, false)));
     loading.value = false;
   };
 
@@ -257,8 +261,9 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       } else if (listType === ListType.Watchlist) {
         await TraktService[remove ? 'remove' : 'add'].watchlist({ [`${itemType}s`]: [{ ids: itemIds }] });
         updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
-      } else if (listType === 'favorites') {
+      } else if (listType === ListType.Favorites) {
         await TraktService[remove ? 'remove' : 'add'].favorites({ [`${itemType}s`]: [{ ids: itemIds }] });
+        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
       } else if (listType === ListType.Collection) {
         if (remove) {
           await TraktService.remove.collection({ [`${itemType}s`]: [{ ids: itemIds }] });

@@ -200,7 +200,7 @@ const listLoading = computed(() => {
 const listOptions = computed(
   () =>
     myLists.value?.map(list => ({
-      label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
+      label: list.type === ListType.List ? list.name : i18n(list.name),
       value: list.id,
       icon: getIcon(list),
     })),

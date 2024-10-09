@@ -3,6 +3,10 @@
     "message": "Watchlist",
     "description": "Label for the watchlist button in the panel"
   },
+  "panel__buttons__list_type__favorites": {
+    "message": "Favorites",
+    "description": "Label for the favorites button in the panel"
+  },
   "panel__buttons__label__checkin": {
     "message": "Start Checkin",
     "description": "Label for the checkin button in the panel"

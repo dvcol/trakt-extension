@@ -125,10 +125,12 @@ const listOptions = computed(
   () =>
     lists.value
       ?.filter(list =>
-        [ListType.List, ListType.Watchlist].map(String).includes(list.type),
+        [ListType.List, ListType.Watchlist, ListType.Favorites]
+          .map(String)
+          .includes(list.type),
       )
       .map(list => ({
-        label: list.type === ListType.Watchlist ? i18n(list.name) : list.name,
+        label: list.type === ListType.List ? list.name : i18n(list.name),
         value: list.id,
         icon: getIcon(list),
       })),

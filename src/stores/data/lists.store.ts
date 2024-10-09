@@ -125,10 +125,10 @@ export const useListsStore = defineStore(ListsStoreConstants.Store, () => {
     }
   };
 
-  /** Filter favorites and collections out  */
+  /** Filter collaboration and collections out  */
   const myLists = computed(() => {
     return lists.value?.filter(list => {
-      return [ListType.List, ListType.Watchlist].map(String).includes(list.type);
+      return [ListType.List, ListType.Watchlist, ListType.Favorites].map(String).includes(list.type);
     });
   });
 
