@@ -412,8 +412,8 @@ const onClick = () => {
     }
 
     &.reverse {
-      height: layout.$watching-height;
-      padding-top: calc(#{layout.$safe-area-inset-top / 1.5});
+      height: layout.$top-safe-watching-height;
+      padding-top: calc(#{layout.$safe-area-inset-top} / 1.5);
 
       &:active,
       &:focus-within,

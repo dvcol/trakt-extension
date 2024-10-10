@@ -8,6 +8,7 @@ import type { Component, Ref } from 'vue';
 import PageLoading from '~/components/common/loading/PageLoading.vue';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useSimklStoreRefs } from '~/stores/data/simkl.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import lazyComponent from '~/utils/lazy.utils';
 import { watchMedia } from '~/utils/window.utils';
@@ -104,6 +105,7 @@ const onLeave = (section: Section) => {
 const isCompact = watchMedia('(max-width: 600px)');
 
 const { floating, reverse } = useAppStateStoreRefs();
+const { isWatching } = useWatchingStoreRefs();
 
 onDeactivated(() => {
   target.value = undefined;
@@ -112,7 +114,11 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <NLayout class="container" :class="{ floating, reverse }" has-sider>
+  <NLayout
+    class="container"
+    :class="{ floating, reverse, watching: isWatching }"
+    has-sider
+  >
     <NLayoutSider
       class="menu"
       bordered
@@ -226,6 +232,10 @@ onDeactivated(() => {
     margin-top: layout.$safe-navbar-height;
   }
 
+  &.watching {
+    padding-bottom: layout.$safe-watching-height;
+  }
+
   &.reverse {
     margin-top: 0;
 
@@ -239,6 +249,11 @@ onDeactivated(() => {
       .card:first-child {
         margin-top: calc(#{layout.$safe-area-inset-top / 2});
       }
+    }
+
+    &.watching {
+      padding-top: layout.$top-safe-watching-height;
+      padding-bottom: 0;
     }
   }
 

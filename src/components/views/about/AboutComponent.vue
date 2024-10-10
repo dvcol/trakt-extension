@@ -10,6 +10,7 @@ import IconGithub from '~/components/icons/IconGithub.vue';
 import IconStar from '~/components/icons/IconStar.vue';
 import { ExternaLinks, ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -22,6 +23,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const { openTab } = useLinksStore();
 
 const { floating, reverse } = useAppStateStoreRefs();
+const { watching } = useWatchingStoreRefs();
 
 const openRelease = (url?: string) => {
   if (!url) return;
@@ -32,7 +34,7 @@ const openRelease = (url?: string) => {
 <template>
   <NLayout
     class="container"
-    :class="{ floating, reverse }"
+    :class="{ floating, reverse, watching }"
     :content-style="{
       padding: '0.75rem 1rem',
     }"
@@ -135,17 +137,27 @@ const openRelease = (url?: string) => {
   background: transparent;
   transition: padding 0.5s var(--n-bezier);
 
-  &.floating {
-    height: layout.$floating-content-height;
-    padding-top: layout.$floating-navbar-height;
+  &.watching {
+    padding-bottom: layout.$safe-watching-height;
   }
 
   &.reverse {
-    padding-bottom: layout.$header-navbar-height;
+    margin-bottom: layout.$header-navbar-height;
+
+    &.watching {
+      padding-top: layout.$top-safe-watching-height;
+      padding-bottom: 0;
+    }
   }
 
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
+  }
+
+  &.floating {
+    .card {
+      margin-top: layout.$floating-navbar-height;
+    }
   }
 
   .link {
