@@ -409,16 +409,16 @@ const onClick = () => {
           color: var(--white-80);
         }
       }
-    }
 
-    &.reverse {
-      height: layout.$top-safe-watching-height;
-      padding-top: calc(#{layout.$safe-area-inset-top} / 1.5);
+      &.reverse {
+        height: layout.$top-safe-watching-height;
+        padding-top: calc(#{layout.$safe-area-inset-top} / 1.5);
 
-      &:active,
-      &:focus-within,
-      &:hover {
-        height: layout.$watching-open-height;
+        &:active,
+        &:focus-within,
+        &:hover {
+          height: layout.$watching-open-height;
+        }
       }
     }
   }

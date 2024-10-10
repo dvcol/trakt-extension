@@ -38,12 +38,13 @@ export const useAppStateStore = defineStore('app.state', () => {
 
   const { navbarPosition } = useExtensionSettingsStoreRefs();
 
-  const { mobile, tablet } = watchBreakpoint(
+  const { bottom, minimum, floating } = watchBreakpoint(
     appRef,
-    { mobile: 600, tablet: 1300 },
+    { bottom: 400, minimum: 800, floating: 1000 },
     {
-      mobile: { width: window.innerWidth < 600 },
-      tablet: { width: window.innerWidth < 1300 },
+      bottom: { width: window.innerWidth < 400 },
+      minimum: { width: window.innerWidth < 800 },
+      floating: { width: window.innerWidth < 1000 },
     },
   );
 
@@ -65,14 +66,15 @@ export const useAppStateStore = defineStore('app.state', () => {
       if (navbarPosition.value === NavbarPosition.Bottom) return true;
       if (!isWeb.value) return false;
       // web and small screen only
-      return navbarPosition.value === NavbarPosition.Auto && mobile.width;
+      return navbarPosition.value === NavbarPosition.Auto && bottom.width;
     }),
     floating: computed(() => {
+      if (minimum.width) return false;
       // if (panelOpen.value) return false;
       if (navbarPosition.value === NavbarPosition.Floating) return true;
       if (!isWeb.value) return false;
       // web & big screen only
-      return navbarPosition.value === NavbarPosition.Auto && tablet.width === false;
+      return navbarPosition.value === NavbarPosition.Auto && floating.width === false;
     }),
   };
 });

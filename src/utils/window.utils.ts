@@ -36,7 +36,7 @@ export const watchSize = (element: Ref<Element | undefined>, cb: ResizeObserverC
 export const watchBreakpoint = <Name extends string, Value extends number>(
   element: Ref<Element | undefined>,
   breakpoints: Record<Name, Value>,
-  seed?: Record<Name, { height?: boolean; width?: boolean }>,
+  seed?: Partial<Record<Name, { height?: boolean; width?: boolean }>>,
 ): Record<Name, { height?: boolean; width?: boolean }> => {
   const result = reactive<Record<string, { height?: boolean; width?: boolean }>>(
     Object.fromEntries(Object.keys(breakpoints).map(key => [key, { height: undefined, width: undefined, ...seed?.[key as Name] }])),

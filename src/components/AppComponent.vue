@@ -155,8 +155,6 @@ const onBack = () => {
 @include transition.scale;
 
 .app-container {
-  --max-header-width: 800px;
-
   overflow: hidden;
 
   header {
@@ -257,8 +255,8 @@ const onBack = () => {
   &.floating {
     header {
       top: layout.$floating-navbar-offset;
-      left: calc(50% - var(--max-header-width) / 2);
-      width: var(--max-header-width);
+      left: calc(50% - #{layout.$floating-navbar-width} / 2);
+      width: layout.$floating-navbar-width;
     }
 
     main {
