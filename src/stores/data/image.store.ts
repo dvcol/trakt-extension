@@ -235,7 +235,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const setResponseValue = (
     { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number | 'original' },
     response: Ref<ImageStoreMedias | undefined> = ref(),
-  ) => {
+  ): Ref<ImageStoreMedias | undefined> => {
     if (typeof image === 'string') response.value = buildImageUrl({ url: image, baseUrl, type, size });
     else {
       response.value = {
@@ -246,23 +246,52 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     return response;
   };
 
-  const getImageUrl = async (query: ImageQuery, size: number | 'original', response: Ref<ImageStoreMedias | undefined> = ref()) => {
+  const getImageResponse = ({
+    query,
+    size = 300,
+    response = ref(),
+  }: {
+    query: ImageQuery;
+    size?: number | 'original';
+    response?: Ref<ImageStoreMedias | undefined>;
+  }): {
+    response: Ref<ImageStoreMedias | undefined>;
+    key: string;
+    type: ImageQuery['type'];
+    image?: string | ImageStoreMedias;
+    baseUrl?: string;
+  } => {
+    const { key, type } = getKeyAndType(query);
+    const image = images[type][key];
+    const baseUrl = tmdbConfig.value?.images?.secure_base_url;
+    if (image && baseUrl) setResponseValue({ image, baseUrl, type, size }, response);
+    return { response, key, type, image, baseUrl };
+  };
+
+  const getImageUrl = async ({
+    query,
+    size = 300,
+    response = ref(),
+    fetch = true,
+  }: {
+    query: ImageQuery;
+    size?: number | 'original';
+    response?: Ref<ImageStoreMedias | undefined>;
+    fetch?: boolean;
+  }) => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
 
-    const { key, type } = getKeyAndType(query);
+    const { image, key, type, baseUrl = tmdbConfig.value.images.secure_base_url } = getImageResponse({ query, size, response });
 
-    const baseUrl = tmdbConfig.value.images.secure_base_url;
-
-    const image = images[type][key];
-    if (image) return setResponseValue({ image, baseUrl, type, size }, response);
+    if (image || !fetch) return response;
 
     const result = await fetchImageUrl(key, query);
     if (!result?.image) return response;
     return setResponseValue({ image: result.image, baseUrl, type, size }, response);
   };
 
-  return { initImageStore, getImageUrl, imageSizes, clearState, buildImageUrl };
+  return { initImageStore, getImageUrl, getImageResponse, imageSizes, clearState, buildImageUrl };
 });
 
 export const useImageStoreRefs = () => storeToRefs(useImageStore());

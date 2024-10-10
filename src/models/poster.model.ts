@@ -4,6 +4,7 @@ import type { ImageQuery, ImageStoreMedias, ImageStoreTypes } from '~/stores/dat
 
 export type PosterItem = {
   type?: ImageStoreTypes;
+  key?: string;
 
   poster?: string;
   posterRef?: Ref<ImageStoreMedias | undefined>;

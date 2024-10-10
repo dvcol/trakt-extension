@@ -36,11 +36,14 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  size: {
+    type: [Number, String] as PropType<number | 'original'>,
+    required: false,
+    default: window?.innerWidth ?? 800 / 2,
+  },
 });
 
 const { tmdb, mode, seasonNumber, episodeNumber, link } = toRefs(props);
-
-const size = computed(() => window?.innerWidth ?? 800 / 2);
 
 const posterItem = computed<PosterItem | undefined>(() => {
   const id = tmdb?.value;

@@ -7,13 +7,13 @@ import type { Ref } from 'vue';
 import type { ListScrollItem, ListScrollItemMeta, ListScrollItemTag, ListScrollSourceItem, OnScroll, OnUpdated } from '~/models/list-scroll.model';
 
 import type { StorePagination } from '~/models/pagination.model';
-import type { ImageQuery } from '~/stores/data/image.store';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 
 import { RouterService } from '~/services/router.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { type ImageQuery } from '~/stores/data/image.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
@@ -69,22 +69,21 @@ const isMediaType = (type: ListScrollItem['type']): type is 'movie' | 'show' | '
   type === ListScrollItemType.Episode ||
   type === ListScrollItemType.Person;
 
-export const getPosterQuery =
-  (item: ListScrollSourceItem, type: ListScrollItem['type']): ListScrollItem['getPosterQuery'] =>
-  () => {
-    if (!item || !type) return;
-    if (type === ListScrollItemType.Placeholder) return;
-    if (!isMediaType(type)) return;
-    const _type = ['show', 'episode', 'season'].includes(type) ? 'show' : type;
-    const media = item[_type];
-    if (!media?.ids.tmdb) return;
-    return {
-      type,
-      id: media.ids.tmdb,
-      season: item?.episode?.season ?? item.season?.number,
-      episode: item?.episode?.number,
-    } satisfies ImageQuery;
+export const getPosterQuery = (item: ListScrollSourceItem, type: ListScrollItem['type']): ListScrollItem['getPosterQuery'] => {
+  if (!item || !type) return () => undefined;
+  if (type === ListScrollItemType.Placeholder) return () => undefined;
+  if (!isMediaType(type)) return () => undefined;
+  const _type = ['show', 'episode', 'season'].includes(type) ? 'show' : type;
+  const media = item[_type];
+  if (!media?.ids.tmdb) return () => undefined;
+  const query: ImageQuery = {
+    type,
+    id: media.ids.tmdb,
+    season: item?.episode?.season ?? item.season?.number,
+    episode: item?.episode?.number,
   };
+  return () => query;
+};
 
 export const getProgressQuery = (item: ListScrollSourceItem): ListScrollItem['getProgressQuery'] => {
   const showId = item.show?.ids.trakt;
