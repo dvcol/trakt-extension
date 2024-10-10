@@ -250,6 +250,8 @@ const listPaddingBottom = computed(() => {
       <template #default="{ item }">
         <slot v-if="item.type === ListScrollItemType.LoadMore" name="load-more">
           <NFlex
+            :key="item.key"
+            :data-key="item.key"
             class="load-more"
             justify="flex-start"
             align="center"
@@ -270,6 +272,8 @@ const listPaddingBottom = computed(() => {
         </slot>
         <slot v-else-if="item.type === ListScrollItemType.AllLoaded" name="empty">
           <NFlex
+            :key="item.key"
+            :data-key="item.key"
             class="all-loaded"
             justify="flex-start"
             align="center"

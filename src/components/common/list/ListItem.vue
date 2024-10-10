@@ -158,7 +158,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
 <template>
   <NTimelineItem
     ref="itemRef"
-    :key="item.id"
+    :key="item.key"
     class="timeline-item"
     :class="{
       'no-header': noHead,
