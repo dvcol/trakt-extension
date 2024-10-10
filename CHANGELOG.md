@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.27.0](https://github.com/dvcol/trakt-extension/compare/v1.26.4...v1.27.0) (2024-10-10)
+
+
+### Features
+
+* **favorites:** adds support to favorites list ([829fba1](https://github.com/dvcol/trakt-extension/commit/829fba1a2c8535c35489347de43633e93700d807))
+* **settings:** adds navbar position setting ([249834b](https://github.com/dvcol/trakt-extension/commit/249834b4109b846e3543b0a628780b23a630a6ba))
+* **web:** adds floating & reversed navbar ([612e94d](https://github.com/dvcol/trakt-extension/commit/612e94de80747ca06311249da006ca01749b4a25))
+
+
+### Bug Fixes
+
+* **button:** adjust right position in reverse mode ([8c9e720](https://github.com/dvcol/trakt-extension/commit/8c9e7208386614ee2d4d9d1c490c79465fb40859))
+* **checkin:** adds watching offset in about and settings ([ba185bc](https://github.com/dvcol/trakt-extension/commit/ba185bc1d74cfe8fe862ca1ba042079fdeb8916f))
+* **floating:** auto coerce to top when below threshold ([3b8f0dc](https://github.com/dvcol/trakt-extension/commit/3b8f0dc3f4a714aa3969cb05db497d1ee633c24e))
+* **floating:** fix panel top offset ([13d4d59](https://github.com/dvcol/trakt-extension/commit/13d4d59ac6400b6ed35d189e8a19e71a39727b9b))
+* **listener:** switch to passive listeners ([9283fd0](https://github.com/dvcol/trakt-extension/commit/9283fd0fd4c9f27249700ae70841e827172e5641))
+* **mobile:** fix bottom navbar ([b14e115](https://github.com/dvcol/trakt-extension/commit/b14e11577a014074b03a180c122fa6015293ebc5))
+* **mobile:** fix floating and progress ([ee8ad29](https://github.com/dvcol/trakt-extension/commit/ee8ad294b46b128dad85d2e2f67f7b0866760edf))
+* **mobile:** fix floating offsets ([dc2660d](https://github.com/dvcol/trakt-extension/commit/dc2660d4e185cd5b85dc855a5edbd698c91431db))
+* **navbar:** invert tooltip direction when in bottom mode ([171dbd2](https://github.com/dvcol/trakt-extension/commit/171dbd21ae75ed9de2e339a351ffac06c505eec2))
+* **progress:** fix css on progress after n-ui bump ([f5d986e](https://github.com/dvcol/trakt-extension/commit/f5d986efca62c3ef65860f98a07c683ca0bdfece))
+* **TextField:** switch defaults to fit-content ([e1a19a3](https://github.com/dvcol/trakt-extension/commit/e1a19a3a616fe28b8c2f837c3bf4e5d61f1fdacd))
+
 ### [1.26.4](https://github.com/dvcol/trakt-extension/compare/v1.26.3...v1.26.4) (2024-09-24)
 
 
