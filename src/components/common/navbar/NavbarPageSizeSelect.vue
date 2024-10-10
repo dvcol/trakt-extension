@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { NIcon, NSelect, NTooltip } from 'naive-ui';
 
-import { computed, defineProps, onMounted, ref, toRefs, watch } from 'vue';
+import { computed, defineProps, onMounted, type PropType, ref, toRefs, watch } from 'vue';
+
+import type { TooltipProps } from 'naive-ui';
 
 import IconChevron from '~/components/icons/IconChevronDownSmall.vue';
 import IconPage from '~/components/icons/IconPage.vue';
@@ -24,6 +26,11 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     required: false,
+  },
+  placement: {
+    type: String as PropType<TooltipProps['placement']>,
+    required: false,
+    default: 'bottom',
   },
 });
 
@@ -48,7 +55,7 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
     class="page-size-tooltip"
     :disabled="open"
     :show-arrow="false"
-    placement="bottom"
+    :placement="placement"
     :delay="300"
     trigger="hover"
     :to="parentElement"

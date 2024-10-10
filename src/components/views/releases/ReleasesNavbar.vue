@@ -10,10 +10,15 @@ import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.s
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible } from '~/utils/store.utils';
 
-defineProps({
+const { reverse } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
+  },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 
@@ -46,6 +51,7 @@ const regionOptions = computed<SelectOption[]>(() =>
   })),
 );
 
+const placement = computed(() => (reverse ? 'top' : 'bottom'));
 const open = ref(false);
 
 onActivated(() => fetchRegions());
@@ -63,6 +69,7 @@ useActiveAndDocumentVisible({
       :options="typesOptions"
       :to="parentElement"
       :disabled="loading"
+      :placement="placement"
     />
     <NDatePicker
       v-model:show="open"
@@ -71,7 +78,7 @@ useActiveAndDocumentVisible({
       type="date"
       :to="parentElement"
       :disabled="loading"
-      placement="bottom"
+      :placement="placement"
       update-value-on-close
       close-on-select
       clearable

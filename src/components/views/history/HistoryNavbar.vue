@@ -33,10 +33,15 @@ const external = computed(() =>
   }),
 );
 
-defineProps({
+const { reverse } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
+  },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 
@@ -51,6 +56,7 @@ const onDateChange = debounce((values?: [number, number]) => {
   setHistoryRange({ start: new Date(start), end: new Date(end) });
 }, 350);
 
+const placement = computed(() => (reverse ? 'top' : 'bottom'));
 const open = ref(false);
 </script>
 
@@ -62,7 +68,7 @@ const open = ref(false);
       type="daterange"
       :to="parentElement"
       :default-value="[Date.now(), Date.now()]"
-      placement="bottom"
+      :placement="placement"
       update-value-on-close
       close-on-select
       clearable
@@ -90,8 +96,13 @@ const open = ref(false);
       v-model:page-size="pageSize"
       :parent-element="parentElement"
       :disabled="loading"
+      :placement="placement"
     />
-    <ButtonLinkExternal :href="external" :label="i18n('history', 'common', 'link')" />
+    <ButtonLinkExternal
+      :href="external"
+      :label="i18n('history', 'common', 'link')"
+      :placement="placement"
+    />
   </NFlex>
 </template>
 

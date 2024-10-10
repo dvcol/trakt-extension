@@ -2,6 +2,8 @@
 import { NButton, NIcon, NTooltip } from 'naive-ui';
 import { type Component, type PropType, ref } from 'vue';
 
+import type { TooltipProps } from 'naive-ui';
+
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 
 defineOptions({
@@ -31,6 +33,11 @@ defineProps({
     required: false,
     default: false,
   },
+  placement: {
+    type: String as PropType<TooltipProps['placement']>,
+    required: false,
+    default: 'bottom',
+  },
 });
 
 const anchor = ref();
@@ -41,7 +48,7 @@ const anchor = ref();
     class="button-link-external-tooltip"
     :disabled="disabled || !label || !href"
     :show-arrow="false"
-    placement="bottom"
+    :placement="placement"
     :delay="300"
     trigger="hover"
     :to="anchor"

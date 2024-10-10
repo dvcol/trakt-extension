@@ -71,12 +71,19 @@ const selectValue = computed({
 
 const debouncedSearch = useDebouncedSearch(searchList);
 
-defineProps({
+const { reverse } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
   },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
+
+const placement = computed(() => (reverse ? 'top' : 'bottom'));
 
 watchUserChange({
   fetch: fetchLists,
@@ -117,6 +124,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
       :render-label="renderLabel"
       :render-tag="renderTag"
       filterable
+      :placement="placement"
     >
       <template #arrow>
         <NIcon :component="open ? IconLoop : selectedIcon" />
@@ -137,8 +145,13 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
       v-model:page-size="pageSize"
       :parent-element="parentElement"
       :disabled="listLoading"
+      :placement="placement"
     />
-    <ButtonLinkExternal :href="external" :label="i18n('list', 'common', 'link')" />
+    <ButtonLinkExternal
+      :href="external"
+      :label="i18n('list', 'common', 'link')"
+      :placement="placement"
+    />
   </NFlex>
 </template>
 

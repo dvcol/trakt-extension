@@ -62,10 +62,15 @@ const historyOptions = computed(() =>
   filteredHistory.value.map(value => ({ value, label: value })),
 );
 
-defineProps({
+const { reverse } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
+  },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 
@@ -160,6 +165,8 @@ const inputRef = ref();
 
 const route = useRoute();
 
+const placement = computed(() => (reverse ? 'top' : 'bottom'));
+
 onActivated(() => {
   if (!search.value) inputRef.value?.focus();
   if (typeof route?.query?.search === 'string') search.value = route.query.search;
@@ -177,6 +184,7 @@ onActivated(() => {
       :render-label="renderLabel"
       :max-tag-count="1"
       :clearable="false"
+      :placement="placement"
       :ellipsis-tag-popover-props="{ disabled: true }"
       multiple
     >
@@ -188,7 +196,7 @@ onActivated(() => {
     <NTooltip
       class="search-tooltip"
       :class="{ active: tooltipHover }"
-      placement="bottom"
+      :placement="placement"
       trigger="focus"
       :show-arrow="false"
       :disabled="!query"
@@ -230,8 +238,13 @@ onActivated(() => {
       v-model:page-size="pageSize"
       :parent-element="parentElement"
       :disabled="loading"
+      :placement="placement"
     />
-    <ButtonLinkExternal :href="external" :label="i18n('search', 'common', 'link')" />
+    <ButtonLinkExternal
+      :href="external"
+      :label="i18n('search', 'common', 'link')"
+      :placement="placement"
+    />
 
     <NSwitch
       v-if="false"

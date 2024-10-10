@@ -14,10 +14,15 @@ import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.s
 import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
-defineProps({
+const { reverse } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: false,
+  },
+  reverse: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 
@@ -46,6 +51,8 @@ const external = computed(() => {
   return ResolveExternalLinks.trakt.calendar();
 });
 
+const placement = computed(() => (reverse ? 'top' : 'bottom'));
+
 const open = ref(false);
 </script>
 
@@ -58,7 +65,7 @@ const open = ref(false);
       type="date"
       :to="parentElement"
       :disabled="loading"
-      placement="bottom"
+      :placement="placement"
       update-value-on-close
       close-on-select
       clearable
@@ -70,7 +77,7 @@ const open = ref(false);
     <NTooltip
       class="calendar-tooltip"
       :show-arrow="false"
-      placement="bottom"
+      :placement="placement"
       :delay="100"
       trigger="focus"
       :to="parentElement"
@@ -90,7 +97,11 @@ const open = ref(false);
         </NInput>
       </template>
     </NTooltip>
-    <ButtonLinkExternal :href="external" :label="i18n('calendar', 'common', 'link')" />
+    <ButtonLinkExternal
+      :href="external"
+      :label="i18n('calendar', 'common', 'link')"
+      :placement="placement"
+    />
   </NFlex>
 </template>
 

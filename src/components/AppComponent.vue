@@ -79,7 +79,11 @@ const onBack = () => {
             <template v-if="Component" #drawer="{ parentElement }">
               <Transition name="scale" mode="out-in">
                 <KeepAlive>
-                  <component :is="Component" :parent-element="parentElement" />
+                  <component
+                    :is="Component"
+                    :parent-element="parentElement"
+                    :reverse="reverse"
+                  />
                 </KeepAlive>
               </Transition>
             </template>
