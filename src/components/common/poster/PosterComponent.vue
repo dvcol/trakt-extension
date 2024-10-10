@@ -6,6 +6,7 @@ import { computed, onBeforeUnmount, type PropType, ref, toRefs, watch } from 'vu
 import type { PosterItem } from '~/models/poster.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+import { Logger } from '~/services/logger.service';
 import { useImageStore } from '~/stores/data/image.store';
 
 const props = defineProps({
@@ -58,7 +59,7 @@ const timeout = ref();
 
 const { getImageUrl } = useImageStore();
 
-const getPosters = (_item: PosterItem) => {
+const getPosters = async (_item: PosterItem) => {
   if (poster?.value) return;
   if (_item.poster) return;
 
@@ -74,7 +75,11 @@ const getPosters = (_item: PosterItem) => {
     if (imgLoaded.value) return;
     transition.value = true;
   }, 100);
-  getImageUrl(query, size.value, _item.posterRef ?? localPoster);
+  try {
+    await getImageUrl(query, size.value, _item.posterRef ?? localPoster);
+  } catch (error) {
+    Logger.error('Failed to fetch poster', error);
+  }
 };
 
 watch(item, getPosters, { immediate: true, flush: 'post' });

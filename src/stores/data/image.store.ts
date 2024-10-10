@@ -149,6 +149,10 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
       delete imageErrors[type]?.[key];
       return response;
     } catch (error) {
+      if (error instanceof Response && error.status === 404) {
+        Logger.warn('No image found', { key, type });
+        return {};
+      }
       Logger.error('Failed to queue image request', { key, type });
       if (!imageErrors[type]) imageErrors[type] = {};
       imageErrors[type]![key] = ErrorCount.fromDictionary(imageErrors[type]!, key, error);

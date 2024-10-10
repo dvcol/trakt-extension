@@ -183,6 +183,8 @@ const placement = computed(() => {
 </template>
 
 <style lang="scss">
+@use '~/styles/layout' as layout;
+
 .settings-dropdown {
   min-width: max(calc(100vw / var(--tab-count)), 8rem);
   max-width: 20rem;
@@ -191,7 +193,7 @@ const placement = computed(() => {
   text-align: left;
 
   &.floating {
-    min-width: max(calc(var(--max-header-width) / var(--tab-count)), 8rem);
+    min-width: max(calc(#{layout.$floating-navbar-width} / var(--tab-count)), 8rem);
     margin-right: 0;
   }
 
