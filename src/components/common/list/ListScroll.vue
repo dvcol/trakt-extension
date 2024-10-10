@@ -18,7 +18,7 @@ import {
 } from '~/models/list-scroll.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
-import { Watching } from '~/styles/layout.style';
+import { Header, Watching } from '~/styles/layout.style';
 import { watchMedia } from '~/utils/window.utils';
 
 const listRef = ref<VirtualListRef>();
@@ -207,14 +207,15 @@ const topInset = computed(() => {
 const listPaddingTop = computed(() => {
   const offset = topInset.value;
   if (listOptions?.value?.paddingTop) return offset + listOptions.value.paddingTop;
-  if (floating.value) return offset + 10;
-  if (reverse.value)
-    return isWatching.value ? offset + 16 + Watching.Height : offset + 16;
+  if (floating.value) return offset + Header.navbarHeight + Header.floatingOffset + 14;
+  if (reverse.value && isWatching.value) return offset + 16 + Watching.Height;
+  if (reverse.value) return offset + 16;
   return offset + 60;
 });
 const listPaddingBottom = computed(() => {
   if (listOptions?.value?.paddingBottom) return listOptions.value.paddingBottom;
-  if (reverse.value) return 8 + 16;
+  if (reverse.value) return 8 + Header.navbarHeight;
+  if (isWatching.value) return 8 + Watching.Height;
   return 8;
 });
 </script>

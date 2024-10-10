@@ -24,12 +24,12 @@ $floating-content-height: $safe-full-height;
 $bottom-content-height: calc(var(--full-height) - #{$header-navbar-height});
 
 // Watching
-$watching-height: 1.75rem;
+$watching-height: 2rem;
 $watching-open-height: 3rem;
 $safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-bottom / 1.5});
 $safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-bottom / 1.5});
-$top-safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-top / 1.5});
-$top-safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-top / 1.5});
+$top-safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-top});
+$top-safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-top});
 
 // Navbar transition
 $navbar-transition: 0.5s var(--n-bezier);

@@ -219,6 +219,10 @@ const onBack = () => {
 
   :deep(.root-panel-wrapper.n-drawer) {
     transition: all 0.3s var(--n-bezier);
+
+    .n-drawer-content-wrapper {
+      overscroll-behavior: none;
+    }
   }
 
   &.watching {
@@ -245,6 +249,10 @@ const onBack = () => {
       bottom: auto;
     }
 
+    :deep(.root-panel-wrapper.n-drawer) {
+      padding-bottom: layout.$header-navbar-height;
+    }
+
     &.watching {
       :deep(.root-panel-wrapper.n-drawer) {
         padding-top: layout.$top-safe-watching-height;
@@ -260,8 +268,8 @@ const onBack = () => {
     }
 
     main {
-      min-height: layout.$floating-content-height;
-      margin-top: layout.$safe-area-inset-top;
+      min-height: var(--full-height);
+      margin-top: 0;
     }
 
     :deep(.root-panel-wrapper.n-drawer) {

@@ -64,7 +64,7 @@ export const useAppStateStore = defineStore('app.state', () => {
     root,
     reverse: computed(() => {
       if (navbarPosition.value === NavbarPosition.Bottom) return true;
-      if (!isWeb.value) return false;
+      if (isPopup.value) return false;
       // web and small screen only
       return navbarPosition.value === NavbarPosition.Auto && bottom.width;
     }),
@@ -72,7 +72,7 @@ export const useAppStateStore = defineStore('app.state', () => {
       if (minimum.width) return false;
       // if (panelOpen.value) return false;
       if (navbarPosition.value === NavbarPosition.Floating) return true;
-      if (!isWeb.value) return false;
+      if (isPopup.value) return false;
       // web & big screen only
       return navbarPosition.value === NavbarPosition.Auto && floating.width === false;
     }),
