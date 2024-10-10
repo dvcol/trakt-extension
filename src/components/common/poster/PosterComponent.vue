@@ -7,7 +7,7 @@ import type { PosterItem } from '~/models/poster.model';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import { Logger } from '~/services/logger.service';
-import { useImageStore } from '~/stores/data/image.store';
+import { type ImageStoreMedias, useImageStore } from '~/stores/data/image.store';
 
 const props = defineProps({
   item: {
@@ -38,12 +38,20 @@ const onLoad = () => {
   imgLoaded.value = true;
 };
 
-const localPoster = ref<string>();
+// Local poster is used when the item has no poster ref of its own.
+const localPoster = ref<ImageStoreMedias>();
+
+// cache poster image to prevent flickering
+const cache: Map<string, ImageStoreMedias> = new Map();
 
 const resolvedPoster = computed(() => {
   if (poster?.value) return poster.value;
   if (item.value.poster) return item.value.poster;
-  const image = (item.value.posterRef ?? localPoster)?.value;
+  let image = (item.value.posterRef ?? localPoster)?.value;
+  if (item?.value?.key) {
+    if (image) cache.set(item.value.key, image);
+    else image = cache.get(item.value.key);
+  }
   if (!image) return;
   if (typeof image === 'string') return image;
   if (backdrop.value && 'backdrop' in image) return image.backdrop;
@@ -60,11 +68,9 @@ const timeout = ref();
 const { getImageUrl } = useImageStore();
 
 const getPosters = async (_item: PosterItem) => {
-  if (poster?.value) return;
-  if (_item.poster) return;
+  if (resolvedPoster.value) return;
 
   imgLoaded.value = false;
-  if (_item.posterRef?.value) return;
   const query = _item.getPosterQuery?.();
   if (!query) return;
   if (!backdrop.value && _item.type === 'episode') {
@@ -76,13 +82,17 @@ const getPosters = async (_item: PosterItem) => {
     transition.value = true;
   }, 100);
   try {
-    await getImageUrl(query, size.value, _item.posterRef ?? localPoster);
+    await getImageUrl({
+      query,
+      size: size.value,
+      response: _item.posterRef ?? localPoster,
+    });
   } catch (error) {
     Logger.error('Failed to fetch poster', error);
   }
 };
 
-watch(item, getPosters, { immediate: true, flush: 'post' });
+watch(item, getPosters, { immediate: true, flush: 'pre' });
 
 onBeforeUnmount(() => {
   clearTimeout(timeout.value);
