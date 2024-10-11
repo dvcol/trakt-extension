@@ -57,6 +57,11 @@ const { routes } = defineProps({
     required: false,
     default: () => [],
   },
+  compact: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const users = computed(() => {
@@ -171,6 +176,7 @@ const placement = computed(() => {
   >
     <NFlex justify="space-around" align="center" :wrap="false">
       <NEllipsis
+        v-if="!compact"
         style="max-width: calc(100vw / 6 - 0.25rem - 3px - 1.75rem); margin-left: 0.25rem"
         :tooltip="{
           to: parentElement,

@@ -40,9 +40,9 @@ export const useAppStateStore = defineStore('app.state', () => {
 
   const { bottom, minimum, floating } = watchBreakpoint(
     appRef,
-    { bottom: 400, minimum: 800, floating: 1000 },
+    { bottom: 500, minimum: 800, floating: 1000 },
     {
-      bottom: { width: window.innerWidth < 400 },
+      bottom: { width: window.innerWidth < 500 },
       minimum: { width: window.innerWidth < 800 },
       floating: { width: window.innerWidth < 1000 },
     },

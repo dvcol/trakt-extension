@@ -239,6 +239,7 @@ const onTouchEnd = (e: TouchEvent) => {
           v-if="navElement"
           :parent-element="navElement"
           :routes="overflowRoutes"
+          :compact="isCompact"
         />
       </NTab>
     </NTabs>

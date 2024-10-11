@@ -350,7 +350,7 @@ onActivated(() => {
   margin-top: 12px;
 }
 
-@media (width < 400px) {
+@media (width < 500px) {
   .n-auto-complete.search-input .n-input-wrapper .n-base-loading.n-base-suffix {
     display: none;
     background-color: red;
