@@ -245,7 +245,8 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       set: (value?: string) => {
         region.value = regions.value?.find(r => r.iso_3166_1 === value) ?? getLocaleRegion();
         saveState().catch(error => Logger.error('Failed to save region state', error));
-        return clearState();
+        clearState();
+        return fetchReleases();
       },
     }),
     releaseType: computed({
@@ -253,7 +254,8 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
       set: (value: TmdbMovieReleaseTypes) => {
         releaseType.value = value;
         saveState().catch(error => Logger.error('Failed to save release type state', error));
-        return clearState();
+        clearState();
+        return fetchReleases();
       },
     }),
     initReleasesStore,
