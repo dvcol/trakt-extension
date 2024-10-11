@@ -15,6 +15,10 @@
     "message": "Navbar Position",
     "description": "Label for the 'Navbar Position' setting"
   },
+  "settings__tabs__label_icon_only": {
+    "message": "Display icon tabs for small screens",
+    "description": "Label for the 'Display icon tabs in small screens' setting"
+  },
   "settings__tabs__label_restore_tab": {
     "message": "Restore active tab on startup",
     "description": "Label for the 'Restore active tab on startup' setting"

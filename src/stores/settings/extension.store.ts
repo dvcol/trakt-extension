@@ -52,6 +52,7 @@ type ExtensionSettings = {
   backgroundColor: string;
   loadingHysteresis: number;
   navbarPosition: NavbarPositions;
+  iconOnly: boolean;
 };
 
 const ExtensionSettingsConstants = {
@@ -73,6 +74,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const backgroundColor = ref('transparent');
   const loadingHysteresis = ref(-1);
   const navbarPosition = ref<NavbarPositions>(NavbarPosition.Auto);
+  const iconOnly = ref(true);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -97,6 +99,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         backgroundColor: backgroundColor.value,
         loadingHysteresis: loadingHysteresis.value,
         navbarPosition: navbarPosition.value,
+        iconOnly: iconOnly.value,
       }),
     500,
   );
@@ -132,6 +135,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.backgroundColor !== undefined) backgroundColor.value = restored.backgroundColor;
     if (restored?.loadingHysteresis !== undefined) loadingHysteresis.value = restored.loadingHysteresis;
     if (restored?.navbarPosition !== undefined) navbarPosition.value = restored.navbarPosition;
+    if (restored?.iconOnly !== undefined) iconOnly.value = restored.iconOnly;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -253,6 +257,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: NavbarPositions) => {
         navbarPosition.value = value;
         saveState().catch(err => Logger.error('Failed to save navbar position extension settings', { value, err }));
+      },
+    }),
+    iconOnly: computed({
+      get: () => iconOnly.value,
+      set: (value: boolean) => {
+        iconOnly.value = value;
+        saveState().catch(err => Logger.error('Failed to save icon only extension settings', { value, err }));
       },
     }),
   };

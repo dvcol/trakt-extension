@@ -53,6 +53,7 @@ const {
   backgroundColor,
   loadingHysteresis,
   navbarPosition,
+  iconOnly,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -220,6 +221,14 @@ const onColor = () => {
           </NButton>
         </NButtonGroup>
       </div>
+    </SettingsFormItem>
+
+    <!--  Icon Only  -->
+    <SettingsFormItem :label="i18n('label_icon_only')">
+      <NSwitch v-model:value="iconOnly" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+      </NSwitch>
     </SettingsFormItem>
 
     <!--  Restore tab  -->

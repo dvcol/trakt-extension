@@ -4,13 +4,13 @@ import {
   SwipeDirection,
   type SwipeDirections,
 } from '@dvcol/common-utils/common/touch';
-import { NTab, NTabs } from 'naive-ui';
+import { NFlex, NIcon, NTab, NTabs } from 'naive-ui';
 import { computed, ref, toRefs, useSlots } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import NavbarSettingsDropdown from '~/components/common/navbar/NavbarSettingsDopdown.vue';
 
-import { Route } from '~/models/router.model';
+import { getRouteIcon, Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
@@ -47,11 +47,14 @@ const navigate = (to: Route) => {
   router.push({ name: to });
 };
 
-const { enabledRoutes } = useExtensionSettingsStoreRefs();
+const { enabledRoutes, iconOnly } = useExtensionSettingsStoreRefs();
 
 const isCompact = watchMedia('(max-width: 500px)');
 const isTiny = watchMedia('(max-width: 400px)');
-const threshold = computed(() => (isTiny.value ? 3 : 4));
+const threshold = computed(() => {
+  if (iconOnly.value) return 6;
+  return isTiny.value ? 3 : 4;
+});
 const visibleRoutes = computed(() =>
   isCompact.value ? enabledRoutes.value.slice(0, threshold.value) : enabledRoutes.value,
 );
@@ -213,9 +216,16 @@ const onTouchEnd = (e: TouchEvent) => {
           type="segment"
           @click="navigate(_route)"
         >
-          <span>
-            {{ i18n(_route.toLowerCase()) }}
-          </span>
+          <NFlex
+            align="center"
+            class="tab-label"
+            :class="{ icon: iconOnly, overflow: enabledRoutes.length > 4 }"
+          >
+            <NIcon :component="getRouteIcon(_route)" size="1em" />
+            <span class="text">
+              {{ i18n(_route.toLowerCase()) }}
+            </span>
+          </NFlex>
         </NTab>
       </template>
       <NTab
@@ -293,6 +303,35 @@ nav {
     display: flex;
     justify-content: center;
     min-height: layout.$header-navbar-height;
+
+    .tab-label {
+      i {
+        margin-top: 0.1rem;
+        margin-right: -0.25rem;
+      }
+
+      &.overflow {
+        @media (width < 700px) {
+          &:not(.icon) i {
+            display: none;
+          }
+
+          &.icon .text {
+            display: none;
+          }
+        }
+      }
+
+      @media (width < 550px) {
+        &:not(.icon) i {
+          display: none;
+        }
+
+        &.icon .text {
+          display: none;
+        }
+      }
+    }
 
     :deep(.n-tabs-capsule) {
       height: calc(#{layout.$header-navbar-height} - 0.75rem) !important;
