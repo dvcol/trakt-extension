@@ -93,6 +93,7 @@ useActiveAndDocumentVisible({
       :options="regionOptions"
       :loading="regionLoading"
       :disabled="loading || regionLoading || !regionOptions.length"
+      :consistent-menu-width="false"
       :to="parentElement"
       filterable
       clearable
@@ -110,16 +111,31 @@ useActiveAndDocumentVisible({
   .type-select {
     flex: 0 0 10rem;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 0 0 7rem;
+      min-width: auto;
+    }
   }
 
   .region-select {
     flex: 1 0 10rem;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 2 0 6rem;
+      min-width: auto;
+    }
   }
 
   .date-picker {
     flex: 2 1 48%;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 1 0 8rem;
+      min-width: auto;
+    }
   }
 }
 </style>

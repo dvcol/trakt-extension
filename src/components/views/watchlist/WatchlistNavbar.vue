@@ -125,6 +125,7 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
       :render-tag="renderTag"
       filterable
       :placement="placement"
+      :consistent-menu-width="false"
     >
       <template #arrow>
         <NIcon :component="open ? IconLoop : selectedIcon" />
@@ -165,6 +166,11 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
   .list-select {
     flex: 0 1 33%;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 0 0 8rem;
+      min-width: auto;
+    }
   }
 
   .search-input {

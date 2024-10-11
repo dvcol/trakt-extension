@@ -115,6 +115,11 @@ const open = ref(false);
   .date-picker {
     flex: 0 1 33%;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 0 0 8rem;
+      min-width: auto;
+    }
   }
 
   .search-input {

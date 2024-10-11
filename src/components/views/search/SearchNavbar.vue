@@ -327,11 +327,20 @@ onActivated(() => {
   .types-select {
     flex: 0 1 12rem;
     min-width: fit-content;
+
+    @media (width < 600px) {
+      flex: 0 2 8rem;
+      min-width: auto;
+    }
   }
 
   .search-input {
-    flex: 1 1 30%;
+    flex: 2 1 30%;
     min-width: 12rem;
+
+    @media (width < 600px) {
+      min-width: auto;
+    }
   }
 }
 </style>
@@ -339,5 +348,20 @@ onActivated(() => {
 <style lang="scss">
 .search-tooltip.search-tooltip {
   margin-top: 12px;
+}
+
+@media (width < 400px) {
+  .n-auto-complete.search-input .n-input-wrapper .n-base-loading.n-base-suffix {
+    display: none;
+    background-color: red;
+  }
+}
+
+@media (width < 600px) {
+  .n-select.types-select
+    .n-base-selection-tags
+    .n-base-selection-tag-wrapper:nth-child(2) {
+    display: none;
+  }
 }
 </style>

@@ -81,6 +81,10 @@ const pageIcon = computed(() => (pageSize.value > 200 ? IconPageDouble : IconPag
 <style scoped lang="scss">
 .page-select {
   flex: 0 0 5rem;
+
+  @media (width < 600px) {
+    max-width: 2.125rem;
+  }
 }
 </style>
 

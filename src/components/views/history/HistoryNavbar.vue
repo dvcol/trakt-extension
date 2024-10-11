@@ -116,10 +116,15 @@ const open = ref(false);
   .date-picker {
     flex: 0 1 33%;
     min-width: 14rem;
+
+    @media (width < 600px) {
+      flex: 1 0 9rem;
+      min-width: auto;
+    }
   }
 
   .search-input {
-    flex: 1 1 calc(46% - 5rem);
+    flex: 2 1 calc(46% - 5rem);
     min-width: 12rem;
   }
 }
@@ -142,6 +147,20 @@ const open = ref(false);
     max-height: calc(var(--full-height) - #{layout.$safe-header-open-drawer-height});
     overflow: auto;
     scrollbar-width: thin;
+
+    @media (width < 600px) {
+      .n-date-panel-calendar--start {
+        margin-right: 5.0625rem;
+      }
+
+      .n-date-panel-actions {
+        flex: 0 1 auto;
+
+        .n-date-panel-actions__suffix {
+          flex-direction: column;
+        }
+      }
+    }
   }
 }
 </style>
