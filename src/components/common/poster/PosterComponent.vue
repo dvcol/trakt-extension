@@ -32,12 +32,6 @@ const props = defineProps({
 
 const { backdrop, poster, item, size } = toRefs(props);
 
-const imgLoaded = ref(true);
-
-const onLoad = () => {
-  imgLoaded.value = true;
-};
-
 // Local poster is used when the item has no poster ref of its own.
 const localPoster = ref<ImageStoreMedias>();
 
@@ -63,22 +57,30 @@ const objectFit = computed(() =>
 );
 
 const transition = ref(false);
-const timeout = ref();
+
+const imgLoaded = ref(false);
+const loading = computed(() => !imgLoaded.value || !resolvedPoster.value);
+
+const onLoad = () => {
+  imgLoaded.value = true;
+};
 
 const { getImageUrl } = useImageStore();
 
+const timeout = ref();
 const getPosters = async (_item: PosterItem) => {
   if (resolvedPoster.value) return;
 
-  imgLoaded.value = false;
   const query = _item.getPosterQuery?.();
   if (!query) return;
   if (!backdrop.value && _item.type === 'episode') {
     query.type = 'show';
     delete query.episode;
   }
-  setTimeout(() => {
-    if (imgLoaded.value) return;
+  // If the image is not loaded after 100ms, show transition
+  clearTimeout(timeout.value);
+  timeout.value = setTimeout(() => {
+    if (!loading.value) return;
     transition.value = true;
   }, 100);
   try {
@@ -105,7 +107,7 @@ onBeforeUnmount(() => {
     class="poster"
     :class="{
       backdrop,
-      loading: !imgLoaded,
+      loading,
       transition,
     }"
     :object-fit="objectFit"
@@ -139,18 +141,13 @@ onBeforeUnmount(() => {
   height: var(--poster-height, 8rem);
   border-radius: var(--poster-radius, 8px);
   opacity: 1;
-  will-change: opacity;
 
   &.loading {
     opacity: 0;
   }
 
   &.transition {
-    transition: opacity 0.5s var(--n-bezier);
-
-    &.loading {
-      transition: opacity 0.1s;
-    }
+    transition: opacity 0.3s var(--n-bezier);
   }
 
   &.backdrop {
