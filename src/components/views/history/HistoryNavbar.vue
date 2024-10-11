@@ -118,7 +118,7 @@ const open = ref(false);
     min-width: 14rem;
 
     @media (width < 600px) {
-      flex: 1 0 9rem;
+      flex: 1 0 7rem;
       min-width: auto;
     }
   }
@@ -126,6 +126,10 @@ const open = ref(false);
   .search-input {
     flex: 2 1 calc(46% - 5rem);
     min-width: 12rem;
+
+    @media (width < 600px) {
+      min-width: auto;
+    }
   }
 }
 </style>

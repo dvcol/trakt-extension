@@ -176,6 +176,10 @@ const renderTag = ({ option }: { option: SelectOption }) => option.label?.toStri
   .search-input {
     flex: 1 1 auto;
     min-width: 12rem;
+
+    @media (width < 600px) {
+      min-width: auto;
+    }
   }
 }
 </style>

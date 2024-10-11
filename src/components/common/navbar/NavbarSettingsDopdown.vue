@@ -10,17 +10,15 @@ import { computed, defineProps, h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { ArrayElement } from '@dvcol/common-utils/common';
-import type { DropdownProps } from 'naive-ui';
-import type { Component } from 'vue';
+import type { DropdownOption, DropdownProps } from 'naive-ui';
+import type { Component, PropType } from 'vue';
 
 import IconAccount from '~/components/icons/IconAccount.vue';
 import IconAccountAdd from '~/components/icons/IconAccountAdd.vue';
-import IconCog from '~/components/icons/IconCog.vue';
 import IconExternalLink from '~/components/icons/IconExternalLink.vue';
-import IconLightBulb from '~/components/icons/IconLightBulb.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 
-import { Route } from '~/models/router.model';
+import { getRouteIcon, Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { NavbarService } from '~/services/navbar.service';
 import { TraktService } from '~/services/trakt.service';
@@ -49,10 +47,15 @@ const onAvatarError = (event: Event) => {
   fallback.value = true;
 };
 
-defineProps({
+const { routes } = defineProps({
   parentElement: {
     type: HTMLElement,
     required: true,
+  },
+  routes: {
+    type: Array as PropType<Route[]>,
+    required: false,
+    default: () => [],
   },
 });
 
@@ -82,10 +85,11 @@ const toOption = (
   };
 };
 
-const options = computed<DropdownProps['options']>(() => {
-  const baseOptions: DropdownProps['options'] = [
-    toOption('settings', IconCog),
-    toOption('about', IconLightBulb),
+const { floating, reverse } = useAppStateStoreRefs();
+const options = computed<DropdownOption[]>(() => {
+  const baseOptions: DropdownOption[] = [
+    toOption(Route.Settings, getRouteIcon(Route.Settings)),
+    toOption(Route.About, getRouteIcon(Route.About)),
     { type: 'divider', key: 'external-links' },
     toOption('trakt', IconExternalLink),
     { type: 'divider', key: 'session-divider' },
@@ -93,8 +97,19 @@ const options = computed<DropdownProps['options']>(() => {
     toOption('logout', IconLogOut),
   ];
 
-  if (!users.value.length) return baseOptions;
+  const _routes = [];
+  if (routes?.length) {
+    _routes.push(
+      ...routes.map(route =>
+        toOption(route, getRouteIcon(route), i18n(route.toLowerCase(), 'route')),
+      ),
+    );
+    _routes.push({ type: 'divider', key: 'routes-divider' });
+  }
+
+  if (!users.value.length) return [..._routes, ...baseOptions];
   return [
+    ..._routes,
     ...users.value.map(([key, value]) =>
       toOption(
         `user-${key}`,
@@ -108,14 +123,14 @@ const options = computed<DropdownProps['options']>(() => {
   ];
 });
 
+const optionsReversed = computed(() =>
+  reverse.value ? [...options.value].reverse() : options.value,
+);
+
 const { loadUser, logout } = useLogout();
 
 const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
   switch (key) {
-    case 'settings':
-      return router.push(Route.Settings);
-    case 'about':
-      return router.push(Route.About);
     case 'trakt':
       return createTab({
         url: ExternaLinks.trakt[TraktService.isStaging ? 'staging' : 'production'],
@@ -125,14 +140,15 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     case 'logout':
       return logout();
     default:
+      if (Object.values(Route).includes(key as Route)) return router.push(key);
       if (typeof label === 'string' && key.startsWith('user-')) {
         return loadUser(label);
       }
       Logger.error('Unknown key:', key);
   }
 };
+
 const { dropdown } = NavbarService;
-const { floating, reverse } = useAppStateStoreRefs();
 const placement = computed(() => {
   if (reverse.value) return 'top';
   if (floating.value) return 'bottom';
@@ -143,7 +159,7 @@ const placement = computed(() => {
 <template>
   <NDropdown
     trigger="hover"
-    :options="options"
+    :options="optionsReversed"
     :to="parentElement"
     :placement="placement"
     size="small"

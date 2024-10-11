@@ -16,6 +16,7 @@ import { NavbarService } from '~/services/navbar.service';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { Header } from '~/styles/layout.style';
 import { useI18n } from '~/utils/i18n.utils';
+import { watchMedia } from '~/utils/window.utils';
 
 const props = defineProps({
   disabled: {
@@ -47,6 +48,16 @@ const navigate = (to: Route) => {
 };
 
 const { enabledRoutes } = useExtensionSettingsStoreRefs();
+
+const isCompact = watchMedia('(max-width: 500px)');
+const isTiny = watchMedia('(max-width: 400px)');
+const threshold = computed(() => (isTiny.value ? 3 : 4));
+const visibleRoutes = computed(() =>
+  isCompact.value ? enabledRoutes.value.slice(0, threshold.value) : enabledRoutes.value,
+);
+const overflowRoutes = computed(() =>
+  isCompact.value ? enabledRoutes.value.slice(threshold.value) : [],
+);
 
 const activableRoutes = computed(() => [...enabledRoutes.value, Route.Settings]);
 
@@ -190,7 +201,7 @@ const onTouchEnd = (e: TouchEvent) => {
         '--n-color-segment': 'inherit',
       }"
     >
-      <template v-for="_route in enabledRoutes" :key="_route">
+      <template v-for="_route in visibleRoutes" :key="_route">
         <NTab
           class="tab"
           :style="
@@ -214,7 +225,11 @@ const onTouchEnd = (e: TouchEvent) => {
         type="segment"
         @click="navigate(Route.Settings)"
       >
-        <NavbarSettingsDropdown v-if="navElement" :parent-element="navElement" />
+        <NavbarSettingsDropdown
+          v-if="navElement"
+          :parent-element="navElement"
+          :routes="overflowRoutes"
+        />
       </NTab>
     </NTabs>
     <div

@@ -125,6 +125,10 @@ const open = ref(false);
   .search-input {
     flex: 1 1 33%;
     min-width: 12rem;
+
+    @media (width < 600px) {
+      min-width: auto;
+    }
   }
 }
 </style>
