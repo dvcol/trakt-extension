@@ -93,7 +93,7 @@ const onBack = () => {
       <RouterView v-slot="{ Component }">
         <main
           ref="mainRef"
-          :class="{ 'full-height': !isAuthenticated, 'loading': !Component }"
+          :class="{ loading: !Component }"
           @touchstart.passive="NavbarService.hideDrawer"
         >
           <GridBackground v-if="!Component" :size="20" />
@@ -192,22 +192,12 @@ const onBack = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: layout.$safe-content-height;
-    margin-top: layout.$safe-navbar-height;
+    min-height: layout.$content-height;
     padding-right: calc(#{layout.$safe-area-inset-right} / 1.5);
     padding-left: calc(#{layout.$safe-area-inset-left} / 1.5);
     transition:
       min-height 0.5s var(--n-bezier),
       margin-top 0.5s var(--n-bezier);
-
-    &.full-height {
-      min-height: var(--full-height);
-      margin-top: 0;
-
-      :deep(.loading-container) {
-        padding-top: layout.$safe-navbar-height;
-      }
-    }
   }
 
   footer {
@@ -218,10 +208,15 @@ const onBack = () => {
   }
 
   :deep(.root-panel-wrapper.n-drawer) {
+    padding-top: layout.$safe-navbar-height;
     transition: all 0.3s var(--n-bezier);
 
     .n-drawer-content-wrapper {
       overscroll-behavior: none;
+
+      .loading-container {
+        min-height: calc(var(--height-90-dvh) - #{layout.$safe-navbar-height});
+      }
     }
   }
 
@@ -231,17 +226,28 @@ const onBack = () => {
     }
   }
 
+  &.floating {
+    header {
+      top: layout.$floating-navbar-offset;
+      left: calc(50% - #{layout.$floating-navbar-width} / 2);
+      width: layout.$floating-navbar-width;
+    }
+  }
+
   &.reverse {
     header {
       top: auto;
-      bottom: calc(0% - #{layout.$safe-area-inset-bottom});
+      bottom: calc(0% - #{layout.$safe-area-inset-top});
       flex-direction: column-reverse;
+
+      > :first-child {
+        padding-bottom: calc(#{layout.$safe-area-inset-bottom / 2});
+      }
     }
 
     main {
-      min-height: layout.$bottom-content-height;
+      min-height: layout.$safe-bottom-content-height;
       margin-top: 0;
-      margin-bottom: layout.$safe-navbar-height;
     }
 
     footer {
@@ -250,30 +256,16 @@ const onBack = () => {
     }
 
     :deep(.root-panel-wrapper.n-drawer) {
-      padding-bottom: layout.$header-navbar-height;
+      padding-top: layout.$safe-area-inset-top;
+      padding-bottom: calc(
+        #{layout.$safe-navbar-height} + #{layout.$safe-area-inset-bottom / 2}
+      );
     }
 
     &.watching {
       :deep(.root-panel-wrapper.n-drawer) {
         padding-top: layout.$top-safe-watching-height;
       }
-    }
-  }
-
-  &.floating {
-    header {
-      top: layout.$floating-navbar-offset;
-      left: calc(50% - #{layout.$floating-navbar-width} / 2);
-      width: layout.$floating-navbar-width;
-    }
-
-    main {
-      min-height: var(--full-height);
-      margin-top: 0;
-    }
-
-    :deep(.root-panel-wrapper.n-drawer) {
-      margin-top: layout.$floating-navbar-height;
     }
   }
 }

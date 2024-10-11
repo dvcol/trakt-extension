@@ -3,10 +3,12 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :host {
   /* height */
+  --absolute-height: 100vh;
   --full-height: 100dvh;
   --half-height: 50dvh;
   --height-40-dvh: 40dvh;
   --height-70-dvh: 70dvh;
+  --height-90-dvh: 90dvh;
 
   /** safe area */
   --safe-area-inset-top: env(safe-area-inset-top);

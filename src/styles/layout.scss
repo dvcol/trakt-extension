@@ -10,18 +10,19 @@ $header-drawer-height: 3.5rem;
 $header-open-drawer-height: calc(#{$header-navbar-height} + #{$header-drawer-height});
 $safe-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-top});
 $safe-header-open-drawer-height: calc(#{$safe-navbar-height} + #{$header-drawer-height});
-$safe-content-height: calc(var(--full-height) - #{$safe-navbar-height});
-$safe-full-height: calc(var(--full-height) - #{$safe-area-inset-top});
+$content-height: var(--full-height);
 
 // floating navbar
 $floating-navbar-width: 800px;
 $floating-navbar-offset: calc(1rem + #{$safe-area-inset-top / 3});
 $floating-navbar-height: calc(#{$floating-navbar-offset} + #{$header-navbar-height});
 $floating-open-drawer-height: calc(#{$floating-navbar-height} + #{$header-drawer-height});
-$floating-content-height: $safe-full-height;
+$floating-content-height: calc(var(--full-height) - #{$safe-area-inset-top});
 
 // Bottom Navbar
-$bottom-content-height: calc(var(--full-height) - #{$header-navbar-height});
+$safe-bottom-content-height: calc(100dvh + #{$safe-area-inset-top});
+$safe-bottom-navbar-height: calc(#{$header-navbar-height} + #{$safe-area-inset-bottom / 2});
+$safe-bottom-open-drawer-height: calc(#{$safe-bottom-navbar-height} + #{$header-drawer-height});
 
 // Watching
 $watching-height: 2rem;

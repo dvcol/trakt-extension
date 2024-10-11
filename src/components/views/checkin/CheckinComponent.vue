@@ -411,7 +411,7 @@ const onClick = () => {
       }
 
       &.reverse {
-        height: layout.$top-safe-watching-height;
+        height: layout.$watching-height;
         padding-top: layout.$safe-area-inset-top;
 
         &:active,

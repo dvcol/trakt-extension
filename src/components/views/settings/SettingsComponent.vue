@@ -123,8 +123,8 @@ onDeactivated(() => {
       class="menu"
       bordered
       collapse-mode="width"
-      width="6rem"
-      :collapsed-width="0"
+      width="calc(6rem + var(--safe-area-inset-left))"
+      :collapsed-width="8"
       :native-scrollbar="false"
       show-trigger="bar"
       inverted
@@ -181,9 +181,11 @@ onDeactivated(() => {
 @use '~/styles/layout' as layout;
 
 .container {
-  width: 100%;
-  height: var(--full-height);
-  margin-top: calc(0% - #{layout.$safe-navbar-height});
+  display: flex;
+  flex-direction: column;
+  width: var(--full-width);
+  height: layout.$content-height;
+  padding-right: layout.$safe-area-inset-right;
   background: transparent;
   transition: margin-top 0.5s var(--n-bezier);
 
@@ -217,7 +219,13 @@ onDeactivated(() => {
   .menu {
     @include mixin.hover-background;
 
-    padding: 0.5rem;
+    margin-top: layout.$safe-navbar-height;
+    padding: 0.5rem 0.5rem 0.5rem calc(0.5rem + #{layout.$safe-area-inset-left});
+
+    // stylelint-disable-next-line selector-class-pattern -- framework override
+    :deep(.n-anchor.n-anchor--block .n-anchor-link) {
+      width: fit-content;
+    }
   }
 
   .content {
@@ -227,46 +235,52 @@ onDeactivated(() => {
       margin-top 0.5s var(--n-bezier);
   }
 
-  .menu,
-  .content .card:first-child {
-    margin-top: layout.$safe-navbar-height;
+  .content .card {
+    &:first-child {
+      margin-top: layout.$safe-navbar-height;
+    }
+
+    &:last-child {
+      margin-bottom: layout.$safe-area-inset-bottom;
+    }
   }
 
   &.watching {
     padding-bottom: layout.$safe-watching-height;
-  }
 
-  &.reverse {
-    margin-top: 0;
-
-    .menu {
-      margin-top: 0;
-    }
-
-    .content {
-      margin-bottom: layout.$header-navbar-height;
-
-      .card:first-child {
-        margin-top: calc(#{layout.$safe-area-inset-top / 2});
-      }
-    }
-
-    &.watching {
-      padding-top: layout.$top-safe-watching-height;
-      padding-bottom: 0;
+    .content .card:last-child {
+      margin-bottom: 0;
     }
   }
 
   &.floating {
-    margin-top: calc(0% - #{layout.$safe-area-inset-top});
-
     .content .card:first-child {
       margin-top: layout.$floating-navbar-height;
     }
 
     .menu {
       margin-top: 0;
-      padding-top: 1.5rem;
+      padding-top: calc(1.25rem + #{layout.$floating-navbar-height});
+    }
+  }
+
+  &.reverse {
+    .content .card:first-child {
+      margin-top: calc(#{layout.$safe-area-inset-top / 2});
+    }
+
+    .content .card:last-child {
+      margin-bottom: layout.$safe-bottom-navbar-height;
+    }
+
+    .menu {
+      margin-top: 0;
+      margin-bottom: layout.$safe-bottom-navbar-height;
+    }
+
+    &.watching {
+      padding-top: layout.$top-safe-watching-height;
+      padding-bottom: 0;
     }
   }
 }

@@ -133,7 +133,7 @@ const openRelease = (url?: string) => {
 
 .container {
   width: 100%;
-  height: layout.$safe-content-height;
+  height: layout.$content-height;
   background: transparent;
   transition: padding 0.5s var(--n-bezier);
 
@@ -141,17 +141,17 @@ const openRelease = (url?: string) => {
     padding-bottom: layout.$safe-watching-height;
   }
 
-  &.reverse {
-    margin-bottom: layout.$header-navbar-height;
-
-    &.watching {
-      padding-top: layout.$top-safe-watching-height;
-      padding-bottom: 0;
-    }
-  }
-
   .card {
     @include mixin.hover-background($from: var(--bg-black-50), $to: var(--bg-color-80));
+
+    margin-top: layout.$safe-navbar-height;
+    margin-bottom: layout.$safe-area-inset-bottom;
+  }
+
+  .link {
+    :deep(.label) {
+      padding: 0.15rem;
+    }
   }
 
   &.floating {
@@ -160,9 +160,15 @@ const openRelease = (url?: string) => {
     }
   }
 
-  .link {
-    :deep(.label) {
-      padding: 0.15rem;
+  &.reverse {
+    .card {
+      margin-top: layout.$safe-area-inset-top;
+      margin-bottom: layout.$header-navbar-height;
+    }
+
+    &.watching {
+      padding-top: layout.$top-safe-watching-height;
+      padding-bottom: 0;
     }
   }
 }

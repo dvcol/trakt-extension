@@ -205,7 +205,7 @@ const topInset = computed(() => {
   return parseInt(inset, 10);
 });
 const listPaddingTop = computed(() => {
-  const offset = topInset.value;
+  const offset = topInset.value / 2;
   if (listOptions?.value?.paddingTop) return offset + listOptions.value.paddingTop;
   if (floating.value) return offset + Header.navbarHeight + Header.floatingOffset + 14;
   if (reverse.value && isWatching.value) return offset + 16 + Watching.Height;
@@ -335,11 +335,9 @@ const listPaddingBottom = computed(() => {
 @include animation.fade-in;
 
 .list-scroll {
-  height: var(--full-height);
-  margin-top: calc(0% - #{layout.$safe-navbar-height});
+  height: layout.$content-height;
   transition: margin-top 0.5s var(--n-bezier);
 
-  &.floating,
   &.reverse {
     margin-top: calc(0% - #{layout.$safe-area-inset-top});
   }

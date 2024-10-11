@@ -460,7 +460,7 @@ const onTagClick = (url?: string) => {
   background: var(--bg-color-80);
 }
 
-// stylelint-disable-next-line selector-class-pattern -- framework overriding
+// stylelint-disable-next-line selector-class-pattern -- framework override
 .n-tag.n-tag--icon.tag.badge .n-tag__icon {
   margin: 0;
 }

@@ -77,13 +77,12 @@ const emit = defineEmits<{
   }
 
   &.reverse {
-    right: 1.5rem;
-    bottom: calc(1rem + #{layout.$header-navbar-height});
+    right: calc(1.5rem + #{layout.$safe-area-inset-right});
+    bottom: calc(1rem + #{layout.$safe-bottom-navbar-height});
     transition-delay: 0.5s;
 
     &.open {
-      right: 1.5rem;
-      bottom: calc(1rem + #{layout.$header-open-drawer-height});
+      bottom: calc(1rem + #{layout.$safe-bottom-open-drawer-height});
       transition-delay: 0s;
     }
   }

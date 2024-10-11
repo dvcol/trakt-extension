@@ -16,6 +16,7 @@ import MessageProvider from '~/components/container/MessageProvider.vue';
 import NotificationProvider from '~/components/container/NotificationProvider.vue';
 import { NavbarService } from '~/services/navbar.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { lazyComponent } from '~/utils/lazy.utils';
 import { addCustomProgressProperty } from '~/utils/style.utils';
@@ -32,6 +33,7 @@ const override: GlobalThemeOverrides = {
 const { drawer, open, dropdown } = NavbarService;
 const { enabledRoutes, backgroundColor } = useExtensionSettingsStoreRefs();
 const { root, floating, reverse } = useAppStateStoreRefs();
+const { isWatching } = useWatchingStoreRefs();
 
 onBeforeMount(() => addCustomProgressProperty());
 </script>
@@ -65,6 +67,7 @@ onBeforeMount(() => addCustomProgressProperty());
             open ? 'drawer-visible' : '',
             floating ? 'floating' : '',
             reverse ? 'reverse' : '',
+            isWatching ? 'watching' : '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -84,6 +87,7 @@ onBeforeMount(() => addCustomProgressProperty());
             dropdown ? 'dropdown-visible' : '',
             floating ? 'floating' : '',
             reverse ? 'reverse' : '',
+            isWatching ? 'watching' : '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -169,7 +173,11 @@ onBeforeMount(() => addCustomProgressProperty());
   }
 
   &.reverse {
-    top: 0.5rem;
+    top: calc(#{layout.$safe-area-inset-top} + 0.5rem);
+  }
+
+  &.watching {
+    top: calc(#{layout.$top-safe-watching-height} + 0.5rem);
   }
 }
 
@@ -198,7 +206,11 @@ onBeforeMount(() => addCustomProgressProperty());
   }
 
   &.reverse {
-    top: 0.5rem;
+    top: calc(#{layout.$safe-area-inset-top} + 0.5rem);
+
+    &.watching {
+      top: calc(#{layout.$top-safe-watching-height} + 0.5rem);
+    }
   }
 
   &:not(.reverse, .floating) {
