@@ -7,7 +7,7 @@ export const useBackToTop = () => {
   const scrolled = ref(false);
 
   const onClick = (scrollTo?: ScrollTo) => {
-    listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth', ...scrollTo });
+    listRef.value?.list?.scrollTo({ top: 0, left: 0, behavior: 'smooth', debounce: true, ...scrollTo });
     scrolled.value = false;
   };
 

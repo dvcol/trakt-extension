@@ -216,6 +216,7 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
     if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
     if (!_item.tags) _item.tags = getTags(item, _item.type);
 
+    _item.key = `${_item.type}-${_item.id}`;
     _item.date = getDate(item, array, index, dateFn);
     _item.meta = {
       source: item,
@@ -291,7 +292,7 @@ export const useListScrollEvents = (
 ) => {
   const onScroll: OnScroll = async listRef => {
     const _listRef = isRef(listRef) ? listRef.value : listRef;
-    const key = data.value[data.value.length - 1].id;
+    const { key } = data.value[data.value.length - 1];
     await callback({
       page: pagination.value?.page ? pagination.value.page + 1 : 0,
     });
@@ -335,7 +336,8 @@ export const addAllLoaded = (items: Ref<ListScrollItem[]>, pagination: Ref<Store
     if (array[array.length - 1].type === ListScrollItemType.AllLoaded) return array;
     const type = ListScrollItemType.AllLoaded;
     const index = items.value.length;
-    const allLoaded: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };
+    // All loaded should be unique so id and key are based on the type
+    const allLoaded: ListScrollItem = { id: type, type, index, key: type };
     return [...array, allLoaded];
   });
 };
@@ -353,7 +355,8 @@ export const addLoadMore = (items: Ref<ListScrollItem[]>, pagination: Ref<StoreP
     if (array[array.length - 1].type === ListScrollItemType.LoadMore) return array;
     const type = ListScrollItemType.LoadMore;
     const index = items.value.length;
-    const loadMore: ListScrollItem = { id: type, type, index, key: `${index}-${type}` };
+    // Load more should be unique so id and key are based on the type
+    const loadMore: ListScrollItem = { id: type, type, index, key: type };
     return [...array, loadMore];
   });
 };

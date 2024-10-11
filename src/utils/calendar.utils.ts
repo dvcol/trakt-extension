@@ -1,3 +1,4 @@
+import { randomHex } from '@dvcol/common-utils';
 import { DateUtils } from '@dvcol/common-utils/common/date';
 import { computed, nextTick, type Ref, ref, watch } from 'vue';
 
@@ -26,9 +27,9 @@ export const CalendarPlaceholder: Partial<CalendarItem> = {
   type: ListScrollItemType.Placeholder,
 } as const;
 
-export const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}`, date }) as CalendarItem;
+export const getPlaceholder = (date: Date) => ({ ...CalendarPlaceholder, id: `empty-${date.getTime()}-${randomHex(4)}`, date }) as CalendarItem;
 export const getLoadingPlaceholder = (date: Date) =>
-  ({ ...getPlaceholder(date), id: `loading-${date.getTime()}`, type: ListScrollItemType.Loading }) as CalendarItem;
+  ({ ...getPlaceholder(date), id: `loading-${date.getTime()}-${randomHex(4)}`, type: ListScrollItemType.Loading }) as CalendarItem;
 
 export const getEmptyWeeks = ({ startDate, loading = false, days = 14 }: { startDate: Date; loading?: boolean; days?: number }): CalendarItem[] => {
   return Array(days)
@@ -149,7 +150,8 @@ export const useCalendar = ({
     if (!listRef.value?.list) return;
 
     listRef.value?.list.scrollTo({
-      top: index * 145,
+      top: index * itemSize,
+      debounce: true,
       ...options,
     });
   };
@@ -172,7 +174,7 @@ export const useCalendar = ({
     // offset the scroll by 1 item if a placeholder is added
     let placeholder = 0;
     const timeout = setTimeout(() => {
-      listRef.value?.list.scrollTo({ top: 145 });
+      listRef.value?.list.scrollTo({ top: itemSize });
       placeholder = placeholders;
     }, defaultDebounceLoadingDelay); // default debounceLoading delay
 
