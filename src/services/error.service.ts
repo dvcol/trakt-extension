@@ -2,6 +2,8 @@ import { isReactive, isRef, toRaw } from 'vue';
 
 import type { RecursiveRecord } from '@dvcol/common-utils/common';
 
+import { Logger } from '~/services/logger.service';
+
 const toRawDeep = (obj: RecursiveRecord): RecursiveRecord => {
   return Object.fromEntries(
     Object.entries(obj).map(([key, value]) => {
@@ -30,7 +32,7 @@ export class ErrorService {
   }
 
   static registerDictionary(name: string, dictionary: RecursiveRecord) {
-    if (this._dictionaries[name]) throw new Error(`Dictionary ${name} already exists`);
+    if (this._dictionaries[name]) Logger.warn('Overwriting dictionary', name, { was: this._dictionaries[name], is: dictionary });
     this._dictionaries[name] = dictionary;
   }
 
