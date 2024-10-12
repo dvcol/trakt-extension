@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.1](https://github.com/dvcol/trakt-extension/compare/v1.27.0...v1.27.1) (2024-10-12)
+
+
+### Bug Fixes
+
+* **errors:** switch error to warn to fail gracefully ([db41862](https://github.com/dvcol/trakt-extension/commit/db41862881520336558afc6041ba9d84f98ed880))
+* **image:** adds poster cache to prevent flickering ([3cc19e1](https://github.com/dvcol/trakt-extension/commit/3cc19e1e9a7d0b2975c816e02a64b05cd1dda154))
+* **image:** simplify transiiton logic ([41d5e08](https://github.com/dvcol/trakt-extension/commit/41d5e08555409d0b74525c370c56145f3e71a494))
+* **images:** silence 404 on image fetching ([2a6e33a](https://github.com/dvcol/trakt-extension/commit/2a6e33a6f86035b5380b6908abe23b586bc77a3c))
+* **notification:** align css with the rest of the ui ([c8e2e1a](https://github.com/dvcol/trakt-extension/commit/c8e2e1ac2cf5acc3ac6d433631481f11fe26c3d5))
+* **reactive:** move route overflow to settings dropdown ([295fa51](https://github.com/dvcol/trakt-extension/commit/295fa515067be3b4b5a52bdd4d16a52f465dcb04))
+* **releases:** fix release refresh when changing navbar options ([393cced](https://github.com/dvcol/trakt-extension/commit/393ccede6e8db77b84360f0696ac13468dcf89b6))
+* **responsive:** adjust navbar element to fit smaller screens ([9f7ec8c](https://github.com/dvcol/trakt-extension/commit/9f7ec8cf865a604cdea90a45dbabe0e39e718e86))
+* **responsive:** hide account name on small screens ([0224348](https://github.com/dvcol/trakt-extension/commit/02243487956677d0a5cb09aaced3f2f54543707b))
+* **responsive:** toggle between label or icon in small screens ([1974680](https://github.com/dvcol/trakt-extension/commit/197468084c986dc03a16c30a7799bb360f1b24b4))
+* **responsive:** various sizing and css fix for mobile views ([8b3033d](https://github.com/dvcol/trakt-extension/commit/8b3033d19a8101bd804712dfb9b01ed1ea5b602a))
+* **scroll:** fix incorrect key unicity ([77df7b2](https://github.com/dvcol/trakt-extension/commit/77df7b27e104cb10f5b3592b483b22961fcf4c6e))
+* **web:** adds wc teardown for micro-frontend environments ([0aeebfb](https://github.com/dvcol/trakt-extension/commit/0aeebfb06673f63995f56bc45aeda739d7483710))
+
 ## [1.27.0](https://github.com/dvcol/trakt-extension/compare/v1.26.4...v1.27.0) (2024-10-10)
 
 
