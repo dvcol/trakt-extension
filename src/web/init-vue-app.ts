@@ -1,13 +1,13 @@
 import { createPinia } from 'pinia';
 
-import { createApp, getCurrentInstance } from 'vue';
+import { createApp, getCurrentInstance, onUnmounted } from 'vue';
 
 import type { App, Component } from 'vue';
 
 import type { RouterOptions } from '~/router';
 
 import { RouterService } from '~/services/router.service';
-import { initServices } from '~/web/init-services';
+import { destroyServices, initServices } from '~/web/init-services';
 
 export type InitVueAppOption = RouterOptions & { view?: { option?: boolean; popup?: boolean; web?: boolean } };
 export const initVueApp = (component: Component, options: InitVueAppOption = {}) => {
@@ -23,6 +23,10 @@ export const initVueApp = (component: Component, options: InitVueAppOption = {})
   app.use(router);
 
   initServices(options.view).catch(error => console.error('Failed to initialized services.', error));
+
+  onUnmounted(async () => {
+    await destroyServices();
+  });
 
   return app;
 };

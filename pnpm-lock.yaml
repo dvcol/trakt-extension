@@ -24,8 +24,8 @@ importers:
         specifier: ^1.4.16
         version: 1.4.16
       '@dvcol/web-extension-utils':
-        specifier: ^3.4.3
-        version: 3.4.3
+        specifier: ^3.4.4
+        version: 3.4.4
       '@vue/devtools':
         specifier: ^7.4.6
         version: 7.4.6(vite@5.4.2(@types/node@20.5.3)(sass@1.66.1)(sugarss@2.0.0)(terser@5.31.2))(vue@3.5.10(typescript@5.5.4))
@@ -1106,8 +1106,8 @@ packages:
     resolution: {integrity: sha512-Eq68U9Y3XDsPhApVdFdjx5SKJQjP8bE6NlXqyyyK2Z9r69FCozXzw8Li34l7Y/sopOs4S4HAWRqAbatIqJM2zw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/web-extension-utils@3.4.3':
-    resolution: {integrity: sha512-88fWbVcEvYqxcVR6j0bV6Wo2jb05Ci3ADT35VS/OklesRBCurGJyrYvzGd/+0oTY1wiVNB1dhbxjuvZqMDVyPQ==}
+  '@dvcol/web-extension-utils@3.4.4':
+    resolution: {integrity: sha512-LQBB/UPk8TVf/8eb4coLfFxP0kpeFW1BRhCbj+vWy96+qgMbmDHNo8N4rCg3tv8epVQtrXHclgJ28UG8vnDygg==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
 
   '@electron/get@2.0.3':
@@ -6950,7 +6950,7 @@ snapshots:
 
   '@babel/core@7.24.9':
     dependencies:
-      '@ampproject/remapping': 2.2.1
+      '@ampproject/remapping': 2.3.0
       '@babel/code-frame': 7.24.7
       '@babel/generator': 7.24.9
       '@babel/helper-compilation-targets': 7.24.8
@@ -8005,7 +8005,7 @@ snapshots:
       '@dvcol/base-http-client': 1.16.1
       '@dvcol/common-utils': 1.16.1
 
-  '@dvcol/web-extension-utils@3.4.3':
+  '@dvcol/web-extension-utils@3.4.4':
     dependencies:
       '@dvcol/common-utils': 1.16.1
       fast-glob: 3.3.2

@@ -146,6 +146,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     }
   };
 
+  let unsub: () => void | undefined;
   const interval = ref<ReturnType<typeof setInterval>>();
   const initWatchingStore = async () => {
     await restoreState();
@@ -172,7 +173,12 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
       await fetchWatching();
     });
 
-    useDocumentVisible({ onVisible: fetchWatching });
+    unsub = useDocumentVisible({ onVisible: fetchWatching });
+  };
+
+  const destroyWatchingStore = () => {
+    if (interval.value) clearInterval(interval.value);
+    if (unsub) unsub();
   };
 
   return {
@@ -196,6 +202,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     checkingIn: computed(() => loading.checkin),
     loading: computed(() => loading.cancel || loading.checkin),
     initWatchingStore,
+    destroyWatchingStore,
     checkin,
     cancel,
   };

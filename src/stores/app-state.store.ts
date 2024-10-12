@@ -23,10 +23,15 @@ export const useAppStateStore = defineStore('app.state', () => {
   const isWeb = ref(false);
   const root = ref<HTMLElement>();
 
-  const { waitReady, setReady } = useWaitReady();
+  const { waitReady, setReady, resetReady } = useWaitReady();
 
-  const setAppReady = async (ready: boolean, { option, popup, web = !chromeRuntimeId }: { option?: boolean; popup?: boolean; web?: boolean }) => {
+  const setAppReady = async (
+    ready: boolean,
+    { option, popup, web = !chromeRuntimeId }: { option?: boolean; popup?: boolean; web?: boolean } = {},
+  ) => {
     isAppReady.value = ready;
+
+    if (!ready) return resetReady();
 
     isOption.value = option ?? false;
     isPopup.value = popup ?? false;

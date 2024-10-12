@@ -16,6 +16,7 @@ declare global {
 
 export const createElementInstance = (component: Component, { name, ...options }: InitVueAppOption & { name: string }) => {
   return defineCustomElement({
+    name,
     setup(props) {
       const app = initVueApp(component, options);
 

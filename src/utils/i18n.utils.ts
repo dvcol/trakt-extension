@@ -40,3 +40,8 @@ export const useI18n = (...roots: string[]): I18nFunction => {
 
   return useI18nTranslate(...roots);
 };
+
+export const i18nTearDown = () => {
+  promise = undefined;
+  hotReload = false;
+};

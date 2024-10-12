@@ -223,37 +223,35 @@ export class TraktService {
     }
   }
 
-  static listen() {
-    this.traktClient.onAuthChange(async _auth => {
-      Logger.debug('TraktClient.onAuthChange', { ..._auth });
-    });
-
-    this.traktClient.onCall(async call => {
-      Logger.debug('TraktClient.onCall', call);
-      await this.loadingBar(call.query);
-    });
-
-    this.simklClient.onAuthChange(async _auth => {
-      Logger.debug('SimklClient.onAuthChange', { ..._auth });
-    });
-
-    this.simklClient.onCall(async call => {
-      Logger.debug('SimklClient.onCall', call);
-      await this.loadingBar(call.query);
-    });
-
-    this.tmdbClient.onAuthChange(async _auth => {
-      Logger.debug('TmdbClient.onAuthChange', { ..._auth });
-    });
-
-    this.tmdbClient.onCall(async call => {
-      Logger.debug('TmdbClient.onCall', call);
-      try {
-        await call.query;
-      } catch (error) {
-        ErrorService.registerError(error);
-      }
-    });
+  static listen(subs: (() => void)[] = []) {
+    subs.push(
+      this.traktClient.onAuthChange(async _auth => {
+        Logger.debug('TraktClient.onAuthChange', { ..._auth });
+      }),
+      this.traktClient.onCall(async call => {
+        Logger.debug('TraktClient.onCall', call);
+        await this.loadingBar(call.query);
+      }),
+      this.simklClient.onAuthChange(async _auth => {
+        Logger.debug('SimklClient.onAuthChange', { ..._auth });
+      }),
+      this.simklClient.onCall(async call => {
+        Logger.debug('SimklClient.onCall', call);
+        await this.loadingBar(call.query);
+      }),
+      this.tmdbClient.onAuthChange(async _auth => {
+        Logger.debug('TmdbClient.onAuthChange', { ..._auth });
+      }),
+      this.tmdbClient.onCall(async call => {
+        Logger.debug('TmdbClient.onCall', call);
+        try {
+          await call.query;
+        } catch (error) {
+          ErrorService.registerError(error);
+        }
+      }),
+    );
+    return () => subs.forEach(sub => sub());
   }
 
   static async tmdbConfiguration() {

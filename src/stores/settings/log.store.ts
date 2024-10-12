@@ -34,15 +34,22 @@ export const useLogStore = defineStore(LogStoreConstants.Store, () => {
     console.debug(`[${name}]: Storage changes`, changes);
   };
 
+  let subs: (() => void)[] = [];
   const initLogStore = async () => {
     await restoreState();
-    storage.sync.listen(getChangeCallback('sync'));
-    storage.local.listen(getChangeCallback('local'));
-    storage.session.listen(getChangeCallback('session'));
+    subs.push(storage.sync.listen(getChangeCallback('sync')));
+    subs.push(storage.local.listen(getChangeCallback('local')));
+    subs.push(storage.session.listen(getChangeCallback('session')));
+  };
+
+  const destroyLogStore = () => {
+    subs.forEach(sub => sub());
+    subs = [];
   };
 
   return {
     initLogStore,
+    destroyLogStore,
     clearState,
     saveState,
     logLevel: computed({

@@ -166,7 +166,15 @@ export const useWaitReady = () => {
     isReady.value = ready;
   };
 
-  return { waitReady, setReady, isReady };
+  const resetReady = () => {
+    if (!isReady.value) return;
+    isReady.value = false;
+    waitReady.value = new Promise(_resolve => {
+      resolve = _resolve;
+    });
+  };
+
+  return { waitReady, setReady, resetReady, isReady };
 };
 
 export const useDocumentVisible = ({

@@ -18,8 +18,31 @@ type MessageApi = ReturnType<typeof useMessage>;
 const renderButton = (label: string, props: ButtonProps) => () => h(NButton, { tertiary: true, type: 'info', ...props }, { default: () => label });
 
 export class NotificationService {
-  static notification: NotificationApi;
-  static message: MessageApi;
+  static _notification?: NotificationApi;
+  static _message?: MessageApi;
+
+  static get notification(): NotificationApi {
+    if (!this._notification) throw new Error('NotificationService not initialized');
+    return this._notification;
+  }
+
+  static set notification(value: NotificationApi) {
+    this._notification = value;
+  }
+
+  static get message(): MessageApi {
+    if (!this._message) throw new Error('NotificationService not initialized');
+    return this._message;
+  }
+
+  static set message(value: MessageApi) {
+    this._message = value;
+  }
+
+  static destroy() {
+    this._notification = undefined;
+    this._message = undefined;
+  }
 
   static error(title: string, error: Error | Response | unknown, duration = 5000) {
     const option: Mutable<NotificationOptions> = {
@@ -40,7 +63,7 @@ export class NotificationService {
 
   static release(payload: MessagePayload<typeof MessageType.VersionUpdate>) {
     const i18n = useI18n('notification');
-    const notification = NotificationService.notification.info({
+    const notification = this.notification.info({
       title: i18n('release_title'),
       description: `From ${payload.previousVersion} to ${payload.nextVersion}`,
       content: i18n('release_content'),
@@ -58,7 +81,7 @@ export class NotificationService {
 
   static userMismatch({ user, session }: { user: string; session: string }) {
     const i18n = useI18n('notification');
-    const notification = NotificationService.notification.warning({
+    const notification = this.notification.warning({
       title: 'Warning: user mismatch',
       description: `Displaying ${session} instead of ${user}`,
       content: 'Current user does not match the session. \nPlease log out and log in from trakt.tv.',

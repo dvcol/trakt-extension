@@ -12,4 +12,13 @@ export class NavbarService {
     NavbarService.ref.value?.blur();
     NavbarService.ref.value?.dispatchEvent(new Event('mouseleave'));
   }
+
+  static destroy() {
+    this.ref.value = undefined;
+    this.open.value = false;
+    this.drawer.value = false;
+    this.dropdown.value = false;
+    this.isHover.value = false;
+    this.isFocus.value = false;
+  }
 }

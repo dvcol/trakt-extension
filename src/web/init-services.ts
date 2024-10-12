@@ -4,8 +4,12 @@ import type { MessagePayload } from '~/models/message/message-type.model';
 
 import { MessageType } from '~/models/message/message-type.model';
 
+import { ErrorService } from '~/services/error.service';
+import { LoadingBarService } from '~/services/loading-bar.service';
 import { Logger } from '~/services/logger.service';
+import { NavbarService } from '~/services/navbar.service';
 import { NotificationService } from '~/services/notification.service';
+import { RouterService } from '~/services/router.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStore } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -28,7 +32,7 @@ import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogStore } from '~/stores/settings/log.store';
 import { useUserSettingsStore } from '~/stores/settings/user.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { initLocalI18n } from '~/utils/i18n.utils';
+import { i18nTearDown, initLocalI18n } from '~/utils/i18n.utils';
 
 const onVersionUpdate = async () => {
   const versionUpdate = await storage.local.get<MessagePayload<typeof MessageType.VersionUpdate>>(MessageType.VersionUpdate);
@@ -81,4 +85,22 @@ export const initServices = async (options: { option?: boolean; popup?: boolean;
 
   onVersionUpdate().catch(Logger.error);
   TraktService.evict.clean().catch(Logger.error);
+};
+
+export const destroyServices = async () => {
+  await useAppStateStore().setAppReady(false);
+
+  useLogStore().destroyLogStore();
+  useAuthSettingsStore().destroyAuthStore();
+  useActivityStore().destroyActivityStore();
+  useWatchingStore().destroyWatchingStore();
+
+  LoadingBarService.destroy();
+  NotificationService.destroy();
+  NavbarService.destroy();
+  RouterService.destroy();
+  ErrorService.clear();
+
+  i18nTearDown();
+  Logger.info(...Logger.colorize(LoggerColor.Info, Logger.timestamp, 'All services destroyed!'));
 };

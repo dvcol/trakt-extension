@@ -5,11 +5,16 @@ import type { useLoadingBar } from 'naive-ui';
 import { Logger } from '~/services/logger.service';
 
 export class LoadingBarService {
-  private static instance: ReturnType<typeof useLoadingBar>;
+  private static instance?: ReturnType<typeof useLoadingBar>;
   private static counter = ref(0);
 
   static init(instance: ReturnType<typeof useLoadingBar>) {
     this.instance = instance;
+  }
+
+  static destroy() {
+    this.instance = undefined;
+    this.counter.value = 0;
   }
 
   static get isLoading() {
@@ -30,6 +35,7 @@ export class LoadingBarService {
 
   private static debounceStart(debounce: number) {
     return setTimeout(() => {
+      if (!this.instance?.start) return Logger.warn('LoadingBarService instance is not initialized');
       if (this.isLoading) this.instance.start();
     }, debounce);
   }

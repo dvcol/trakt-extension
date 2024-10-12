@@ -131,7 +131,7 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
     return syncSetAuth(auths[account], account);
   };
 
-  const { waitReady, setReady } = useWaitReady();
+  const { waitReady, setReady, resetReady } = useWaitReady();
 
   const { setRouteParam } = useRouterStore();
   const { routeParam } = useRouterStoreRefs();
@@ -175,6 +175,7 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
     }
   };
 
+  let unsub: (() => void) | undefined;
   const initAuthStore = async () => {
     await syncRestoreAuths();
 
@@ -188,9 +189,14 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
       await syncRestoreUser();
     }
 
-    TraktService.listen();
+    unsub = TraktService.listen();
 
     setReady();
+  };
+
+  const destroyAuthStore = () => {
+    resetReady();
+    unsub?.();
   };
 
   return {
@@ -202,6 +208,7 @@ export const useAuthSettingsStore = defineStore(AuthStoreConstants.Store, () => 
     isAuthenticated,
     isSimklAuthenticated,
     initAuthStore,
+    destroyAuthStore,
     waitAuthReady: waitReady,
     loading,
     importAuth,

@@ -176,6 +176,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
     return _evicted;
   };
 
+  let unsub: (() => void) | undefined;
   const initActivityStore = async () => {
     await restoreState();
 
@@ -210,10 +211,15 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
       await fetchActivity();
     });
 
-    useDocumentVisible({ onVisible: fetchActivity });
+    unsub = useDocumentVisible({ onVisible: fetchActivity });
 
     if (polling.value || !isAuthenticated.value) return;
     return fetchActivity();
+  };
+
+  const destroyActivityStore = () => {
+    if (interval.value) clearInterval(interval.value);
+    unsub?.();
   };
 
   return {
@@ -233,6 +239,7 @@ export const useActivityStore = defineStore(ActivityStoreConstants.Store, () => 
     saveState,
     restoreState,
     initActivityStore,
+    destroyActivityStore,
   };
 });
 

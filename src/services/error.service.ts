@@ -44,4 +44,9 @@ export class ErrorService {
   static since(date: Date) {
     return this._errors.filter(({ date: errorDate }) => errorDate > date);
   }
+
+  static clear() {
+    this._errors = [];
+    this._dictionaries = {};
+  }
 }
