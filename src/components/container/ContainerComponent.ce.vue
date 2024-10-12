@@ -242,6 +242,14 @@ onBeforeMount(() => addCustomProgressProperty());
   );
 }
 
+.n-message-wrapper .n-message {
+  border-radius: 1em;
+}
+
+.n-notification-container .n-notification {
+  border-radius: 0.5rem;
+}
+
 .n-notification-container .n-notification.n-notification--error-type,
 .n-message-wrapper .n-message.n-message--error-type {
   --custom-bg-color: var(--bg-color-error-80);
