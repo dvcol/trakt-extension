@@ -34,6 +34,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  panelOpen: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const { disabled, reverse } = toRefs(props);
@@ -181,7 +186,7 @@ const onTouchEnd = (e: TouchEvent) => {
 <template>
   <nav
     ref="navElement"
-    :class="{ reverse, floating }"
+    :class="{ reverse, floating, panel: panelOpen, drawer: showDrawer }"
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
     @focusin="isFocus = true"
@@ -257,6 +262,7 @@ const onTouchEnd = (e: TouchEvent) => {
 </template>
 
 <style lang="scss" scoped>
+@use '~/styles/mixin' as mixin;
 @use '~/styles/layout' as layout;
 
 nav {
@@ -265,6 +271,8 @@ nav {
   --navbar-text-color-hover-active: var(--white);
   --navbar-text-color-active: var(--white);
 
+  @include mixin.hover-background;
+
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) 0.25rem 0;
@@ -272,8 +280,21 @@ nav {
   font-size: 12px;
   text-align: center;
   transition:
+    backdrop-filter layout.$navbar-transition layout.$navbar-transition-delay,
+    background layout.$navbar-transition layout.$navbar-transition-delay,
     border-radius 0.25s var(--n-bezier),
     padding 0.25s var(--n-bezier);
+
+  &.drawer {
+    transition-delay: layout.$navbar-transition-delay-visible;
+  }
+
+  &.panel {
+    background: var(--bg-gradient-60-90);
+    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+    -webkit-backdrop-filter: blur(var(--bg-blur-20));
+    backdrop-filter: blur(var(--bg-blur-20));
+  }
 
   &.reverse {
     flex-direction: column-reverse;

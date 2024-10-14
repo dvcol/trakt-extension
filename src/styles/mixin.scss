@@ -11,8 +11,6 @@
   -webkit-backdrop-filter: blur($blur);
   backdrop-filter: blur($blur);
   transition: $transition-prop $transition;
-  will-change: color, background, background-color, backdrop-filter, box-shadow,
-    border-color, scale, opacity, backdrop-filter;
 
   &:active,
   &:hover {

@@ -33,8 +33,8 @@ $top-safe-watching-height: calc(#{$watching-height} + #{$safe-area-inset-top});
 $top-safe-watching-open-height: calc(#{$watching-open-height} + #{$safe-area-inset-top});
 
 // Navbar transition
-$navbar-transition: 0.5s var(--n-bezier);
-$navbar-transition-visible: 0.25s var(--n-bezier);
+$navbar-transition: 0.75s var(--n-bezier);
+$navbar-transition-visible: 0.5s var(--n-bezier);
 $navbar-transition-delay: 0.5s;
 $navbar-transition-delay-visible: 0s;
 

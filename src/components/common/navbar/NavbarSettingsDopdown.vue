@@ -145,7 +145,7 @@ const onSelect: DropdownProps['onSelect'] = async (key: string, { label }) => {
     case 'logout':
       return logout();
     default:
-      if (Object.values(Route).includes(key as Route)) return router.push(key);
+      if (Object.values(Route).includes(key as Route)) return router.push(`/${key}`);
       if (typeof label === 'string' && key.startsWith('user-')) {
         return loadUser(label);
       }

@@ -83,6 +83,7 @@ const onBack = () => {
                     :is="Component"
                     :parent-element="parentElement"
                     :reverse="reverse"
+                    :panel-open="panelOpen"
                   />
                 </KeepAlive>
               </Transition>
@@ -148,7 +149,6 @@ const onBack = () => {
 </template>
 
 <style lang="scss" scoped>
-@use '~/styles/mixin' as mixin;
 @use '~/styles/layout' as layout;
 @use '~/styles/z-index' as layers;
 @use '~/styles/transition' as transition;
@@ -173,17 +173,6 @@ const onBack = () => {
       top 0.5s var(--n-bezier),
       left 0.5s var(--n-bezier),
       width 0.5s var(--n-bezier);
-
-    > :first-child {
-      @include mixin.hover-background;
-    }
-
-    &.open > :first-child {
-      background: var(--bg-gradient-60-90);
-      // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
-      -webkit-backdrop-filter: blur(var(--bg-blur-20));
-      backdrop-filter: blur(var(--bg-blur-20));
-    }
   }
 
   main {
