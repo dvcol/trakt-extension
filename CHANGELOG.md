@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.2](https://github.com/dvcol/trakt-extension/compare/v1.27.1...v1.27.2) (2024-10-14)
+
+
+### Bug Fixes
+
+* **navbar:** adjust css transition and fix absolute routing ([533563b](https://github.com/dvcol/trakt-extension/commit/533563b9fa9ff751e37dc7f8efcf3bcaf00dc9e4))
+
 ### [1.27.1](https://github.com/dvcol/trakt-extension/compare/v1.27.0...v1.27.1) (2024-10-12)
 
 
