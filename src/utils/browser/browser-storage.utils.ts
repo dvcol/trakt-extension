@@ -1,10 +1,4 @@
-import {
-  localStorage,
-  sessionStorage,
-  setStorageWrapper as _setStorageWrapper,
-  storageWrapper,
-  syncStorage,
-} from '@dvcol/web-extension-utils/chrome/storage';
+import { localStorage, setStorageWrapper as _setStorageWrapper, storageWrapper, syncStorage } from '@dvcol/web-extension-utils/chrome/storage';
 
 /**
  * This object is used to access the storage areas.
@@ -12,7 +6,6 @@ import {
 export const storage = {
   sync: storageWrapper('sync', syncStorage, 'trakt'),
   local: storageWrapper('local', localStorage, 'trakt'),
-  session: storageWrapper('session', sessionStorage, 'trakt'),
 };
 
 /**
