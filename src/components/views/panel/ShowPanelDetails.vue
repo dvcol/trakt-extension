@@ -188,9 +188,9 @@ const ids = computed(() => {
   return { ...simklShow.value?.ids, ...show.value?.ids };
 });
 
-const { getAlias } = useLinksStore();
+const { getAliasRef } = useLinksStore();
 const showId = computed(() => show?.value?.ids?.trakt.toString());
-const alias = getAlias('show', showId);
+const alias = getAliasRef('show', showId);
 const showAlias = computed(() => alias.value || show?.value?.title);
 const showTitle = computed(() => deCapitalise(show?.value?.title));
 const title = computed(() =>
@@ -217,6 +217,7 @@ const title = computed(() =>
         :episode="episode?.number"
         :alias="showAlias"
         :title="title"
+        :genres="genres"
       />
     </NFlex>
 

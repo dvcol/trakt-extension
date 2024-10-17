@@ -38,5 +38,29 @@
   "common__tag__series_finale": {
     "message": "Series Finale",
     "description": "Label for a finale"
+  },
+  "common__tag__type__default": {
+    "message": "Default",
+    "description": "Label for the default tag type"
+  },
+  "common__tag__type__primary": {
+    "message": "Primary",
+    "description": "Label for the primary tag type"
+  },
+  "common__tag__type__success": {
+    "message": "Success",
+    "description": "Label for the success tag type"
+  },
+  "common__tag__type__info": {
+    "message": "Info",
+    "description": "Label for the info tag type"
+  },
+  "common__tag__type__warning": {
+    "message": "Warning",
+    "description": "Label for the warning tag type"
+  },
+  "common__tag__type__error": {
+    "message": "Error",
+    "description": "Label for the error tag type"
   }
 }

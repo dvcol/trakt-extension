@@ -51,12 +51,27 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
   const poster = progress.fanart ?? progress.screenshot;
 
   const id = Number(progress.episodeId ?? progress.seasonId ?? progress.showId);
+  const title = getTitle({ show, episode });
+  const meta = {
+    source: progress,
+    episode,
+    show,
+    ids: {
+      show: { trakt: progress.showId ? Number(progress.showId) : undefined },
+      season: { trakt: progress.seasonId ? Number(progress.seasonId) : undefined },
+      episode: { trakt: progress.episodeId ? Number(progress.episodeId) : undefined },
+    },
+    number: {
+      season: Number(progress.seasonNumber),
+      episode: Number(progress.episodeNumber),
+    },
+  };
 
   return {
     id,
     index,
     key: `${index}-${id}`,
-    title: getTitle({ show, episode }),
+    title,
     content: getContent({ show, episode }),
     poster,
     getProgressQuery: () => ({
@@ -69,21 +84,8 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
       current: new Date(progress.firstAired),
     },
     type: progress.type,
-    tags: getTags({ episode }, progress.type),
-    meta: {
-      source: progress,
-      episode,
-      show,
-      ids: {
-        show: { trakt: progress.showId ? Number(progress.showId) : undefined },
-        season: { trakt: progress.seasonId ? Number(progress.seasonId) : undefined },
-        episode: { trakt: progress.episodeId ? Number(progress.episodeId) : undefined },
-      },
-      number: {
-        season: Number(progress.seasonNumber),
-        episode: Number(progress.episodeNumber),
-      },
-    },
+    meta,
+    tags: getTags({ episode }, { id, type: progress.type, title, meta }),
   };
 };
 

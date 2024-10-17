@@ -1,45 +1,27 @@
 import { type JsonWriterOptions, writeJson } from '@dvcol/common-utils/common/save';
+import { capitalizeEachWord } from '@dvcol/common-utils/common/string';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, type Ref } from 'vue';
 
 import type { TagLink } from '~/models/tag.model';
 
+import {
+  type AliasScope,
+  type CustomLink,
+  CustomLinkGenreMode,
+  type CustomLinkScopes,
+  type CustomLinkSubstitution,
+  CustomLinkView,
+  type CustomLinkViews,
+} from '~/models/link.model';
+import { TagType } from '~/models/tag.model';
+
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
 import { clearProxy } from '~/utils/vue.utils';
-
-export const CustomLinkScope = {
-  Movie: 'movie' as const,
-  Show: 'show' as const,
-  Season: 'season' as const,
-  Episode: 'episode' as const,
-  Person: 'person' as const,
-} as const;
-
-export const AllCustomLinkScopes = Object.values(CustomLinkScope);
-
-type CustomLinkScopes = (typeof CustomLinkScope)[keyof typeof CustomLinkScope];
-type CustomLinkSubstitution<T = string | number> = Partial<{
-  slug: T;
-  trakt: T;
-  imdb: T;
-  tmdb: T;
-  tvdb: T;
-  alias: T;
-  episode: T;
-  season: T;
-  title: T;
-}>;
-
-export type CustomLink = TagLink & {
-  id: string | number;
-  url: string;
-  scopes: CustomLinkScopes[];
-  icon?: 'external';
-};
 
 export const resolveLinkUrl = (url: string, substitutions: CustomLinkSubstitution) => {
   let _url = url;
@@ -50,8 +32,6 @@ export const resolveLinkUrl = (url: string, substitutions: CustomLinkSubstitutio
   });
   return _url;
 };
-
-export type AliasScope = 'movie' | 'show';
 
 export type CustomLinkDictionary = Record<CustomLink['id'], CustomLink>;
 type CustomLinkScopeDictionary = Partial<Record<CustomLinkScopes, CustomLinkDictionary>>;
@@ -105,6 +85,9 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     const _was = linkDictionary[link.id];
     if (_was && _was.scopes) Object.values(_was.scopes).forEach(scope => removeFromScope(scope, link.id));
 
+    // remove component
+    link.icon = undefined;
+
     // update link
     linkDictionary[link.id] = link;
 
@@ -133,7 +116,15 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     if (restoredAliases) Object.assign(aliasDictionary, restoredAliases);
     if (restoredLinks) {
       Object.values(restoredLinks)
-        .map(l => ({ ...l, scopes: Object.values(l.scopes) }))
+        .map(l => ({
+          view: CustomLinkView.Panel,
+          genreMode: CustomLinkGenreMode.Some,
+          type: TagType.Default,
+          bordered: true,
+          ...l,
+          scopes: l.scopes ? Object.values(l.scopes) : [],
+          genres: l.genres ? Object.values(l.genres) : [],
+        }))
         .forEach(addLink);
     }
   };
@@ -169,15 +160,46 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     await restoreState();
   };
 
-  const getLinks = (scope: Ref<CustomLinkScopes>) =>
-    computed(() => {
-      const _links = linkScopeDictionary[scope.value] ?? {};
-      return Object.values(_links);
-    });
+  const getLinks = ({
+    scope,
+    genres,
+    view = CustomLinkView.Both,
+  }: {
+    scope: CustomLinkScopes;
+    genres?: (string | TagLink)[];
+    view?: CustomLinkViews;
+  }): CustomLink[] => {
+    const _genres = genres?.map(g => capitalizeEachWord(typeof g === 'string' ? g : g.label));
+    const _links = linkScopeDictionary[scope] ?? {};
+    return Object.values(_links)
+      .filter(l => !l.view || [view, l.view].includes(CustomLinkView.Both) || l.view === view)
+      .filter(l => {
+        if (!l.genres?.length) return true;
+        if (!_genres?.length) return l.genreMode === CustomLinkGenreMode.None;
+        if (l.genreMode === CustomLinkGenreMode.None) return !l.genres.filter(Boolean).some(g => _genres.includes(g));
+        if (l.genreMode === CustomLinkGenreMode.Every) return l.genres.filter(Boolean).every(g => _genres.includes(g));
+        return l.genres.filter(Boolean).some(g => _genres.includes(g));
+      });
+  };
 
-  const getAlias = (type: AliasScope, id: Ref<string | undefined>) =>
+  const getLinksRef = ({
+    scope,
+    genres,
+    view = CustomLinkView.Both,
+  }: {
+    scope: Ref<CustomLinkScopes>;
+    genres?: Ref<(string | TagLink)[] | undefined>;
+    view?: CustomLinkViews;
+  }) => computed<CustomLink[]>(() => getLinks({ scope: scope.value, genres: genres?.value, view }));
+
+  const getAlias = (type: AliasScope, id?: string): string | undefined => {
+    if (!id) return;
+    return aliasDictionary[type]?.[id];
+  };
+
+  const getAliasRef = (type: AliasScope, id: Ref<string | undefined>) =>
     computed({
-      get: () => (id.value ? aliasDictionary[type]?.[id.value] ?? '' : ''),
+      get: () => getAlias(type, id.value) ?? '',
       set: (value: string) => {
         if (!id.value) return;
         if (!aliasDictionary[type]) aliasDictionary[type] = {};
@@ -214,7 +236,9 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     addLink,
     removeLink,
     getLinks,
+    getLinksRef,
     getAlias,
+    getAliasRef,
     aliasEnabled,
     openLinkInBackground,
     openTab,

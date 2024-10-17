@@ -42,6 +42,10 @@ defineProps({
     type: Array as PropType<TagLink[]>,
     required: false,
   },
+  short: {
+    type: Boolean,
+    required: false,
+  },
   array: {
     type: Boolean,
     required: false,

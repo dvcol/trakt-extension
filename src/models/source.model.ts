@@ -25,7 +25,7 @@ export type DataSources = (typeof DataSource)[keyof typeof DataSource];
 export const AllDataSources = Object.keys(DataSource).map(key => key.toLowerCase());
 export const isKnownSource = (source: string): source is DataSources => AllDataSources.includes(source);
 
-export const getIconFromSource = (source: DataSources | string, fallback = IconExternalLinkRounded): Component => {
+export const getIconFromSource = (source: DataSources | string, fallback: Component = IconExternalLinkRounded): Component => {
   switch (source) {
     case DataSource.Trakt:
       return IconTrakt;

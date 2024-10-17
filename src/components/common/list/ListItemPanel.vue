@@ -19,6 +19,7 @@ import TagLink from '~/components/common/buttons/TagLink.vue';
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
+import { getCustomLinkIcon } from '~/models/link.model';
 import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
@@ -98,9 +99,17 @@ const date = computed(() => {
 const tags = computed(
   () =>
     item.value.tags?.map(tag => {
-      if (!tag.i18n) return tag;
-      if (typeof tag.i18n === 'boolean') return { ...tag, label: i18n(tag.label) };
-      return { ...tag, label: i18n(tag.label, ...tag.i18n) };
+      const _tag = { ...tag };
+
+      if (tag.i18n && typeof tag.i18n === 'boolean') _tag.label = i18n(tag.label);
+      else if (tag.i18n) _tag.label = i18n(tag.label, ...tag.i18n);
+
+      if (!tag.icon && tag.iconType) {
+        const { icon, iconProps } = getCustomLinkIcon(tag.iconType);
+        _tag.icon = icon;
+        _tag.iconProps = iconProps;
+      }
+      return _tag;
     }),
 );
 
@@ -300,6 +309,7 @@ const onTagClick = (url?: string) => {
         "
         size="medium"
         class="tags"
+        :class="{ 'show-progress': showProgress }"
       >
         <template v-if="loading && showTagLoader">
           <NSkeleton text style="width: 120px; height: 18px; border-radius: 2px" />
@@ -311,7 +321,7 @@ const onTagClick = (url?: string) => {
               text
               style="width: 120px; height: 18px; border-radius: 2px"
             />
-            <TagLink :tag="tag" @on-click="onTagClick" />
+            <TagLink :tag="tag" short @on-click="onTagClick" />
           </template>
         </template>
 
@@ -440,7 +450,13 @@ const onTagClick = (url?: string) => {
 
   .tags {
     gap: 0.5rem !important;
+    max-height: 3.325rem;
     margin-top: 0.3rem;
+    overflow: scroll;
+
+    &.show-progress {
+      max-height: 1.5rem;
+    }
   }
 
   .panel-progress {

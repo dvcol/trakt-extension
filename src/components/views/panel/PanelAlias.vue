@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import { NFlex, NInput } from 'naive-ui';
+
 import { computed, nextTick, type PropType, ref, toRefs } from 'vue';
 
 import type { InputInst } from 'naive-ui';
 
+import type { AliasScope } from '~/models/link.model';
+
 import TextField from '~/components/common/typography/TextField.vue';
 
-import {
-  type AliasScope,
-  useLinksStore,
-  useLinksStoreRefs,
-} from '~/stores/settings/links.store';
+import { useLinksStore, useLinksStoreRefs } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -33,9 +32,9 @@ const props = defineProps({
 const { scope, id, placeholder } = toRefs(props);
 
 const { aliasEnabled } = useLinksStoreRefs();
-const { getAlias } = useLinksStore();
+const { getAliasRef } = useLinksStore();
 
-const alias = getAlias(scope.value, id);
+const alias = getAliasRef(scope.value, id);
 
 const value = computed(() => {
   if (!id.value) return;

@@ -13,6 +13,7 @@ import type {
 } from '@dvcol/trakt-http-client/models';
 import type { NVirtualList, VirtualListInst } from 'naive-ui';
 import type { Ref } from 'vue';
+import type { CustomLink } from '~/models/link.model';
 import type { PosterItem } from '~/models/poster.model';
 import type { ProgressItem } from '~/models/progress.model';
 import type { TagLink } from '~/models/tag.model';
@@ -35,17 +36,17 @@ export type ListScrollSourceItem = {
   id: string | number;
   type?: ListScrollItem['type'];
 
-  movie?: TraktMovie<'short'>;
-  show?: TraktShow<'short'>;
+  movie?: TraktMovie<'any'>;
+  show?: TraktShow<'any'>;
   season?: TraktSeason<'short'>;
-  episode?: TraktEpisode<'short'> | TraktEpisode<'extended'>;
+  episode?: TraktEpisode<'any'>;
   person?: TraktPerson<'short'>;
   list?: TraktList<'short'>;
 };
 
 export type ListScrollItemTag = {
   i18n?: boolean | string[];
-} & TagLink;
+} & (TagLink & Partial<CustomLink>);
 
 export type EpisodeProgress = BaseTraktProgressEpisode & {
   date?: Date;
@@ -98,6 +99,7 @@ export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
     person?: Partial<TraktPerson['ids']>;
     [key: string]: Partial<TraktApiIds> | undefined;
   };
+  genres?: string[];
   number?: {
     season?: number;
     episode?: number;

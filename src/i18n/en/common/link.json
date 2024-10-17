@@ -18,5 +18,49 @@
   "common__link__rating": {
     "message": "Open rating in source Website",
     "description": "Link to open rating in source Website"
+  },
+  "common__link__view__both": {
+    "message": "Both",
+    "description": "Label for the link view both option"
+  },
+  "common__link__view__panel": {
+    "message": "Panel",
+    "description": "Label for the link view panel option"
+  },
+  "common__link__view__list": {
+    "message": "List",
+    "description": "Label for the link view list option"
+  },
+  "common__link__genre__some": {
+    "message": "Some",
+    "description": "Label for the genre some option"
+  },
+  "common__link__genre__every": {
+    "message": "Every",
+    "description": "Label for the genre every option"
+  },
+  "common__link__genre__none": {
+    "message": "None",
+    "description": "Label for the genre none option"
+  },
+  "common__link__icon__link": {
+    "message": "Link",
+    "description": "Label for the link icon"
+  },
+  "common__link__icon__search": {
+    "message": "Search",
+    "description": "Label for the search icon"
+  },
+  "common__link__icon__download": {
+    "message": "Download",
+    "description": "Label for the download icon"
+  },
+  "common__link__icon__squared": {
+    "message": "Squared",
+    "description": "Label for the square icon"
+  },
+  "common__link__icon__rounded": {
+    "message": "Rounded",
+    "description": "Label for the rounded icon"
   }
 }

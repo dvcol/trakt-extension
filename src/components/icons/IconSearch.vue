@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+const { disabled } = defineProps({
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+});
+</script>
+
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
     <g
@@ -8,19 +18,25 @@
       stroke-width="1.5"
     >
       <path
-        stroke-dasharray="40"
-        stroke-dashoffset="40"
+        :stroke-dasharray="disabled ? 0 : 40"
+        :stroke-dashoffset="disabled ? 0 : 40"
         d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"
       >
         <animate
+          v-if="!disabled"
           fill="freeze"
           attributeName="stroke-dashoffset"
           dur="0.5s"
           values="40;0"
         />
       </path>
-      <path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5">
+      <path
+        :stroke-dasharray="disabled ? 0 : 12"
+        :stroke-dashoffset="disabled ? 0 : 12"
+        d="M10.5 13.5l-7.5 7.5"
+      >
         <animate
+          v-if="!disabled"
           fill="freeze"
           attributeName="stroke-dashoffset"
           begin="0.5s"

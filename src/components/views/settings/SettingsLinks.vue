@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getUUID } from '@dvcol/common-utils';
+import { capitalizeEachWord, getUUID } from '@dvcol/common-utils/common/string';
 import {
   type FormInst,
   type FormItemRule,
@@ -18,9 +18,19 @@ import {
   NSwitch,
   NText,
   NUl,
+  type SelectOption,
 } from 'naive-ui';
 
-import { computed, onActivated, reactive, ref, toRaw, watch } from 'vue';
+import {
+  type Component,
+  computed,
+  h,
+  onActivated,
+  reactive,
+  ref,
+  toRaw,
+  watch,
+} from 'vue';
 
 import IconClose from '~/components/icons/IconClose.vue';
 import IconConfirm from '~/components/icons/IconConfirm.vue';
@@ -29,14 +39,23 @@ import IconLoadingDots from '~/components/icons/IconLoadingDots.vue';
 import IconPlus from '~/components/icons/IconPlus.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
+import {
+  AllCustomLinkGenreModes,
+  AllCustomLinkIconTypes,
+  AllCustomLinkScopes,
+  AllCustomLinkViews,
+  type CustomLink,
+  CustomLinkGenreMode,
+  CustomLinkView,
+  getCustomLinkIcon,
+} from '~/models/link.model';
 import { AllDataSources, DataSource } from '~/models/source.model';
+import { AllTagTypes, TagType } from '~/models/tag.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useSimklStoreRefs } from '~/stores/data/simkl.store';
 import {
-  AllCustomLinkScopes,
-  type CustomLink,
   type CustomLinkDictionary,
   useLinksStore,
   useLinksStoreRefs,
@@ -126,8 +145,15 @@ const addOrUpdate = (link?: CustomLink) => {
       label: 'Custom Link All',
       url: 'https://example.com',
       scopes: AllCustomLinkScopes,
+      view: CustomLinkView.Panel,
+      genres: [],
+      genreMode: CustomLinkGenreMode.Some,
+      type: TagType.Default,
+      bordered: true,
     } satisfies CustomLink;
   }
+  if (link.genres?.length) link.genres = link.genres.map(capitalizeEachWord);
+
   addLink(structuredClone(toRaw(link)));
   NotificationService.message.success(i18n('link_save_success'));
 };
@@ -163,6 +189,39 @@ const remove = (id: CustomLink['id']) => {
 const scopeOptions = AllCustomLinkScopes.map(scope => ({
   label: i18n(scope, 'common', 'media', 'type'),
   value: scope satisfies string,
+}));
+
+const viewOptions = AllCustomLinkViews.map(view => ({
+  label: i18n(view, 'common', 'link', 'view'),
+  value: view satisfies string,
+}));
+
+const genreOptions = AllCustomLinkGenreModes.map(genre => ({
+  label: i18n(genre, 'common', 'link', 'genre'),
+  value: genre satisfies string,
+}));
+
+type IconOption = SelectOption & { icon: Component };
+const iconOptions = AllCustomLinkIconTypes.map(icon => ({
+  label: i18n(icon, 'common', 'link', 'icon'),
+  value: icon satisfies string,
+  icon: getCustomLinkIcon(icon).icon,
+}));
+
+const renderLabel = (option: IconOption) => [
+  h(NIcon, {
+    style: {
+      verticalAlign: '-0.15em',
+      marginRight: '0.7em',
+    },
+    component: option.icon,
+  }),
+  option.label?.toString(),
+];
+
+const colorOptions = AllTagTypes.map(type => ({
+  label: i18n(type, 'common', 'tag', 'type'),
+  value: type satisfies string,
 }));
 
 const isValid = (link: CustomLink) => {
@@ -339,17 +398,32 @@ const containerRef = ref<HTMLDivElement>();
           class="link-card"
           :style="{ '--n-border-color': 'var(--border-color)' }"
         >
-          <NFormItem
-            :label="i18n('label_name')"
-            :path="`[${ link.id }].label`"
-            :rule="{
-              required: true,
-              message: i18n('validation_unique_name'),
-              trigger: ['input', 'blur'],
-            }"
-          >
-            <NInput v-model:value="form[link.id].label" clearable />
-          </NFormItem>
+          <NFlex class="form-row">
+            <NFormItem
+              class="flex-auto"
+              :label="i18n('label_name')"
+              :path="`[${ link.id }].label`"
+              :rule="{
+                required: true,
+                message: i18n('validation_unique_name'),
+                trigger: ['input', 'blur'],
+              }"
+            >
+              <NInput v-model:value="form[link.id].label" clearable />
+            </NFormItem>
+
+            <NFormItem
+              class="flex-auto"
+              :label="i18n('label_short')"
+              :path="`[${ link.id }].short`"
+            >
+              <NInput
+                v-model:value="form[link.id].short"
+                :placeholder="i18n('placeholder_short')"
+                clearable
+              />
+            </NFormItem>
+          </NFlex>
 
           <NFormItem
             :label="i18n('label_template')"
@@ -363,10 +437,11 @@ const containerRef = ref<HTMLDivElement>();
           >
             <NInput v-model:value="form[link.id].url" clearable />
           </NFormItem>
+
           <NFormItem
             :label="i18n('label_label')"
             class="form-row"
-            :path="`[${ link.id }].url`"
+            :path="`[${ link.id }].title`"
           >
             <NInput
               v-model:value="form[link.id].title"
@@ -375,21 +450,127 @@ const containerRef = ref<HTMLDivElement>();
             />
           </NFormItem>
 
-          <NFormItem :label="i18n('label_scopes')" :path="`[${ link.id }].scopes`">
-            <NSelect
-              v-model:value="form[link.id].scopes"
-              multiple
-              :to="containerRef"
-              :options="
-                scopeOptions.map(option => ({
-                  ...option,
-                  disabled:
-                    form[link.id].scopes?.length === 1 &&
-                    form[link.id].scopes[0] === option.value,
-                }))
-              "
-            />
-          </NFormItem>
+          <NFlex class="form-row">
+            <NFormItem
+              class="flex-auto"
+              :label="i18n('label_scopes')"
+              :path="`[${ link.id }].scopes`"
+            >
+              <NSelect
+                v-model:value="form[link.id].scopes"
+                multiple
+                :to="containerRef"
+                :options="
+                  scopeOptions.map(option => ({
+                    ...option,
+                    disabled:
+                      form[link.id].scopes?.length === 1 &&
+                      form[link.id].scopes[0] === option.value,
+                  }))
+                "
+              />
+            </NFormItem>
+
+            <NFormItem
+              class="form-select"
+              :label="i18n('label_view')"
+              :path="`[${ link.id }].view`"
+            >
+              <NSelect
+                v-model:value="form[link.id].view"
+                :default-value="CustomLinkView.Panel"
+                :to="containerRef"
+                :options="viewOptions"
+              />
+            </NFormItem>
+          </NFlex>
+
+          <NFlex class="form-row">
+            <NFormItem
+              class="flex-auto"
+              :label="i18n('label_genres')"
+              :path="`[${ link.id }].genres`"
+            >
+              <NSelect
+                v-model:value="form[link.id].genres"
+                :placeholder="i18n('placeholder_genres')"
+                :to="containerRef"
+                :show-arrow="false"
+                :show="false"
+                filterable
+                multiple
+                tag
+              />
+            </NFormItem>
+
+            <NFormItem
+              class="form-select"
+              :label="i18n('label_genre_mode')"
+              :path="`[${ link.id }].genreMode`"
+            >
+              <NSelect
+                v-model:value="form[link.id].genreMode"
+                :to="containerRef"
+                :default-value="CustomLinkGenreMode.Some"
+                :options="genreOptions"
+              />
+            </NFormItem>
+          </NFlex>
+
+          <NFlex class="form-row">
+            <NFormItem
+              class="form-select"
+              :label="i18n('label_color')"
+              :path="`[${ link.id }].type`"
+            >
+              <NSelect
+                v-model:value="form[link.id].type"
+                class="color-select"
+                :class="{ [form[link.id].type as string]: true }"
+                :to="containerRef"
+                :default-value="TagType.Default"
+                :options="colorOptions"
+              />
+            </NFormItem>
+
+            <NFormItem
+              class="flex-auto"
+              :label="i18n('label_icon')"
+              :path="`[${ link.id }].iconType`"
+            >
+              <NSelect
+                v-model:value="form[link.id].iconType"
+                :to="containerRef"
+                :options="iconOptions"
+                :render-label="renderLabel"
+                type="error"
+                clearable
+              />
+            </NFormItem>
+
+            <NFormItem
+              class="form-toggle"
+              :label="i18n('label_icon_only')"
+              :path="`[${ link.id }].iconOnly`"
+            >
+              <NSwitch v-model:value="form[link.id].iconOnly" class="flex-auto">
+                <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+                <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+              </NSwitch>
+            </NFormItem>
+
+            <NFormItem
+              class="form-toggle"
+              :label="i18n('label_bordered')"
+              :path="`[${ link.id }].bordered`"
+            >
+              <NSwitch v-model:value="form[link.id].bordered" class="flex-auto">
+                <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+                <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+              </NSwitch>
+            </NFormItem>
+          </NFlex>
+
           <NFlex class="form-row" align="center" justify="flex-end">
             <NPopconfirm
               :to="containerRef"
@@ -532,6 +713,18 @@ const containerRef = ref<HTMLDivElement>();
   }
 }
 
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+.form-select {
+  flex: 0 1 8.75rem;
+}
+
+.form-toggle {
+  flex: 0 1 4rem;
+}
+
 .form-switch {
   display: flex;
   flex: 1 1 auto;
@@ -550,6 +743,38 @@ const containerRef = ref<HTMLDivElement>();
 
   i {
     margin-left: calc(0% - var(--n-icon-margin));
+  }
+}
+
+/* stylelint-disable selector-class-pattern -- library class name */
+.color-select {
+  :deep(.n-base-selection-input__content) {
+    transition: color 0.5s var(--n-bezier);
+  }
+
+  &.warning {
+    :deep(.n-base-selection-input__content) {
+      color: var(--color-warning);
+    }
+  }
+
+  &.primary,
+  &.success {
+    :deep(.n-base-selection-input__content) {
+      color: var(--color-primary);
+    }
+  }
+
+  &.error {
+    :deep(.n-base-selection-input__content) {
+      color: var(--color-error);
+    }
+  }
+
+  &.info {
+    :deep(.n-base-selection-input__content) {
+      color: var(--color-info);
+    }
   }
 }
 

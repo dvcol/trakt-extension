@@ -3,11 +3,15 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { SimklIdsExtended } from '@dvcol/simkl-http-client/models';
 import type { TraktApiIds } from '@dvcol/trakt-http-client/models';
-import type { TagLink } from '~/models/tag.model';
 
 import TextField from '~/components/common/typography/TextField.vue';
-import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 
+import {
+  type CustomLink,
+  CustomLinkIconType,
+  CustomLinkView,
+  getCustomLinkIcon,
+} from '~/models/link.model';
 import {
   DataSource,
   getIconFromSource,
@@ -16,6 +20,7 @@ import {
   getUrlFromSource,
   isKnownSource,
 } from '~/models/source.model';
+import { type TagLink } from '~/models/tag.model';
 import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -45,28 +50,50 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  genres: {
+    type: Array as PropType<TagLink[]>,
+    required: false,
+  },
 });
 
-const { ids, mode, season, episode, alias, title } = toRefs(props);
+const { ids, mode, season, episode, alias, title, genres } = toRefs(props);
 
 const i18n = useI18n('panel', 'detail');
 
-const { getLinks } = useLinksStore();
+const { getLinksRef } = useLinksStore();
 
-const customLinksTemplate = getLinks(mode);
+const customLinksTemplate = getLinksRef({
+  scope: mode,
+  genres,
+  view: CustomLinkView.Panel,
+});
 const customLinks = computed(() => {
   if (!customLinksTemplate.value) return;
-  return customLinksTemplate.value.map(link => ({
-    ...link,
-    url: resolveLinkUrl(link.url, {
-      ...ids?.value,
-      alias: alias?.value,
-      season: season?.value,
-      episode: episode?.value,
-      title: title?.value,
-    }),
-    icon: IconExternalLinkRounded,
-  }));
+  return customLinksTemplate.value.map(link => {
+    const _link: CustomLink = {
+      ...link,
+      url: resolveLinkUrl(link.url, {
+        ...ids?.value,
+        alias: alias?.value,
+        season: season?.value,
+        episode: episode?.value,
+        title: title?.value,
+      }),
+      iconOnly: false,
+      iconImgProps: { freeze: true },
+      type: undefined,
+    };
+
+    if (!_link.icon) {
+      const { icon, iconProps } = getCustomLinkIcon(
+        _link.iconType ?? CustomLinkIconType.Rounded,
+      );
+      _link.icon = icon;
+      _link.iconProps = { ..._link.iconProps, ...iconProps };
+      if (link.type) _link.iconProps.color = `var(--color-${link.type})`;
+    }
+    return _link;
+  });
 });
 
 const links = computed(() => {

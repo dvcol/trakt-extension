@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NIcon, NTag } from 'naive-ui';
-import { type PropType, toRefs } from 'vue';
+import { computed, type PropType, toRefs } from 'vue';
 
 import type { TagLink } from '~/models/tag.model';
 
@@ -9,9 +9,20 @@ const props = defineProps({
     type: Object as PropType<TagLink>,
     required: true,
   },
+  short: {
+    type: Boolean,
+    required: false,
+  },
 });
 
-const { tag } = toRefs(props);
+const { tag, short } = toRefs(props);
+
+const label = computed(() => {
+  if (short.value) return tag?.value?.short || tag?.value?.label;
+  return tag?.value?.label;
+});
+
+const iconOnly = computed(() => tag?.value?.iconOnly && tag?.value?.icon);
 
 const emit = defineEmits<{
   (e: 'onClick', href?: string): void;
@@ -35,13 +46,21 @@ const onClick = (e: MouseEvent) => {
   >
     <NTag
       class="tag"
-      :class="{ meta: tag?.meta, link: !!tag?.url }"
+      :class="{
+        meta: tag?.meta,
+        link: !!tag?.url,
+        icon: tag?.icon,
+        only: iconOnly,
+        square: !tag?.round,
+      }"
       size="small"
       v-bind="tag"
     >
-      <span class="label">{{ tag?.label }}</span>
+      <span v-if="!iconOnly" class="label">{{ label }}</span>
       <template v-if="tag?.icon" #icon>
-        <NIcon class="icon" :component="tag.icon" v-bind="tag.iconProps" />
+        <NIcon class="icon" v-bind="tag.iconProps">
+          <component :is="tag.icon" v-bind="tag.iconImgProps" />
+        </NIcon>
       </template>
     </NTag>
   </a>
@@ -54,6 +73,14 @@ const onClick = (e: MouseEvent) => {
   .tag {
     width: fit-content;
     border: 1px solid transparent;
+
+    &.only {
+      padding: 0.1rem;
+    }
+
+    &.icon.square {
+      padding-left: 0.25rem;
+    }
   }
 
   &:focus-visible {

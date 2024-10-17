@@ -106,9 +106,9 @@ const country = computed(() => {
   return movie.value?.country || '-';
 });
 
-const { getAlias } = useLinksStore();
+const { getAliasRef } = useLinksStore();
 const movieId = computed(() => movie?.value?.ids?.trakt.toString());
-const alias = getAlias('show', movieId);
+const alias = getAliasRef('show', movieId);
 const movieAlias = computed(() => alias.value || movie?.value?.title);
 const movieTitle = computed(() => deCapitalise(movie?.value?.title));
 </script>
@@ -126,7 +126,13 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       />
 
       <!--  links  -->
-      <PanelLinks mode="movie" :ids="ids" :title="movieTitle" :alias="movieAlias" />
+      <PanelLinks
+        mode="movie"
+        :ids="ids"
+        :title="movieTitle"
+        :alias="movieAlias"
+        :genres="genres"
+      />
     </NFlex>
 
     <!--  Movie name alias  -->

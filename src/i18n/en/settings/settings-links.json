@@ -11,6 +11,46 @@
     "message": "Label",
     "description": "Label for the label field"
   },
+  "settings__links__label_view": {
+    "message": "View",
+    "description": "Label for the view field"
+  },
+  "settings__links__label_short": {
+    "message": "Short name",
+    "description": "Label for the short field"
+  },
+  "settings__links__placeholder_short": {
+    "message": "A short name to use when applicable.",
+    "description": "Placeholder for the short label"
+  },
+  "settings__links__label_genres": {
+    "message": "Genres",
+    "description": "Label for the genres field"
+  },
+  "settings__links__label_genre_mode": {
+    "message": "Mode",
+    "description": "Label for the genre mode field"
+  },
+  "settings__links__placeholder_genres": {
+    "message": "Restrict this link to specific genres tags.",
+    "description": "Placeholder for the genres label"
+  },
+  "settings__links__label_icon": {
+    "message": "Icon",
+    "description": "Label for the icon field"
+  },
+  "settings__links__label_icon_only": {
+    "message": "Icon only",
+    "description": "Label for the only icon field"
+  },
+  "settings__links__label_color": {
+    "message": "Color",
+    "description": "Label for the color field"
+  },
+  "settings__links__label_bordered": {
+    "message": "Bordered",
+    "description": "Label for the border field"
+  },
   "settings__links__label_template": {
     "message": "Template",
     "description": "Label for the template field"

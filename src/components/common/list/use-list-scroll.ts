@@ -4,16 +4,18 @@ import { computed, isRef, ref, watch } from 'vue';
 
 import type { Ref } from 'vue';
 
-import type { ListScrollItem, ListScrollItemMeta, ListScrollItemTag, ListScrollSourceItem, OnScroll, OnUpdated } from '~/models/list-scroll.model';
+import type { ListScrollItem, ListScrollItemTag, ListScrollSourceItem, OnScroll, OnUpdated } from '~/models/list-scroll.model';
 
 import type { StorePagination } from '~/models/pagination.model';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { CustomLinkView, isAliasScope, isCustomLinkScope } from '~/models/link.model';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 
 import { RouterService } from '~/services/router.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { type ImageQuery } from '~/stores/data/image.store';
+import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 export type ListScrollSourceItemWithDate<T extends string> = ListScrollSourceItem & Partial<Record<T, string | number | Date>>;
@@ -126,7 +128,7 @@ const getEpisodeTypeTag = (episode: ListScrollSourceItem['episode']): ListScroll
       label: premiere,
       i18n: ['common', 'tag'],
       type: color,
-      bordered: true,
+      bordered: false,
     };
   }
   if (!type) return;
@@ -134,11 +136,13 @@ const getEpisodeTypeTag = (episode: ListScrollSourceItem['episode']): ListScroll
   let finale: TraktEpisodeTypes | null = null;
   if (type === TraktEpisodeType.SeriesFinale) {
     finale = TraktEpisodeType.SeriesFinale;
+    color = 'error';
   } else if (type === TraktEpisodeType.MidSeasonFinale) {
     finale = TraktEpisodeType.MidSeasonFinale;
     color = 'info';
   } else if (type === TraktEpisodeType.SeasonFinale) {
     finale = TraktEpisodeType.SeasonFinale;
+    color = 'error';
   }
 
   if (!finale) return;
@@ -146,38 +150,66 @@ const getEpisodeTypeTag = (episode: ListScrollSourceItem['episode']): ListScroll
     label: finale,
     i18n: ['common', 'tag'],
     type: color,
-    bordered: true,
+    bordered: false,
   };
 };
 
-export const getTags = (item: Pick<ListScrollSourceItem, 'episode' | 'season'>, type: ListScrollItem['type']): ListScrollItem['tags'] => {
+export const getTags = (
+  source: Pick<ListScrollSourceItem, 'episode' | 'season' | 'show' | 'movie'>,
+  { id, type, title, meta }: Partial<ListScrollItem>,
+): ListScrollItem['tags'] => {
   const tags: ListScrollItem['tags'] = [];
-  if (type === 'episode' && item.episode) {
+  if (type === 'episode' && source.episode) {
     tags.push({
-      label: `${i18nSeason()} ${item.episode.season.toString().padStart(2, '0')} ${i18nEpisode()} ${item.episode.number.toString().padStart(2, '0')}`,
+      label: `${i18nSeason()} ${source.episode.season.toString().padStart(2, '0')} ${i18nEpisode()} ${source.episode.number
+        .toString()
+        .padStart(2, '0')}`,
       title: openInEpisode(),
       type: 'warning',
       bordered: true,
       url: ResolveExternalLinks.search({
         type: 'episode',
         source: 'trakt',
-        id: item.episode.ids.trakt,
+        id: source.episode.ids.trakt,
       }),
     });
 
-    const typeTag = getEpisodeTypeTag(item.episode);
+    const typeTag = getEpisodeTypeTag(source.episode);
     if (typeTag) tags.push(typeTag);
-  } else if (type === 'season' && item.season) {
+  } else if (type === 'season' && source.season) {
     tags.push({
-      label: `${i18nSeason()} ${item.season.number.toString().padStart(2, '0')}`,
+      label: `${i18nSeason()} ${source.season.number.toString().padStart(2, '0')}`,
       title: openInSeason(),
       type: 'warning',
+      bordered: true,
       url: ResolveExternalLinks.search({
         type: 'season',
         source: 'trakt',
-        id: item.season.ids.trakt,
+        id: source.season.ids.trakt,
       }),
     });
+  }
+
+  if (type && isCustomLinkScope(type)) {
+    const { getAlias, getLinks } = useLinksStore();
+
+    let alias: string | undefined;
+    if (id && isAliasScope(type)) alias = getAlias(type, String(id));
+    alias ??= source.show?.title ?? source.movie?.title;
+
+    getLinks({ scope: type, view: CustomLinkView.List, genres: meta?.genres })?.forEach(link =>
+      tags.push({
+        ...link,
+        url: resolveLinkUrl(link.url, {
+          ...meta?.ids,
+          alias,
+          season: meta?.number?.season,
+          episode: meta?.number?.episode,
+          title,
+        }),
+        iconImgProps: { disabled: true },
+      }),
+    );
   }
 
   return tags;
@@ -200,7 +232,7 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
   dateFn?: D | ((item: T) => T[D]),
 ): ListScrollItem[] =>
   array.map((item, index) => {
-    const _item: ListScrollItem<ListScrollItemMeta> = {
+    const _item: ListScrollItem = {
       ...item,
       index,
       key: `${index}-${item.id}`,
@@ -214,7 +246,6 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
     if (!_item.posterRef) _item.posterRef = ref<string>();
     if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
     if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
-    if (!_item.tags) _item.tags = getTags(item, _item.type);
 
     _item.key = `${_item.type}-${_item.id}`;
     _item.date = getDate(item, array, index, dateFn);
@@ -227,6 +258,7 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
         episode: item.episode?.ids,
         person: item.person?.ids,
       },
+      genres: item.show?.genres ?? item.movie?.genres,
     };
 
     if (_item.type === 'episode' || _item.type === 'season') {
@@ -235,6 +267,8 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
         episode: item.episode?.number,
       };
     }
+
+    if (!_item.tags) _item.tags = getTags(item, _item);
 
     return _item;
   });
