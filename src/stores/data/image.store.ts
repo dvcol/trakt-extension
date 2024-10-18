@@ -2,7 +2,7 @@ import { arrayMax, findClosestMatch } from '@dvcol/common-utils/common/math';
 import { getShortLocale } from '@dvcol/common-utils/common/navigator';
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, type Ref, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import type { TmdbConfiguration, TmdbImage } from '@dvcol/tmdb-http-client/models';
 
@@ -232,66 +232,58 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const buildImageUrl = ({ url, baseUrl, type, size }: { url: string; baseUrl: string; type: ImageQuery['type']; size: number | 'original' }) =>
     `${baseUrl}${getImageSize(type, size)}${url}`;
 
-  const setResponseValue = (
-    { image, baseUrl, type, size }: { image: ImageStoreMedias; baseUrl: string; type: ImageQuery['type']; size: number | 'original' },
-    response: Ref<ImageStoreMedias | undefined> = ref(),
-  ): Ref<ImageStoreMedias | undefined> => {
-    if (typeof image === 'string') response.value = buildImageUrl({ url: image, baseUrl, type, size });
-    else {
-      response.value = {
-        poster: image.poster ? buildImageUrl({ url: image.poster, baseUrl, type, size }) : undefined,
-        backdrop: image.backdrop ? buildImageUrl({ url: image.backdrop, baseUrl, type, size }) : undefined,
-      };
-    }
-    return response;
+  const getResponseValue = ({
+    image,
+    baseUrl,
+    type,
+    size,
+  }: {
+    image?: ImageStoreMedias;
+    baseUrl?: string;
+    type: ImageQuery['type'];
+    size: number | 'original';
+  }): ImageStoreMedias | undefined => {
+    if (!baseUrl || !image) return undefined;
+    if (typeof image === 'string') return buildImageUrl({ url: image, baseUrl, type, size });
+
+    return {
+      poster: image.poster ? buildImageUrl({ url: image.poster, baseUrl, type, size }) : undefined,
+      backdrop: image.backdrop ? buildImageUrl({ url: image.backdrop, baseUrl, type, size }) : undefined,
+    };
   };
 
   const getImageResponse = ({
     query,
     size = 300,
-    response = ref(),
   }: {
     query: ImageQuery;
     size?: number | 'original';
-    response?: Ref<ImageStoreMedias | undefined>;
   }): {
-    response: Ref<ImageStoreMedias | undefined>;
     key: string;
     type: ImageQuery['type'];
-    image?: string | ImageStoreMedias;
+    image?: ImageStoreMedias;
     baseUrl?: string;
   } => {
     const { key, type } = getKeyAndType(query);
     const image = images[type][key];
     const baseUrl = tmdbConfig.value?.images?.secure_base_url;
-    if (image && baseUrl) setResponseValue({ image, baseUrl, type, size }, response);
-    return { response, key, type, image, baseUrl };
+    return { key, type, baseUrl, image: getResponseValue({ image, baseUrl, type, size }) };
   };
 
-  const getImageUrl = async ({
-    query,
-    size = 300,
-    response = ref(),
-    fetch = true,
-  }: {
-    query: ImageQuery;
-    size?: number | 'original';
-    response?: Ref<ImageStoreMedias | undefined>;
-    fetch?: boolean;
-  }) => {
+  const getImageUrl = async ({ query, size = 300, fetch = true }: { query: ImageQuery; size?: number | 'original'; fetch?: boolean }) => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
 
-    const { image, key, type, baseUrl = tmdbConfig.value.images.secure_base_url } = getImageResponse({ query, size, response });
+    const { image, key, type, baseUrl = tmdbConfig.value.images.secure_base_url } = getImageResponse({ query, size });
 
-    if (image || !fetch) return response;
+    if (image || !fetch) return image;
 
     const result = await fetchImageUrl(key, query);
-    if (!result?.image) return response;
-    return setResponseValue({ image: result.image, baseUrl, type, size }, response);
+    if (!result?.image) return undefined;
+    return getResponseValue({ image: result.image, baseUrl, type, size });
   };
 
-  return { initImageStore, getImageUrl, getImageResponse, imageSizes, clearState, buildImageUrl };
+  return { initImageStore, getImageUrl, imageSizes, clearState, buildImageUrl };
 });
 
 export const useImageStoreRefs = () => storeToRefs(useImageStore());

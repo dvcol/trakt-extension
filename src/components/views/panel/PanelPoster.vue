@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NFlex, NSkeleton } from 'naive-ui';
-import { computed, type PropType, ref, toRefs, Transition } from 'vue';
+import { computed, type PropType, toRefs, Transition } from 'vue';
 
 import type { PosterItem } from '~/models/poster.model';
 import type { ImageQuery, ImageStoreTypes } from '~/stores/data/image.store';
@@ -59,7 +59,9 @@ const posterItem = computed<PosterItem | undefined>(() => {
   };
 
   return {
-    posterRef: ref(),
+    id,
+    key: `${type}-${id}`,
+    type,
     getPosterQuery: () => imageQuery,
   };
 });

@@ -1,7 +1,16 @@
 <script lang="ts" setup>
 import { NImage } from 'naive-ui';
 
-import { computed, onBeforeUnmount, type PropType, ref, toRefs, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  type PropType,
+  reactive,
+  ref,
+  toRaw,
+  toRefs,
+  watch,
+} from 'vue';
 
 import type { PosterItem } from '~/models/poster.model';
 
@@ -36,19 +45,18 @@ const props = defineProps({
 
 const { backdrop, poster, item, size, type } = toRefs(props);
 
-// Local poster is used when the item has no poster ref of its own.
-const localPoster = ref<ImageStoreMedias>();
-
 // cache poster image to prevent flickering
-const cache: Map<string, ImageStoreMedias> = new Map();
+const cache = reactive<Record<string, ImageStoreMedias>>({});
 
-const resolvedPoster = computed(() => {
+const resolvedPoster = computed<string | undefined>(() => {
   if (poster?.value) return poster.value;
   if (item.value.poster) return item.value.poster;
-  let image = (item.value.posterRef ?? localPoster)?.value;
-  if (item?.value?.key) {
-    if (image) cache.set(item.value.key, image);
-    else image = cache.get(item.value.key);
+
+  let image: ImageStoreMedias | undefined = item.value.posterRef?.value;
+  if (!image) {
+    if (!item.value.key) return;
+    const key = [item.value.key, backdrop.value, type?.value].filter(Boolean).join('-');
+    image = cache[key];
   }
   if (!image) return;
   if (typeof image === 'string') return image;
@@ -83,13 +91,16 @@ const onLoad = () => {
 const { getImageUrl } = useImageStore();
 
 const timeout = ref();
-const getPosters = async (_item: PosterItem) => {
+const getPosters = async (
+  _item: PosterItem = item.value,
+  _type: PosterItem['type'] | undefined = type?.value,
+) => {
   if (resolvedPoster.value) return;
 
   const query = _item.getPosterQuery?.();
   if (!query) return;
-  if (type?.value && type.value !== _item.type) {
-    query.type = type.value;
+  if (_type === 'show' && (_item.type === 'season' || _item.type === 'episode')) {
+    query.type = _type;
     if (_item.type === 'episode') delete query.episode;
     if (_item.type === 'season') delete query.season;
   }
@@ -100,17 +111,20 @@ const getPosters = async (_item: PosterItem) => {
     transition.value = true;
   }, 100);
   try {
-    await getImageUrl({
+    const response = await getImageUrl({
       query,
       size: size.value,
-      response: _item.posterRef ?? localPoster,
     });
+    if (!_item?.key || !response) return;
+    const key = [item.value.key, backdrop.value, type?.value].filter(Boolean).join('-');
+    cache[key] = response;
+    console.info('caching', query, key, response, toRaw(cache));
   } catch (error) {
     Logger.error('Failed to fetch poster', error);
   }
 };
 
-watch(item, getPosters, { immediate: true, flush: 'pre' });
+watch([item, type, backdrop], () => getPosters(), { immediate: true, flush: 'pre' });
 
 onBeforeUnmount(() => {
   clearTimeout(timeout.value);

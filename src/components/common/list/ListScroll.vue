@@ -146,6 +146,7 @@ const {
   backdrop,
   hidePoster,
   scrollBoundary,
+  posterType,
 } = toRefs(props);
 
 const { floating, reverse } = useAppStateStoreRefs();
@@ -155,6 +156,7 @@ const scrolled = ref(false);
 
 const isCompact = watchMedia('(max-width: 600px)');
 const showBackdrop = computed(() => backdrop?.value && !isCompact.value);
+const overridePanelType = computed(() => (isCompact.value ? 'show' : posterType?.value));
 
 const isTiny = watchMedia('(max-width: 350px)');
 const showPoster = computed(() => !hidePoster?.value && !isTiny.value);
@@ -307,7 +309,7 @@ const listPaddingBottom = computed(() => {
           :hide-time="hideTime"
           :hide-poster="!showPoster"
           :backdrop="showBackdrop"
-          :poster-type="posterType"
+          :poster-type="overridePanelType"
           :content-height="contentHeight"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"
