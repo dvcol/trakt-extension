@@ -16,6 +16,7 @@ import { useActivityStore } from '~/stores/data/activity.store';
 import { useProgressStore, useProgressStoreRefs } from '~/stores/data/progress.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 import { getSessionUser } from '~/utils/trakt-service.utils';
@@ -45,6 +46,9 @@ onMounted(() => {
 const { user } = useAuthSettingsStoreRefs();
 const unSub = ref<() => void>();
 const notification = ref<NotificationReactive>();
+
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.Progress);
 
 const { getEvicted } = useActivityStore();
 useWatchActivated(
@@ -103,7 +107,8 @@ useActiveAndDocumentVisible({
         ref="listRef"
         :loading="loading"
         :items="progress"
-        backdrop
+        :backdrop="imageSettings.backdrop"
+        :poster-type="imageSettings.type"
         hide-date
         show-progress
         show-collected

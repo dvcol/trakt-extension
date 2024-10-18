@@ -5,6 +5,8 @@ import { computed, reactive, ref, toRaw } from 'vue';
 
 import type { ListEntity } from '~/models/list.model';
 
+import type { PosterItem } from '~/models/poster.model';
+
 import { NavbarPosition, type NavbarPositions } from '~/models/navbar-position.model';
 
 import { PageSize } from '~/models/page-size.model';
@@ -34,10 +36,31 @@ type RouteDictionary = Partial<Record<Route, boolean>>;
 const DefaultRoutes: RouteDictionary = {
   [Route.Progress]: false,
   [Route.Calendar]: true,
-  [Route.Releases]: false,
   [Route.History]: true,
   [Route.Watchlist]: true,
+  [Route.Releases]: false,
   [Route.Search]: true,
+};
+
+type ImageTypeDictionary = Partial<Record<Route, PosterItem['type'] | 'default'>>;
+
+const DefaultImageTypes: ImageTypeDictionary = {
+  [Route.Progress]: 'default',
+  [Route.Calendar]: 'default',
+  [Route.History]: 'default',
+  [Route.Watchlist]: 'default',
+  [Route.Releases]: 'default',
+  [Route.Search]: 'default',
+};
+
+type ImageFormatDictionary = Partial<Record<Route, 'backdrop' | 'poster'>>;
+const DefaultImageFormats: ImageFormatDictionary = {
+  [Route.Progress]: 'backdrop',
+  [Route.Calendar]: 'backdrop',
+  [Route.History]: 'backdrop',
+  [Route.Watchlist]: 'poster',
+  [Route.Releases]: 'poster',
+  [Route.Search]: 'poster',
 };
 
 type ExtensionSettings = {
@@ -53,6 +76,8 @@ type ExtensionSettings = {
   loadingHysteresis: number;
   navbarPosition: NavbarPositions;
   iconOnly: boolean;
+  imageType: ImageTypeDictionary;
+  imageFormat: ImageFormatDictionary;
 };
 
 const ExtensionSettingsConstants = {
@@ -75,10 +100,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const loadingHysteresis = ref(-1);
   const navbarPosition = ref<NavbarPositions>(NavbarPosition.Auto);
   const iconOnly = ref(true);
+  const imageType = reactive<ExtensionSettings['imageType']>(DefaultImageTypes);
+  const imageFormat = reactive<ExtensionSettings['imageFormat']>(DefaultImageFormats);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
     Object.assign(routeDictionary, DefaultRoutes);
+    Object.assign(imageType, DefaultImageTypes);
+    Object.assign(imageFormat, DefaultImageFormats);
     restoreRoute.value = true;
     restorePanel.value = false;
     progressType.value = ProgressType.Show;
@@ -92,7 +121,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         enabledRoutes: toRaw(routeDictionary),
         restoreRoute: restoreRoute.value,
         restorePanel: restorePanel.value,
-        loadLists,
+        loadLists: toRaw(loadLists),
         loadListsPageSize: loadListsPageSize.value,
         progressType: progressType.value,
         enableRatings: enableRatings.value,
@@ -100,6 +129,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         loadingHysteresis: loadingHysteresis.value,
         navbarPosition: navbarPosition.value,
         iconOnly: iconOnly.value,
+        imageType: toRaw(imageType),
+        imageFormat: toRaw(imageFormat),
       }),
     500,
   );
@@ -136,6 +167,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.loadingHysteresis !== undefined) loadingHysteresis.value = restored.loadingHysteresis;
     if (restored?.navbarPosition !== undefined) navbarPosition.value = restored.navbarPosition;
     if (restored?.iconOnly !== undefined) iconOnly.value = restored.iconOnly;
+    if (restored?.imageType !== undefined) Object.assign(imageType, restored.imageType);
+    if (restored?.imageFormat !== undefined) Object.assign(imageFormat, restored.imageFormat);
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -165,6 +198,12 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     }
     saveState().catch(err => Logger.error('Failed to save enabled tab extension settings', { tab, err }));
   };
+
+  const getImageSettings = (route: Route) =>
+    computed(() => ({
+      type: imageType[route] === 'default' ? undefined : imageType[route],
+      backdrop: imageFormat[route] === 'backdrop',
+    }));
 
   return {
     initExtensionSettingsStore,
@@ -264,6 +303,21 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: boolean) => {
         iconOnly.value = value;
         saveState().catch(err => Logger.error('Failed to save icon only extension settings', { value, err }));
+      },
+    }),
+    getImageSettings,
+    imageType: computed({
+      get: () => imageType,
+      set: (value: ImageTypeDictionary) => {
+        Object.assign(imageType, value);
+        saveState().catch(err => Logger.error('Failed to save image type extension settings', { value, err }));
+      },
+    }),
+    imageFormat: computed({
+      get: () => imageFormat,
+      set: (value: ImageFormatDictionary) => {
+        Object.assign(imageFormat, value);
+        saveState().catch(err => Logger.error('Failed to save image format extension settings', { value, err }));
       },
     }),
   };

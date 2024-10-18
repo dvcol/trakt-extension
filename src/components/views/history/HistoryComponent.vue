@@ -15,6 +15,7 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
 import { useHistoryStore, useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 import { useWatchActivated } from '~/utils/vue.utils';
@@ -48,6 +49,9 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchHistory, {
   active,
 });
 
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.History);
+
 const { getEvicted } = useActivityStore();
 useWatchActivated(
   watch(getEvicted(Route.History), async _evicted => {
@@ -80,6 +84,8 @@ useActiveAndDocumentVisible({
       :loading="loading"
       :pagination="pagination"
       :page-size="pageSize"
+      :backdrop="imageSettings.backdrop"
+      :poster-type="imageSettings.type"
       show-collected
       show-tag-loader
       @on-scroll="scrolled = true"

@@ -10,12 +10,14 @@ import {
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
   type SearchResult,
   useSearchStore,
   useSearchStoreRefs,
 } from '~/stores/data/search.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible } from '~/utils/store.utils';
 
@@ -25,6 +27,9 @@ const { footerOpen } = useAppStateStoreRefs();
 
 const { searchResults, loading, pagination } = useSearchStoreRefs();
 const { fetchSearchResults } = useSearchStore();
+
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.Search);
 
 onActivated(async () => {
   await fetchSearchResults();
@@ -53,6 +58,8 @@ const { onItemClick } = usePanelItem();
       hide-date
       :items="list"
       :loading="loading"
+      :backdrop="imageSettings.backdrop"
+      :poster-type="imageSettings.type"
       show-played
       show-collected
       @on-scroll="scrolled = true"

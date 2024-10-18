@@ -10,6 +10,7 @@ import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
 import { useCalendarStore, useCalendarStoreRefs } from '~/stores/data/calendar.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
@@ -32,6 +33,9 @@ const { listRef, onClick, onScrollTop, onScrollBottom, reload } = useCalendar({
   centerItem,
   fetchData: fetchCalendar,
 });
+
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.Calendar);
 
 watch(center, (_is, _was) => {
   if (new Date(_is).toLocaleDateString() === new Date(_was).toLocaleDateString()) return;
@@ -72,7 +76,8 @@ const { onItemClick } = usePanelItem();
       ref="listRef"
       :items="list"
       :loading="loading"
-      backdrop
+      :backdrop="imageSettings.backdrop"
+      :poster-type="imageSettings.type"
       show-played
       show-collected
       show-tag-loader

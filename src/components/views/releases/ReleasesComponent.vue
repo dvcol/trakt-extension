@@ -9,9 +9,11 @@ import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
@@ -24,6 +26,9 @@ const { releases, loading, center } = useReleasesStoreRefs();
 const { fetchReleases, clearState } = useReleasesStore();
 
 const list = useListScroll(releases, 'date');
+
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.Releases);
 
 const { centerItem, centerIsToday, scrolledOut, recenterIcon, onScrollIntoOutOfView } =
   useCenterButton({ list, center });
@@ -73,6 +78,8 @@ const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
       :items="list"
       :loading="loading"
       :content-height="3"
+      :backdrop="imageSettings.backdrop"
+      :poster-type="imageSettings.type"
       hide-time
       overscroll="none"
       :scroll-into-view="centerItem?.id ? [centerItem?.id] : []"

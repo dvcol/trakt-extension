@@ -22,6 +22,7 @@ import {
   useListStoreRefs,
 } from '~/stores/data/list.store';
 import { useListsStoreRefs } from '~/stores/data/lists.store';
+import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 import { useWatchActivated } from '~/utils/vue.utils';
@@ -65,6 +66,9 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
   active,
 });
 
+const { getImageSettings } = useExtensionSettingsStore();
+const imageSettings = getImageSettings(Route.Watchlist);
+
 const { getEvicted } = useActivityStore();
 useWatchActivated(
   watch(getEvicted(Route.Watchlist), async _evicted => {
@@ -95,6 +99,8 @@ useActiveAndDocumentVisible({
       :loading="listLoading"
       :pagination="pagination"
       :page-size="pageSize"
+      :backdrop="imageSettings.backdrop"
+      :poster-type="imageSettings.type"
       show-played
       show-collected
       @on-scroll="scrolled = true"
