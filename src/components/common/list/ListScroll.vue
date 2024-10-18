@@ -7,6 +7,8 @@ import type { PropType, Ref, Transition } from 'vue';
 
 import type { StorePagination } from '~/models/pagination.model';
 
+import type { PosterItem } from '~/models/poster.model';
+
 import ListEmpty from '~/components/common/list/ListEmpty.vue';
 import ListItem from '~/components/common/list/ListItem.vue';
 import ListLoadMore from '~/components/common/list/ListLoadMore.vue';
@@ -46,6 +48,10 @@ const props = defineProps({
   },
   backdrop: {
     type: Boolean,
+    required: false,
+  },
+  posterType: {
+    type: String as PropType<PosterItem['type']>,
     required: false,
   },
   hidePoster: {
@@ -301,6 +307,7 @@ const listPaddingBottom = computed(() => {
           :hide-time="hideTime"
           :hide-poster="!showPoster"
           :backdrop="showBackdrop"
+          :poster-type="posterType"
           :content-height="contentHeight"
           :hover="hoverDate === item.date?.current?.toDateString()"
           :scroll-into-view="scrollIntoView?.includes(item.id)"

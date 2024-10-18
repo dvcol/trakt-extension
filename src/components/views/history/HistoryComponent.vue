@@ -81,6 +81,7 @@ useActiveAndDocumentVisible({
       :pagination="pagination"
       :page-size="pageSize"
       show-collected
+      show-tag-loader
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"

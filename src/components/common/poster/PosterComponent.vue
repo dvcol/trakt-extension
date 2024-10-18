@@ -14,6 +14,10 @@ const props = defineProps({
     type: Object as PropType<PosterItem>,
     required: true,
   },
+  type: {
+    type: String as PropType<PosterItem['type']>,
+    required: false,
+  },
   poster: {
     type: String,
     required: false,
@@ -30,7 +34,7 @@ const props = defineProps({
   },
 });
 
-const { backdrop, poster, item, size } = toRefs(props);
+const { backdrop, poster, item, size, type } = toRefs(props);
 
 // Local poster is used when the item has no poster ref of its own.
 const localPoster = ref<ImageStoreMedias>();
@@ -48,20 +52,31 @@ const resolvedPoster = computed(() => {
   }
   if (!image) return;
   if (typeof image === 'string') return image;
-  if (backdrop.value && 'backdrop' in image) return image.backdrop;
-  return image.poster;
+  if (backdrop.value && 'backdrop' in image) return image.backdrop ?? image.poster;
+  return image.poster ?? image.backdrop;
 });
-
-const objectFit = computed(() =>
-  resolvedPoster.value === PosterPlaceholder ? 'contain' : 'cover',
-);
 
 const transition = ref(false);
 
 const imgLoaded = ref(false);
 const loading = computed(() => !imgLoaded.value || !resolvedPoster.value);
 
+const imageRef = ref<typeof NImage>();
+const dimensions = ref<{ width: number; height: number; ratio: number }>();
+const portrait = computed(() => dimensions.value?.ratio && dimensions.value.ratio < 1);
+
+const objectFit = computed(() =>
+  resolvedPoster.value === PosterPlaceholder ? 'contain' : 'cover',
+);
+
 const onLoad = () => {
+  const { naturalWidth, naturalHeight }: HTMLImageElement =
+    imageRef.value?.$el?.firstElementChild ?? {};
+  dimensions.value = {
+    width: naturalWidth,
+    height: naturalHeight,
+    ratio: Math.round((naturalWidth / naturalHeight) * 100) / 100,
+  };
   imgLoaded.value = true;
 };
 
@@ -73,9 +88,10 @@ const getPosters = async (_item: PosterItem) => {
 
   const query = _item.getPosterQuery?.();
   if (!query) return;
-  if (!backdrop.value && _item.type === 'episode') {
-    query.type = 'show';
-    delete query.episode;
+  if (type?.value && type.value !== _item.type) {
+    query.type = type.value;
+    if (_item.type === 'episode') delete query.episode;
+    if (_item.type === 'season') delete query.season;
   }
   // If the image is not loaded after 100ms, show transition
   clearTimeout(timeout.value);
@@ -103,9 +119,11 @@ onBeforeUnmount(() => {
 
 <template>
   <NImage
+    ref="imageRef"
     alt="poster-image"
     class="poster"
     :class="{
+      portrait,
       backdrop,
       loading,
       transition,
@@ -121,7 +139,10 @@ onBeforeUnmount(() => {
   <NImage
     alt="poster-image-fallback"
     class="poster placeholder"
-    :class="{ backdrop }"
+    :class="{
+      portrait,
+      backdrop,
+    }"
     object-fit="contain"
     width="100%"
     lazy

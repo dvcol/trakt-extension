@@ -115,7 +115,7 @@ const { openTab } = useLinksStore();
     cursor: pointer;
   }
 
-  &.landscape {
+  &.landscape:not(:has(.poster.portrait)) {
     --poster-width: min(var(--half-width), var(--height-70-dvh));
     --poster-height: calc(var(--poster-width) * (9 / 16));
   }

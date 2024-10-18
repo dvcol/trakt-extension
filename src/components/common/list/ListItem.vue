@@ -36,6 +36,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  posterType: {
+    type: String as PropType<PosterItem['type']>,
+    required: false,
+  },
   color: {
     type: String,
     required: false,
@@ -228,6 +232,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
             v-if="!hidePoster"
             :item="item as PosterItem"
             :poster="poster"
+            :type="posterType"
             :backdrop="backdrop"
           />
           <ListItemPanel
@@ -273,7 +278,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
       @include mixin.hover-background(
         $from: transparent,
         $to: var(--bg-color-20),
-        $transition: 0.4s var(--n-bezier)
+        $transition: 0.3s var(--n-bezier)
       );
 
       flex: 1 1 auto;
