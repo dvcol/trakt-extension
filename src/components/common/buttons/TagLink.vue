@@ -101,7 +101,6 @@ const onClick = (e: MouseEvent) => {
     padding-left: 0.15rem;
   }
 
-  &:active,
   &:focus-within,
   &:hover {
     background-color: color-mix(
@@ -112,6 +111,18 @@ const onClick = (e: MouseEvent) => {
 
     .label {
       filter: saturate(1.5);
+    }
+  }
+
+  &:active {
+    background-color: color-mix(
+      in srgb,
+      var(--n-close-icon-color-hover),
+      transparent 80%
+    );
+
+    .label {
+      filter: saturate(1.25);
     }
   }
 }

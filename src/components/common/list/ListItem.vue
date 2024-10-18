@@ -273,11 +273,17 @@ const onClick = () => emit('onItemClick', { item: item?.value });
       @include mixin.hover-background(
         $from: transparent,
         $to: var(--bg-color-20),
-        $transition: 0.2s var(--n-bezier)
+        $transition: 0.4s var(--n-bezier)
       );
 
       flex: 1 1 auto;
       padding: 0.5rem;
+      border-radius: 1.15rem;
+
+      &:active {
+        background-color: var(--bg-color-30);
+        box-shadow: var(--inset-box-shadow);
+      }
     }
 
     .placeholder {

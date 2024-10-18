@@ -73,7 +73,9 @@ const onTitleClick = (e: MouseEvent) => {
   will-change: color;
 
   .hover-link {
-    transition: color 0.3s var(--n-bezier);
+    transition:
+      color 0.3s var(--n-bezier),
+      filter 0.3s var(--n-bezier);
     will-change: color;
 
     &:active,
@@ -82,11 +84,20 @@ const onTitleClick = (e: MouseEvent) => {
     &:focus-visible {
       color: var(--trakt-red);
     }
+
+    &:active {
+      filter: saturate(1.5);
+    }
   }
 
+  &:active,
   &:hover,
   &:focus-visible .hover-link {
     color: var(--trakt-red);
+  }
+
+  &:active {
+    filter: saturate(1.5);
   }
 
   .content {
