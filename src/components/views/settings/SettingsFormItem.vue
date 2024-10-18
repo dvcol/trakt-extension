@@ -16,18 +16,24 @@ defineProps({
     type: Object as PropType<FormItemGiProps>,
     required: false,
   },
+  vertical: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 </script>
 
 <template>
-  <NFlex class="flex-auto" wrap justify="space-between" align="center">
+  <NFlex class="flex-auto" justify="space-between" align="center" wrap>
     <NFormItem
       class="form-row"
+      :class="{ vertical }"
       label-placement="left"
       :show-feedback="false"
       v-bind="form"
     >
-      <template #label>
+      <template v-if="label" #label>
         <span class="from-label">{{ label }}</span>
       </template>
       <slot />
@@ -80,6 +86,12 @@ defineProps({
     .from-label {
       color: var(--white-mute);
     }
+  }
+
+  &.vertical {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 8px;
   }
 }
 </style>

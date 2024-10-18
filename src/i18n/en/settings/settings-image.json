@@ -1,0 +1,6 @@
+{
+  "settings__images__image_format_type": {
+    "message": "Enforce show image for season or episodes when applicable, display backdrop or poster image when available.",
+    "description": "Image format type"
+  }
+}

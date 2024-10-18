@@ -99,8 +99,11 @@ const getPosters = async (
 
   const query = _item.getPosterQuery?.();
   if (!query) return;
-  if (_type === 'show' && (_item.type === 'season' || _item.type === 'episode')) {
-    query.type = _type;
+  if (
+    (_type === 'show' || !backdrop.value) &&
+    (_item.type === 'season' || _item.type === 'episode')
+  ) {
+    query.type = 'show';
     if (_item.type === 'episode') delete query.episode;
     if (_item.type === 'season') delete query.season;
   }

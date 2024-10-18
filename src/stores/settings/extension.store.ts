@@ -42,7 +42,8 @@ const DefaultRoutes: RouteDictionary = {
   [Route.Search]: true,
 };
 
-type ImageTypeDictionary = Partial<Record<Route, PosterItem['type'] | 'default'>>;
+export type ImageType = PosterItem['type'] | 'default';
+type ImageTypeDictionary = Partial<Record<Route, ImageType>>;
 
 const DefaultImageTypes: ImageTypeDictionary = {
   [Route.Progress]: 'default',
@@ -53,7 +54,8 @@ const DefaultImageTypes: ImageTypeDictionary = {
   [Route.Search]: 'default',
 };
 
-type ImageFormatDictionary = Partial<Record<Route, 'backdrop' | 'poster'>>;
+export type ImageFormat = 'backdrop' | 'poster';
+type ImageFormatDictionary = Partial<Record<Route, ImageFormat>>;
 const DefaultImageFormats: ImageFormatDictionary = {
   [Route.Progress]: 'backdrop',
   [Route.Calendar]: 'backdrop',
@@ -205,6 +207,16 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       backdrop: imageFormat[route] === 'backdrop',
     }));
 
+  const setImageType = (route: Route, type: PosterItem['type'] | 'default') => {
+    imageType[route] = type;
+    saveState().catch(err => Logger.error('Failed to save image type extension settings', { route, type, err }));
+  };
+
+  const setImageFormat = (route: Route, format: 'backdrop' | 'poster') => {
+    imageFormat[route] = format;
+    saveState().catch(err => Logger.error('Failed to save image format extension settings', { route, format, err }));
+  };
+
   return {
     initExtensionSettingsStore,
     restoreDefaultTab,
@@ -306,20 +318,10 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       },
     }),
     getImageSettings,
-    imageType: computed({
-      get: () => imageType,
-      set: (value: ImageTypeDictionary) => {
-        Object.assign(imageType, value);
-        saveState().catch(err => Logger.error('Failed to save image type extension settings', { value, err }));
-      },
-    }),
-    imageFormat: computed({
-      get: () => imageFormat,
-      set: (value: ImageFormatDictionary) => {
-        Object.assign(imageFormat, value);
-        saveState().catch(err => Logger.error('Failed to save image format extension settings', { value, err }));
-      },
-    }),
+    setImageType,
+    setImageFormat,
+    imageType,
+    imageFormat,
   };
 });
 

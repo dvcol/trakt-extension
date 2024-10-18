@@ -1,0 +1,18 @@
+{
+  "common__image__type__default": {
+    "message": "Default",
+    "description": "Default image type"
+  },
+  "common__image__type__show": {
+    "message": "Show",
+    "description": "Show image type"
+  },
+  "common__image__format__poster": {
+    "message": "Poster",
+    "description": "Poster image format"
+  },
+  "common__image__format__backdrop": {
+    "message": "Backdrop",
+    "description": "Backdrop image format"
+  }
+}

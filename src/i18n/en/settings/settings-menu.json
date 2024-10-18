@@ -23,6 +23,10 @@
     "message": "Links",
     "description": "Links menu item"
   },
+  "settings__menu__images": {
+    "message": "Images",
+    "description": "Images menu item"
+  },
   "settings__menu__menus": {
     "message": "Menus",
     "description": "Context menus menu item"
