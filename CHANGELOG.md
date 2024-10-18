@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.29.0](https://github.com/dvcol/trakt-extension/compare/v1.28.0...v1.29.0) (2024-10-18)
+
+
+### Features
+
+* **images:** add setting to enforces show image or poster UI in tabs ([b30e971](https://github.com/dvcol/trakt-extension/commit/b30e971c349e6aed6ed2de462c0b4559b45537eb))
+* **poster:** parametrize image format ([012243b](https://github.com/dvcol/trakt-extension/commit/012243b4e8378dc2f1dc34f59a59bd0c3efe3481))
+
+
+### Bug Fixes
+
+* **css:** adds active css on clickable links ([9c570b6](https://github.com/dvcol/trakt-extension/commit/9c570b651bfae7cbef0f091d9e6bf00de87de2d3))
+* **image:** simplify image fetching logic ([74b4898](https://github.com/dvcol/trakt-extension/commit/74b489859b926f0164b523edd70d77780ef1fcdb))
+* **poster:** auto-resize to portrait if no backdrop found ([1535f59](https://github.com/dvcol/trakt-extension/commit/1535f5979aa9d6ebb38949806da5c64f84d8619e))
+
 ## [1.28.0](https://github.com/dvcol/trakt-extension/compare/v1.27.2...v1.28.0) (2024-10-18)
 
 
