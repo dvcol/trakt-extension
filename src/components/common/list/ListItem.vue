@@ -16,7 +16,7 @@ import type { PosterItem } from '~/models/poster.model';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
-import { Colors } from '~/styles/colors.style';
+import { BrandColors } from '~/styles/colors.style';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -43,7 +43,7 @@ const props = defineProps({
   color: {
     type: String,
     required: false,
-    default: Colors.traktRedDark,
+    default: BrandColors.traktDark,
   },
   lineType: {
     type: String as PropType<'dashed' | 'default'>,

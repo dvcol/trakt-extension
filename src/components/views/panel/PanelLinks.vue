@@ -21,6 +21,7 @@ import {
   isKnownSource,
 } from '~/models/source.model';
 import { type TagLink } from '~/models/tag.model';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { resolveLinkUrl, useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -96,6 +97,8 @@ const customLinks = computed(() => {
   });
 });
 
+const { brand } = useExtensionSettingsStoreRefs();
+
 const links = computed(() => {
   if (!ids?.value) return;
   const _links: TagLink[] = [];
@@ -110,7 +113,7 @@ const links = computed(() => {
           season: season?.value,
           episode: episode?.value,
         }),
-        icon: getIconFromSource(key),
+        icon: getIconFromSource(key, brand.value),
       });
     });
   if (customLinks.value) _links.push(...customLinks.value);

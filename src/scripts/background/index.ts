@@ -1,4 +1,4 @@
-import { setBadgeBackgroundColor, setBadgeText, setBadgeTextColor, setTitle } from '@dvcol/web-extension-utils/chrome/action';
+import { setBadgeBackgroundColor, setBadgeText, setBadgeTextColor, setIcon, setTitle } from '@dvcol/web-extension-utils/chrome/action';
 import { onContextMenuClicked } from '@dvcol/web-extension-utils/chrome/context';
 import { onInstalledEvent, onVersionUpdate } from '@dvcol/web-extension-utils/chrome/runtime';
 
@@ -58,6 +58,15 @@ try {
     if (text !== undefined) setBadgeText?.({ text });
     if (color !== undefined) setBadgeTextColor?.({ color });
     if (backgroundColor !== undefined) setBadgeBackgroundColor?.({ color: backgroundColor });
+  });
+} catch (error) {
+  console.error('Failed to handle badge update message', error);
+}
+
+try {
+  onMessage(MessageType.IconUpdate, async message => {
+    if (!message.payload) return;
+    setIcon?.({ path: message.payload });
   });
 } catch (error) {
   console.error('Failed to handle badge update message', error);

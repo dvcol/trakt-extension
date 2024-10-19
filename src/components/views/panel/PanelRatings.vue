@@ -10,6 +10,7 @@ import type { RatingItem } from '~/models/rating.model';
 import IconStarFilledHalf from '~/components/icons/IconStarFilledHalf.vue';
 import PanelRating from '~/components/views/panel/PanelRating.vue';
 import { getIconFromSource } from '~/models/source.model';
+import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 
 const props = defineProps({
   ratings: {
@@ -20,13 +21,16 @@ const props = defineProps({
 
 const { ratings } = toRefs(props);
 
+const { brand } = useExtensionSettingsStoreRefs();
 const getIcon = (icon: RatingItem['icon']): DropdownOption['icon'] => {
   if (!icon) return undefined;
   return () =>
     h(NIcon, {
       style: { marginRight: '-0.25rem' },
       component:
-        typeof icon === 'string' ? getIconFromSource(icon, IconStarFilledHalf) : icon,
+        typeof icon === 'string'
+          ? getIconFromSource(icon, brand.value, IconStarFilledHalf)
+          : icon,
     });
 };
 

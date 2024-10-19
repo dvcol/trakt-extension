@@ -7,16 +7,18 @@ import {
   type PropType,
   reactive,
   ref,
-  toRaw,
   toRefs,
   watch,
 } from 'vue';
 
 import type { PosterItem } from '~/models/poster.model';
 
+import PosterPlaceholderNew from '~/assets/images/poster-placeholder-new.webp';
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
+
 import { Logger } from '~/services/logger.service';
 import { type ImageStoreMedias, useImageStore } from '~/stores/data/image.store';
+import { Brand, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 
 const props = defineProps({
   item: {
@@ -88,6 +90,12 @@ const onLoad = () => {
   imgLoaded.value = true;
 };
 
+const { brand } = useExtensionSettingsStoreRefs();
+const placeholder = computed(() => {
+  if (brand.value === Brand.New) return PosterPlaceholderNew;
+  return PosterPlaceholder;
+});
+
 const { getImageUrl } = useImageStore();
 
 const timeout = ref();
@@ -121,7 +129,6 @@ const getPosters = async (
     if (!_item?.key || !response) return;
     const key = [item.value.key, backdrop.value, type?.value].filter(Boolean).join('-');
     cache[key] = response;
-    console.info('caching', query, key, response, toRaw(cache));
   } catch (error) {
     Logger.error('Failed to fetch poster', error);
   }
@@ -150,7 +157,7 @@ onBeforeUnmount(() => {
     lazy
     preview-disabled
     :src="resolvedPoster"
-    :fallback-src="PosterPlaceholder"
+    :fallback-src="placeholder"
     :on-load="onLoad"
   />
   <NImage
@@ -164,8 +171,8 @@ onBeforeUnmount(() => {
     width="100%"
     lazy
     preview-disabled
-    :src="PosterPlaceholder"
-    :fallback-src="PosterPlaceholder"
+    :src="placeholder"
+    :fallback-src="placeholder"
   />
 </template>
 

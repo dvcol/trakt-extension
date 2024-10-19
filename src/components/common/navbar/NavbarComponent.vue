@@ -358,6 +358,9 @@ nav {
     :deep(.n-tabs-capsule) {
       height: calc(#{layout.$header-navbar-height} - 0.75rem) !important;
       border-radius: 0.5rem !important;
+      transition:
+        background-color 0.3s var(--n-bezier),
+        transform 0.3s var(--n-bezier);
     }
 
     :deep(.tab) {

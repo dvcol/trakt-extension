@@ -31,7 +31,7 @@ const override: GlobalThemeOverrides = {
 };
 
 const { drawer, open, dropdown } = NavbarService;
-const { enabledRoutes, backgroundColor } = useExtensionSettingsStoreRefs();
+const { enabledRoutes, backgroundColor, brand } = useExtensionSettingsStoreRefs();
 const { root, floating, reverse } = useAppStateStoreRefs();
 const { isWatching } = useWatchingStoreRefs();
 
@@ -46,6 +46,7 @@ onBeforeMount(() => addCustomProgressProperty());
       '--tab-count': enabledRoutes.length + 1,
       '--background-color': backgroundColor,
     }"
+    :data-brand="brand"
   >
     <NConfigProvider :theme="theme" :theme-overrides="override" abstract>
       <AppComponent />

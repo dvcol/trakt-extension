@@ -1,12 +1,17 @@
 import { CacheRetention } from '@dvcol/common-utils/common/cache';
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
+
 import { defineStore, storeToRefs } from 'pinia';
+
 import { computed, reactive, ref, toRaw } from 'vue';
 
 import type { ListEntity } from '~/models/list.model';
 
 import type { PosterItem } from '~/models/poster.model';
 
+import NewExtensionIcon from '~/assets/brand/favicon-128x128.png';
+import OldExtensionIcon from '~/assets/favicon/favicon-128x128.png';
+import { MessageType } from '~/models/message/message-type.model';
 import { NavbarPosition, type NavbarPositions } from '~/models/navbar-position.model';
 
 import { PageSize } from '~/models/page-size.model';
@@ -15,8 +20,10 @@ import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
+import { newIcons, newThemeColor, oldIcons, oldThemeColor, replaceIcon, replaceMeta } from '~/utils/icons.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
 type CacheRetentionState = {
@@ -65,6 +72,13 @@ const DefaultImageFormats: ImageFormatDictionary = {
   [Route.Search]: 'poster',
 };
 
+export const Brand = {
+  Old: 'old' as const,
+  New: 'new' as const,
+} as const;
+
+export type Brands = (typeof Brand)[keyof typeof Brand];
+
 type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
@@ -80,6 +94,7 @@ type ExtensionSettings = {
   iconOnly: boolean;
   imageType: ImageTypeDictionary;
   imageFormat: ImageFormatDictionary;
+  brand: Brands;
 };
 
 const ExtensionSettingsConstants = {
@@ -104,6 +119,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const iconOnly = ref(true);
   const imageType = reactive<ExtensionSettings['imageType']>(DefaultImageTypes);
   const imageFormat = reactive<ExtensionSettings['imageFormat']>(DefaultImageFormats);
+
+  const brand = ref<Brands>(Brand.Old);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -133,6 +150,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         iconOnly: iconOnly.value,
         imageType: toRaw(imageType),
         imageFormat: toRaw(imageFormat),
+        brand: brand.value,
       }),
     500,
   );
@@ -171,6 +189,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.iconOnly !== undefined) iconOnly.value = restored.iconOnly;
     if (restored?.imageType !== undefined) Object.assign(imageType, restored.imageType);
     if (restored?.imageFormat !== undefined) Object.assign(imageFormat, restored.imageFormat);
+    if (restored?.brand !== undefined) brand.value = restored.brand;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -180,11 +199,6 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const restoreDefaultTab = async () => {
     const restored = await storage.sync.get<Route>(ExtensionSettingsConstants.LocalDefaultTab);
     if (restored) defaultTab.value = restored;
-  };
-
-  const initExtensionSettingsStore = async () => {
-    if (!initialized.value) initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => true);
-    return initialized.value;
   };
 
   const setDefaultTab = (value?: Route) => {
@@ -215,6 +229,23 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const setImageFormat = (route: Route, format: 'backdrop' | 'poster') => {
     imageFormat[route] = format;
     saveState().catch(err => Logger.error('Failed to save image format extension settings', { route, format, err }));
+  };
+
+  const changeBrand = async (value: Brands = brand.value) => {
+    if (value === Brand.New) {
+      if (chromeRuntimeId) return sendMessage({ type: MessageType.IconUpdate, payload: NewExtensionIcon });
+      newIcons.forEach(replaceIcon);
+      return replaceMeta(newThemeColor);
+    }
+    if (chromeRuntimeId) return sendMessage({ type: MessageType.IconUpdate, payload: OldExtensionIcon });
+    oldIcons.forEach(replaceIcon);
+    return replaceMeta(oldThemeColor);
+  };
+
+  const initExtensionSettingsStore = async () => {
+    if (!initialized.value) initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => true);
+    changeBrand();
+    return initialized.value;
   };
 
   return {
@@ -322,6 +353,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     setImageFormat,
     imageType,
     imageFormat,
+    brand: computed({
+      get: () => brand.value,
+      set: (value: Brands) => {
+        brand.value = value;
+        saveState().catch(err => Logger.error('Failed to save brand extension settings', { value, err }));
+        return changeBrand(value);
+      },
+    }),
   };
 });
 

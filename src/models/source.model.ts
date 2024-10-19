@@ -2,6 +2,8 @@ import type { Component } from 'vue';
 
 import type { I18nFunction } from '~/models/i18n.model';
 
+import type { Brands } from '~/stores/settings/extension.store';
+
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconIMDb from '~/components/icons/IconIMDb.vue';
 import IconMyAnimeList from '~/components/icons/IconMyAnimeList.vue';
@@ -9,7 +11,9 @@ import IconSimkl from '~/components/icons/IconSimkl.vue';
 import IconTMDb from '~/components/icons/IconTMDb.vue';
 import IconTVDb from '~/components/icons/IconTVDb.vue';
 import IconTrakt from '~/components/icons/IconTrakt.vue';
+import IconTraktNew from '~/components/icons/IconTraktNew.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { Brand } from '~/stores/settings/extension.store';
 
 export const DataSource = {
   Trakt: 'trakt',
@@ -25,10 +29,10 @@ export type DataSources = (typeof DataSource)[keyof typeof DataSource];
 export const AllDataSources = Object.keys(DataSource).map(key => key.toLowerCase());
 export const isKnownSource = (source: string): source is DataSources => AllDataSources.includes(source);
 
-export const getIconFromSource = (source: DataSources | string, fallback: Component = IconExternalLinkRounded): Component => {
+export const getIconFromSource = (source: DataSources | string, brand?: Brands, fallback: Component = IconExternalLinkRounded): Component => {
   switch (source) {
     case DataSource.Trakt:
-      return IconTrakt;
+      return brand === Brand.New ? IconTraktNew : IconTrakt;
     case DataSource.Tmdb:
       return IconTMDb;
     case DataSource.Imdb:

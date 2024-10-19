@@ -29,6 +29,7 @@ import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import {
+  Brand,
   useExtensionSettingsStore,
   useExtensionSettingsStoreRefs,
 } from '~/stores/settings/extension.store';
@@ -54,6 +55,7 @@ const {
   loadingHysteresis,
   navbarPosition,
   iconOnly,
+  brand,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -151,6 +153,10 @@ const onColor = () => {
   picker.value?.focus();
   picker.value?.click();
 };
+
+const toggleBrand = () => {
+  brand.value = brand.value === Brand.New ? Brand.Old : Brand.New;
+};
 </script>
 
 <template>
@@ -221,6 +227,18 @@ const onColor = () => {
           </NButton>
         </NButtonGroup>
       </div>
+    </SettingsFormItem>
+
+    <!--  Brand  -->
+    <SettingsFormItem :label="i18n('label_brand')">
+      <NSwitch
+        class="form-switch"
+        :value="brand === Brand.New"
+        @update:value="toggleBrand()"
+      >
+        <template #checked>{{ i18n('new', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('old', 'common', 'button') }}</template>
+      </NSwitch>
     </SettingsFormItem>
 
     <!--  Icon Only  -->

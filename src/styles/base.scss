@@ -99,15 +99,6 @@
   --bg-color-warning-80: rgb(43 37 25 / 80%);
   --bg-color-error: rgb(45 27 28);
   --bg-color-error-80: rgb(45 27 28 / 80%);
-  --bg-trakt: rgb(237 28 36);
-  --bg-trakt-50: rgba(237 28 36 / 50%);
-  --bg-trakt-60: rgba(237 28 36 / 60%);
-  --bg-trakt-80: rgba(237 28 36 / 80%);
-  --bg-trakt-dark: rgb(128 0 10);
-  --bg-trakt-dark-50: rgba(128 0 1 / 50%);
-  --bg-trakt-dark-60: rgba(128 0 1 / 60%);
-  --bg-trakt-dark-80: rgba(128 0 1 / 80%);
-  --bg-trakt-dark-90: rgba(128 0 1 / 90%);
 
   /* ui color variables */
   --white: rgb(255 255 255);
@@ -147,6 +138,35 @@
   --trakt-red-light:#ff5c62;
   --trakt-red-lighter: #e98b8b;
 
+  /* trakt.tv background brand color */
+  --bg-trakt: rgb(237 28 36);
+  --bg-trakt-50: rgba(237 28 36 / 50%);
+  --bg-trakt-60: rgba(237 28 36 / 60%);
+  --bg-trakt-80: rgba(237 28 36 / 80%);
+  --bg-trakt-dark: rgb(128 0 10);
+  --bg-trakt-dark-50: rgba(128 0 1 / 50%);
+  --bg-trakt-dark-60: rgba(128 0 1 / 60%);
+  --bg-trakt-dark-80: rgba(128 0 1 / 80%);
+  --bg-trakt-dark-90: rgba(128 0 1 / 90%);
+
+  /* trakt.tv background new brand color */
+  --trakt-purple: #9f42c6;
+  --trakt-purple-dark: #6e1f9d;
+  --trakt-purple-darker: #4a0f7a;
+  --trakt-purple-light: #bf80d9;
+  --trakt-purple-lighter: #d4a3e1;
+
+  /* trakt.tv background new brand color */
+  --bg-trakt-purple: rgb(159 66 198);
+  --bg-trakt-purple-50: rgba(159 66 198 / 50%);
+  --bg-trakt-purple-60: rgba(159 66 198 / 60%);
+  --bg-trakt-purple-80: rgba(159 66 198 / 80%);
+  --bg-trakt-purple-darker: rgb(74 15 122);
+  --bg-trakt-purple-darker-50: rgba(74 15 122 / 50%);
+  --bg-trakt-purple-darker-60: rgba(74 15 122 / 60%);
+  --bg-trakt-purple-darker-80: rgba(74 15 122 / 80%);
+  --bg-trakt-purple-darker-90: rgba(74 15 122 / 90%);
+
   /* Transforms */
   --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -179,28 +199,6 @@
   --card-box-shadow: 0 1px 2px -2px rgb(0 0 0 / 24%), 0 3px 6px 0 rgb(0 0 0 / 18%), 0 5px 12px 4px rgb(0 0 0 / 12%);
   --inset-box-shadow: inset 0 0 20px 6px var(--bg-color-40);
 
-  @media (prefers-color-scheme: dark) {
-    /* semantic color variables for this project */
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-
-    /* Dark theme override for ui color variables */
-    --bg-color-20: var(--bg-black-20);
-    --bg-color-30: var(--bg-black-30);
-    --bg-color-50: var(--bg-black-50);
-    --bg-color-60: var(--bg-black-60);
-    --bg-color-70: var(--bg-black-70);
-    --bg-color-80: var(--bg-black-80);
-    --bg-color-90: var(--bg-black-90);
-    --bg-color: var(--bg-color-30);
-    --bg-color-hover: var(--bg-black-60);
-  }
-
   @media (display-mode: standalone) {
     /* height */
     --full-height: 100vh;
@@ -213,5 +211,27 @@
     --half-width: 50vw;
     --width-40-dvh: 40vw;
     --width-70-dvh: 70vw;
+  }
+}
+
+#trakt-extension-root {
+  &[data-brand="new"] {
+    /* trakt.tv background new brand color overrides */
+    --trakt-red: var(--trakt-purple);
+    --trakt-red-dark: var(--trakt-purple-dark);
+    --trakt-red-darker: var(--trakt-purple-darker);
+    --trakt-red-light: var(--trakt-purple-light);
+    --trakt-red-lighter: var(--trakt-purple-lighter);
+
+    /* trakt.tv background new brand color overrides */
+    --bg-trakt: var(--bg-trakt-purple);
+    --bg-trakt-50: var(--bg-trakt-purple-50);
+    --bg-trakt-60: var(--bg-trakt-purple-60);
+    --bg-trakt-80: var(--bg-trakt-purple-80);
+    --bg-trakt-dark: var(--bg-trakt-purple-darker);
+    --bg-trakt-dark-50: var(--bg-trakt-purple-darker-50);
+    --bg-trakt-dark-60: var(--bg-trakt-purple-darker-60);
+    --bg-trakt-dark-80: var(--bg-trakt-purple-darker-80);
+    --bg-trakt-dark-90: var(--bg-trakt-purple-darker-90);
   }
 }

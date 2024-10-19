@@ -15,7 +15,7 @@ import { fetchCalendarData } from '~/stores/data/calendar.store';
 import { fetchProgressData } from '~/stores/data/progress.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { Colors } from '~/styles/colors.style';
+import { BrandColors, Colors } from '~/styles/colors.style';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { spaceDate } from '~/utils/calendar.utils';
@@ -83,7 +83,7 @@ const sendCalendarBadge = async (start_date = DateUtils.previous(1), days = 8) =
   ];
   return sendMessage({
     type: MessageType.BadgeUpdate,
-    payload: { text, title: title.join('\n\n'), color: Colors.white, backgroundColor: Colors.traktRedDark },
+    payload: { text, title: title.join('\n\n'), color: Colors.white, backgroundColor: BrandColors.traktDark },
   });
 };
 
@@ -107,7 +107,7 @@ const sendProgressBadge = async () => {
 
   return sendMessage({
     type: MessageType.BadgeUpdate,
-    payload: { text, title: title.join('\n\n'), color: Colors.white, backgroundColor: Colors.traktRedDark },
+    payload: { text, title: title.join('\n\n'), color: Colors.white, backgroundColor: BrandColors.traktDark },
   });
 };
 

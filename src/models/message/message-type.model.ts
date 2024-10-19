@@ -6,6 +6,7 @@ export const MessageType = {
   VersionUpdate: 'version-update',
   AppReady: 'app-ready',
   BadgeUpdate: 'badge-update',
+  IconUpdate: 'icon-update',
 } as const;
 
 export type MessageTypes = (typeof MessageType)[keyof typeof MessageType];
@@ -28,4 +29,6 @@ export type MessagePayload<T extends MessageTypes = MessageTypes> = T extends ty
       ? boolean
       : T extends typeof MessageType.BadgeUpdate
         ? BadgeUpdatePayload
-        : MessageTypes;
+        : T extends typeof MessageType.IconUpdate
+          ? string
+          : never;

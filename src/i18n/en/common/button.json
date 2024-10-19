@@ -94,5 +94,13 @@
   "common__button__watched": {
     "message": "Watched",
     "description": "Button to mark as watched."
+  },
+  "common__button__new": {
+    "message": "New",
+    "description": "New button."
+  },
+  "common__button__old": {
+    "message": "Old",
+    "description": "Old button."
   }
 }
