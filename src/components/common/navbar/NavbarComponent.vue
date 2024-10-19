@@ -54,7 +54,7 @@ const navigate = (to: Route) => {
 
 const { enabledRoutes, iconOnly } = useExtensionSettingsStoreRefs();
 
-const isCompact = watchMedia('(max-width: 500px)');
+const isCompact = watchMedia('(max-width: 550px)');
 const isTiny = watchMedia('(max-width: 400px)');
 const threshold = computed(() => {
   if (iconOnly.value) return 6;
@@ -224,7 +224,12 @@ const onTouchEnd = (e: TouchEvent) => {
           <NFlex
             align="center"
             class="tab-label"
-            :class="{ icon: iconOnly, overflow: enabledRoutes.length > 4 }"
+            :class="{
+              icon: iconOnly,
+              wide: enabledRoutes.length === 5,
+              overflow: enabledRoutes.length > 5,
+            }"
+            :data-count="enabledRoutes.length"
           >
             <NIcon :component="getRouteIcon(_route)" size="1em" />
             <span class="text">
@@ -333,7 +338,19 @@ nav {
       }
 
       &.overflow {
-        @media (width < 700px) {
+        @media (width < 750px) {
+          &:not(.icon) i {
+            display: none;
+          }
+
+          &.icon .text {
+            display: none;
+          }
+        }
+      }
+
+      &.wide {
+        @media (width < 650px) {
           &:not(.icon) i {
             display: none;
           }
