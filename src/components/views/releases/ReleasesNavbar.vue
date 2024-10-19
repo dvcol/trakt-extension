@@ -31,6 +31,7 @@ const { clearState, fetchRegions } = useReleasesStore();
 const pickerValue = computed({
   get: () => center.value.getTime(),
   set: (value: number) => {
+    if (!value) return clearState();
     const newDate = value ? new Date(value) : new Date();
     if (newDate.toLocaleDateString() === center.value.toLocaleDateString()) return;
     clearState(newDate);
