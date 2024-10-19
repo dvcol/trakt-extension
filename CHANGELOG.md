@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.30.0](https://github.com/dvcol/trakt-extension/compare/v1.29.0...v1.30.0) (2024-10-19)
+
+
+### Features
+
+* **brand:** adds support for new branding ([107bf2a](https://github.com/dvcol/trakt-extension/commit/107bf2a4dc348e3991357f66ed98719301fcedfc))
+
 ## [1.29.0](https://github.com/dvcol/trakt-extension/compare/v1.28.0...v1.29.0) (2024-10-18)
 
 
