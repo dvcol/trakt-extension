@@ -66,7 +66,9 @@ try {
 try {
   onMessage(MessageType.IconUpdate, async message => {
     if (!message.payload) return;
-    setIcon?.({ path: message.payload });
+    const { icon, color } = message.payload;
+    if (icon !== undefined) setIcon?.(icon);
+    if (color !== undefined) setBadgeBackgroundColor?.(color);
   });
 } catch (error) {
   console.error('Failed to handle badge update message', error);

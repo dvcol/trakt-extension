@@ -20,6 +20,7 @@ import { Route } from '~/models/router.model';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { BrandColors } from '~/styles/colors.style';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -233,11 +234,22 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const changeBrand = async (value: Brands = brand.value) => {
     if (value === Brand.New) {
-      if (chromeRuntimeId) return sendMessage({ type: MessageType.IconUpdate, payload: NewExtensionIcon });
+      if (chromeRuntimeId) {
+        return sendMessage({
+          type: MessageType.IconUpdate,
+          payload: { icon: { path: NewExtensionIcon }, color: { color: BrandColors.traktDark } },
+        });
+      }
       newIcons.forEach(replaceIcon);
       return replaceMeta(newThemeColor);
     }
-    if (chromeRuntimeId) return sendMessage({ type: MessageType.IconUpdate, payload: OldExtensionIcon });
+
+    if (chromeRuntimeId) {
+      return sendMessage({
+        type: MessageType.IconUpdate,
+        payload: { icon: { path: OldExtensionIcon }, color: { color: BrandColors.traktDark } },
+      });
+    }
     oldIcons.forEach(replaceIcon);
     return replaceMeta(oldThemeColor);
   };

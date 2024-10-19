@@ -1,5 +1,6 @@
 import type { VersionUpdateDetails } from '@dvcol/web-extension-utils/chrome/models';
 import type { ContextMenuIds } from '~/models/context/context-menu.model';
+import type { BadgeColorDetails, TabIconDetails } from '~/utils/browser/browser-message.utils';
 
 export const MessageType = {
   ContextMenu: 'context-menu',
@@ -30,5 +31,5 @@ export type MessagePayload<T extends MessageTypes = MessageTypes> = T extends ty
       : T extends typeof MessageType.BadgeUpdate
         ? BadgeUpdatePayload
         : T extends typeof MessageType.IconUpdate
-          ? string
+          ? { icon?: TabIconDetails; color?: BadgeColorDetails }
           : never;

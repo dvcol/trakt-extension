@@ -32,3 +32,6 @@ export const sendMessage = async <
     else throw error;
   }
 };
+
+export type TabIconDetails = chrome.action.TabIconDetails;
+export type BadgeColorDetails = chrome.action.BadgeColorDetails;
