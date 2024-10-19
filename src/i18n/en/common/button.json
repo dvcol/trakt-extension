@@ -102,5 +102,29 @@
   "common__button__old": {
     "message": "Old",
     "description": "Old button."
+  },
+  "common__button__panel__watched__aired": {
+    "message": "Aired Only",
+    "description": "Button to select aired items."
+  },
+  "common__button__panel__watched__unwatched": {
+    "message": "Unwatched",
+    "description": "Button to select unwatched items."
+  },
+  "common__button__panel__watched__all": {
+    "message": "All Episodes",
+    "description": "Button to select all."
+  },
+  "common__button__panel__collection__unwatched": {
+    "message": "Uncollected",
+    "description": "Button to select unwatched items."
+  },
+  "common__button__panel__collection__aired": {
+    "message": "Aired Only",
+    "description": "Button to select aired items."
+  },
+  "common__button__panel__collection__all": {
+    "message": "All Episodes",
+    "description": "Button to select all."
   }
 }

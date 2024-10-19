@@ -19,6 +19,7 @@ import {
   type ListEntity,
   ListType,
 } from '~/models/list.model';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
@@ -143,13 +144,17 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
-  panelDirty.value = true;
-  await addToOrRemoveFromList({
-    list: _list,
-    itemType: 'movie',
-    itemIds: movie.value?.ids,
-    remove,
-  });
+  try {
+    panelDirty.value = true;
+    await addToOrRemoveFromList({
+      list: _list,
+      itemType: 'movie',
+      itemIds: movie.value?.ids,
+      remove,
+    });
+  } catch (error) {
+    Logger.error('Failed to update list', { list: _list, error });
+  }
 };
 
 const releaseDate = computed(() => movie.value?.released);
@@ -163,18 +168,22 @@ const onCollectionUpdate = async (
     date = releaseDate.value;
   }
 
-  panelDirty.value = true;
-  await addToOrRemoveFromList({
-    list: DefaultLists.ShowCollection,
-    itemType: 'movie',
-    itemIds: movie.value?.ids,
-    date,
-    remove: value === PanelButtonsOption.Remove,
-  });
+  try {
+    panelDirty.value = true;
+    await addToOrRemoveFromList({
+      list: DefaultLists.ShowCollection,
+      itemType: 'movie',
+      itemIds: movie.value?.ids,
+      date,
+      remove: value === PanelButtonsOption.Remove,
+    });
 
-  const _id = movie.value?.ids?.trakt;
-  if (_id === undefined) return;
-  return changeMovieCollected(_id, value === PanelButtonsOption.Remove);
+    const _id = movie.value?.ids?.trakt;
+    if (_id === undefined) return;
+    return await changeMovieCollected(_id, value === PanelButtonsOption.Remove);
+  } catch (error) {
+    Logger.error('Failed to update collection', error);
+  }
 };
 
 const onWatchedUpdate = async (
@@ -186,22 +195,26 @@ const onWatchedUpdate = async (
     date = releaseDate.value;
   }
 
-  panelDirty.value = true;
-  await addToOrRemoveFromList({
-    list: {
-      id: DefaultListId.History,
-      type: ListType.History,
-      name: 'list_type__history',
-    },
-    itemType: 'movie',
-    itemIds: movie.value?.ids,
-    date,
-    remove: value === PanelButtonsOption.Remove,
-  });
+  try {
+    panelDirty.value = true;
+    await addToOrRemoveFromList({
+      list: {
+        id: DefaultListId.History,
+        type: ListType.History,
+        name: 'list_type__history',
+      },
+      itemType: 'movie',
+      itemIds: movie.value?.ids,
+      date,
+      remove: value === PanelButtonsOption.Remove,
+    });
 
-  const _id = movie.value?.ids?.trakt;
-  if (_id === undefined) return;
-  return changeMovieWatched(_id, value === PanelButtonsOption.Remove);
+    const _id = movie.value?.ids?.trakt;
+    if (_id === undefined) return;
+    return await changeMovieWatched(_id, value === PanelButtonsOption.Remove);
+  } catch (error) {
+    Logger.error('Failed to update watched status', error);
+  }
 };
 
 const i18n = useI18n('movie', 'panel');
@@ -233,20 +246,24 @@ const { cancel: cancelCheckin, checkin } = useWatchingStore();
 
 const { onCancel } = useCancelWatching(cancelCheckin);
 const onCheckin = async (cancel: boolean) => {
-  if (cancel) {
-    const cancelled = await onCancel();
-    if (!cancelled) return;
-  } else if (!movie.value?.ids?.trakt) {
-    return NotificationService.error(
-      i18n('checkin_failed', 'watching'),
-      new Error('No movie id'),
-    );
-  } else {
-    panelDirty.value = true;
-    await checkin({ movie: { ids: movie.value.ids } });
-  }
+  try {
+    if (cancel) {
+      const cancelled = await onCancel();
+      if (!cancelled) return;
+    } else if (!movie.value?.ids?.trakt) {
+      return NotificationService.error(
+        i18n('checkin_failed', 'watching'),
+        new Error('No movie id'),
+      );
+    } else {
+      panelDirty.value = true;
+      await checkin({ movie: { ids: movie.value.ids } });
+    }
 
-  await fetchMovieWatched(true);
+    await fetchMovieWatched(true);
+  } catch (error) {
+    Logger.error('Failed to checkin', error);
+  }
 };
 
 onMounted(() => {

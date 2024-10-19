@@ -59,6 +59,10 @@ export type SeasonProgress = BaseTraktProgressSeason & {
   finished: boolean;
 };
 
+export const isSeasonProgress = (_progress?: ShowProgress | SeasonProgress | EpisodeProgress): _progress is SeasonProgress => {
+  return !!_progress && 'episodes' in _progress;
+};
+
 export const ShowProgressType = {
   Collection: 'collection',
   Watched: 'watched',

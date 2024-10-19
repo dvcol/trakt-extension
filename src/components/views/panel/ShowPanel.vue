@@ -13,17 +13,26 @@ import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
+  PanelButtonsWatchedOption,
+  type PanelButtonsWatchedOptions,
 } from '~/components/views/panel/use-panel-buttons';
+import {
+  type EpisodeProgress,
+  isSeasonProgress,
+  type SeasonProgress,
+  type ShowProgress,
+} from '~/models/list-scroll.model';
 import {
   DefaultListId,
   DefaultLists,
   type ListEntity,
   ListType,
 } from '~/models/list.model';
+import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
-import { useListStore } from '~/stores/data/list.store';
+import { type AddOrRemoveIds, useListStore } from '~/stores/data/list.store';
 import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
@@ -281,62 +290,137 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
   const _list = myLists.value.find(list => list.id === value);
   if (!_list) return;
 
-  panelDirty.value = true;
-  await addToOrRemoveFromList({
-    list: _list,
-    itemType: panelType.value,
-    itemIds: activeItem.value.ids,
-    remove,
-  });
+  try {
+    panelDirty.value = true;
+    await addToOrRemoveFromList({
+      list: _list,
+      itemType: panelType.value,
+      itemIds: activeItem.value.ids,
+      remove,
+    });
+  } catch (error) {
+    Logger.error('Failed to update list', { list: _list, error });
+  }
 };
 
-const onCollectionUpdate = async (
-  value: PanelButtonsOptions,
-  date?: string | number | Date,
+const getUnwatchedEpisodes = (
+  _progress: SeasonProgress,
+  _option: PanelButtonsWatchedOptions,
+  _episodes = episodes.value,
 ) => {
-  if (!panelType.value || !activeItem.value?.ids) return;
+  const _aired = _progress.aired;
+  const _completed = _episodes?.filter(
+    _e => !_progress.episodes?.some(_p => _p.number === _e.number && _p.completed),
+  );
+  if (_option === PanelButtonsWatchedOption.Unwatched) return _completed;
+  if (!_aired) return [];
+  return _completed?.filter(_episode => _episode.number <= _aired);
+};
+
+const isSeasonIncomplete = (
+  option: PanelButtonsWatchedOptions,
+  progressEntity?: ShowProgress | SeasonProgress | EpisodeProgress,
+): progressEntity is SeasonProgress => {
+  if (panelType.value !== 'season') return false;
+  if (!season.value) return false;
+  if (option === PanelButtonsWatchedOption.All) return false;
+  if (!isSeasonProgress(progressEntity)) return false;
+  return progressEntity.completed !== season.value.episode_count;
+};
+
+const handleSeason = (
+  value: PanelButtonsOptions,
+  selected?: string | number | Date,
+  progressEntity?: ShowProgress | SeasonProgress | EpisodeProgress,
+  options: PanelButtonsWatchedOptions = PanelButtonsWatchedOption.All,
+) => {
+  if (!panelType.value || !activeItem.value?.ids) throw new Error('No active item');
+
+  const remove = value === PanelButtonsOption.Remove;
+  let itemType = panelType.value;
+  let itemIds: AddOrRemoveIds = activeItem.value.ids;
+  let date = selected;
+
   if (date === undefined && value === PanelButtonsOption.Release) {
     date = releaseDate.value;
   }
 
+  if (!remove && isSeasonIncomplete(options, progressEntity)) {
+    const _ids = getUnwatchedEpisodes(progressEntity, options);
+    itemIds = _ids?.map(_episode => _episode.ids) ?? [];
+    itemType = 'episode';
+  }
+
+  return {
+    itemType,
+    itemIds,
+    date,
+    remove,
+  };
+};
+
+const onCollectionUpdate = async (
+  value: PanelButtonsOptions,
+  selected?: string | number | Date,
+  options: PanelButtonsWatchedOptions = PanelButtonsWatchedOption.All,
+) => {
+  if (!panelType.value || !activeItem.value?.ids) return;
+
+  const { itemType, itemIds, date, remove } = handleSeason(
+    value,
+    selected,
+    collectionProgressEntity.value,
+    options,
+  );
+
   try {
+    panelDirty.value = true;
     await addToOrRemoveFromList({
       list: DefaultLists.ShowCollection,
-      itemType: panelType.value,
-      itemIds: activeItem.value.ids,
+      itemType,
+      itemIds,
       date,
-      remove: value === PanelButtonsOption.Remove,
+      remove,
     });
     if (!showId?.value) return;
     await fetchShowCollectionProgress(showId.value, { force: true });
-  } finally {
-    panelDirty.value = true;
+  } catch (error) {
+    Logger.error('Failed to update collection', error);
   }
 };
 
 const onWatchedUpdate = async (
   value: PanelButtonsOptions,
-  date?: string | number | Date,
+  selected?: string | number | Date,
+  options: PanelButtonsWatchedOptions = PanelButtonsWatchedOption.All,
 ) => {
   if (!panelType.value || !activeItem.value?.ids) return;
-  if (date === undefined && value === PanelButtonsOption.Release) {
-    date = releaseDate.value;
-  }
 
-  panelDirty.value = true;
-  await addToOrRemoveFromList({
-    list: {
-      id: DefaultListId.History,
-      type: ListType.History,
-      name: 'list_type__history',
-    },
-    itemType: panelType.value,
-    itemIds: activeItem.value.ids,
-    date,
-    remove: value === PanelButtonsOption.Remove,
-  });
-  if (!showId?.value) return;
-  await fetchShowProgress(showId.value, { force: true });
+  const { itemType, itemIds, date, remove } = handleSeason(
+    value,
+    selected,
+    watchedProgressEntity.value,
+    options,
+  );
+
+  try {
+    panelDirty.value = true;
+    await addToOrRemoveFromList({
+      list: {
+        id: DefaultListId.History,
+        type: ListType.History,
+        name: 'list_type__history',
+      },
+      itemType,
+      itemIds,
+      date,
+      remove,
+    });
+    if (!showId?.value) return;
+    await fetchShowProgress(showId.value, { force: true });
+  } catch (error) {
+    Logger.error('Failed to update watched status', error);
+  }
 };
 
 const { watching, loading: checkinLoading } = useWatchingStoreRefs();
@@ -353,21 +437,25 @@ const { cancel: cancelCheckin, checkin } = useWatchingStore();
 
 const { onCancel } = useCancelWatching(cancelCheckin);
 const onCheckin = async (cancel: boolean) => {
-  if (cancel) {
-    const cancelled = await onCancel();
-    if (!cancelled) return;
-  } else if (!episode.value?.ids?.trakt) {
-    return NotificationService.error(
-      i18n('checkin_failed', 'watching'),
-      new Error('No episode id'),
-    );
-  } else {
-    panelDirty.value = true;
-    await checkin({ episode: { ids: episode.value.ids } });
-  }
+  try {
+    if (cancel) {
+      const cancelled = await onCancel();
+      if (!cancelled) return;
+    } else if (!episode.value?.ids?.trakt) {
+      return NotificationService.error(
+        i18n('checkin_failed', 'watching'),
+        new Error('No episode id'),
+      );
+    } else {
+      panelDirty.value = true;
+      await checkin({ episode: { ids: episode.value.ids } });
+    }
 
-  if (!showId?.value) return;
-  await fetchShowProgress(showId.value, { force: true });
+    if (!showId?.value) return;
+    await fetchShowProgress(showId.value, { force: true });
+  } catch (error) {
+    Logger.error('Failed to checkin', error);
+  }
 };
 
 onMounted(() => {

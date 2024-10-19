@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { wait } from '@dvcol/common-utils/common/promise';
 import {
   type ButtonProps,
   NButton,
@@ -11,7 +12,7 @@ import {
   type TooltipProps,
 } from 'naive-ui';
 
-import { type Component, computed, h, type PropType, ref, toRefs } from 'vue';
+import { type Component, computed, h, type PropType, reactive, ref, toRefs } from 'vue';
 
 import type {
   EpisodeProgress,
@@ -21,11 +22,21 @@ import type {
 } from '~/models/list-scroll.model';
 
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
+import {
+  PanelButtonsOption,
+  type SelectProgressResponse,
+  type SelectProgressValue,
+} from '~/components/views/panel/use-panel-buttons';
+import { clearProxy } from '~/utils/vue.utils';
 
 const props = defineProps({
   select: {
     type: Object as PropType<PopselectProps>,
     required: true,
+  },
+  confirm: {
+    type: Object as PropType<PopselectProps>,
+    required: false,
   },
   progress: {
     type: Object as PropType<ShowProgress | SeasonProgress | EpisodeProgress>,
@@ -64,12 +75,12 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (o: 'onSelect', value: string | number | (string | number)[], date?: number): void;
+  (o: 'onSelect', selected: SelectProgressResponse): void;
 }>();
 
-const { percentage } = toRefs(props);
+const { percentage, confirm, type } = toRefs(props);
 
-const root = ref();
+const root = ref<HTMLDivElement>();
 const trigger = ref();
 
 const progressBackground = computed(() => {
@@ -78,22 +89,50 @@ const progressBackground = computed(() => {
 });
 
 const showPicker = ref(false);
+const showConfirm = ref(false);
 
-const onSelect = (value: string | number | (string | number)[]) => {
-  if (value === 'custom') {
+const selected = reactive<Partial<SelectProgressResponse>>({});
+const clear = () => {
+  showConfirm.value = false;
+  showPicker.value = false;
+  clearProxy(selected);
+};
+
+const onCancel = () => clear();
+
+const onConfirm = (value?: SelectProgressValue) => {
+  selected.confirm = value;
+  if (!selected.option) return clear();
+  if (selected.option === PanelButtonsOption.Custom) {
     showPicker.value = true;
     return;
   }
-  emit('onSelect', value);
+  emit('onSelect', selected as SelectProgressResponse);
+  clear();
 };
 
-const onClear = () => {
-  showPicker.value = false;
+const displayConfirm = async () => {
+  showConfirm.value = true;
+  await wait(500);
+  const popSelect = root.value?.querySelector<HTMLDivElement>('div[tabindex]');
+  if (!popSelect || !showConfirm.value) return;
+  popSelect.focus();
+  if (popSelect.onblur) return;
+  popSelect.onblur = clear;
 };
 
-const onConfirm = (value: number) => {
-  showPicker.value = false;
-  emit('onSelect', 'custom', value);
+const onSelect = (value: SelectProgressValue) => {
+  selected.option = value;
+  if (confirm?.value && value !== PanelButtonsOption.Remove) {
+    return displayConfirm();
+  }
+  return onConfirm();
+};
+
+const onPickerConfirm = (value: number) => {
+  selected.date = value;
+  if (selected.option) emit('onSelect', selected as SelectProgressResponse);
+  clear();
 };
 
 const renderLabel = (option: SelectOption & { icon: Component }) => [
@@ -106,6 +145,11 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
   }),
   option.label?.toString(),
 ];
+
+const selectStyle = computed(() => ({
+  '--custom-bg-color': `var(--bg-color-${type.value}-80)`,
+  '--custom-bg-color-hover': `var(--bg-color-${type.value})`,
+}));
 </script>
 
 <template>
@@ -131,33 +175,39 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
         <slot name="tooltip" />
       </template>
       <NPopselect
-        :style="{
-          '--custom-bg-color': `var(--bg-color-${ type }-80)`,
-          '--custom-bg-color-hover': `var(--bg-color-${ type })`,
-        }"
+        :style="selectStyle"
         :to="root"
         :render-label="renderLabel"
-        trigger="focus"
-        :disabled="disabled || loading"
-        v-bind="select"
-        :on-update:show="_show => !_show && trigger?.$el?.blur()"
-        :on-update-value="onSelect"
+        :show="showConfirm"
+        v-bind="confirm"
+        :on-update-value="onConfirm"
       >
-        <NButton
-          ref="trigger"
-          class="button"
-          :class="{ filled, progress: progressBackground }"
-          round
-          :secondary="!filled"
-          :disabled="disabled"
-          :loading="loading"
-          :type="type"
+        <NPopselect
+          :style="selectStyle"
+          :to="root"
+          :render-label="renderLabel"
+          trigger="focus"
+          :disabled="disabled || loading || showConfirm"
+          v-bind="select"
+          :on-update:show="_show => !_show && trigger?.$el?.blur()"
+          :on-update-value="onSelect"
         >
-          <template #icon>
-            <NIcon class="button-icon" :component="icon" />
-          </template>
-          <span><slot /></span>
-        </NButton>
+          <NButton
+            ref="trigger"
+            class="button"
+            :class="{ filled, progress: progressBackground }"
+            round
+            :secondary="!filled"
+            :disabled="disabled"
+            :loading="loading"
+            :type="type"
+          >
+            <template #icon>
+              <NIcon class="button-icon" :component="icon" />
+            </template>
+            <span><slot /></span>
+          </NButton>
+        </NPopselect>
       </NPopselect>
     </ProgressTooltip>
 
@@ -169,13 +219,14 @@ const renderLabel = (option: SelectOption & { icon: Component }) => [
         '--custom-bg-color-hover': `var(--bg-color-${ type })`,
       }"
       class="picker-modal"
+      :on-mask-click="onCancel"
     >
       <NDatePicker
         panel
         type="datetime"
         clearable
-        :on-clear="onClear"
-        :on-confirm="onConfirm"
+        :on-clear="onCancel"
+        :on-confirm="onPickerConfirm"
       />
     </NModal>
   </div>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NFlex } from 'naive-ui';
+import { NFlex, type PopselectProps } from 'naive-ui';
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue';
 
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
@@ -12,12 +12,16 @@ import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vu
 import PanelSelectProgress from '~/components/views/panel/PanelSelectProgress.vue';
 
 import {
+  AllPanelButtonsWatchedOptions,
+  getWatchedIcon,
+  type PanelButtonsEmit,
   PanelButtonsOption,
-  type PanelButtonsOptions,
   usePanelButtons,
+  usePanelButtonsEmit,
 } from '~/components/views/panel/use-panel-buttons';
 import {
   type EpisodeProgress,
+  isSeasonProgress,
   type SeasonProgress,
   type ShowProgress,
 } from '~/models/list-scroll.model';
@@ -73,12 +77,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits<{
-  (e: 'onListUpdate', value: ListEntity['id'], remove: boolean): void;
-  (e: 'onCollectionUpdate', value: PanelButtonsOptions, date?: number): void;
-  (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
-  (e: 'onCheckin', cancel: boolean): void;
-}>();
+const emit = defineEmits<
+  {
+    (e: 'onCheckin', cancel: boolean): void;
+  } & PanelButtonsEmit
+>();
 
 const {
   mode,
@@ -89,26 +92,6 @@ const {
   hasRelease,
   watching,
 } = toRefs(props);
-
-const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
-  const newList = Array.isArray(value) ? value : [value];
-  const removed = activeLists?.value?.find(id => !newList.includes(id));
-  if (removed) emit('onListUpdate', removed, true);
-  const added = newList.find(id => !activeLists?.value?.includes(id));
-  if (added) emit('onListUpdate', added, false);
-};
-
-const onCollectionUpdate = (value: unknown, date?: number) => {
-  if (value === PanelButtonsOption.Cancel) return;
-  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
-  emit('onCollectionUpdate', value as PanelButtonsOptions, date);
-};
-
-const onWatchedUpdate = (value: unknown, date?: number) => {
-  if (value === PanelButtonsOption.Cancel) return;
-  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
-  emit('onWatchedUpdate', value as PanelButtonsOptions, date);
-};
 
 const watched = computed(() => {
   const _progress = watchedProgress?.value;
@@ -123,14 +106,14 @@ const watchedPercentage = computed(() => {
   return watched.value ? 100 : 0;
 });
 
-const hadAiredWatched = computed(() => {
+const hasAiredWatched = computed(() => {
   const _progress = watchedProgress?.value;
   if (!_progress) return false;
   return 'aired' in _progress && _progress.aired > 0;
 });
 
 const disableWatchedTooltip = computed(() => {
-  return !['show', 'season'].includes(mode.value) || !hadAiredWatched.value;
+  return !['show', 'season'].includes(mode.value) || !hasAiredWatched.value;
 });
 
 const collected = computed(() => {
@@ -161,6 +144,10 @@ const i18n = useI18n('panel', 'buttons');
 const root = ref<HTMLDivElement>();
 
 const { removeOptions, mixedOptions, timeOptions } = usePanelButtons();
+const { onListUpdate, onCollectionUpdate, onWatchedUpdate } = usePanelButtonsEmit(
+  emit,
+  activeLists,
+);
 
 const watchedOptions = computed(() => {
   const _options = [];
@@ -205,6 +192,32 @@ const listOptions = computed(
       icon: getIcon(list),
     })),
 );
+
+const watchedConfirmOptions = computed<PopselectProps | undefined>(() => {
+  if (mode.value !== 'season') return;
+  if (!isSeasonProgress(watchedProgress?.value)) return;
+  if (watchedProgress.value.finished) return;
+  return {
+    options: AllPanelButtonsWatchedOptions.map(option => ({
+      label: i18n(option, 'common', 'button', 'panel', 'watched'),
+      value: option,
+      icon: getWatchedIcon(option),
+    })),
+  };
+});
+
+const collectConfirmOptions = computed<PopselectProps | undefined>(() => {
+  if (mode.value !== 'season') return;
+  if (!isSeasonProgress(collectionProgress?.value)) return;
+  if (collectionProgress.value.completed) return;
+  return {
+    options: AllPanelButtonsWatchedOptions.map(option => ({
+      label: i18n(option, 'common', 'button', 'panel', 'collection'),
+      value: option,
+      icon: getWatchedIcon(option),
+    })),
+  };
+});
 
 const onCheckin = () => emit('onCheckin', watching.value);
 
@@ -258,10 +271,11 @@ onMounted(() => fetchLists());
         :percentage="collectionPercentage"
         :filled="collected"
         :loading="collectionLoading"
+        :confirm="collectConfirmOptions"
         type="info"
         @on-select="onCollectionUpdate"
       >
-        {{ i18n(`label__collection__${ collected ? 'remove' : 'add' }`) }}
+        {{ i18n(`label__collection__${collected ? 'remove' : 'add' }`) }}
       </PanelSelectProgress>
     </NFlex>
 
@@ -279,9 +293,10 @@ onMounted(() => fetchLists());
         :percentage="watchedPercentage"
         :filled="watched"
         :loading="watchedLoading"
+        :confirm="watchedConfirmOptions"
         @on-select="onWatchedUpdate"
       >
-        {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}
+        {{ i18n(`label__history__${watched ? 'remove' : 'add' }`) }}
       </PanelSelectProgress>
     </NFlex>
 
@@ -312,39 +327,49 @@ onMounted(() => fetchLists());
   flex-wrap: wrap;
   gap: 1.25rem;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   width: 100%;
   margin: 1rem 1rem 1.25rem;
 
   .button-container {
+    margin: auto;
+
     i {
       margin-left: calc(0% - var(--n-icon-margin));
     }
 
     &.checkin {
       width: 0;
+      margin: 0;
       opacity: 0;
-      scale: 0.9;
-      // stylelint-disable-next-line property-no-unknown
-      tansition-delay: width 0.25s;
       transition:
         width 0.5s var(--n-bezier),
         opacity 0.5s var(--n-bezier),
-        scale 0.5s var(--n-bezier);
+        scale 0.5s var(--n-bezier),
+        margin 0.5s var(--n-bezier);
+      scale: 0.9;
+      // stylelint-disable-next-line property-no-unknown
+      tansition-delay: width 0.25s;
 
       &.visible {
         width: 7rem;
+        margin: auto;
         opacity: 1;
         scale: 1;
         // stylelint-disable-next-line property-no-unknown
         tansition-delay: 0;
+      }
+
+      &:not(.visible) {
+        cursor: default;
+        pointer-events: none;
       }
     }
   }
 }
 
 @media (width < 660px) {
-  .button-container {
+  .button-container:not(.checkin:not(.visible)) {
     min-width: 45%;
   }
 }

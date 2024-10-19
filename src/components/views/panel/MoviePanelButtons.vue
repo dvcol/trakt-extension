@@ -11,9 +11,10 @@ import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
 import PanelSelectProgress from '~/components/views/panel/PanelSelectProgress.vue';
 import {
+  type PanelButtonsEmit,
   PanelButtonsOption,
-  type PanelButtonsOptions,
   usePanelButtons,
+  usePanelButtonsEmit,
 } from '~/components/views/panel/use-panel-buttons';
 import { type ListEntity, ListType } from '~/models/list.model';
 import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
@@ -62,41 +63,25 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits<{
-  (e: 'onListUpdate', value: ListEntity['id'], remove: boolean): void;
-  (e: 'onCollectionUpdate', value: PanelButtonsOptions, date?: number): void;
-  (e: 'onWatchedUpdate', value: PanelButtonsOptions, date?: number): void;
-  (e: 'onCheckin', cancel: boolean): void;
-}>();
+const emit = defineEmits<
+  {
+    (e: 'onCheckin', cancel: boolean): void;
+  } & PanelButtonsEmit
+>();
 
 const { watched, collected, activeLoading, activeLists, hasRelease, watching } =
   toRefs(props);
-
-const onListUpdate = (value: ListEntity['id'] | ListEntity['id'][]) => {
-  const newList = Array.isArray(value) ? value : [value];
-  const removed = activeLists?.value?.find(id => !newList.includes(id));
-  if (removed) emit('onListUpdate', removed, true);
-  const added = newList.find(id => !activeLists?.value?.includes(id));
-  if (added) emit('onListUpdate', added, false);
-};
-
-const onCollectionUpdate = (value: unknown, date?: number) => {
-  if (value === PanelButtonsOption.Cancel) return;
-  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
-  emit('onCollectionUpdate', value as PanelButtonsOptions, date);
-};
-
-const onWatchedUpdate = (value: unknown, date?: number) => {
-  if (value === PanelButtonsOption.Cancel) return;
-  if (value === PanelButtonsOption.Now && date === undefined) date = Date.now();
-  emit('onWatchedUpdate', value as PanelButtonsOptions, date);
-};
 
 const i18n = useI18n('panel', 'buttons');
 
 const root = ref<HTMLDivElement>();
 
 const { removeOptions, timeOptions } = usePanelButtons();
+
+const { onListUpdate, onCollectionUpdate, onWatchedUpdate } = usePanelButtonsEmit(
+  emit,
+  activeLists,
+);
 
 const watchedOptions = computed(() => {
   const _options = watched.value ? removeOptions : timeOptions;

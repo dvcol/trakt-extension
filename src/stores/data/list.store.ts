@@ -44,6 +44,8 @@ type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListIt
 type ListItemQuery = TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery;
 type ListQuery = { page?: number; limit?: number; list?: ListEntity };
 
+export type AddOrRemoveIds = Pick<TraktApiIds, 'trakt'> | Pick<TraktApiIds, 'trakt'>[];
+
 const ListStoreConstants = {
   Store: 'data.list',
   LocalPageSize: 'data.list.page-size',
@@ -221,13 +223,14 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   }: {
     list: ListEntity;
     itemType: ListItemTypes;
-    itemIds: Pick<TraktApiIds, 'trakt'>;
+    itemIds: AddOrRemoveIds;
     date?: Date | string | number;
     remove?: boolean;
   }) => {
     const listId = list.id?.toString();
     const listType = list.type;
     const userId = list.owner?.username;
+    const _itemIds = Array.isArray(itemIds) ? itemIds : [itemIds];
 
     if (!listType) throw new Error('List type is missing');
     if (listType === ListType.List || listType === ListType.Collaboration) {
@@ -240,40 +243,46 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       return;
     }
 
-    if (typeItemLoading[listType]?.[itemType]?.[itemIds.trakt.toString()]) {
-      Logger.warn('Already adding item to list');
-      return;
-    }
+    const filter = _itemIds.filter(id => {
+      if (typeItemLoading[listType]?.[itemType]?.[id.trakt.toString()]) {
+        Logger.warn('Already adding item to list', id);
+        return false;
+      }
+      return true;
+    });
+    if (!filter.length) return;
 
     if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
     if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};
-    typeItemLoading[listType]![itemType]![itemIds.trakt.toString()] = true;
+    filter.forEach(id => {
+      typeItemLoading[listType]![itemType]![id.trakt.toString()] = true;
+    });
     typeLoading[listType] = true;
 
     try {
       if (listType === ListType.History) {
         if (remove) {
-          await TraktService.remove.history({ [`${itemType}s`]: [{ ids: itemIds }] });
+          await TraktService.remove.history({ [`${itemType}s`]: filter.map(ids => ({ ids })) });
         } else {
           const _date = date ? new Date(date).toISOString() : undefined;
-          await TraktService.add.history({ [`${itemType}s`]: [{ watched_at: _date, ids: itemIds }] });
+          await TraktService.add.history({ [`${itemType}s`]: filter.map(ids => ({ watched_at: _date, ids })) });
         }
       } else if (listType === ListType.Watchlist) {
-        await TraktService[remove ? 'remove' : 'add'].watchlist({ [`${itemType}s`]: [{ ids: itemIds }] });
-        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
+        await TraktService[remove ? 'remove' : 'add'].watchlist({ [`${itemType}s`]: filter.map(ids => ({ ids })) });
+        filter.forEach(ids => updateDictionary(list, { [itemType]: { ids } }, remove));
       } else if (listType === ListType.Favorites) {
-        await TraktService[remove ? 'remove' : 'add'].favorites({ [`${itemType}s`]: [{ ids: itemIds }] });
-        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
+        await TraktService[remove ? 'remove' : 'add'].favorites({ [`${itemType}s`]: filter.map(ids => ({ ids })) });
+        filter.forEach(ids => updateDictionary(list, { [itemType]: { ids } }, remove));
       } else if (listType === ListType.Collection) {
         if (remove) {
-          await TraktService.remove.collection({ [`${itemType}s`]: [{ ids: itemIds }] });
+          await TraktService.remove.collection({ [`${itemType}s`]: filter.map(ids => ({ ids })) });
         } else {
           const _date = date ? new Date(date).toISOString() : undefined;
-          await TraktService.add.collection({ [`${itemType}s`]: [{ collected_at: _date, ids: itemIds }] });
+          await TraktService.add.collection({ [`${itemType}s`]: filter.map(ids => ({ collected_at: _date, ids })) });
         }
       } else if ([ListType.List, ListType.Collaboration].includes(listType)) {
-        await TraktService[remove ? 'remove' : 'add'].list({ id: userId!, list_id: listId, [`${itemType}s`]: [{ ids: itemIds }] });
-        updateDictionary(list, { [itemType]: { ids: itemIds } }, remove);
+        await TraktService[remove ? 'remove' : 'add'].list({ id: userId!, list_id: listId, [`${itemType}s`]: filter.map(ids => ({ ids })) });
+        filter.forEach(ids => updateDictionary(list, { [itemType]: { ids } }, remove));
       } else {
         Logger.error(`Unknown list type ${listType}.`);
       }
@@ -292,9 +301,11 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       NotificationService.error(`Failed to add item to list '${list.name}'`, e);
       throw e;
     } finally {
-      typeItemLoading[listType]![itemType]![itemIds.trakt.toString()] = false;
+      filter.forEach(id => {
+        typeItemLoading[listType]![itemType]![id.trakt.toString()] = false;
+      });
       typeLoading[listType] = false;
-      updateActivity();
+      updateActivity().catch(Logger.error);
     }
   };
 
