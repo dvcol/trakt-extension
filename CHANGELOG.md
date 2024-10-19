@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.30.1](https://github.com/dvcol/trakt-extension/compare/v1.30.0...v1.30.1) (2024-10-19)
+
+
+### Bug Fixes
+
+* **branding:** update badge color when switching branding ([ece8426](https://github.com/dvcol/trakt-extension/commit/ece8426bceeff936d0fd83f2f518abe8d387975e))
+* **calendar:** clear saved date when clearing date picker ([621062f](https://github.com/dvcol/trakt-extension/commit/621062f7dd244f570cb350a6b60c430abacbac42))
+
 ## [1.30.0](https://github.com/dvcol/trakt-extension/compare/v1.29.0...v1.30.0) (2024-10-19)
 
 
