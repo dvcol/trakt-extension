@@ -262,6 +262,7 @@ const onTagClick = (url?: string) => {
 <template>
   <NFlex
     class="panel"
+    :class="{ played: showPlayed && played, collected: showCollected && collected }"
     vertical
     justify="center"
     size="small"
@@ -426,6 +427,14 @@ const onTagClick = (url?: string) => {
 .panel {
   flex: 1 1 auto;
   margin: 0 0 0.25rem;
+
+  &.played {
+    --trakt-red: var(--color-primary-darker);
+  }
+
+  &.collected:not(.played) {
+    --trakt-red: var(--color-info-darker);
+  }
 
   .title {
     margin-top: 0.1rem;

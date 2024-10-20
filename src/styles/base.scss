@@ -120,9 +120,11 @@
   --color-primary-lighter: #7fe7c4;
   --color-primary-disabled: #548272;
   --color-primary-dark: color-mix(in srgb, var(--color-primary) 40%, black 60%);
+  --color-primary-darker: #2ccd7a;
   --color-primary-focus: rgba(99 226 183 / 10%);
   --color-info: #70c0e8;
   --color-info-dark: color-mix(in srgb, var(--color-info) 40%, black 60%);
+  --color-info-darker: #38a8df;
   --color-disabled: rgba(255 255 255 / 6%);
   --text-color-disabled: rgba(255 255 255 / 38%);
   --color-warning: #f2c97d;
