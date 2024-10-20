@@ -118,7 +118,10 @@ const displayConfirm = async () => {
   if (!popSelect || !showConfirm.value) return;
   popSelect.focus();
   if (popSelect.onblur) return;
-  popSelect.onblur = clear;
+  popSelect.onblur = () => {
+    if (!showPicker.value) return clear();
+    showConfirm.value = false;
+  };
 };
 
 const onSelect = (value: SelectProgressValue) => {
