@@ -43,7 +43,6 @@ const props = defineProps({
   color: {
     type: String,
     required: false,
-    default: BrandColors.traktDark,
   },
   lineType: {
     type: String as PropType<'dashed' | 'default'>,
@@ -113,7 +112,7 @@ const emit = defineEmits<{
 
 const i18n = useI18n('list', 'item');
 
-const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height } =
+const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height, color } =
   toRefs(props);
 
 const onHover = (_hover: boolean) => {
@@ -156,6 +155,8 @@ onBeforeUnmount(() => {
 
 const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefined));
 
+const _color = computed(() => color?.value ?? BrandColors.traktDark);
+
 const onClick = () => emit('onItemClick', { item: item?.value });
 </script>
 
@@ -178,7 +179,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
     :data-type="item.type"
     :aria-label="item.title"
     :line-type="loading ? 'dashed' : lineType"
-    :color="loading ? 'grey' : color"
+    :color="loading ? 'grey' : _color"
     @click="onClick"
     @mouseenter="onHover(true)"
     @mouseleave="onHover(false)"

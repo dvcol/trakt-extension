@@ -1,4 +1,4 @@
-import { Brand, useExtensionSettingsStore } from '~/stores/settings/extension.store';
+import { Brand, useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 
 export const Colors = {
   bgBlurBlack: 'rgba(0, 0, 0, 30%)',
@@ -18,12 +18,12 @@ export const Blurs = {
 
 export const BrandColors = {
   get trakt() {
-    return useExtensionSettingsStore().brand === Brand.New ? Colors.traktPurple : Colors.traktRed;
+    return useExtensionSettingsStoreRefs().brand.value === Brand.New ? Colors.traktPurple : Colors.traktRed;
   },
   get traktDark() {
-    return useExtensionSettingsStore().brand === Brand.New ? Colors.traktPurpleDark : Colors.traktRedDark;
+    return useExtensionSettingsStoreRefs().brand.value === Brand.New ? Colors.traktPurpleDark : Colors.traktRedDark;
   },
   get traktDarker() {
-    return useExtensionSettingsStore().brand === Brand.New ? Colors.traktPurpleDarker : Colors.traktRedDarker;
+    return useExtensionSettingsStoreRefs().brand.value === Brand.New ? Colors.traktPurpleDarker : Colors.traktRedDarker;
   },
 };
