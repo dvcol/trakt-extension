@@ -10,6 +10,7 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
     seasonNumber,
     episodeNumber,
     item,
+    force,
   }: {
     type?: 'person' | 'movie' | 'show' | 'season' | 'episode';
     id?: number;
@@ -18,7 +19,10 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
     episodeNumber?: number;
 
     item?: ListScrollItem;
+
+    force?: boolean;
   }) => {
+    const query = force ? { force: 'true' } : undefined;
     const _type = type ?? item?.type;
     if (!_type) return;
     const base = currentRoute.value.name?.toString()?.split('-')?.at(0);
@@ -35,6 +39,7 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
         return push({
           name: `${base}-${_type}`,
           params: { [`${_type}Id`]: _id },
+          query,
         });
       case 'season':
         if (_showId === undefined || _seasonNumber === undefined) return;
@@ -44,6 +49,7 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
             showId: _showId,
             seasonNumber: _seasonNumber,
           },
+          query,
         });
       case 'episode':
         if (_showId === undefined || _seasonNumber === undefined || _episodeNumber === undefined) return;
@@ -54,6 +60,7 @@ export const usePanelItem = ({ push, currentRoute } = useRouter()) => {
             seasonNumber: _seasonNumber,
             episodeNumber: _episodeNumber,
           },
+          query,
         });
       default:
         break;

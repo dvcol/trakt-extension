@@ -124,24 +124,24 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const { user, isAuthenticated } = useAuthSettingsStoreRefs();
 
-  const fetchItems = async (list: ListEntity, query: ListItemQuery = {}) => {
+  const fetchItems = async (list: ListEntity, query: ListItemQuery = {}, force?: boolean) => {
     let _query = { ...query };
     let response;
 
     try {
       if (list.type === ListType.Watchlist) {
-        response = await TraktService.watchlist(_query as TraktWatchlistGetQuery);
+        response = await TraktService.watchlist(_query as TraktWatchlistGetQuery, force);
         delete listErrors[list.type]?.[JSON.stringify(_query)];
       } else if (list.type === ListType.Favorites) {
-        response = await TraktService.favorites(_query as TraktFavoriteGetQuery);
+        response = await TraktService.favorites(_query as TraktFavoriteGetQuery, force);
         delete listErrors[list.type]?.[JSON.stringify(_query)];
       } else if (list.type === ListType.Collection && list.scope) {
         _query.type = list.scope;
-        response = await TraktService.collection(_query as TraktCollectionGetQuery);
+        response = await TraktService.collection(_query as TraktCollectionGetQuery, force);
         delete listErrors[list.type]?.[JSON.stringify(_query)];
       } else if (list.id !== undefined) {
         _query = { ..._query, id: user.value, list_id: list.id.toString() } as TraktListItemsGetQuery;
-        response = await TraktService.list(_query as TraktListItemsGetQuery);
+        response = await TraktService.list(_query as TraktListItemsGetQuery, force);
         delete listErrors[list.type]?.[JSON.stringify(_query)];
       }
     } catch (e) {
@@ -156,7 +156,10 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
   };
 
   const { evicted } = useActivityStore();
-  const fetchListItems = async ({ page, limit = pageSize.value, list = activeList.value }: ListQuery = {}, parallel = false, updateState = true) => {
+  const fetchListItems = async (
+    { page, limit = pageSize.value, list = activeList.value }: ListQuery = {},
+    { parallel = false, updateState = true, force }: { parallel?: boolean; updateState?: boolean; force?: boolean } = {},
+  ) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch list, user is not authenticated');
       return;
@@ -177,7 +180,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     if (updateState) clearLoading = debounceLoading(listItems, loadingPlaceholder, { clear: !page, time: 1000 }).clearLoading;
 
     try {
-      const response = await fetchItems(list, { pagination: { page, limit } });
+      const response = await fetchItems(list, { pagination: { page, limit } }, force);
       const newData = response.data.map<AnyList>((item, index) => {
         updateDictionary(list, item as MinimalItem);
         if ('id' in item) return item;
@@ -201,10 +204,10 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     }
   };
 
-  const fetchAll = async (lists: ListEntity[], query?: Omit<ListQuery, 'list'>) => {
+  const fetchAll = async (lists: ListEntity[], query?: Omit<ListQuery, 'list'>, force?: boolean) => {
     if (!lists.length) return;
     loading.value = true;
-    await Promise.all(lists.map(list => fetchListItems({ list, ...query }, true, false)));
+    await Promise.all(lists.map(list => fetchListItems({ list, ...query }, { parallel: true, updateState: false, force })));
     loading.value = false;
   };
 

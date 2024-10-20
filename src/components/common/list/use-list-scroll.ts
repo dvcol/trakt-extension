@@ -222,7 +222,7 @@ const getContentLink = (item: ListScrollSourceItem): ListScrollItem['contentLink
     onClick: event => {
       event.preventDefault();
       event.stopPropagation();
-      usePanelItem(RouterService.router).onItemClick({ type: 'show', id: item.show!.ids.trakt });
+      usePanelItem(RouterService.router).onItemClick({ type: 'show', id: item.show!.ids.trakt, force: event.shiftKey });
     },
   };
 };

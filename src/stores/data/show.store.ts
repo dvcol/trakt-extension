@@ -158,7 +158,7 @@ export const useShowStore = defineStore('data.show', () => {
   const { simklEnabled } = useSimklStoreRefs();
   const { fetchShow: fetchSimklShow, fetchAnime: fetchSimklAnime } = useSimklStore();
   const { user, isAuthenticated } = useAuthSettingsStoreRefs();
-  const fetchShow = async (id: string) => {
+  const fetchShow = async (id: string, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch show, user is not authenticated');
       return;
@@ -172,7 +172,7 @@ export const useShowStore = defineStore('data.show', () => {
 
     showsLoading[id] = true;
     try {
-      shows[id] = await TraktService.show.summary(id);
+      shows[id] = await TraktService.show.summary(id, force);
 
       if (simklEnabled.value && shows[id].ids.imdb) {
         if (shows[id].genres.includes('anime')) await fetchSimklAnime(shows[id].ids.imdb);
@@ -240,7 +240,7 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const fetchShowSeasons = async (id: string) => {
+  const fetchShowSeasons = async (id: string, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch show seasons, user is not authenticated');
       return;
@@ -254,7 +254,7 @@ export const useShowStore = defineStore('data.show', () => {
 
     showsSeasonsLoading[id] = true;
     try {
-      const seasons = await TraktService.show.seasons(id);
+      const seasons = await TraktService.show.seasons(id, force);
       showsSeasons[id] = seasons.reduce<ShowSeasonDictionary[number]>((acc, season) => {
         acc[season.number] = season;
         return acc;
@@ -270,7 +270,7 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const fetchShowSeasonEpisodes = async (id: string, season: number) => {
+  const fetchShowSeasonEpisodes = async (id: string, season: number, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch show season episodes, user is not authenticated');
       return;
@@ -285,7 +285,7 @@ export const useShowStore = defineStore('data.show', () => {
     if (!showsSeasonEpisodesLoading[id]) showsSeasonEpisodesLoading[id] = {};
     showsSeasonEpisodesLoading[id][season] = true;
     try {
-      const episodes = await TraktService.show.season(id, season);
+      const episodes = await TraktService.show.season(id, season, force);
       if (!showsSeasonEpisodes[id]) showsSeasonEpisodes[id] = {};
       showsSeasonEpisodes[id][season] = episodes;
       delete showsSeasonEpisodesError[id]?.[season];
@@ -302,7 +302,7 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const fetchShowEpisode = async (id: string, season: number, episode: number) => {
+  const fetchShowEpisode = async (id: string, season: number, episode: number, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch show episodes, user is not authenticated');
       return;
@@ -320,7 +320,7 @@ export const useShowStore = defineStore('data.show', () => {
     try {
       if (!showsEpisodes[id]) showsEpisodes[id] = {};
       if (!showsEpisodes[id][season]) showsEpisodes[id][season] = {};
-      showsEpisodes[id][season][episode] = await TraktService.show.episode({ id, season, episode });
+      showsEpisodes[id][season][episode] = await TraktService.show.episode({ id, season, episode }, force);
       delete showsEpisodesError[id]?.[season]?.[episode];
     } catch (e) {
       Logger.error('Failed to fetch show episodes', id, season, episode);

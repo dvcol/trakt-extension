@@ -58,7 +58,13 @@ useActiveAndDocumentVisible({
 
 const { onItemClick } = usePanelItem();
 
-const onMovieClick = async ({ item }: { item: ListScrollItem }) => {
+const onMovieClick = async ({
+  item,
+  force,
+}: {
+  item: ListScrollItem;
+  force?: boolean;
+}) => {
   const lookup: TraktSearchResult[] = await TraktService.lookup({
     id: item.id.toString(),
     id_type: 'tmdb',

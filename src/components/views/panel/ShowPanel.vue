@@ -3,6 +3,8 @@ import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
+import { useRoute } from 'vue-router';
+
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
 import PanelShowStatistics from '~/components/views/panel/PanelShowStatistics.vue';
@@ -458,20 +460,22 @@ const onCheckin = async (cancel: boolean) => {
   }
 };
 
+const route = useRoute();
 onMounted(() => {
+  const force = route.query.force === 'true';
   watch(
     [showId, seasonNb, episodeNb],
     ([_showId, _seasonNb, _episodeNb]) => {
       if (_showId !== undefined) {
-        fetchShow(_showId);
-        fetchShowSeasons(_showId);
+        fetchShow(_showId, force);
+        fetchShowSeasons(_showId, force);
 
         if (_seasonNb !== undefined) {
-          fetchShowSeasonEpisodes(_showId, _seasonNb);
+          fetchShowSeasonEpisodes(_showId, _seasonNb, force);
         }
 
         if (_seasonNb !== undefined && _episodeNb !== undefined) {
-          fetchShowEpisode(_showId, _seasonNb, _episodeNb);
+          fetchShowEpisode(_showId, _seasonNb, _episodeNb, force);
         }
       }
 

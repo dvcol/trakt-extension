@@ -105,7 +105,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'onHover', event: { item: ListScrollItem; hover: boolean }): void;
-  (e: 'onItemClick', event: { item: ListScrollItem }): void;
+  (e: 'onItemClick', event: { item: ListScrollItem; force?: boolean }): void;
   (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
   (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();
@@ -157,7 +157,8 @@ const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefin
 
 const _color = computed(() => color?.value ?? BrandColors.traktDark);
 
-const onClick = () => emit('onItemClick', { item: item?.value });
+const onClick = (e: MouseEvent | KeyboardEvent) =>
+  emit('onItemClick', { item: item?.value, force: e.shiftKey });
 </script>
 
 <template>

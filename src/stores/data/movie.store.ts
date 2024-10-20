@@ -53,7 +53,7 @@ export const useMovieStore = defineStore('data.movie', () => {
   const { simklEnabled } = useSimklStoreRefs();
   const { fetchMovie: fetchSimklMovie } = useSimklStore();
   const { user, isAuthenticated } = useAuthSettingsStoreRefs();
-  const fetchMovie = async (id: string | number) => {
+  const fetchMovie = async (id: string | number, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch movie, user is not authenticated');
       return;
@@ -68,7 +68,7 @@ export const useMovieStore = defineStore('data.movie', () => {
     loading[id] = true;
 
     try {
-      movies[id] = await TraktService.movie(id);
+      movies[id] = await TraktService.movie(id, force);
       if (simklEnabled.value && movies[id]?.ids?.imdb) await fetchSimklMovie(movies[id].ids.imdb);
       delete movieErrors[id.toString()];
     } catch (error) {

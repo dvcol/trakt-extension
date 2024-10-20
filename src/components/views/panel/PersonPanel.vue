@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
-import { computed, onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
+import { computed, onMounted, toRefs, watch } from 'vue';
 
-import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
+import { useRoute } from 'vue-router';
 
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import PanelPoster from '~/components/views/panel/PanelPoster.vue';
@@ -23,30 +23,14 @@ const props = defineProps({
 
 const { personId } = toRefs(props);
 
-const person = ref<TraktPersonExtended>();
-
-const { getPersonRef } = usePersonStore();
-
-const unsub = ref<() => void>();
-
-onMounted(() =>
-  watch(
-    personId,
-    async id => {
-      unsub.value?.();
-      if (!id) return;
-      unsub.value = getPersonRef(id, person).unsub;
-    },
-    { immediate: true },
-  ),
-);
-
-onUnmounted(() => {
-  unsub.value?.();
-  person.value = undefined;
-});
-
 const i18n = useI18n('panel', 'person');
+
+const { getPerson, fetchPerson } = usePersonStore();
+
+const person = computed(() => {
+  if (!personId?.value) return;
+  return getPerson(personId.value).value;
+});
 
 const title = computed(() => {
   if (!person.value?.name) return;
@@ -60,6 +44,12 @@ const titleUrl = computed(() => {
     source: 'trakt',
     id: person.value.ids.trakt,
   });
+});
+
+const route = useRoute();
+onMounted(() => {
+  const force = route.query.force === 'true';
+  watch(personId, async id => fetchPerson(id, force), { immediate: true });
 });
 </script>
 

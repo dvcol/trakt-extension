@@ -128,7 +128,7 @@ const emits = defineEmits<{
       pageSize: number;
     },
   ): void;
-  (e: 'onItemClick', event: { item: ListScrollItem }): void;
+  (e: 'onItemClick', event: { item: ListScrollItem; force?: boolean }): void;
   (e: 'onScrollIntoView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
   (e: 'onScrollOutOfView', event: { item: ListScrollItem; ref?: HTMLDivElement }): void;
 }>();

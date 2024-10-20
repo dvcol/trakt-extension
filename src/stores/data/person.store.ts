@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 
 import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
@@ -13,7 +13,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { ErrorCount } from '~/utils/retry.utils';
-import { asyncRefGetter, clearProxy } from '~/utils/vue.utils';
+import { clearProxy } from '~/utils/vue.utils';
 
 type PersonDictionary = Record<string, TraktPersonExtended>;
 type LoadingDictionary = Record<string, boolean>;
@@ -32,7 +32,7 @@ export const usePersonStore = defineStore('data.person', () => {
   };
 
   const { isAuthenticated } = useAuthSettingsStoreRefs();
-  const fetchPerson = async (id: string | number) => {
+  const fetchPerson = async (id: string | number, force?: boolean) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch person, user is not authenticated');
       return;
@@ -47,7 +47,7 @@ export const usePersonStore = defineStore('data.person', () => {
     loading[id] = true;
 
     try {
-      people[id] = await TraktService.person(id);
+      people[id] = await TraktService.person(id, force);
       delete peopleErrors[id.toString()];
     } catch (error) {
       Logger.error('Failed to fetch person', id);
@@ -60,18 +60,12 @@ export const usePersonStore = defineStore('data.person', () => {
   };
 
   const getPersonLoading = (id: string | number) => computed(() => loading[id.toString()]);
-  const getPerson = async (id: string | number) => {
-    if (!people[id.toString()] && !loading[id.toString()]) await fetchPerson(id);
-    return people[id.toString()];
-  };
-  const getPersonRef = (id: string | number, response = ref<TraktPersonExtended>()) =>
-    asyncRefGetter(() => getPerson(id), getPersonLoading(id), response);
+  const getPerson = (id: string | number) => computed(() => people[id.toString()]);
 
   return {
     clearState,
     fetchPerson,
     getPerson,
-    getPersonRef,
     getPersonLoading,
   };
 });

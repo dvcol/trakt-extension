@@ -3,6 +3,8 @@ import { deCapitalise } from '@dvcol/common-utils/common/string';
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
+import { useRoute } from 'vue-router';
+
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
 import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
@@ -266,10 +268,12 @@ const onCheckin = async (cancel: boolean) => {
   }
 };
 
+const route = useRoute();
 onMounted(() => {
+  const force = route.query.force === 'true';
   watch(movieId, id => fetchMovie(id), { immediate: true });
-  fetchMovieWatched();
-  fetchMovieCollected();
+  fetchMovieWatched(force);
+  fetchMovieCollected(force);
 
   if (shouldFetchLists.value) {
     fetchAll(
@@ -279,6 +283,7 @@ onMounted(() => {
       {
         limit: loadListsPageSize.value,
       },
+      force,
     );
   }
 });

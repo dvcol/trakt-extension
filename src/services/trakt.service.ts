@@ -309,23 +309,23 @@ export class TraktService {
     },
   };
 
-  static async history(query: TraktHistoryGetQuery) {
-    const response = await this.traktClient.sync.history.get.cached(query);
+  static async history(query: TraktHistoryGetQuery, force?: boolean) {
+    const response = await this.traktClient.sync.history.get.cached(query, undefined, { force });
     return { data: await response.json(), pagination: response.pagination };
   }
 
-  static async watchlist(query: TraktWatchlistGetQuery) {
-    const response = await this.traktClient.sync.watchlist.get.cached(query);
+  static async watchlist(query: TraktWatchlistGetQuery, force?: boolean) {
+    const response = await this.traktClient.sync.watchlist.get.cached(query, undefined, { force });
     return { data: await response.json(), pagination: response.pagination };
   }
 
-  static async favorites(query: TraktFavoriteGetQuery) {
-    const response = await this.traktClient.sync.favorites.get.cached(query);
+  static async favorites(query: TraktFavoriteGetQuery, force?: boolean) {
+    const response = await this.traktClient.sync.favorites.get.cached(query, undefined, { force });
     return { data: await response.json(), pagination: response.pagination };
   }
 
-  static async collection(query: TraktCollectionGetQuery) {
-    const response = await this.traktClient.sync.collection.get.cached(query);
+  static async collection(query: TraktCollectionGetQuery, force?: boolean) {
+    const response = await this.traktClient.sync.collection.get.cached(query, undefined, { force });
     return { data: await response.json(), pagination: response.pagination };
   }
 
@@ -339,8 +339,8 @@ export class TraktService {
     return response.json();
   }
 
-  static async list(query: TraktListItemsGetQuery) {
-    const response = await this.traktClient.users.list.items.get.cached(query);
+  static async list(query: TraktListItemsGetQuery, force?: boolean) {
+    const response = await this.traktClient.users.list.items.get.cached(query, undefined, { force });
     return { data: await response.json(), pagination: response.pagination };
   }
 
@@ -416,44 +416,44 @@ export class TraktService {
   };
 
   static show = {
-    async summary(id: string | number) {
-      const response = await TraktService.traktClient.shows.summary.cached({ id, extended: 'full' });
+    async summary(id: string | number, force?: boolean) {
+      const response = await TraktService.traktClient.shows.summary.cached({ id, extended: 'full' }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data as TraktShowExtended;
     },
 
-    async season(id: string | number, season: number) {
-      const response = await TraktService.traktClient.seasons.season.cached({ id, season });
+    async season(id: string | number, season: number, force?: boolean) {
+      const response = await TraktService.traktClient.seasons.season.cached({ id, season }, undefined, { force });
       const data = await response.json();
       if (data.some(e => shouldEvict(response?.cache, e?.first_aired))) response.cache?.evict?.();
       return data as TraktEpisodeShort[];
     },
 
-    async seasons(id: string | number) {
-      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' });
+    async seasons(id: string | number, force?: boolean) {
+      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' }, undefined, { force });
       const data = await response.json();
       if (data.some(s => shouldEvict(response?.cache, s?.first_aired))) response.cache?.evict?.();
       return data as TraktSeasonExtended[];
     },
 
-    async episode({ id, season, episode }: { id: string | number; season: number; episode: number }) {
-      const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: 'full' });
+    async episode({ id, season, episode }: { id: string | number; season: number; episode: number }, force?: boolean) {
+      const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: 'full' }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data as TraktEpisodeExtended;
     },
   };
 
-  static async movie(id: string | number) {
-    const response = await this.traktClient.movies.summary.cached({ id, extended: 'full' });
+  static async movie(id: string | number, force?: boolean) {
+    const response = await this.traktClient.movies.summary.cached({ id, extended: 'full' }, undefined, { force });
     const data = await response.json();
     if (shouldEvict(response?.cache, data?.released)) response.cache?.evict?.();
     return data as TraktMovieExtended;
   }
 
-  static async person(id: string | number) {
-    const response = await this.traktClient.people.summary.cached({ id, extended: 'full' });
+  static async person(id: string | number, force?: boolean) {
+    const response = await this.traktClient.people.summary.cached({ id, extended: 'full' }, undefined, { force });
     return response.json() as Promise<TraktPersonExtended>;
   }
 

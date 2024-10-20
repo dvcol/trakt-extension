@@ -131,12 +131,13 @@ const onCancel = async (event: MouseEvent) => {
 };
 
 const { onItemClick } = usePanelItem();
-const onClick = () => {
+const onClick = (e: MouseEvent | KeyboardEvent) => {
   if (!watching.value) return;
   if (isWatchingMovie(watching.value))
     onItemClick({
       type: 'movie',
       id: watching.value.movie.ids.trakt,
+      force: e.shiftKey,
     });
   if (isWatchingShow(watching.value))
     onItemClick({
@@ -145,6 +146,7 @@ const onClick = () => {
       showId: watching.value.show.ids.trakt,
       seasonNumber: watching.value.episode.season,
       episodeNumber: watching.value.episode.number,
+      force: e.shiftKey,
     });
 };
 </script>
