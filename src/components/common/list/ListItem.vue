@@ -228,7 +228,7 @@ const onClick = () => emit('onItemClick', { item: item?.value });
             <NEmpty size="large" :description="i18n('placeholder_empty')" />
           </NFlex>
         </slot>
-        <NFlex v-else class="tile" :wrap="false">
+        <NFlex v-else class="tile" :wrap="false" align="center">
           <PosterComponent
             v-if="!hidePoster"
             :item="item as PosterItem"
@@ -283,8 +283,9 @@ const onClick = () => emit('onItemClick', { item: item?.value });
       );
 
       flex: 1 1 auto;
-      padding: 0.5rem;
-      border-radius: 1.15rem;
+      margin: 0.25rem 0;
+      padding: 0.3rem 0.25rem 0.25rem;
+      border-radius: 0.75rem;
 
       &:active {
         background-color: var(--bg-color-30);
