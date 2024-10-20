@@ -43,9 +43,14 @@ const props = defineProps({
     required: false,
     default: 300,
   },
+  force: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
-const { backdrop, poster, item, size, type } = toRefs(props);
+const { backdrop, poster, item, size, type, force } = toRefs(props);
 
 // cache poster image to prevent flickering
 const cache = reactive<Record<string, ImageStoreMedias>>({});
@@ -122,10 +127,7 @@ const getPosters = async (
     transition.value = true;
   }, 100);
   try {
-    const response = await getImageUrl({
-      query,
-      size: size.value,
-    });
+    const response = await getImageUrl({ query, size: size.value, force: force.value });
     if (!_item?.key || !response) return;
     const key = [item.value.key, backdrop.value, type?.value].filter(Boolean).join('-');
     cache[key] = response;
@@ -133,7 +135,6 @@ const getPosters = async (
     Logger.error('Failed to fetch poster', error);
   }
 };
-
 watch([item, type, backdrop], () => getPosters(), { immediate: true, flush: 'pre' });
 
 onBeforeUnmount(() => {

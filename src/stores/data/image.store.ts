@@ -147,6 +147,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
       if (!(key in queue)) queue[key] = request();
       const response = await queue[key];
       delete imageErrors[type]?.[key];
+      delete queue[key];
       return response;
     } catch (error) {
       if (error instanceof Response && error.status === 404) {
@@ -170,18 +171,19 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
   const fetchImageUrl = async (
     key: string,
     { id, season, episode, type }: ImageQuery,
+    force?: boolean,
   ): Promise<{ image: ImageStoreMedias; key: string; type: ImageQuery['type'] } | undefined> => {
     let payload: ImagePayload;
     if (type === 'movie') {
-      payload = await queueRequest({ key, type }, () => TraktService.posters.movie(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.movie(id, force));
     } else if (type === 'person') {
-      payload = await queueRequest({ key, type }, () => TraktService.posters.person(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.person(id, force));
     } else if (type === 'episode' && season !== undefined && episode !== undefined) {
-      payload = await queueRequest({ key, type }, () => TraktService.posters.episode(id, season, episode));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.episode(id, season, episode, force));
     } else if (type === 'season' && season !== undefined) {
-      payload = await queueRequest({ key, type }, () => TraktService.posters.season(id, season));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.season(id, season, force));
     } else if (type === 'show') {
-      payload = await queueRequest({ key, type }, () => TraktService.posters.show(id));
+      payload = await queueRequest({ key, type }, () => TraktService.posters.show(id, force));
     } else {
       Logger.error('Unsupported type or missing parameters for fetchImageUrl', { key, id, season, episode, type });
       throw new Error('Unsupported type or missing parameters for fetchImageUrl');
@@ -191,7 +193,7 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
       const sType = 'show';
       const sKey = `${sType}-${id}`;
       if (images[sType][sKey]) return { image: images[sType][sKey], key: sKey, type: sType };
-      return fetchImageUrl(sKey, { id, type: sType });
+      return fetchImageUrl(sKey, { id, type: sType }, force);
     }
 
     if (['movie', 'show'].includes(type)) {
@@ -270,15 +272,25 @@ export const useImageStore = defineStore(ImageStoreConstants.Store, () => {
     return { key, type, baseUrl, image: getResponseValue({ image, baseUrl, type, size }) };
   };
 
-  const getImageUrl = async ({ query, size = 300, fetch = true }: { query: ImageQuery; size?: number | 'original'; fetch?: boolean }) => {
+  const getImageUrl = async ({
+    query,
+    size = 300,
+    fetch = true,
+    force,
+  }: {
+    query: ImageQuery;
+    size?: number | 'original';
+    fetch?: boolean;
+    force?: boolean;
+  }) => {
     if (!tmdbConfig.value) throw new Error('TmdbConfiguration not initialized');
     if (!tmdbConfig.value?.images?.secure_base_url) throw new Error('TmdbConfiguration missing secure_base_url');
 
     const { image, key, type, baseUrl = tmdbConfig.value.images.secure_base_url } = getImageResponse({ query, size });
 
-    if (image || !fetch) return image;
+    if (!force && (image || !fetch)) return image;
 
-    const result = await fetchImageUrl(key, query);
+    const result = await fetchImageUrl(key, query, force);
     if (!result?.image) return undefined;
     return getResponseValue({ image: result.image, baseUrl, type, size });
   };

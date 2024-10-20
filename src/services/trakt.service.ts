@@ -260,49 +260,36 @@ export class TraktService {
   }
 
   static posters = {
-    async movie(movie_id: string | number) {
-      const response = await TraktService.tmdbClient.v3.movies.images.cached({
-        movie_id,
-      });
+    async movie(movie_id: string | number, force?: boolean) {
+      const response = await TraktService.tmdbClient.v3.movies.images.cached({ movie_id }, undefined, { force });
       const data = await response.json();
       if (imageResponseEmpty(data) && shouldEvict(response.cache)) response.cache?.evict?.();
       return data;
     },
 
-    async show(series_id: string | number) {
-      const response = await TraktService.tmdbClient.v3.shows.images.cached({
-        series_id,
-      });
+    async show(series_id: string | number, force?: boolean) {
+      const response = await TraktService.tmdbClient.v3.shows.images.cached({ series_id }, undefined, { force });
       const data = await response.json();
       if (imageResponseEmpty(data) && shouldEvict(response.cache)) response.cache?.evict?.();
       return data;
     },
 
-    async season(series_id: string | number, season_number: number) {
-      const response = await TraktService.tmdbClient.v3.seasons.images.cached({
-        series_id,
-        season_number,
-      });
+    async season(series_id: string | number, season_number: number, force?: boolean) {
+      const response = await TraktService.tmdbClient.v3.seasons.images.cached({ series_id, season_number }, undefined, { force });
       const data = await response.json();
       if (imageResponseEmpty(data) && shouldEvict(response.cache)) response.cache?.evict?.();
       return data;
     },
 
-    async episode(series_id: string | number, season_number: number, episode_number: number) {
-      const response = await TraktService.tmdbClient.v3.episodes.images.cached({
-        series_id,
-        season_number,
-        episode_number,
-      });
+    async episode(series_id: string | number, season_number: number, episode_number: number, force?: boolean) {
+      const response = await TraktService.tmdbClient.v3.episodes.images.cached({ series_id, season_number, episode_number }, undefined, { force });
       const data = await response.json();
       if (imageResponseEmpty(data) && shouldEvict(response.cache)) response.cache?.evict?.();
       return data;
     },
 
-    async person(person_id: string | number) {
-      const response = await TraktService.tmdbClient.v3.people.images.cached({
-        person_id,
-      });
+    async person(person_id: string | number, force?: boolean) {
+      const response = await TraktService.tmdbClient.v3.people.images.cached({ person_id }, undefined, { force });
       const data = await response.json();
       if (imageResponseEmpty(data) && shouldEvict(response.cache)) response.cache?.evict?.();
       return data;

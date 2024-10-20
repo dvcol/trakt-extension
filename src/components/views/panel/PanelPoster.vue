@@ -2,6 +2,8 @@
 import { NFlex, NSkeleton } from 'naive-ui';
 import { computed, type PropType, toRefs, Transition } from 'vue';
 
+import { useRoute } from 'vue-router';
+
 import type { PosterItem } from '~/models/poster.model';
 import type { ImageQuery, ImageStoreTypes } from '~/stores/data/image.store';
 
@@ -81,6 +83,7 @@ const label = computed(() => {
 });
 
 const { openTab } = useLinksStore();
+const route = useRoute();
 </script>
 
 <template>
@@ -92,7 +95,12 @@ const { openTab } = useLinksStore();
       :title="label"
       @click="openTab(link)"
     >
-      <PosterComponent :item="posterItem" :size="size" :backdrop="!portait" />
+      <PosterComponent
+        :item="posterItem"
+        :size="size"
+        :backdrop="!portait"
+        :force="route.query.force === 'true'"
+      />
     </NFlex>
   </Transition>
   <NSkeleton
