@@ -37,7 +37,9 @@ const isCompact = watchMedia('(max-width: 725px)');
 
 <template>
   <NFlex class="statistics-container" justify="center">
-    <slot v-if="isCompact" />
+    <div v-if="isCompact" class="slot-container">
+      <slot />
+    </div>
     <PanelRatings v-if="enableRatings" :ratings="ratings" />
     <slot v-if="!isCompact" />
     <PanelScore
@@ -52,5 +54,10 @@ const isCompact = watchMedia('(max-width: 725px)');
 <style scoped lang="scss">
 .statistics-container {
   width: 100%;
+}
+
+.slot-container {
+  display: flex;
+  flex: 1 1 100%;
 }
 </style>

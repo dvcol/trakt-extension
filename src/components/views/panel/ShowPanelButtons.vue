@@ -325,7 +325,7 @@ onMounted(() => fetchLists());
 .panel-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 1.25rem 0;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -333,6 +333,7 @@ onMounted(() => fetchLists());
 
   .button-container {
     margin: auto;
+    padding: 0 0.5rem;
 
     i {
       margin-left: calc(0% - var(--n-icon-margin));
@@ -361,6 +362,7 @@ onMounted(() => fetchLists());
       }
 
       &:not(.visible) {
+        padding: 0;
         cursor: default;
         pointer-events: none;
       }

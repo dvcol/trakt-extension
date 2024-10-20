@@ -85,6 +85,10 @@ const onTouchEnd = (e: TouchEvent) => {
         opacity: 0;
       }
     }
+
+    @media (width < 725px) {
+      padding: 0 0.75rem 1rem;
+    }
   }
 }
 </style>

@@ -108,8 +108,13 @@ const { openTab } = useLinksStore();
 @include transition.scale;
 
 .poster-container {
-  --poster-height: calc(min(var(--half-width), var(--height-70-dvh)) * (9 / 16));
+  --min-width: var(--half-width);
+  --poster-height: calc(min(var(--min-width), var(--height-70-dvh)) * (9 / 16));
   --poster-width: calc(var(--poster-height) * (2 / 3));
+
+  @media (width < 725px) {
+    --min-width: calc(var(--width-80-dvh) - 2rem);
+  }
 
   &.link {
     @include mixin.hover-box-shadow;
@@ -118,7 +123,7 @@ const { openTab } = useLinksStore();
   }
 
   &.landscape:not(:has(.poster.portrait)) {
-    --poster-width: min(var(--half-width), var(--height-70-dvh));
+    --poster-width: min(var(--min-width), var(--height-70-dvh));
     --poster-height: calc(var(--poster-width) * (9 / 16));
   }
 
