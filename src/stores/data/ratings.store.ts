@@ -9,9 +9,9 @@ import {
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
-import type { StorePagination } from '~/models/pagination.model';
-
 import { PageSize } from '~/models/page-size.model';
+import { pageLoaded, type StorePagination } from '~/models/pagination.model';
+
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -40,9 +40,6 @@ const isMovieRating = (rating: TraktRating): rating is TraktRating<'movie'> => r
 const isShowRating = (rating: TraktRating): rating is TraktRating<'show'> => rating.type === 'show';
 const isSeasonRating = (rating: TraktRating): rating is TraktRating<'season'> => rating.type === 'season';
 const isEpisodeRating = (rating: TraktRating): rating is TraktRating<'episode'> => rating.type === 'episode';
-
-const pageLoaded = (pagination?: StorePagination) =>
-  pagination && pagination?.page && pagination?.pageCount && pagination.page >= pagination.pageCount;
 
 const updateRatings = (rating: TraktRating, score: TraktSyncRatingValue) => {
   rating.rating = score;
