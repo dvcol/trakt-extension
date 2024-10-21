@@ -212,6 +212,7 @@ const onTouchEnd = (e: TouchEvent) => {
       <template v-for="_route in visibleRoutes" :key="_route">
         <NTab
           class="tab"
+          tabindex="0"
           :style="
             _route === activeRoute
               ? { '--n-tab-text-color-hover': 'var(--navbar-text-color-hover-active)' }
@@ -220,6 +221,7 @@ const onTouchEnd = (e: TouchEvent) => {
           :name="_route.toLowerCase()"
           type="segment"
           @click="navigate(_route)"
+          @keydown.enter="navigate(_route)"
         >
           <NFlex
             align="center"
@@ -384,6 +386,11 @@ nav {
       --n-font-weight-strong: normal;
 
       padding: 0 0.75rem;
+      outline: none;
+
+      &:focus-visible {
+        color: var(--n-tab-text-color-hover);
+      }
     }
   }
 }
