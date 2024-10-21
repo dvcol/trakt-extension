@@ -9,7 +9,7 @@ import {
   NNotificationProvider,
 } from 'naive-ui';
 
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import LoadingBarProvider from '~/components/container/LoadingBarProvider.vue';
 import MessageProvider from '~/components/container/MessageProvider.vue';
@@ -19,7 +19,7 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { lazyComponent } from '~/utils/lazy.utils';
-import { addCustomProgressProperty } from '~/utils/style.utils';
+import '~/styles/properties.css';
 
 const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
 
@@ -34,8 +34,6 @@ const { drawer, open, dropdown } = NavbarService;
 const { enabledRoutes, backgroundColor, brand } = useExtensionSettingsStoreRefs();
 const { root, floating, reverse } = useAppStateStoreRefs();
 const { isWatching } = useWatchingStoreRefs();
-
-onBeforeMount(() => addCustomProgressProperty());
 </script>
 
 <template>

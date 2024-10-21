@@ -300,28 +300,33 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
         $transition: 0.3s var(--n-bezier)
       );
 
+      position: relative;
       flex: 1 1 auto;
       margin: 0.25rem 0;
       padding: 0.3rem 0.25rem 0.25rem;
       overflow: hidden;
       border-radius: 0.75rem;
 
-      &:active {
-        background-color: var(--bg-color-30);
-        box-shadow: var(--inset-box-shadow);
-      }
-
       &-buttons {
         position: absolute;
         right: 0;
         z-index: layers.$in-front;
-        transition: translate 0.25s var(--n-bezier);
-        translate: 150%;
+        box-sizing: border-box;
+        height: calc(var(--list-item-height, 100%) - 0.5rem);
+        opacity: 0;
+        transition:
+          translate 0.25s var(--n-bezier),
+          opacity 0.25s var(--n-bezier);
+        translate: 100%;
+
+        &:focus-within {
+          transition: opacity 0.25s var(--n-bezier);
+        }
 
         &:focus-within,
         &.open {
+          opacity: 1;
           translate: 0;
-          display: flex;
         }
 
         :first-child {
@@ -344,6 +349,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
     -webkit-backdrop-filter: var(--bg-blur-hover);
     backdrop-filter: var(--bg-blur-hover);
+  }
+
+  .content .tile:active:not(:has(button:active)) {
+    background-color: var(--bg-color-30);
+    box-shadow: var(--inset-box-shadow);
   }
 
   .header {

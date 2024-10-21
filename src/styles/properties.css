@@ -1,0 +1,11 @@
+@property --color {
+    syntax: '<color>';
+    initial-value: transparent;
+    inherits: false;
+}
+
+@property --progress {
+    syntax: '<percentage>';
+    inherits: true;
+    initial-value: 0%;
+}

@@ -12,6 +12,7 @@
   backdrop-filter: blur($blur);
   transition: $transition-prop $transition;
 
+  &:focus-within,
   &:active,
   &:hover {
     background: $to;
@@ -21,13 +22,13 @@
   }
 }
 
-
 @mixin hover-background-only(
   $from: var(--custom-bg-color, var(--bg-color)),
   $to: var(--custom-bg-color-hover, var(--bg-color-hover)),
 ) {
   background: $from;
 
+  &:focus-within,
   &:active,
   &:hover {
     background: $to;
