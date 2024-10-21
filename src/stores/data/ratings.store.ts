@@ -10,7 +10,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
 import { PageSize } from '~/models/page-size.model';
-import { pageLoaded, type StorePagination } from '~/models/pagination.model';
+import { pageLoaded, pageNotLoaded, type StorePagination } from '~/models/pagination.model';
 
 import { ErrorService } from '~/services/error.service';
 import { Logger } from '~/services/logger.service';
@@ -229,7 +229,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
 
   const loadRatings = async <T extends TraktRatingTypes>(type: T, id: string): Promise<TraktRatingsReturn<T> | undefined> => {
     while (
-      !pageLoaded(paginations[type]) &&
+      pageNotLoaded(paginations[type]) &&
       !getLoading(type) &&
       !getRatings(type, id) &&
       shouldRetry(errors[JSON.stringify(getQuery(type))], { error: `Ratings for ${type} - ${id.toString()}` })

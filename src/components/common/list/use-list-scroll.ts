@@ -247,8 +247,8 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
     if (!_item.getPosterQuery) _item.getPosterQuery = getPosterQuery(item, _item.type);
     if (!_item.getProgressQuery) _item.getProgressQuery = getProgressQuery(item);
 
-    _item.key = `${_item.type}-${_item.id}`;
     _item.date = getDate(item, array, index, dateFn);
+    _item.key = `${_item.type}-${_item.id}-${_item.date?.current?.getTime()}`;
     _item.meta = {
       source: item,
       ids: {
