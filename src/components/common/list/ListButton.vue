@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { type ButtonProps, NButton } from 'naive-ui';
+import { type ButtonProps, type IconProps, NButton, NIcon } from 'naive-ui';
 
 const { buttonProps } = defineProps<{
   buttonProps?: ButtonProps;
+  iconProps?: IconProps;
   disabled?: boolean;
 }>();
 
@@ -20,12 +21,16 @@ const onClick = (e: MouseEvent) => {
 <template>
   <NButton
     class="list-button"
+    icon-placement="right"
     quaternary
     v-bind="buttonProps"
     @click="onClick"
     @keydown.enter="onClick"
   >
     <slot />
+    <template v-if="iconProps && !disabled" #icon>
+      <NIcon class="list-button-icon" v-bind="iconProps" />
+    </template>
   </NButton>
 </template>
 
@@ -36,9 +41,10 @@ const onClick = (e: MouseEvent) => {
 
   display: flex;
   flex: 1 1 auto;
+  justify-content: flex-end;
   box-sizing: border-box;
   min-width: min(20vw, 10rem);
-  padding-left: 20%;
+  padding-right: 1rem;
   background: linear-gradient(
     to right,
     transparent 0%,
@@ -48,6 +54,10 @@ const onClick = (e: MouseEvent) => {
   transition:
     --color 0.25s var(--n-bezier),
     --progress 0.25s var(--n-bezier);
+
+  &-icon {
+    margin-left: 0.25rem;
+  }
 
   // stylelint-disable-next-line selector-class-pattern -- framework override
   &:not(.n-button--disabled) {

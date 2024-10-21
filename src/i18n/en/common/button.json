@@ -15,6 +15,15 @@
     "message": "Remove",
     "description": "Button to remove an item."
   },
+  "common__button__clear_all": {
+    "message": "Clear All",
+    "description": "Button to clear all."
+  },
+  "common__button__delete": {
+    "message": "Delete",
+    "description": "Button to delete an item."
+  },
+
   "common__button__save": {
     "message": "Save",
     "description": "Button to save an item."
@@ -94,6 +103,14 @@
   "common__button__watched": {
     "message": "Watched",
     "description": "Button to mark as watched."
+  },
+  "common__button__favorite": {
+    "message": "Favorite",
+    "description": "Button to mark as favorite."
+  },
+  "common__button__collected": {
+    "message": "Collected",
+    "description": "Button to mark as collected."
   },
   "common__button__new": {
     "message": "New",

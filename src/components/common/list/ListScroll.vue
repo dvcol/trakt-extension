@@ -323,8 +323,13 @@ const listPaddingBottom = computed(() => {
           @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
         >
           <slot :item="item" :loading="item.loading" />
-          <template v-if="$slots.buttons" #buttons="{ open }">
-            <slot name="buttons" :item="item" :loading="item.loading" :open="open" />
+          <template v-if="$slots.buttons" #buttons="{ open, dragged }">
+            <slot
+              name="buttons"
+              :item="item"
+              :loading="item.loading"
+              :open="open || dragged"
+            />
           </template>
         </ListItem>
       </template>

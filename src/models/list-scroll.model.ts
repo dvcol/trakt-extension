@@ -93,6 +93,8 @@ export const ListScrollItemType = {
   Placeholder: 'placeholder',
 } as const;
 
+export type ListScrollItemTypes = (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
+
 export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
   source: ListScrollSourceItem | ProgressItem;
   ids: {
@@ -122,7 +124,7 @@ export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> =
   index: number;
   key: string;
 
-  type?: (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
+  type?: ListScrollItemTypes;
   typeLink?: AnchorLinkUrl;
   title?: string;
   titleLink?: AnchorLinkUrl;

@@ -115,13 +115,39 @@ const i18n = useI18n('list', 'item');
 const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height, color } =
   toRefs(props);
 
-const itemRef = ref<HTMLElement & InstanceType<typeof NTimelineItem>>();
+const itemRef = ref<
+  Omit<InstanceType<typeof NTimelineItem>, '$el'> & { $el?: HTMLDivElement }
+>();
 
 const open = ref(false);
+const dragged = ref(0);
 const onHover = (_event: MouseEvent, _hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
-  itemRef?.value?.$el?.focus();
+  itemRef.value?.$el?.focus({ preventScroll: true });
   open.value = _hover && (_event.altKey || _event.ctrlKey);
+  if (!_hover) dragged.value = 0;
+};
+
+const touchStart = ref<TouchEvent>();
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStart.value = e;
+};
+
+const buttons = ref<InstanceType<typeof NButtonGroup> & { $el?: HTMLDivElement }>();
+const onToucheMove = (e: TouchEvent) => {
+  const _width = buttons.value?.$el?.clientWidth;
+  if (!_width) return;
+  const _start = touchStart.value?.targetTouches?.[0].clientX;
+  if (!_start) return;
+  const _end = e.changedTouches?.[0].clientX;
+  if (!_end) return;
+  dragged.value = Math.min(100, Math.max(0, ((_start - _end) / _width) * 100));
+};
+
+const onTouchEnd = (e: TouchEvent) => {
+  if (dragged.value > 50) dragged.value = 100;
+  else dragged.value = 0;
 };
 
 const noHead = computed(
@@ -189,8 +215,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     @keydown.enter="onClick"
     @keydown.alt="open = !open"
     @keydown.ctrl="open = !open"
-    @mouseenter="e => onHover(e, true)"
-    @mouseleave="e => onHover(e, false)"
+    @mouseenter.passive="e => onHover(e, true)"
+    @mouseleave.passive="e => onHover(e, false)"
+    @touchstart.passive="onTouchStart"
+    @touchmove.passive="onToucheMove"
+    @touchend.passive="onTouchEnd"
   >
     <template #icon>
       <slot name="tag" />
@@ -260,11 +289,13 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
           </ListItemPanel>
           <NButtonGroup
             v-if="$slots.buttons"
+            ref="buttons"
             class="tile-buttons"
-            :class="{ open }"
+            :class="{ open, dragged: dragged > 0 && dragged < 100 }"
+            :style="{ '--dragged': `${dragged}%` }"
             vertical
           >
-            <slot name="buttons" :open="open" :item="item" />
+            <slot name="buttons" :open="open" :dragged="dragged" :item="item" />
           </NButtonGroup>
         </NFlex>
       </NFlex>
@@ -313,11 +344,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
         z-index: layers.$in-front;
         box-sizing: border-box;
         height: calc(var(--list-item-height, 100%) - 0.5rem);
-        opacity: 0;
-        transition:
-          translate 0.25s var(--n-bezier),
-          opacity 0.25s var(--n-bezier);
-        translate: 100%;
+        translate: calc(100% - var(--dragged));
+
+        &:not(.dragged) {
+          transition: translate 0.25s var(--n-bezier);
+        }
 
         &:focus-within {
           transition: opacity 0.25s var(--n-bezier);
@@ -325,7 +356,6 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
 
         &:focus-within,
         &.open {
-          opacity: 1;
           translate: 0;
         }
 
