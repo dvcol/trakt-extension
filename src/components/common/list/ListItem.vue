@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NEmpty, NFlex, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
+import { NButtonGroup, NEmpty, NFlex, NSkeleton, NTime, NTimelineItem } from 'naive-ui';
 
 import {
   computed,
@@ -115,8 +115,13 @@ const i18n = useI18n('list', 'item');
 const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height, color } =
   toRefs(props);
 
-const onHover = (_hover: boolean) => {
+const itemRef = ref<HTMLElement & InstanceType<typeof NTimelineItem>>();
+
+const open = ref(false);
+const onHover = (_event: MouseEvent, _hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
+  itemRef?.value?.$el?.focus();
+  open.value = _hover && (_event.altKey || _event.ctrlKey);
 };
 
 const noHead = computed(
@@ -134,8 +139,6 @@ const isToday = computed(
 const year = new Date().getFullYear();
 const sameYear = computed(() => date.value?.getFullYear() === year);
 const loading = computed(() => item?.value?.loading);
-
-const itemRef = ref<HTMLElement & InstanceType<typeof NTimelineItem>>();
 
 onMounted(() => {
   if (!scrollIntoView.value) return;
@@ -165,6 +168,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
   <NTimelineItem
     ref="itemRef"
     :key="item.key"
+    tabindex="0"
     class="timeline-item"
     :class="{
       'no-header': noHead,
@@ -182,8 +186,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : _color"
     @click="onClick"
-    @mouseenter="onHover(true)"
-    @mouseleave="onHover(false)"
+    @keydown.enter="onClick"
+    @keydown.alt="open = !open"
+    @keydown.ctrl="open = !open"
+    @mouseenter="e => onHover(e, true)"
+    @mouseleave="e => onHover(e, false)"
   >
     <template #icon>
       <slot name="tag" />
@@ -198,6 +205,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
         size="small"
         :theme-overrides="{ gapSmall: '0' }"
         :wrap="false"
+        align="center"
       >
         <NFlex
           v-if="!hideDate"
@@ -250,6 +258,14 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
           >
             <slot :item="item" :loading="loading" />
           </ListItemPanel>
+          <NButtonGroup
+            v-if="$slots.buttons"
+            class="tile-buttons"
+            :class="{ open }"
+            vertical
+          >
+            <slot name="buttons" :open="open" :item="item" />
+          </NButtonGroup>
         </NFlex>
       </NFlex>
     </template>
@@ -268,6 +284,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
 .timeline-item {
   height: var(--list-item-height, 145px);
   margin: 0 1rem;
+  outline: none;
 
   &.show-date {
     margin-left: 4rem;
@@ -286,17 +303,47 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
       flex: 1 1 auto;
       margin: 0.25rem 0;
       padding: 0.3rem 0.25rem 0.25rem;
+      overflow: hidden;
       border-radius: 0.75rem;
 
       &:active {
         background-color: var(--bg-color-30);
         box-shadow: var(--inset-box-shadow);
       }
+
+      &-buttons {
+        position: absolute;
+        right: 0;
+        z-index: layers.$in-front;
+        transition: translate 0.25s var(--n-bezier);
+        translate: 150%;
+
+        &:focus-within,
+        &.open {
+          translate: 0;
+          display: flex;
+        }
+
+        :first-child {
+          border-top-right-radius: 0.75rem;
+        }
+
+        :last-child {
+          border-bottom-right-radius: 0.75rem;
+        }
+      }
     }
 
     .placeholder {
       flex: 1 1 auto;
     }
+  }
+
+  &:focus-visible .content .tile {
+    background-color: var(--bg-color-20);
+    // stylelint-disable-next-line property-no-vendor-prefix -- necessary for safari
+    -webkit-backdrop-filter: var(--bg-blur-hover);
+    backdrop-filter: var(--bg-blur-hover);
   }
 
   .header {
@@ -311,6 +358,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     transition:
       color 0.2s var(--n-bezier),
       border 0.2s var(--n-bezier);
+    pointer-events: none;
 
     &.today {
       color: var(--color-warning);
