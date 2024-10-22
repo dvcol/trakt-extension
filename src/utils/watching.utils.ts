@@ -98,17 +98,11 @@ export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') =
 
   const onCheckin = async <T extends 'episode' | 'movie'>(
     { ids, type }: { ids?: Pick<TraktApiIds, 'trakt'> & Partial<TraktApiIds>; type: T },
-    { cancel: _cancel, callback }: { cancel?: boolean; callback: () => void },
+    before?: () => void,
   ) => {
-    if (_cancel) {
-      const cancelled = await onCancel();
-      if (!cancelled) return Promise.resolve(false);
-    } else if (!ids) {
-      return NotificationService.error(i18n('checkin_failed', 'watching'), new Error(`Missing ${type} id`));
-    } else {
-      callback?.();
-      return checkin({ [type]: { ids } } as unknown as TraktCheckinRequest);
-    }
+    if (!ids) return NotificationService.error(i18n('checkin_failed', 'watching'), new Error(`Missing ${type} id`));
+    before?.();
+    return checkin({ [type]: { ids } } as unknown as TraktCheckinRequest);
   };
   return { cancel: onCancel, checkin: onCheckin };
 };

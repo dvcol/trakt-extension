@@ -246,16 +246,12 @@ const isWatching = computed(() => {
 const { cancel, checkin } = useCancelWatching();
 const onCheckin = async (_cancel: boolean) => {
   try {
-    await checkin(
-      { ids: movie.value?.ids, type: 'movie' },
-      {
-        cancel: _cancel,
-
-        callback: () => {
-          panelDirty.value = true;
-        },
-      },
-    );
+    if (_cancel) await cancel();
+    else {
+      await checkin({ ids: movie.value?.ids, type: 'movie' }, () => {
+        panelDirty.value = true;
+      });
+    }
     await fetchMovieWatched(true);
   } catch (error) {
     Logger.error('Failed to checkin', error);

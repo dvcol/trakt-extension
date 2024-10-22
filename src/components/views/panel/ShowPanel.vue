@@ -434,18 +434,15 @@ const isWatching = computed(() => {
   return false;
 });
 
-const { cancel, checkin } = useCancelWatching();
+const { checkin, cancel } = useCancelWatching();
 const onCheckin = async (_cancel: boolean) => {
   try {
-    await checkin(
-      { ids: episode.value?.ids, type: 'episode' },
-      {
-        cancel: _cancel,
-        callback: () => {
-          panelDirty.value = true;
-        },
-      },
-    );
+    if (_cancel) await cancel();
+    else {
+      await checkin({ ids: episode.value?.ids, type: 'episode' }, () => {
+        panelDirty.value = true;
+      });
+    }
 
     if (!showId?.value) return;
     await fetchShowProgress(showId.value, { force: true });

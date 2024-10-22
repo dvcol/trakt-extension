@@ -129,9 +129,11 @@ const onHover = (_event: MouseEvent, _hover: boolean) => {
 };
 
 const touchStart = ref<TouchEvent>();
+const initialDrag = ref(0);
 
 const onTouchStart = (e: TouchEvent) => {
   touchStart.value = e;
+  initialDrag.value = dragged.value;
 };
 
 const buttons = ref<InstanceType<typeof NButtonGroup> & { $el?: HTMLDivElement }>();
@@ -142,7 +144,10 @@ const onToucheMove = (e: TouchEvent) => {
   if (!_start) return;
   const _end = e.changedTouches?.[0].clientX;
   if (!_end) return;
-  dragged.value = Math.min(100, Math.max(0, ((_start - _end) / _width) * 100));
+  const diff = _start - _end;
+  const initial = initialDrag.value;
+  const percent = initial + (diff / _width) * 100;
+  dragged.value = Math.min(100, Math.max(0, percent));
 };
 
 const onTouchEnd = (e: TouchEvent) => {
@@ -343,15 +348,16 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
         right: 0;
         z-index: layers.$in-front;
         box-sizing: border-box;
+        min-width: min(20vw, 10rem);
         height: calc(var(--list-item-height, 100%) - 0.5rem);
         translate: calc(100% - var(--dragged));
 
         &:not(.dragged) {
-          transition: translate 0.25s var(--n-bezier);
+          transition: translate 0.3s var(--n-bezier);
         }
 
         &:focus-within {
-          transition: opacity 0.25s var(--n-bezier);
+          transition: translate 0s;
         }
 
         &:focus-within,

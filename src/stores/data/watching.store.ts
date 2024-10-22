@@ -5,6 +5,7 @@ import { computed, reactive, ref, watch } from 'vue';
 
 import type { TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 
+import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
 import { PollingIntervals } from '~/models/polling.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -13,6 +14,7 @@ import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useDocumentVisible } from '~/utils/store.utils';
+import { isWatchingMovie, isWatchingShow } from '~/utils/watching.utils';
 
 const WatchingStoreConstants = {
   Store: 'data.watching',
@@ -181,6 +183,18 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     if (unsub) unsub();
   };
 
+  const isWatchingListItem = (item?: ListScrollItem) => {
+    if (!item) return false;
+    if (!watching.value) return false;
+    if (isWatchingShow(watching.value) && item.type === ListScrollItemType.Episode) {
+      return watching.value.episode?.ids.trakt === item?.id;
+    }
+    if (isWatchingMovie(watching.value) && item.type === ListScrollItemType.Movie) {
+      return watching.value.movie?.ids.trakt === item?.id;
+    }
+    return false;
+  };
+
   return {
     watching,
     polling: computed({
@@ -205,6 +219,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
     destroyWatchingStore,
     checkin,
     cancel,
+    isWatchingListItem,
   };
 });
 
