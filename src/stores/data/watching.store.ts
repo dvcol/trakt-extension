@@ -10,7 +10,7 @@ import { PollingIntervals } from '~/models/polling.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
-import { isWatchingMovie, isWatchingShow } from '~/stores/composable/use-watching.ts';
+import { isWatchingMovie, isWatchingShow } from '~/stores/composable/use-watching.js';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { useI18n } from '~/utils/i18n.utils';

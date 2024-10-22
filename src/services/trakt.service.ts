@@ -395,8 +395,8 @@ export class TraktService {
         return response.json() as Promise<TraktWatched<'movie', 'short'>[]>;
       },
 
-      async collection(): Promise<TraktCollection<'movie', 'short', 'short'>[]> {
-        const response = await TraktService.traktClient.sync.collection.get.cached({ type: 'movies' });
+      async collection(force?: boolean): Promise<TraktCollection<'movie', 'short', 'short'>[]> {
+        const response = await TraktService.traktClient.sync.collection.get.cached({ type: 'movies' }, undefined, { force });
         return response.json() as Promise<TraktCollection<'movie', 'short', 'short'>[]>;
       },
     },

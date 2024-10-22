@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { ListScrollItem } from '~/models/list-scroll.model';
-
 import ListButton from '~/components/common/list/ListButton.vue';
+import IconCancel from '~/components/icons/IconCancel.vue';
 import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
+import { isEpisodeOrMovie, type ListScrollItem } from '~/models/list-scroll.model';
+import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
+import { useCancelWatching } from '~/stores/composable/use-watching';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
-import { useCancelWatching } from '~/utils/watching.utils';
 
 const { disabled, item } = defineProps<{
   disabled?: boolean;
@@ -25,12 +27,22 @@ const watching = computed(() => {
 const { cancel, checkin } = useCancelWatching();
 const onClick = async () => {
   if (!item?.type) return;
-  if (!['movie', 'episode'].includes(item.type)) return;
-  const type: 'movie' | 'episode' = item.type as 'movie' | 'episode';
-  const ids = item.meta?.ids?.[type];
+  if (!isEpisodeOrMovie(item.type)) return;
+  const ids = item.meta?.ids?.[item.type];
   if (!ids?.trakt) return;
-  if (watching.value) await cancel();
-  else await checkin({ type, ids: { trakt: ids.trakt } });
+  const query = {
+    type: item.type,
+    ids: { trakt: ids.trakt },
+    showId: item.meta?.ids?.show?.trakt,
+  };
+
+  try {
+    if (watching.value) await cancel(query);
+    else await checkin(query);
+  } catch (error) {
+    Logger.error('Failed to checkin', { query, error });
+    NotificationService.error(i18n('checkin_failed', 'watching'), error);
+  }
 };
 
 const { loading } = useWatchingStoreRefs();
@@ -41,7 +53,7 @@ const { loading } = useWatchingStoreRefs();
     :disabled="loading || disabled"
     :loading="loading"
     :button-props="{ type: watching ? 'warning' : 'error' }"
-    :icon-props="{ component: IconConfirmCircle }"
+    :icon-props="{ component: watching ? IconCancel : IconConfirmCircle }"
     @on-click="onClick"
   >
     <span>{{ i18n(watching ? 'cancel' : 'checkin', 'common', 'button') }}</span>

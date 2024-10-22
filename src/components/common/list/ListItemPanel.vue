@@ -20,12 +20,10 @@ import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import { getCustomLinkIcon } from '~/models/link.model';
-import { type ListScrollItem, type ShowProgress } from '~/models/list-scroll.model';
+import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
-import { useHistoryStore } from '~/stores/data/history.store';
-import { useMovieStore } from '~/stores/data/movie.store';
-import { useShowStore } from '~/stores/data/show.store';
+import { useItemCollected, useItemPlayed } from '~/stores/composable/use-item-played';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
@@ -113,127 +111,12 @@ const tags = computed(
     }),
 );
 
-const { getShowWatchedProgress, getShowCollectionProgress } = useShowStore();
-
-const progress = computed<ShowProgress | undefined>(() => {
-  if (!showProgress.value && !showPlayed.value && !showCollected.value) return;
-  if (item?.value?.progress) return item.value?.progress;
-  if (item?.value?.progressRef) return item.value?.progressRef.value;
-  if (!item?.value?.getProgressQuery) return;
-  const { id, cacheOptions, noFetch } = item.value?.getProgressQuery() ?? {};
-  if (!id) return;
-  return getShowWatchedProgress(id, cacheOptions, noFetch).value;
-});
-
-const collection = computed<ShowProgress | undefined>(() => {
-  if (!showCollected.value) return;
-  if (!item?.value?.getProgressQuery) return;
-  const { id, noFetch } = item.value?.getProgressQuery() ?? {};
-  if (!id) return;
-  return getShowCollectionProgress(id, noFetch).value;
-});
-
-const { getMovieWatched, getMovieCollected } = useMovieStore();
-const { getMovieHistory, getEpisodeHistory } = useHistoryStore();
-
-const movieHistory = computed(() => {
-  if (!showPlayed.value) return;
-  const _item = item?.value;
-  if (_item?.type !== 'movie') return;
-  if (!_item?.meta?.ids?.movie?.trakt) return;
-  return getMovieHistory(_item.meta.ids.movie.trakt)?.value;
-});
-
-const episodeHistory = computed(() => {
-  if (!showPlayed.value) return;
-  const _item = item?.value;
-  if (_item?.type !== 'episode') return;
-  if (!_item?.meta?.ids?.episode?.trakt) return;
-  return getEpisodeHistory(_item.meta.ids.episode.trakt)?.value;
-});
-
-const episodeProgress = computed(() => {
-  if (!showPlayed.value) return;
-  const _item = item?.value;
-  if (_item?.type !== 'episode') return;
-  const _progress = progress.value;
-  if (!_progress) return;
-  const _season = _item.meta?.number?.season;
-  const _episode = _item.meta?.number?.episode;
-  if (!_season || !_episode) return;
-  return _progress.seasons
-    ?.find(s => s.number === _season)
-    ?.episodes?.find(e => e.number === _episode);
-});
-
-const movieWatched = computed(() => {
-  if (!showPlayed.value) return;
-  const _item = item?.value;
-  if (_item?.type !== 'movie') return;
-  if (!_item?.meta?.ids?.movie?.trakt) return;
-  return getMovieWatched(_item.meta.ids.movie.trakt)?.value;
-});
-
-const moviePlayed = computed(() => {
-  if (!showPlayed.value) return;
-  if (movieWatched.value !== undefined) return movieWatched.value?.last_watched_at;
-  return movieHistory.value?.watched_at;
-});
-
-const episodePlayed = computed(() => {
-  if (!showPlayed.value) return;
-  if (episodeProgress.value !== undefined) {
-    return {
-      date: episodeProgress.value?.date,
-      completed: episodeProgress.value?.completed,
-    };
-  }
-  return {
-    date: episodeHistory.value?.watched_at,
-    completed: !!episodeHistory.value,
-  };
-});
-
-const played = computed(() => {
-  if (!showPlayed.value) return false;
-  if (item?.value?.type === 'movie') return !!moviePlayed.value;
-  if (item?.value?.type !== 'episode') return false;
-  return episodePlayed.value?.completed;
-});
-
-const playedDate = computed(() => {
-  if (!played.value) return;
-  if (item?.value?.type === 'movie') {
-    if (!moviePlayed.value) return;
-    return new Date(moviePlayed.value).toLocaleString();
-  }
-  if (!episodePlayed.value?.date) return;
-  return new Date(episodePlayed.value?.date).toLocaleString();
-});
-
-const collected = computed(() => {
-  if (!showCollected.value) return false;
-  const _item = item?.value;
-  if (_item?.type === 'movie' && _item?.meta?.ids?.movie?.trakt) {
-    return getMovieCollected(_item.meta.ids.movie.trakt)?.value?.collected_at;
-  }
-  if (_item?.type !== 'episode') return false;
-  const _collection = collection.value;
-
-  if (!_collection) return false;
-  const _season = _item.meta?.number?.season;
-  const _episode = _item.meta?.number?.episode;
-  if (!_season || !_episode) return false;
-  return _collection.seasons
-    ?.find(s => s.number === _season)
-    ?.episodes?.find(e => e.number === _episode)?.date;
-});
-
-const collectedDate = computed(() => {
-  if (!collected.value) return;
-  if (typeof collected.value !== 'string') return;
-  return new Date(collected.value).toLocaleString();
-});
+const {
+  progress,
+  played,
+  date: playedDate,
+} = useItemPlayed(item, { showPlayed, showProgress });
+const { collected, date: collectedDate } = useItemCollected(item, showCollected);
 
 const { progressType } = useExtensionSettingsStoreRefs();
 
@@ -461,7 +344,6 @@ const onTagClick = (url?: string) => {
     gap: 0.5rem !important;
     max-height: 3.325rem;
     margin-top: 0.3rem;
-    overflow: scroll;
 
     &.show-progress {
       max-height: 1.5rem;

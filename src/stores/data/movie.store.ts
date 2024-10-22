@@ -1,4 +1,3 @@
-import { wait } from '@dvcol/common-utils/common/promise';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, watch } from 'vue';
@@ -115,22 +114,8 @@ export const useMovieStore = defineStore('data.movie', () => {
     }
   };
 
-  const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
-  const changeMovieWatched = async (id: string | number, remove?: boolean) => {
-    if (remove) delete moviesWatched[id.toString()];
-    else {
-      moviesWatched[id.toString()] = {
-        plays: 1,
-        last_watched_at: new Date().toISOString(),
-        last_updated_at: movies[id.toString()]?.updated_at,
-        movie: movies[id.toString()],
-      };
-    }
-    await wait(500);
-    return fetchMovieWatched();
-  };
-
   const fetchMovieCollected = async (force?: boolean) => {
+    console.info('fetchMovieCollected', force);
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch collected movies, user is not authenticated');
       return;
@@ -146,7 +131,7 @@ export const useMovieStore = defineStore('data.movie', () => {
 
     loadingCollected.value = true;
     try {
-      const response = await TraktService.progress.movie.collection();
+      const response = await TraktService.progress.movie.collection(force);
       delete movieErrors.collected;
       response.forEach(m => {
         moviesCollected[m.movie.ids.trakt.toString()] = m;
@@ -162,23 +147,7 @@ export const useMovieStore = defineStore('data.movie', () => {
   };
 
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
-  const changeMovieCollected = async (id: string | number, remove?: boolean) => {
-    if (remove) delete moviesCollected[id.toString()];
-    else {
-      moviesCollected[id.toString()] = {
-        collected_at: new Date().toISOString(),
-        updated_at: movies[id.toString()]?.updated_at,
-        movie: movies[id.toString()],
-      };
-    }
-    await wait(500);
-    return fetchMovieCollected();
-  };
-
-  const resetMovieWatched = async (id?: string | number) => {
-    if (id) delete moviesWatched[id.toString()];
-    await fetchMovieWatched(true);
-  };
+  const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
 
   const initMovieStore = () => {
     watch(user, () => {
@@ -199,10 +168,7 @@ export const useMovieStore = defineStore('data.movie', () => {
     fetchMovieCollected,
     getMovieCollected,
     loadingCollected,
-    changeMovieWatched,
-    changeMovieCollected,
     clearMovieWatchedProgress,
-    resetMovieWatched,
   };
 });
 

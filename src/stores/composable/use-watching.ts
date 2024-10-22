@@ -70,13 +70,13 @@ export const isMovieQuery = (query: CheckinQuery<'episode' | 'movie'>): query is
 
 export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') => {
   const { cancel, checkin } = useWatchingStore();
-  const { resetShowProgress } = useShowStore();
-  const { resetMovieWatched } = useMovieStore();
+  const { fetchShowProgress } = useShowStore();
+  const { fetchMovieWatched } = useMovieStore();
 
   const onReset = async <T extends 'episode' | 'movie'>({ type, ids, showId }: CheckinQuery<T>) => {
     if (!isEpisodeOrMovie(type)) return;
-    if (type === 'episode' && showId) return resetShowProgress(showId);
-    if (type === 'movie' && ids?.trakt) return resetMovieWatched(ids.trakt);
+    if (type === 'episode' && showId) return fetchShowProgress(showId.toString(), { force: true });
+    if (type === 'movie' && ids?.trakt) return fetchMovieWatched(true);
   };
 
   const i18n = useI18n('watching');

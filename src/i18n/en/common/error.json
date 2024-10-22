@@ -1,0 +1,18 @@
+{
+  "common__error__history_add_failed": {
+    "message": "Failed to add to watched history.",
+    "description": "Message for failed history update."
+  },
+  "common__error__history_remove_failed": {
+    "message": "Failed to remove from watched history.",
+    "description": "Message for failed history update."
+  },
+  "common__error__collection_add_failed": {
+    "message": "Failed to add to collection.",
+    "description": "Message for failed collection update."
+  },
+  "common__error__collection_remove_failed": {
+    "message": "Failed to remove from collection.",
+    "description": "Message for failed collection update."
+  }
+}

@@ -385,11 +385,6 @@ export const useShowStore = defineStore('data.show', () => {
     });
   };
 
-  const resetShowProgress = async (id: number | string) => {
-    delete showsWatchedProgress[id.toString()];
-    await fetchShowProgress(id.toString(), { force: true });
-  };
-
   const initShowStore = () => {
     watch(user, () => {
       clearProgressState();
@@ -419,7 +414,6 @@ export const useShowStore = defineStore('data.show', () => {
     getShowCollectionProgress,
     getShowCollectionLoading,
     clearShowWatchedProgress,
-    resetShowProgress,
   };
 });
 

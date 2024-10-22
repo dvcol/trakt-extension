@@ -36,7 +36,7 @@ const onClick = (e: MouseEvent) => {
 
 <style scoped lang="scss">
 .list-button {
-  --color: var(--bg-black-80);
+  --color: var(--bg-black-60);
   --progress: 100%;
 
   display: flex;
@@ -63,13 +63,13 @@ const onClick = (e: MouseEvent) => {
   &:not(.n-button--disabled) {
     &:focus-visible,
     &:hover {
-      --color: var(--bg-black-90);
-      --progress: 70%;
+      --color: var(--n-text-color);
+      --progress: 600%;
     }
 
     &:active {
-      --color: var(--bg-black);
-      --progress: 50%;
+      --color: var(--n-text-color);
+      --progress: 300%;
     }
   }
 }

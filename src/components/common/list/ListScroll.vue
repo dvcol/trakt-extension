@@ -255,7 +255,7 @@ const listPaddingBottom = computed(() => {
       :on-scroll="onScrollHandler"
       @vue:updated="onUpdatedHandler"
     >
-      <template #default="{ item }">
+      <template #default="{ item }: { item: ListScrollItem }">
         <slot v-if="item.type === ListScrollItemType.LoadMore" name="load-more">
           <NFlex
             :key="item.key"

@@ -15,7 +15,7 @@ import {
   isWatchingShow,
   useCancelWatching,
   useWatchingProgress,
-} from '~/stores/composable/use-watching.ts';
+} from '~/stores/composable/use-watching';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { watchMedia } from '~/utils/window.utils';

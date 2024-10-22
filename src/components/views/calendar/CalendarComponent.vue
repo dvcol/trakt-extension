@@ -2,9 +2,12 @@
 import { watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
+import ListButtonCheckin from '~/components/common/list/ListButtonCheckin.vue';
+import ListButtonWatched from '~/components/common/list/ListButtonWatched.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/common/panel/use-panel-item';
+import { isListItemType } from '~/models/list.model';
 import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -87,7 +90,14 @@ const { onItemClick } = usePanelItem();
       @on-scroll-out-of-view="e => onScrollIntoOutOfView(true, e.ref)"
       @on-scroll-top="onScrollTop"
       @on-scroll-bottom="onScrollBottom"
-    />
+    >
+      <template #buttons="{ open, item }">
+        <template v-if="isListItemType(item?.type)">
+          <ListButtonWatched :disabled="!open" :item="item" />
+          <ListButtonCheckin :disabled="!open" :item="item" />
+        </template>
+      </template>
+    </ListScroll>
     <FloatingButton
       :show="!footerOpen && scrolledOut"
       :width="centerIsToday ? '2.5rem' : '3.5rem'"

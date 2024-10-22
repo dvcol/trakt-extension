@@ -9,7 +9,7 @@ import type {
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
 
-import type { AnyList, AnyListDateTypes, ListEntity, ListTypes } from '~/models/list.model';
+import type { AddOrRemoveIds, AnyList, AnyListDateTypes, ListEntity, ListItemTypes, ListTypes } from '~/models/list.model';
 
 import type { StorePagination } from '~/models/pagination.model';
 
@@ -29,7 +29,6 @@ import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
-type ListItemTypes = 'show' | 'season' | 'episode' | 'movie';
 type MinimalItem = Partial<Record<ListItemTypes, { ids: Pick<TraktApiIds, 'trakt'> }>>;
 
 type ListDictionary = Record<string, Partial<Record<ListItemTypes, Record<string, boolean>>>>;
@@ -42,8 +41,6 @@ type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListIt
 
 type ListItemQuery = TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery;
 type ListQuery = { page?: number; limit?: number; list?: ListEntity };
-
-export type AddOrRemoveIds = Pick<TraktApiIds, 'trakt'> | Pick<TraktApiIds, 'trakt'>[];
 
 const ListStoreConstants = {
   Store: 'data.list',

@@ -24,23 +24,19 @@ import {
   type SeasonProgress,
   type ShowProgress,
 } from '~/models/list-scroll.model';
-import {
-  DefaultListId,
-  DefaultLists,
-  type ListEntity,
-  ListType,
-} from '~/models/list.model';
+import { type AddOrRemoveIds, type ListEntity, ListType } from '~/models/list.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchedUpdates } from '~/stores/composable/use-list-update';
 import {
   type CheckinQuery,
   isWatchingShow,
   useCancelWatching,
   useWatchingProgress,
-} from '~/stores/composable/use-watching.ts';
-import { type AddOrRemoveIds, useListStore } from '~/stores/data/list.store';
+} from '~/stores/composable/use-watching';
+import { useListStore } from '~/stores/data/list.store';
 import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
@@ -79,7 +75,6 @@ const {
   getShowCollectionProgress,
   getShowProgressLoading,
   getShowCollectionLoading,
-  resetShowProgress,
 } = useShowStore();
 
 const i18n = useI18n('panel', 'show');
@@ -363,6 +358,8 @@ const handleSeason = (
   };
 };
 
+const { addOrRemovePlayed, addOrRemoveCollected } = useWatchedUpdates();
+
 const onCollectionUpdate = async (
   value: PanelButtonsOptions,
   selected?: string | number | Date,
@@ -377,20 +374,14 @@ const onCollectionUpdate = async (
     options,
   );
 
-  try {
-    panelDirty.value = true;
-    await addToOrRemoveFromList({
-      list: DefaultLists.ShowCollection,
-      itemType,
-      itemIds,
-      date,
-      remove,
-    });
-    if (!showId?.value) return;
-    await fetchShowCollectionProgress(showId.value, { force: true });
-  } catch (error) {
-    Logger.error('Failed to update collection', error);
-  }
+  panelDirty.value = true;
+  await addOrRemoveCollected({
+    itemType,
+    itemIds,
+    date,
+    remove,
+    showId: showId.value,
+  });
 };
 
 const onWatchedUpdate = async (
@@ -406,25 +397,14 @@ const onWatchedUpdate = async (
     watchedProgressEntity.value,
     options,
   );
-
-  try {
-    panelDirty.value = true;
-    await addToOrRemoveFromList({
-      list: {
-        id: DefaultListId.History,
-        type: ListType.History,
-        name: 'list_type__history',
-      },
-      itemType,
-      itemIds,
-      date,
-      remove,
-    });
-    if (!showId?.value) return;
-    await resetShowProgress(showId?.value);
-  } catch (error) {
-    Logger.error('Failed to update watched status', error);
-  }
+  panelDirty.value = true;
+  await addOrRemovePlayed({
+    itemType,
+    itemIds,
+    date,
+    remove,
+    showId: showId.value,
+  });
 };
 
 const { watching, loading: checkinLoading } = useWatchingStoreRefs();

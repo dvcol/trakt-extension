@@ -3,6 +3,7 @@ import { onMounted, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
+import ListButtonWatched from '~/components/common/list/ListButtonWatched.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import {
   addLoadMore,
@@ -10,6 +11,7 @@ import {
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/common/panel/use-panel-item';
+import { isListItemType } from '~/models/list.model';
 import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useActivityStore } from '~/stores/data/activity.store';
@@ -94,7 +96,13 @@ useActiveAndDocumentVisible({
       @on-updated="onUpdated"
       @onload-more="onLoadMore"
       @on-item-click="onItemClick"
-    />
+    >
+      <template #buttons="{ open, item }">
+        <template v-if="isListItemType(item?.type)">
+          <ListButtonWatched :disabled="!open" :item="item" watched />
+        </template>
+      </template>
+    </ListScroll>
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}
     </FloatingButton>

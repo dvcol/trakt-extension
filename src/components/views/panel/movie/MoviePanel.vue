@@ -15,22 +15,18 @@ import {
 import MoviePanelButtons from '~/components/views/panel/movie/MoviePanelButtons.vue';
 import MoviePanelDetails from '~/components/views/panel/movie/MoviePanelDetails.vue';
 import MoviePanelOverview from '~/components/views/panel/movie/MoviePanelOverview.vue';
-import {
-  DefaultListId,
-  DefaultLists,
-  type ListEntity,
-  ListType,
-} from '~/models/list.model';
+import { type ListEntity, ListType } from '~/models/list.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useWatchedUpdates } from '~/stores/composable/use-list-update';
 import {
   type CheckinQuery,
   isWatchingMovie,
   useCancelWatching,
   useWatchingProgress,
-} from '~/stores/composable/use-watching.ts';
+} from '~/stores/composable/use-watching';
 import { useListStore } from '~/stores/data/list.store';
 import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useMovieStore, useMovieStoreRefs } from '~/stores/data/movie.store';
@@ -55,9 +51,6 @@ const {
   getMovieCollected,
   fetchMovieWatched,
   fetchMovieCollected,
-  changeMovieWatched,
-  changeMovieCollected,
-  resetMovieWatched,
 } = useMovieStore();
 
 const { loadingCollected, loadingWatched } = useMovieStoreRefs();
@@ -163,6 +156,8 @@ const onListUpdate = async (value: ListEntity['id'], remove: boolean) => {
 
 const releaseDate = computed(() => movie.value?.released);
 
+const { addOrRemovePlayed, addOrRemoveCollected } = useWatchedUpdates();
+
 const onCollectionUpdate = async (
   value: PanelButtonsOptions,
   date?: string | number | Date,
@@ -171,23 +166,13 @@ const onCollectionUpdate = async (
   if (date === undefined && value === PanelButtonsOption.Release) {
     date = releaseDate.value;
   }
-
-  try {
-    panelDirty.value = true;
-    await addToOrRemoveFromList({
-      list: DefaultLists.ShowCollection,
-      itemType: 'movie',
-      itemIds: movie.value?.ids,
-      date,
-      remove: value === PanelButtonsOption.Remove,
-    });
-
-    const _id = movie.value?.ids?.trakt;
-    if (_id === undefined) return;
-    return await changeMovieCollected(_id, value === PanelButtonsOption.Remove);
-  } catch (error) {
-    Logger.error('Failed to update collection', error);
-  }
+  panelDirty.value = true;
+  await addOrRemoveCollected({
+    itemType: 'movie',
+    itemIds: movie.value?.ids,
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
 };
 
 const onWatchedUpdate = async (
@@ -198,27 +183,13 @@ const onWatchedUpdate = async (
   if (date === undefined && value === PanelButtonsOption.Release) {
     date = releaseDate.value;
   }
-
-  try {
-    panelDirty.value = true;
-    await addToOrRemoveFromList({
-      list: {
-        id: DefaultListId.History,
-        type: ListType.History,
-        name: 'list_type__history',
-      },
-      itemType: 'movie',
-      itemIds: movie.value?.ids,
-      date,
-      remove: value === PanelButtonsOption.Remove,
-    });
-
-    const _id = movie.value?.ids?.trakt;
-    if (_id === undefined) return;
-    return await changeMovieWatched(_id, value === PanelButtonsOption.Remove);
-  } catch (error) {
-    Logger.error('Failed to update watched status', error);
-  }
+  panelDirty.value = true;
+  await addOrRemovePlayed({
+    itemIds: movie.value.ids,
+    itemType: 'movie',
+    date,
+    remove: value === PanelButtonsOption.Remove,
+  });
 };
 
 const i18n = useI18n('movie', 'panel');
@@ -272,7 +243,7 @@ const onCheckin = async (_cancel: boolean) => {
 const route = useRoute();
 onMounted(() => {
   const force = route.query.force === 'true';
-  watch(movieId, id => fetchMovie(id), { immediate: true });
+  watch(movieId, id => fetchMovie(id, force), { immediate: true });
   fetchMovieWatched(force);
   fetchMovieCollected(force);
 

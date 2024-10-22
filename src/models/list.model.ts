@@ -1,4 +1,4 @@
-import type { TraktCollection, TraktFavoriteItem, TraktListItem, TraktUser, TraktWatchlist } from '@dvcol/trakt-http-client/models';
+import type { TraktApiIds, TraktCollection, TraktFavoriteItem, TraktListItem, TraktUser, TraktWatchlist } from '@dvcol/trakt-http-client/models';
 
 import type { ListScrollItemType } from '~/models/list-scroll.model';
 
@@ -39,6 +39,9 @@ export const DefaultListId = {
 
 export type DefaultListIds = (typeof DefaultListId)[keyof typeof DefaultListId];
 
+export const isCollectionList = (list?: ListEntity) =>
+  !!list && [DefaultListId.MovieCollection, DefaultListId.ShowCollection].map(String).includes(list.id?.toString());
+
 export const DefaultLists = {
   Watchlist: { type: ListType.Watchlist, id: DefaultListId.Watchlist, name: 'list_type__watchlist' },
   Favorites: { type: ListType.Favorites, id: DefaultListId.Favorites, name: 'list_type__favorites' },
@@ -49,3 +52,8 @@ export const DefaultLists = {
 export const DefaultListsTypes: ListTypes[] = Object.values(DefaultLists).map(l => l.type);
 
 export const isDefaultList = (list: ListEntity | ListTypes) => DefaultListsTypes.includes(typeof list === 'string' ? list : list.type);
+
+export type ListItemTypes = 'show' | 'season' | 'episode' | 'movie';
+export const isListItemType = (type?: string): type is ListItemTypes => !!type && ['show', 'season', 'episode', 'movie'].includes(type);
+
+export type AddOrRemoveIds = Pick<TraktApiIds, 'trakt'> | Pick<TraktApiIds, 'trakt'>[];
