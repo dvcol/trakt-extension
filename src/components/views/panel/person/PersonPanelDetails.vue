@@ -6,6 +6,7 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 import type { TagLink } from '~/models/tag.model';
 
+import PanelLinks from '~/components/common/panel/PanelLinks.vue';
 import TextField from '~/components/common/typography/TextField.vue';
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconFacebook from '~/components/icons/IconFacebook.vue';
@@ -13,7 +14,6 @@ import IconInstagram from '~/components/icons/IconInstagram.vue';
 import IconTwitter from '~/components/icons/IconTwitter.vue';
 import IconWikipedia from '~/components/icons/IconWikipedia.vue';
 
-import PanelLinks from '~/components/views/panel/PanelLinks.vue';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useI18n } from '~/utils/i18n.utils';
 

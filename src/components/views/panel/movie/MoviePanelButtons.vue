@@ -2,20 +2,20 @@
 import { NFlex } from 'naive-ui';
 import { computed, onMounted, type PropType, ref, toRefs } from 'vue';
 
+import PanelButtonProgress from '~/components/common/panel/PanelButtonProgress.vue';
+import PanelSelectProgress from '~/components/common/panel/PanelSelectProgress.vue';
+import {
+  type PanelButtonsEmit,
+  PanelButtonsOption,
+  usePanelButtons,
+  usePanelButtonsEmit,
+} from '~/components/common/panel/use-panel-buttons';
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
 import IconListEmpty from '~/components/icons/IconListEmpty.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
-import PanelButtonProgress from '~/components/views/panel/PanelButtonProgress.vue';
-import PanelSelectProgress from '~/components/views/panel/PanelSelectProgress.vue';
-import {
-  type PanelButtonsEmit,
-  PanelButtonsOption,
-  usePanelButtons,
-  usePanelButtonsEmit,
-} from '~/components/views/panel/use-panel-buttons';
 import { type ListEntity, ListType } from '~/models/list.model';
 import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useI18n } from '~/utils/i18n.utils';

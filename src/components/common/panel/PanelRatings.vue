@@ -7,8 +7,8 @@ import type { DropdownOption } from 'naive-ui';
 
 import type { RatingItem } from '~/models/rating.model';
 
+import PanelRating from '~/components/common/panel/PanelRating.vue';
 import IconStarFilledHalf from '~/components/icons/IconStarFilledHalf.vue';
-import PanelRating from '~/components/views/panel/PanelRating.vue';
 import { getIconFromSource } from '~/models/source.model';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 

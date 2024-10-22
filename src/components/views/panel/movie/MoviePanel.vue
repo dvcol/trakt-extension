@@ -6,15 +6,15 @@ import { computed, onMounted, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
-import MoviePanelButtons from '~/components/views/panel/MoviePanelButtons.vue';
-import MoviePanelDetails from '~/components/views/panel/MoviePanelDetails.vue';
-import MoviePanelOverview from '~/components/views/panel/MoviePanelOverview.vue';
-import PanelMovieStatistics from '~/components/views/panel/PanelMovieStatistics.vue';
-import PanelPoster from '~/components/views/panel/PanelPoster.vue';
+import PanelMovieStatistics from '~/components/common/panel/PanelMovieStatistics.vue';
+import PanelPoster from '~/components/common/panel/PanelPoster.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
-} from '~/components/views/panel/use-panel-buttons';
+} from '~/components/common/panel/use-panel-buttons';
+import MoviePanelButtons from '~/components/views/panel/movie/MoviePanelButtons.vue';
+import MoviePanelDetails from '~/components/views/panel/movie/MoviePanelDetails.vue';
+import MoviePanelOverview from '~/components/views/panel/movie/MoviePanelOverview.vue';
 import {
   DefaultListId,
   DefaultLists,

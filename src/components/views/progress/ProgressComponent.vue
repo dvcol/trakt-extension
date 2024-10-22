@@ -5,9 +5,8 @@ import { onMounted, ref, Transition, watch } from 'vue';
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
 import ListScroll from '~/components/common/list/ListScroll.vue';
-
+import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import LoginCard from '~/components/views/login/LoginCard.vue';
-import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { Route } from '~/models/router.model';
 import { NotificationService } from '~/services/notification.service';
 import { ExternaLinks } from '~/settings/external.links';

@@ -8,7 +8,7 @@ import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 
-import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';

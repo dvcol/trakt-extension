@@ -4,8 +4,8 @@ import { NFlex } from 'naive-ui';
 import type { PropType } from 'vue';
 import type { RatingItem, RatingValue } from '~/models/rating.model';
 
-import PanelRatings from '~/components/views/panel/PanelRatings.vue';
-import PanelScore from '~/components/views/panel/PanelScore.vue';
+import PanelRatings from '~/components/common/panel/PanelRatings.vue';
+import PanelScore from '~/components/common/panel/PanelScore.vue';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { watchMedia } from '~/utils/window.utils';
 

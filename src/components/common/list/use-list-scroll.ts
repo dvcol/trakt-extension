@@ -8,7 +8,7 @@ import type { ListScrollItem, ListScrollItemTag, ListScrollSourceItem, OnScroll,
 
 import type { StorePagination } from '~/models/pagination.model';
 
-import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import { CustomLinkView, isAliasScope, isCustomLinkScope } from '~/models/link.model';
 import { ListScrollItemType } from '~/models/list-scroll.model';
 

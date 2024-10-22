@@ -6,7 +6,7 @@ const panelRoute = (base: Route, partial: Partial<RouteRecordRaw> = {}): RouteRe
   ({
     props: true,
     meta: { panel: true, base },
-    component: () => import('../components/views/panel/ShowPanel.vue'),
+    component: () => import('../components/views/panel/show/ShowPanel.vue'),
     ...partial,
   }) as RouteRecordRaw;
 
@@ -14,12 +14,12 @@ const panelRoutes = (base: Route): RouteRecordRaw[] => [
   panelRoute(base, {
     name: `${base}-movie`,
     path: 'movie/:movieId',
-    component: () => import('../components/views/panel/MoviePanel.vue'),
+    component: () => import('../components/views/panel/movie/MoviePanel.vue'),
   }),
   panelRoute(base, {
     name: `${base}-person`,
     path: 'person/:personId',
-    component: () => import('../components/views/panel/PersonPanel.vue'),
+    component: () => import('../components/views/panel/person/PersonPanel.vue'),
   }),
   panelRoute(base, {
     name: `${base}-show`,

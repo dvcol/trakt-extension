@@ -21,12 +21,12 @@ import type {
   ShowProgressTypes,
 } from '~/models/list-scroll.model';
 
-import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import {
   PanelButtonsOption,
   type SelectProgressResponse,
   type SelectProgressValue,
-} from '~/components/views/panel/use-panel-buttons';
+} from '~/components/common/panel/use-panel-buttons';
+import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import { clearProxy } from '~/utils/vue.utils';
 
 const props = defineProps({

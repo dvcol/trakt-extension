@@ -6,9 +6,9 @@ import { computed, onMounted, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
-import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-import PersonPanelDetails from '~/components/views/panel/PersonPanelDetails.vue';
-import PersonPanelOverview from '~/components/views/panel/PersonPanelOverview.vue';
+import PanelPoster from '~/components/common/panel/PanelPoster.vue';
+import PersonPanelDetails from '~/components/views/panel/person/PersonPanelDetails.vue';
+import PersonPanelOverview from '~/components/views/panel/person/PersonPanelOverview.vue';
 
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { usePersonStore } from '~/stores/data/person.store';

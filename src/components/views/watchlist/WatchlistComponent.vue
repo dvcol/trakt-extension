@@ -11,7 +11,7 @@ import {
   useBufferedListScroll,
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
-import { usePanelItem } from '~/components/views/panel/use-panel-item';
+import { usePanelItem } from '~/components/common/panel/use-panel-item';
 
 import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';

@@ -6,18 +6,18 @@ import { computed, onMounted, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
-import PanelPoster from '~/components/views/panel/PanelPoster.vue';
-import PanelShowStatistics from '~/components/views/panel/PanelShowStatistics.vue';
-import ShowPanelButtons from '~/components/views/panel/ShowPanelButtons.vue';
-import ShowPanelDetails from '~/components/views/panel/ShowPanelDetails.vue';
-import ShowPanelOverview from '~/components/views/panel/ShowPanelOverview.vue';
-import ShowPanelPicker from '~/components/views/panel/ShowPanelPicker.vue';
+import PanelPoster from '~/components/common/panel/PanelPoster.vue';
+import PanelShowStatistics from '~/components/common/panel/PanelShowStatistics.vue';
 import {
   PanelButtonsOption,
   type PanelButtonsOptions,
   PanelButtonsWatchedOption,
   type PanelButtonsWatchedOptions,
-} from '~/components/views/panel/use-panel-buttons';
+} from '~/components/common/panel/use-panel-buttons';
+import ShowPanelButtons from '~/components/views/panel/show/ShowPanelButtons.vue';
+import ShowPanelDetails from '~/components/views/panel/show/ShowPanelDetails.vue';
+import ShowPanelOverview from '~/components/views/panel/show/ShowPanelOverview.vue';
+import ShowPanelPicker from '~/components/views/panel/show/ShowPanelPicker.vue';
 import {
   type EpisodeProgress,
   isSeasonProgress,

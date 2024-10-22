@@ -8,7 +8,7 @@ import type {
   TraktShowExtended,
 } from '@dvcol/trakt-http-client/models';
 
-import PanelOverview from '~/components/views/panel/PanelOverview.vue';
+import PanelOverview from '~/components/common/panel/PanelOverview.vue';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({

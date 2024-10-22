@@ -7,10 +7,10 @@ import { computed, type PropType, toRefs } from 'vue';
 import type { SimklIdsExtended } from '@dvcol/simkl-http-client/models';
 import type { TraktApiIds, TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
-import TextField from '~/components/common/typography/TextField.vue';
-import PanelAlias from '~/components/views/panel/PanelAlias.vue';
+import PanelAlias from '~/components/common/panel/PanelAlias.vue';
 
-import PanelLinks from '~/components/views/panel/PanelLinks.vue';
+import PanelLinks from '~/components/common/panel/PanelLinks.vue';
+import TextField from '~/components/common/typography/TextField.vue';
 import { useSimklStore } from '~/stores/data/simkl.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';

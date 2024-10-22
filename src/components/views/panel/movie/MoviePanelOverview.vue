@@ -4,7 +4,7 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktMovieExtended } from '@dvcol/trakt-http-client/models';
 
-import PanelOverview from '~/components/views/panel/PanelOverview.vue';
+import PanelOverview from '~/components/common/panel/PanelOverview.vue';
 
 const props = defineProps({
   movie: {

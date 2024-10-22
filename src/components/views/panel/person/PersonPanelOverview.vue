@@ -3,7 +3,7 @@ import { computed, type PropType, toRefs } from 'vue';
 
 import type { TraktPersonExtended } from '@dvcol/trakt-http-client/models';
 
-import PanelOverview from '~/components/views/panel/PanelOverview.vue';
+import PanelOverview from '~/components/common/panel/PanelOverview.vue';
 
 const props = defineProps({
   person: {

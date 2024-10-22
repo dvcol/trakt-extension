@@ -9,8 +9,8 @@ import { computed, onMounted, type PropType, toRefs, watch } from 'vue';
 
 import type { RatingItem } from '~/models/rating.model';
 
-import PanelStatistics from '~/components/views/panel/PanelStatistics.vue';
-import PanelTrailers from '~/components/views/panel/PanelTrailers.vue';
+import PanelStatistics from '~/components/common/panel/PanelStatistics.vue';
+import PanelTrailers from '~/components/common/panel/PanelTrailers.vue';
 import { DataSource, getUrlFromSource } from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';

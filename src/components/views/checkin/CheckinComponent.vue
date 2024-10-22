@@ -3,10 +3,10 @@ import { formatTime } from '@dvcol/common-utils/common/format';
 import { NButton, NIcon, NTooltip } from 'naive-ui';
 import { computed } from 'vue';
 
+import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
-import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
