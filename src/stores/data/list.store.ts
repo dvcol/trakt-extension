@@ -24,7 +24,6 @@ import { useActivityStore } from '~/stores/data/activity.store';
 import { useListsStoreRefs } from '~/stores/data/lists.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { debounceLoading, useBelowThreshold, useLoadingPlaceholder, useSearchFilter } from '~/utils/store.utils';
@@ -213,10 +212,6 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const i18n = useI18n('common', 'notification');
 
-  const { fetchActivity } = useActivityStore();
-
-  const updateActivity = debounce(fetchActivity, 1000);
-
   const addToOrRemoveFromList = async ({
     list,
     itemType,
@@ -308,7 +303,6 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
         typeItemLoading[listType]![itemType]![id.trakt.toString()] = false;
       });
       typeLoading[listType] = false;
-      updateActivity().catch(Logger.error);
     }
   };
 

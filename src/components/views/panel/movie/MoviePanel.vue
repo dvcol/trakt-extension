@@ -22,6 +22,7 @@ import {
   ListType,
 } from '~/models/list.model';
 import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useListStore } from '~/stores/data/list.store';
@@ -31,6 +32,7 @@ import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
+  type CheckinQuery,
   isWatchingMovie,
   useCancelWatching,
   useWatchingProgress,
@@ -246,16 +248,24 @@ const isWatching = computed(() => {
 
 const { cancel, checkin } = useCancelWatching();
 const onCheckin = async (_cancel: boolean) => {
+  if (!movie.value?.ids) {
+    Logger.error('Movie has no ids', movie.value);
+    return NotificationService.error(
+      i18n('checkin_failed', 'watching'),
+      new Error(`Missing movie id`),
+    );
+  }
+  const query: CheckinQuery<'movie'> = { ids: movie.value.ids, type: 'movie' };
   try {
-    if (_cancel) await cancel();
+    if (_cancel) await cancel(query);
     else {
-      await checkin({ ids: movie.value?.ids, type: 'movie' }, () => {
+      await checkin(query, () => {
         panelDirty.value = true;
       });
     }
-    await resetMovieWatched(movie.value?.ids?.trakt);
   } catch (error) {
-    Logger.error('Failed to checkin', error);
+    Logger.error('Failed to checkin', { query, error });
+    NotificationService.error('Failed to checkin', error);
   }
 };
 

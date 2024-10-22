@@ -31,6 +31,7 @@ import {
   ListType,
 } from '~/models/list.model';
 import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { type AddOrRemoveIds, useListStore } from '~/stores/data/list.store';
@@ -40,6 +41,7 @@ import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
+  type CheckinQuery,
   isWatchingShow,
   useCancelWatching,
   useWatchingProgress,
@@ -437,18 +439,28 @@ const isWatching = computed(() => {
 
 const { checkin, cancel } = useCancelWatching();
 const onCheckin = async (_cancel: boolean) => {
+  if (!episode.value?.ids) {
+    Logger.error('Episode has no ids', episode.value);
+    return NotificationService.error(
+      i18n('checkin_failed', 'watching'),
+      new Error(`Missing episode id`),
+    );
+  }
+  const query: CheckinQuery<'episode'> = {
+    ids: episode.value.ids,
+    type: 'episode',
+    showId: showId.value,
+  };
   try {
-    if (_cancel) await cancel();
+    if (_cancel) await cancel(query);
     else {
-      await checkin({ ids: episode.value?.ids, type: 'episode' }, () => {
+      await checkin(query, () => {
         panelDirty.value = true;
       });
     }
-
-    if (!showId?.value) return;
-    return resetShowProgress(showId?.value);
   } catch (error) {
     Logger.error('Failed to checkin', error);
+    NotificationService.error(i18n('checkin_failed', 'watching'), error);
   }
 };
 

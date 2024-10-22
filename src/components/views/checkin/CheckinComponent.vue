@@ -7,11 +7,12 @@ import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
-import { useMovieStore } from '~/stores/data/movie.store';
-import { useShowStore } from '~/stores/data/show.store';
+import { Logger } from '~/services/logger.service';
+import { NotificationService } from '~/services/notification.service';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
+  type CheckinQuery,
   isWatchingMovie,
   isWatchingShow,
   useCancelWatching,
@@ -118,20 +119,31 @@ const started = computed(() => {
 });
 
 const { cancel } = useCancelWatching(watching.value?.action);
-const { resetShowProgress } = useShowStore();
-const { resetMovieWatched } = useMovieStore();
 
 const onCancel = async (event: MouseEvent) => {
   event.stopPropagation();
   const _watching = watching.value;
   if (!_watching) return;
-  const cancelled = await cancel();
-  if (!cancelled) return;
+  let query: CheckinQuery<typeof _watching.type>;
   if (isWatchingMovie(_watching)) {
-    return resetMovieWatched(_watching.movie.ids.trakt);
+    query = { type: _watching.type, ids: { trakt: _watching.movie.ids.trakt } };
+  } else if (isWatchingShow(_watching)) {
+    query = {
+      type: _watching.type,
+      ids: { trakt: _watching.episode.ids.trakt },
+      showId: _watching.show.ids.trakt,
+    };
+  } else {
+    Logger.error('Failed to cancel watching', { watching: _watching });
+    return NotificationService.error(
+      i18n('checkin_failed', 'watching'),
+      new Error(`Missing movie id`),
+    );
   }
-  if (isWatchingShow(_watching)) {
-    return resetShowProgress(_watching.show.ids.trakt);
+  try {
+    await cancel(query);
+  } catch (error) {
+    Logger.error('Failed to cancel watching', error);
   }
 };
 

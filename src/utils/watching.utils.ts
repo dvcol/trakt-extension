@@ -7,7 +7,10 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { TraktApiIds, TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 import type { Ref } from 'vue';
 
+import { isEpisodeOrMovie } from '~/models/list-scroll.model';
 import { NotificationService } from '~/services/notification.service';
+import { useMovieStore } from '~/stores/data/movie.store';
+import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -56,11 +59,29 @@ export const useWatchingProgress = (watching: Ref<TraktWatching | undefined>) =>
   return { elapsed, duration, progress };
 };
 
+export type CheckinQuery<T extends 'episode' | 'movie'> = {
+  ids?: Pick<TraktApiIds, 'trakt'> & Partial<TraktApiIds>;
+  type: T;
+  showId?: string | number;
+};
+
+export const isEpisodeQuery = (query: CheckinQuery<'episode' | 'movie'>): query is CheckinQuery<'episode'> => query.type === 'episode';
+export const isMovieQuery = (query: CheckinQuery<'episode' | 'movie'>): query is CheckinQuery<'movie'> => query.type === 'movie';
+
 export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') => {
   const { cancel, checkin } = useWatchingStore();
+  const { resetShowProgress } = useShowStore();
+  const { resetMovieWatched } = useMovieStore();
+
+  const onReset = async <T extends 'episode' | 'movie'>({ type, ids, showId }: CheckinQuery<T>) => {
+    if (!isEpisodeOrMovie(type)) return;
+    if (type === 'episode' && showId) return resetShowProgress(showId);
+    if (type === 'movie' && ids?.trakt) return resetMovieWatched(ids.trakt);
+  };
+
   const i18n = useI18n('watching');
   const dialog = useDialog();
-  const onCancel = () =>
+  const onCancel = <T extends 'episode' | 'movie'>(query: CheckinQuery<T>) =>
     new Promise<unknown>(resolve => {
       dialog.error({
         title: i18n(`dialog_cancel_${action ?? 'checkin'}`),
@@ -89,6 +110,7 @@ export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') =
         closable: false,
         onPositiveClick: async () => {
           await cancel();
+          await onReset(query);
           resolve(true);
         },
         onNegativeClick: () => resolve(false),
@@ -96,13 +118,11 @@ export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') =
       });
     });
 
-  const onCheckin = async <T extends 'episode' | 'movie'>(
-    { ids, type }: { ids?: Pick<TraktApiIds, 'trakt'> & Partial<TraktApiIds>; type: T },
-    before?: () => void,
-  ) => {
-    if (!ids) return NotificationService.error(i18n('checkin_failed', 'watching'), new Error(`Missing ${type} id`));
+  const onCheckin = async <T extends 'episode' | 'movie'>(query: CheckinQuery<T>, before?: () => void) => {
+    if (!query.ids) return NotificationService.error(i18n('checkin_failed', 'watching'), new Error(`Missing ${query.type} id`));
     before?.();
-    return checkin({ [type]: { ids } } as unknown as TraktCheckinRequest);
+    await checkin({ [query.type]: { ids: query.ids } } as unknown as TraktCheckinRequest);
+    return onReset(query);
   };
   return { cancel: onCancel, checkin: onCheckin };
 };
