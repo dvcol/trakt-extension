@@ -130,5 +130,9 @@
   "settings__tabs__label_init_warning": {
     "message": "This may increase application startup time.",
     "description": "Warning message for the 'Fetch history data on startup' setting"
+  },
+  "settings__tabs__label_movie_init": {
+    "message": "Fetch movie collection & watched data on startup",
+    "description": "Label for the 'Fetch history data on startup' setting"
   }
 }

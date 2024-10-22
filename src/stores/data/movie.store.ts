@@ -10,6 +10,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useSimklStore, useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
+import { storage } from '~/utils/browser/browser-storage.utils';
 import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
@@ -19,10 +20,19 @@ type MovieCollectedDictionary = Record<string, TraktCollection<'movie'>>;
 
 type LoadingDictionary = Record<string, boolean>;
 
-export const useMovieStore = defineStore('data.movie', () => {
+type MovieState = {
+  init: boolean;
+};
+
+const MovieStoreConstants = {
+  Store: 'data.movie',
+};
+
+export const useMovieStore = defineStore(MovieStoreConstants.Store, () => {
   const movies = reactive<MovieDictionary>({});
   const moviesWatched = reactive<MovieWatchedDictionary>({});
   const moviesCollected = reactive<MovieCollectedDictionary>({});
+  const init = ref(false);
 
   const loading = reactive<LoadingDictionary>({});
   const loadingWatched = ref(false);
@@ -30,6 +40,17 @@ export const useMovieStore = defineStore('data.movie', () => {
 
   const movieErrors = reactive<ErrorDictionary>({});
   ErrorService.registerDictionary('movie', movieErrors);
+
+  const saveState = async () =>
+    storage.local.set<MovieState>(MovieStoreConstants.Store, {
+      init: init.value,
+    });
+
+  const restoreState = async () => {
+    const restored = await storage.local.get<MovieState>(MovieStoreConstants.Store);
+
+    if (restored?.init !== undefined) init.value = restored.init;
+  };
 
   const clearMovieWatchedProgress = () => clearProxy(moviesWatched);
   const clearMovieCollectedProgress = () => clearProxy(moviesCollected);
@@ -149,10 +170,14 @@ export const useMovieStore = defineStore('data.movie', () => {
   const getMovieCollected = (id: string | number) => computed(() => moviesCollected[id.toString()]);
   const getMovieWatched = (id: string | number) => computed(() => moviesWatched[id.toString()]);
 
-  const initMovieStore = () => {
-    watch(user, () => {
-      clearProgressState();
-    });
+  const initMovieStore = async () => {
+    await restoreState();
+
+    watch(user, () => clearProgressState());
+
+    if (!init.value) return;
+    if (!isAuthenticated.value) return;
+    await Promise.all([fetchMovieWatched(), fetchMovieCollected()]);
   };
 
   return {
@@ -169,6 +194,14 @@ export const useMovieStore = defineStore('data.movie', () => {
     getMovieCollected,
     loadingCollected,
     clearMovieWatchedProgress,
+    init: computed({
+      get: () => init.value,
+      set: (value: boolean) => {
+        init.value = value;
+        saveState().catch(e => Logger.error('Failed to save movie init state', e));
+        if (value) return Promise.all([fetchMovieWatched(), fetchMovieCollected()]);
+      },
+    }),
   };
 });
 

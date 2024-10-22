@@ -25,6 +25,7 @@ import { useCalendarStoreRefs } from '~/stores/data/calendar.store';
 import { useHistoryStoreRefs } from '~/stores/data/history.store';
 import { useListStoreRefs } from '~/stores/data/list.store';
 import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
+import { useMovieStoreRefs } from '~/stores/data/movie.store';
 import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
@@ -116,7 +117,8 @@ useWatchActivated(
   }),
 );
 
-const { pageSize: historyPageSize, init } = useHistoryStoreRefs();
+const { init: initMovie } = useMovieStoreRefs();
+const { pageSize: historyPageSize, init: initHistory } = useHistoryStoreRefs();
 const { pageSize: listPageSize } = useListStoreRefs();
 const { pageSize: searchPageSize } = useSearchStoreRefs();
 const { pageSize: ratingPageSize } = useRatingsStoreRefs();
@@ -265,6 +267,17 @@ const toggleBrand = () => {
       </NSwitch>
     </SettingsFormItem>
 
+    <!--  Movie init  -->
+    <SettingsFormItem
+      :label="i18n('label_movie_init')"
+      :warning="initMovie ? i18n('label_init_warning') : undefined"
+    >
+      <NSwitch v-model:value="initMovie" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
+      </NSwitch>
+    </SettingsFormItem>
+
     <!--  Enable tabs  -->
     <div
       v-for="[route, state] of enabledTabs"
@@ -342,9 +355,9 @@ const toggleBrand = () => {
         :label="i18n('label_history_init')"
         :class="{ show: state }"
         class="hidden-form-item"
-        :warning="init ? i18n('label_init_warning') : undefined"
+        :warning="initHistory ? i18n('label_init_warning') : undefined"
       >
-        <NSwitch v-model:value="init" class="form-switch">
+        <NSwitch v-model:value="initHistory" class="form-switch">
           <template #checked>{{ i18n('on', 'common', 'button') }}</template>
           <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
         </NSwitch>
