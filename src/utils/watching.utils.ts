@@ -4,9 +4,11 @@ import { useDialog } from 'naive-ui';
 
 import { computed, onBeforeMount, ref, watch } from 'vue';
 
-import type { TraktWatching } from '@dvcol/trakt-http-client/models';
+import type { TraktApiIds, TraktCheckinRequest, TraktWatching } from '@dvcol/trakt-http-client/models';
 import type { Ref } from 'vue';
 
+import { NotificationService } from '~/services/notification.service';
+import { useWatchingStore } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 export const isWatchingMovie = (watching: TraktWatching): watching is TraktWatching<'movie'> => watching.type === 'movie';
@@ -54,7 +56,8 @@ export const useWatchingProgress = (watching: Ref<TraktWatching | undefined>) =>
   return { elapsed, duration, progress };
 };
 
-export const useCancelWatching = (cancel: () => unknown, action: TraktWatching['action'] = 'checkin') => {
+export const useCancelWatching = (action: TraktWatching['action'] = 'checkin') => {
+  const { cancel, checkin } = useWatchingStore();
   const i18n = useI18n('watching');
   const dialog = useDialog();
   const onCancel = () =>
@@ -92,5 +95,20 @@ export const useCancelWatching = (cancel: () => unknown, action: TraktWatching['
         onMaskClick: () => resolve(false),
       });
     });
-  return { onCancel };
+
+  const onCheckin = async <T extends 'episode' | 'movie'>(
+    { ids, type }: { ids?: Pick<TraktApiIds, 'trakt'> & Partial<TraktApiIds>; type: T },
+    { cancel: _cancel, callback }: { cancel?: boolean; callback: () => void },
+  ) => {
+    if (_cancel) {
+      const cancelled = await onCancel();
+      if (!cancelled) return Promise.resolve(false);
+    } else if (!ids) {
+      return NotificationService.error(i18n('checkin_failed', 'watching'), new Error(`Missing ${type} id`));
+    } else {
+      callback?.();
+      return checkin({ [type]: { ids } } as unknown as TraktCheckinRequest);
+    }
+  };
+  return { cancel: onCancel, checkin: onCheckin };
 };

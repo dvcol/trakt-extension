@@ -9,7 +9,7 @@ import IconScreen from '~/components/icons/IconScreen.vue';
 import { usePanelItem } from '~/components/views/panel/use-panel-item';
 import { useMovieStore } from '~/stores/data/movie.store';
 import { useShowStore } from '~/stores/data/show.store';
-import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 import {
   isWatchingMovie,
@@ -34,7 +34,6 @@ const props = defineProps({
 const i18n = useI18n('watching');
 
 const { isWatching, watching, cancelling } = useWatchingStoreRefs();
-const { cancel } = useWatchingStore();
 
 const isTiny = watchMedia('(max-width: 600px)');
 
@@ -118,13 +117,13 @@ const started = computed(() => {
   return new Date(watching.value.started_at).toLocaleString();
 });
 
-const { onCancel: onCancelWatching } = useCancelWatching(cancel, watching.value?.action);
+const { cancel } = useCancelWatching(watching.value?.action);
 const { clearShowWatchedProgress } = useShowStore();
 const { clearMovieWatchedProgress } = useMovieStore();
 
 const onCancel = async (event: MouseEvent) => {
   event.stopPropagation();
-  const cancelled = await onCancelWatching();
+  const cancelled = await cancel();
   if (!cancelled) return;
   clearShowWatchedProgress();
   clearMovieWatchedProgress();
