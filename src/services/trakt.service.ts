@@ -560,6 +560,7 @@ export class TraktService {
       const response = await TraktService.traktClient.checkin.add(query);
       TraktService.evict.progress.show().catch(err => Logger.error('Failed to evict show cache', { query, err }));
       TraktService.evict.progress.movie().catch(err => Logger.error('Failed to evict movie cache', { query, err }));
+      TraktService.evict.history().catch(err => Logger.error('Failed to evict history cache', { query, err }));
       return response.json();
     },
     cancel: async () => {

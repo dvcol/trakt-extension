@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { type ButtonProps, NButton, NIcon, NTooltip } from 'naive-ui';
+import { type ButtonProps, type IconProps, NButton, NIcon, NTooltip } from 'naive-ui';
 
 import { computed, type PropType, toRefs } from 'vue';
 
-import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('common');
@@ -30,6 +29,10 @@ const props = defineProps({
     required: false,
     default: 'error',
   },
+  icon: {
+    type: Object as PropType<IconProps['component']>,
+    required: false,
+  },
 });
 
 const { percentage } = toRefs(props);
@@ -51,7 +54,7 @@ const percentageLabel = computed(() => {
     :data-progress="percentage"
     :style="{
       '--progress': `${percentage}%`,
-      '--progress-color': `var(--color-${type}-dark)`,
+      '--progress-color': `var(--color-${type}-dark, var(--color-error-dark))`,
     }"
   >
     <NTooltip class="progress-tooltip" :disabled="!progress" :delay="100">
@@ -73,8 +76,8 @@ const percentageLabel = computed(() => {
           :loading="loading"
           :type="type"
         >
-          <template #icon>
-            <NIcon :component="IconConfirmCircle" />
+          <template v-if="icon" #icon>
+            <NIcon :component="icon" />
           </template>
           <span><slot /></span>
         </NButton>

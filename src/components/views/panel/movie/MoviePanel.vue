@@ -55,6 +55,7 @@ const {
   fetchMovieCollected,
   changeMovieWatched,
   changeMovieCollected,
+  resetMovieWatched,
 } = useMovieStore();
 
 const { loadingCollected, loadingWatched } = useMovieStoreRefs();
@@ -252,7 +253,7 @@ const onCheckin = async (_cancel: boolean) => {
         panelDirty.value = true;
       });
     }
-    await fetchMovieWatched(true);
+    await resetMovieWatched(movie.value?.ids?.trakt);
   } catch (error) {
     Logger.error('Failed to checkin', error);
   }

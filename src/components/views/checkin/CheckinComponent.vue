@@ -118,15 +118,21 @@ const started = computed(() => {
 });
 
 const { cancel } = useCancelWatching(watching.value?.action);
-const { clearShowWatchedProgress } = useShowStore();
-const { clearMovieWatchedProgress } = useMovieStore();
+const { resetShowProgress } = useShowStore();
+const { resetMovieWatched } = useMovieStore();
 
 const onCancel = async (event: MouseEvent) => {
   event.stopPropagation();
+  const _watching = watching.value;
+  if (!_watching) return;
   const cancelled = await cancel();
   if (!cancelled) return;
-  clearShowWatchedProgress();
-  clearMovieWatchedProgress();
+  if (isWatchingMovie(_watching)) {
+    return resetMovieWatched(_watching.movie.ids.trakt);
+  }
+  if (isWatchingShow(_watching)) {
+    return resetShowProgress(_watching.show.ids.trakt);
+  }
 };
 
 const { onItemClick } = usePanelItem();

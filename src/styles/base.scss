@@ -129,6 +129,7 @@
   --text-color-disabled: rgba(255 255 255 / 38%);
   --color-warning: #f2c97d;
   --color-warning-lighter: #f5d599;
+  --color-warning-dark: color-mix(in srgb, var(--color-warning) 40%, black 60%);
   --color-error: #e88080;
   --color-error-dark: color-mix(in srgb, var(--color-error) 40%, black 60%);
   --color-error-lighter: #e98b8b;

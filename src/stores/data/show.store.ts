@@ -21,7 +21,7 @@ import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
 import { useSimklStore, useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { ErrorCount, type ErrorDictionary, shouldRetry } from '~/utils/retry.utils';
+import { ErrorCount, type ErrorDictionary } from '~/utils/retry.utils';
 import { clearProxy } from '~/utils/vue.utils';
 
 export type ShowSeasons = Record<number, TraktSeasonExtended>;
@@ -368,15 +368,7 @@ export const useShowStore = defineStore('data.show', () => {
     });
 
   const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
-  const getShowWatchedProgress = (id: number | string, cacheOptions?: BaseCacheOption, noFetch = false) => {
-    if (
-      !noFetch &&
-      !showsWatchedProgress[id.toString()] &&
-      !showWatchedProgressLoading[id.toString()] &&
-      shouldRetry(showWatchedProgressError[id.toString()], { error: `Watched Progress for ${id.toString()}` })
-    ) {
-      fetchShowProgress(id.toString(), cacheOptions).catch(Logger.error);
-    }
+  const getShowWatchedProgress = (id: number | string) => {
     return computed(() => {
       const progress = showsWatchedProgress[id.toString()];
       if (!progress) return undefined;
@@ -385,20 +377,17 @@ export const useShowStore = defineStore('data.show', () => {
   };
 
   const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
-  const getShowCollectionProgress = (id: number | string, noFetch = false) => {
-    if (
-      !noFetch &&
-      !showsCollectionProgress[id.toString()] &&
-      !showCollectionProgressLoading[id.toString()] &&
-      shouldRetry(showCollectionProgressError[id.toString()], { error: `Collection Progress for ${id.toString()}` })
-    ) {
-      fetchShowCollectionProgress(id.toString()).catch(Logger.error);
-    }
+  const getShowCollectionProgress = (id: number | string) => {
     return computed(() => {
       const progress = showsCollectionProgress[id.toString()];
       if (!progress) return undefined;
       return watchProgressToListProgress(progress, id);
     });
+  };
+
+  const resetShowProgress = async (id: number | string) => {
+    delete showsWatchedProgress[id.toString()];
+    await fetchShowProgress(id.toString(), { force: true });
   };
 
   const initShowStore = () => {
@@ -430,6 +419,7 @@ export const useShowStore = defineStore('data.show', () => {
     getShowCollectionProgress,
     getShowCollectionLoading,
     clearShowWatchedProgress,
+    resetShowProgress,
   };
 });
 

@@ -92,7 +92,6 @@ export const getProgressQuery = (item: ListScrollSourceItem): ListScrollItem['ge
   if (!showId) return;
   return () => ({
     id: showId,
-    noFetch: true,
   });
 };
 

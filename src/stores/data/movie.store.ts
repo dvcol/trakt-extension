@@ -175,6 +175,11 @@ export const useMovieStore = defineStore('data.movie', () => {
     return fetchMovieCollected();
   };
 
+  const resetMovieWatched = async (id?: string | number) => {
+    if (id) delete moviesWatched[id.toString()];
+    await fetchMovieWatched(true);
+  };
+
   const initMovieStore = () => {
     watch(user, () => {
       clearProgressState();
@@ -197,6 +202,7 @@ export const useMovieStore = defineStore('data.movie', () => {
     changeMovieWatched,
     changeMovieCollected,
     clearMovieWatchedProgress,
+    resetMovieWatched,
   };
 });
 

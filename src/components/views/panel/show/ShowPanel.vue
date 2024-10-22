@@ -77,6 +77,7 @@ const {
   getShowCollectionProgress,
   getShowProgressLoading,
   getShowCollectionLoading,
+  resetShowProgress,
 } = useShowStore();
 
 const i18n = useI18n('panel', 'show');
@@ -418,7 +419,7 @@ const onWatchedUpdate = async (
       remove,
     });
     if (!showId?.value) return;
-    await fetchShowProgress(showId.value, { force: true });
+    await resetShowProgress(showId?.value);
   } catch (error) {
     Logger.error('Failed to update watched status', error);
   }
@@ -445,7 +446,7 @@ const onCheckin = async (_cancel: boolean) => {
     }
 
     if (!showId?.value) return;
-    await fetchShowProgress(showId.value, { force: true });
+    return resetShowProgress(showId?.value);
   } catch (error) {
     Logger.error('Failed to checkin', error);
   }
@@ -460,6 +461,8 @@ onMounted(() => {
       if (_showId !== undefined) {
         fetchShow(_showId, force);
         fetchShowSeasons(_showId, force);
+        fetchShowProgress(_showId, { force });
+        fetchShowCollectionProgress(_showId, { force });
 
         if (_seasonNb !== undefined) {
           fetchShowSeasonEpisodes(_showId, _seasonNb, force);

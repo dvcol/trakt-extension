@@ -134,7 +134,7 @@ export type ListScrollItem<T extends Record<string, any> = ListScrollItemMeta> =
 
   progress?: ShowProgress;
   progressRef?: Ref<ShowProgress | undefined>;
-  getProgressQuery?: () => { id: string | number | undefined; cacheOptions?: BaseCacheOption; noFetch?: boolean };
+  getProgressQuery?: () => { id: string | number | undefined; cacheOptions?: BaseCacheOption };
 
   meta?: T;
 

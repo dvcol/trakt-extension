@@ -12,7 +12,9 @@ import {
   usePanelButtons,
   usePanelButtonsEmit,
 } from '~/components/common/panel/use-panel-buttons';
+import IconCancel from '~/components/icons/IconCancel.vue';
 import IconCheckedList from '~/components/icons/IconCheckedList.vue';
+import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
 import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
 import IconListEmpty from '~/components/icons/IconListEmpty.vue';
@@ -310,6 +312,8 @@ onMounted(() => fetchLists());
       <PanelButtonProgress
         :percentage="watching ? watchProgress : 0"
         :loading="watchLoading"
+        :icon="watching ? IconCancel : IconConfirmCircle"
+        :type="watching ? 'warning' : 'error'"
         @click="onCheckin"
       >
         {{ i18n(watching ? 'cancel' : 'checkin', 'common', 'button') }}
