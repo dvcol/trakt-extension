@@ -95,6 +95,8 @@ export const ListScrollItemType = {
 
 export type ListScrollItemTypes = (typeof ListScrollItemType)[keyof typeof ListScrollItemType];
 
+export const isEpisodeOrMovie = (type?: ListScrollItemTypes): type is 'episode' | 'movie' => !!type && ['episode', 'movie'].includes(type);
+
 export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
   source: ListScrollSourceItem | ProgressItem;
   ids: {

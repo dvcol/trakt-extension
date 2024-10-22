@@ -9,15 +9,15 @@ import IconMovie from '~/components/icons/IconMovie.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
-import { useWatchingStoreRefs } from '~/stores/data/watching.store';
-import { useI18n } from '~/utils/i18n.utils';
 import {
   type CheckinQuery,
   isWatchingMovie,
   isWatchingShow,
   useCancelWatching,
   useWatchingProgress,
-} from '~/utils/watching.utils';
+} from '~/stores/composable/use-watching.ts';
+import { useWatchingStoreRefs } from '~/stores/data/watching.store';
+import { useI18n } from '~/utils/i18n.utils';
 import { watchMedia } from '~/utils/window.utils';
 
 const props = defineProps({
