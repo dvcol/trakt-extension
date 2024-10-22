@@ -136,7 +136,6 @@ export const useMovieStore = defineStore(MovieStoreConstants.Store, () => {
   };
 
   const fetchMovieCollected = async (force?: boolean) => {
-    console.info('fetchMovieCollected', force);
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch collected movies, user is not authenticated');
       return;

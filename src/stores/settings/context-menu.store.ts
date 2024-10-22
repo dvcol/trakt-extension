@@ -4,6 +4,7 @@ import { computed, reactive, toRefs } from 'vue';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds } from '~/models/context/context-menu.model';
 import { MessageType } from '~/models/message/message-type.model';
+import { Logger } from '~/services/logger.service';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 import { debounce } from '~/utils/debounce.utils';
@@ -35,7 +36,7 @@ export const useContextMenuStore = defineStore(ContextMenuConstants.Store, () =>
 
   const toggleContextMenu = (id: ContextMenuIds) => {
     enabled[id] = !enabled[id];
-    saveState().catch(err => console.error('Failed to save context menu state', { id, err }));
+    saveState().catch(err => Logger.error('Failed to save context menu state', { id, err }));
   };
 
   const initContextMenuStore = async () => {

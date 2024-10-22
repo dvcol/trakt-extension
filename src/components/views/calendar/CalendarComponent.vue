@@ -2,8 +2,7 @@
 import { watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
-import ListButtonCheckin from '~/components/common/list/ListButtonCheckin.vue';
-import ListButtonWatched from '~/components/common/list/ListButtonWatched.vue';
+import ListButtons from '~/components/common/list/ListButtons.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { useListScroll } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/common/panel/use-panel-item';
@@ -92,10 +91,12 @@ const { onItemClick } = usePanelItem();
       @on-scroll-bottom="onScrollBottom"
     >
       <template #buttons="{ open, item }">
-        <template v-if="isListItemType(item?.type)">
-          <ListButtonWatched :disabled="!open" :item="item" />
-          <ListButtonCheckin :disabled="!open" :item="item" />
-        </template>
+        <ListButtons
+          v-if="isListItemType(item?.type)"
+          :disabled="!open"
+          :item="item"
+          :route="Route.Calendar"
+        />
       </template>
     </ListScroll>
     <FloatingButton

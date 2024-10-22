@@ -80,6 +80,32 @@ export const Brand = {
 
 export type Brands = (typeof Brand)[keyof typeof Brand];
 
+export const QuickAction = {
+  Watched: 'watched' as const,
+  Collected: 'collected' as const,
+  Checkin: 'checkin' as const,
+  List: 'list' as const,
+} as const;
+
+export type QuickActions = (typeof QuickAction)[keyof typeof QuickAction];
+
+type QuickActionDictionary = Partial<Record<Route, Partial<Record<QuickActions, boolean>>>>;
+
+export const QuickActionDate = {
+  Now: 'now' as const,
+  Release: 'release' as const, // only for route with extended data
+} as const;
+
+export type QuickActionDates = (typeof QuickActionDate)[keyof typeof QuickActionDate];
+
+type ActionDateDictionary = { [QuickAction.Watched]?: QuickActionDates; [QuickAction.Collected]?: QuickActionDates };
+
+const DefaultQuickActions: QuickActionDictionary = {
+  [Route.Progress]: { [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
+  [Route.Calendar]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
+  [Route.History]: { [QuickAction.Watched]: true },
+};
+
 type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
@@ -96,6 +122,8 @@ type ExtensionSettings = {
   imageType: ImageTypeDictionary;
   imageFormat: ImageFormatDictionary;
   brand: Brands;
+  actions: QuickActionDictionary;
+  actionDate: ActionDateDictionary;
 };
 
 const ExtensionSettingsConstants = {
@@ -120,6 +148,9 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const iconOnly = ref(true);
   const imageType = reactive<ExtensionSettings['imageType']>(DefaultImageTypes);
   const imageFormat = reactive<ExtensionSettings['imageFormat']>(DefaultImageFormats);
+
+  const actions = reactive<QuickActionDictionary>(DefaultQuickActions);
+  const actionDate = reactive<ActionDateDictionary>({});
 
   const brand = ref<Brands>(Brand.Old);
 
@@ -152,6 +183,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         imageType: toRaw(imageType),
         imageFormat: toRaw(imageFormat),
         brand: brand.value,
+        actions: toRaw(actions),
+        actionDate: toRaw(actionDate),
       }),
     500,
   );
@@ -191,6 +224,9 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.imageType !== undefined) Object.assign(imageType, restored.imageType);
     if (restored?.imageFormat !== undefined) Object.assign(imageFormat, restored.imageFormat);
     if (restored?.brand !== undefined) brand.value = restored.brand;
+
+    if (restored?.actions !== undefined) Object.assign(actions, restored.actions);
+    if (restored?.actionDate !== undefined) Object.assign(actionDate, restored.actionDate);
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -259,6 +295,9 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     changeBrand();
     return initialized.value;
   };
+
+  const getAction = (route: Route) => actions[route];
+  const getActionDate = (action: typeof QuickAction.Collected | typeof QuickAction.Watched) => actionDate[action];
 
   return {
     initExtensionSettingsStore,
@@ -373,6 +412,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         return changeBrand(value);
       },
     }),
+    getAction,
+    getActionDate,
   };
 });
 

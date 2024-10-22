@@ -257,6 +257,12 @@ export const computeNewArray = <T extends ListScrollSourceItemWithDate<D>, D ext
         episode: item.episode?.ids,
         person: item.person?.ids,
       },
+      released: {
+        movie: item.movie?.released,
+        show: item.show?.first_aired,
+        season: item.season?.first_aired,
+        episode: item.episode?.first_aired,
+      },
       genres: item.show?.genres ?? item.movie?.genres,
     };
 

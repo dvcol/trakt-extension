@@ -4,8 +4,7 @@ import { onMounted, ref, Transition, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
-import ListButtonCheckin from '~/components/common/list/ListButtonCheckin.vue';
-import ListButtonWatched from '~/components/common/list/ListButtonWatched.vue';
+import ListButtons from '~/components/common/list/ListButtons.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import LoginCard from '~/components/views/login/LoginCard.vue';
@@ -120,10 +119,12 @@ useActiveAndDocumentVisible({
         @on-item-click="onItemClick"
       >
         <template #buttons="{ open, item }">
-          <template v-if="isListItemType(item?.type)">
-            <ListButtonWatched :disabled="!open" :item="item" :watched="false" />
-            <ListButtonCheckin :disabled="!open" :item="item" />
-          </template>
+          <ListButtons
+            v-if="isListItemType(item?.type)"
+            :disabled="!open"
+            :item="item"
+            :route="Route.Progress"
+          />
         </template>
       </ListScroll>
     </Transition>

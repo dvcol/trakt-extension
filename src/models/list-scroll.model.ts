@@ -38,9 +38,9 @@ export type ListScrollSourceItem = {
 
   movie?: TraktMovie<'any'>;
   show?: TraktShow<'any'>;
-  season?: TraktSeason<'short'>;
+  season?: TraktSeason<'any'>;
   episode?: TraktEpisode<'any'>;
-  person?: TraktPerson<'short'>;
+  person?: TraktPerson<'any'>;
   list?: TraktList<'short'>;
 };
 
@@ -106,6 +106,12 @@ export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
     episode?: Partial<TraktEpisode['ids']>;
     person?: Partial<TraktPerson['ids']>;
     [key: string]: Partial<TraktApiIds> | undefined;
+  };
+  released: {
+    movie: TraktMovie<'any'>['released'];
+    show: TraktShow<'any'>['first_aired'];
+    season: TraktSeason<'any'>['first_aired'];
+    episode: TraktEpisode<'any'>['first_aired'];
   };
   genres?: string[];
   number?: {

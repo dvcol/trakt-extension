@@ -3,6 +3,7 @@ import { onActivated } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
+import ListButtons from '~/components/common/list/ListButtons.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 
 import {
@@ -10,6 +11,7 @@ import {
   useListScrollEvents,
 } from '~/components/common/list/use-list-scroll';
 import { usePanelItem } from '~/components/common/panel/use-panel-item';
+import { isListItemType } from '~/models/list.model';
 import { Route } from '~/models/router.model';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import {
@@ -66,7 +68,16 @@ const { onItemClick } = usePanelItem();
       @on-scroll-top="scrolled = false"
       @on-scroll-bottom="onScroll"
       @on-item-click="onItemClick"
-    />
+    >
+      <template #buttons="{ open, item }">
+        <ListButtons
+          v-if="isListItemType(item?.type)"
+          :disabled="!open"
+          :item="item"
+          :route="Route.Search"
+        />
+      </template>
+    </ListScroll>
 
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">
       {{ i18n('back_to_top', 'common', 'button') }}

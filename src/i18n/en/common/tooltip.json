@@ -67,8 +67,16 @@
     "message": "Collected",
     "description": "Label for a collected item."
   },
+  "common__tooltip__mark_collected": {
+    "message": "Mark as collected",
+    "description": "Label for a collected item."
+  },
   "common__tooltip__watched": {
     "message": "Watched",
     "description": "Label for a watched item."
+  },
+  "common__tooltip__mark_watched": {
+    "message": "Mark as watched",
+    "description": "Label for a collected item."
   }
 }

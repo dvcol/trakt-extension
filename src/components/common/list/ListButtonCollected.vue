@@ -2,11 +2,11 @@
 import { computed, type PropType, toRefs } from 'vue';
 
 import ListButton from '~/components/common/list/ListButton.vue';
-import IconPlay from '~/components/icons/IconPlay.vue';
+import IconGrid from '~/components/icons/IconGrid.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 import { isListItemType, ListType } from '~/models/list.model';
-import { useItemPlayed } from '~/stores/composable/use-item-played';
+import { useItemCollected } from '~/stores/composable/use-item-played';
 import { useWatchedUpdates } from '~/stores/composable/use-list-update';
 import { useListStore } from '~/stores/data/list.store';
 import {
@@ -34,7 +34,7 @@ const props = defineProps({
 
 const { disabled, item, dateType } = toRefs(props);
 
-const { played, date: datePlayed } = useItemPlayed(item);
+const { collected, date: dateCollected } = useItemCollected(item);
 
 const { isItemListLoading } = useListStore();
 
@@ -42,13 +42,13 @@ const isLoading = computed(() => {
   if (!item.value?.id) return;
   if (!isListItemType(item.value.type)) return;
   return isItemListLoading({
-    listType: ListType.History,
+    listType: ListType.Collection,
     itemType: item.value.type,
     itemId: item.value?.id,
   }).value;
 });
 
-const { addOrRemovePlayed } = useWatchedUpdates();
+const { addOrRemoveCollected } = useWatchedUpdates();
 
 const onClick = () => {
   if (!isListItemType(item.value.type)) return;
@@ -60,10 +60,10 @@ const onClick = () => {
     date = item.value?.meta?.released[item.value.type];
   }
 
-  return addOrRemovePlayed({
+  return addOrRemoveCollected({
     itemIds: { trakt },
     itemType: item.value.type,
-    remove: played.value,
+    remove: !!collected.value,
     showId: item.value?.meta?.ids?.show?.trakt,
     date,
   });
@@ -74,14 +74,14 @@ const onClick = () => {
   <ListButton
     :disabled="isLoading || disabled"
     :loading="isLoading"
-    :button-props="{ type: played ? 'error' : 'success' }"
-    :icon-props="{ component: played ? IconRestore : IconPlay }"
+    :button-props="{ type: collected ? 'error' : 'info' }"
+    :icon-props="{ component: collected ? IconRestore : IconGrid }"
     :title="
-      i18n(played ? 'watched' : 'mark_watched', 'common', 'tooltip') +
-      (datePlayed ? `: ${ datePlayed }` : '')
+      i18n(collected ? 'collected' : 'mark_collected', 'common', 'tooltip') +
+      (dateCollected ? `: ${ dateCollected }` : '')
     "
     @on-click="onClick"
   >
-    <span>{{ i18n(played ? 'remove' : 'watched', 'common', 'button') }}</span>
+    <span>{{ i18n(collected ? 'remove' : 'collected', 'common', 'button') }}</span>
   </ListButton>
 </template>

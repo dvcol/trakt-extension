@@ -3,7 +3,7 @@ import { onMounted, watch } from 'vue';
 
 import FloatingButton from '~/components/common/buttons/FloatingButton.vue';
 import { useBackToTop } from '~/components/common/buttons/use-back-to-top';
-import ListButtonWatched from '~/components/common/list/ListButtonWatched.vue';
+import ListButtons from '~/components/common/list/ListButtons.vue';
 import ListScroll from '~/components/common/list/ListScroll.vue';
 import {
   addLoadMore,
@@ -98,9 +98,12 @@ useActiveAndDocumentVisible({
       @on-item-click="onItemClick"
     >
       <template #buttons="{ open, item }">
-        <template v-if="isListItemType(item?.type)">
-          <ListButtonWatched :disabled="!open" :item="item" watched />
-        </template>
+        <ListButtons
+          v-if="isListItemType(item?.type)"
+          :disabled="!open"
+          :item="item"
+          :route="Route.History"
+        />
       </template>
     </ListScroll>
     <FloatingButton :show="!footerOpen && scrolled" @on-click="onClick">

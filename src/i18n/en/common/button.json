@@ -104,12 +104,20 @@
     "message": "Watched",
     "description": "Button to mark as watched."
   },
+  "common__button__watch": {
+    "message": "Watch",
+    "description": "Button to mark as watched."
+  },
   "common__button__favorite": {
     "message": "Favorite",
     "description": "Button to mark as favorite."
   },
   "common__button__collected": {
     "message": "Collected",
+    "description": "Button to mark as collected."
+  },
+  "common__button__collect": {
+    "message": "Collect",
     "description": "Button to mark as collected."
   },
   "common__button__new": {
