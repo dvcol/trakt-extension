@@ -72,8 +72,8 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
 
-  const _center = ref<Date>();
-  const center = computed(() => _center.value ?? new Date());
+  const savedCenter = ref<Date>();
+  const center = computed(() => savedCenter.value ?? new Date());
 
   const startCalendar = ref<Date>(DateUtils.weeks.previous(weeks.value, center.value));
   const endCalendar = ref<Date>(DateUtils.weeks.next(weeks.value, center.value));
@@ -89,15 +89,16 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
 
   const saveState = async () =>
     storage.local.set<ReleaseState>(ReleasesStoreConstants.Store, {
-      center: _center.value?.getTime(),
+      center: savedCenter.value?.getTime(),
       weeks: weeks.value,
       region: region.value,
       releaseType: releaseType.value,
     });
 
   const clearState = (date?: Date) => {
+    if (!date && !savedCenter.value) return;
     releases.value = [];
-    _center.value = date;
+    savedCenter.value = date;
     startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
     endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(releasesErrors);
@@ -238,6 +239,7 @@ export const useReleasesStore = defineStore(ReleasesStoreConstants.Store, () => 
     fetchReleases,
     fetchRegions,
     center,
+    savedCenter,
     regionLoading,
     regions,
     region: computed<string | undefined>({

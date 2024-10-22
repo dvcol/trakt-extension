@@ -51,8 +51,8 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
   const weeks = ref(1);
   const days = computed(() => weeks.value * 7 * 2);
 
-  const _center = ref<Date>();
-  const center = computed(() => _center.value ?? new Date());
+  const savedCenter = ref<Date>();
+  const center = computed(() => savedCenter.value ?? new Date());
 
   const startCalendar = ref<Date>(DateUtils.weeks.previous(weeks.value, center.value));
   const endCalendar = ref<Date>(DateUtils.weeks.next(weeks.value, center.value));
@@ -64,15 +64,16 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
 
   const saveState = async () => {
     return storage.local.set<CalendarState>(CalendarStoreConstants.Store, {
-      center: _center.value?.getTime(),
+      center: savedCenter.value?.getTime(),
       weeks: weeks.value,
       extended: extended.value,
     });
   };
 
   const clearState = (date?: Date, save = true) => {
+    if (!date && !savedCenter.value) return;
     calendar.value = [];
-    _center.value = date;
+    savedCenter.value = date;
     startCalendar.value = DateUtils.weeks.previous(weeks.value, center.value);
     endCalendar.value = DateUtils.weeks.next(weeks.value, center.value);
     clearProxy(calendarErrors);
@@ -167,6 +168,7 @@ export const useCalendarStore = defineStore(CalendarStoreConstants.Store, () => 
     loading,
     calendar,
     center,
+    savedCenter: computed(() => savedCenter.value),
     startCalendar,
     endCalendar,
     filter,
