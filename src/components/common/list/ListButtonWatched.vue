@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType, toRefs } from 'vue';
+import { computed, type PropType, toRefs, watch } from 'vue';
 
 import type { ButtonProps, IconProps } from 'naive-ui';
 
@@ -9,8 +9,13 @@ import IconRestore from '~/components/icons/IconRestore.vue';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 import { isListItemType, ListType } from '~/models/list.model';
 import { useItemPlayed } from '~/stores/composable/use-item-played';
-import { useWatchedUpdates } from '~/stores/composable/use-list-update';
+import {
+  type AddOrRemoveQuery,
+  useWatchedUpdates,
+} from '~/stores/composable/use-list-update';
 import { useListStore } from '~/stores/data/list.store';
+import { useMovieStoreRefs } from '~/stores/data/movie.store';
+import { useShowStore } from '~/stores/data/show.store';
 import {
   QuickActionDate,
   type QuickActionDates,
@@ -32,6 +37,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  disableFetch: {
+    type: Boolean,
+    required: false,
+  },
   buttonProps: {
     type: Object as PropType<ButtonProps>,
     required: false,
@@ -42,57 +51,85 @@ const props = defineProps({
   },
 });
 
-const { disabled, item, dateType } = toRefs(props);
+const emit = defineEmits<{
+  (e: 'onClick', payload: { query: AddOrRemoveQuery; request: Promise<unknown> }): void;
+}>();
+
+const { disabled, disableFetch, item, dateType } = toRefs(props);
 
 const { played, date: datePlayed } = useItemPlayed(item);
 
 const { isItemListLoading } = useListStore();
 
-const isLoading = computed(() => {
-  if (!item.value?.id) return;
+const isListLoading = computed(() => {
   if (!isListItemType(item.value.type)) return;
+  const itemId = item.value.meta?.ids?.[item.value.type]?.trakt;
+  if (!itemId) return false;
   return isItemListLoading({
     listType: ListType.History,
     itemType: item.value.type,
-    itemId: item.value?.id,
-  }).value;
+    itemId,
+  });
 });
 
-const { addOrRemovePlayed } = useWatchedUpdates();
+const { loadingWatched } = useMovieStoreRefs();
+const { getShowProgressLoading } = useShowStore();
 
-const onClick = () => {
+const isLoading = computed(() => {
+  if (isListLoading.value) return true;
+  if (item.value.type === 'movie') return loadingWatched.value;
+  if (!item.value?.meta?.ids?.show?.trakt) return false;
+  return getShowProgressLoading(item.value?.meta?.ids?.show?.trakt);
+});
+
+const { addOrRemovePlayed, fetchWatched } = useWatchedUpdates();
+
+const getQuery = (): AddOrRemoveQuery | undefined => {
   if (!isListItemType(item.value.type)) return;
   const trakt = item.value?.meta?.ids?.[item.value.type]?.trakt;
   if (!trakt) return;
 
-  let date: Date | string | undefined;
-  if (dateType?.value === QuickActionDate.Release) {
-    date = item.value?.meta?.released[item.value.type];
-  }
-
-  return addOrRemovePlayed({
+  return {
     itemIds: { trakt },
     itemType: item.value.type,
     remove: played.value,
     showId: item.value?.meta?.ids?.show?.trakt,
-    date,
-  });
+  };
 };
+
+const onClick = () => {
+  if (!isListItemType(item.value.type)) return;
+  const query = getQuery();
+  if (!query) return;
+
+  if (dateType?.value === QuickActionDate.Release) {
+    query.date = item.value?.meta?.released?.[item.value.type];
+  }
+  const request = addOrRemovePlayed(query);
+  emit('onClick', { query, request });
+};
+
+watch(disabled, () => {
+  if (disabled.value || disableFetch.value) return;
+  const query = getQuery();
+  if (!query) return;
+  return fetchWatched(query);
+});
 </script>
 
 <template>
   <ListButton
-    :disabled="isLoading || disabled"
+    :disabled="disabled"
     :loading="isLoading"
     :colored="played"
     :button-props="{ type: 'success', ...buttonProps }"
     :icon-props="{ component: played ? IconRestore : IconPlay, ...iconProps }"
     :title="
-      i18n(played ? 'watch' : 'mark_watched', 'common', 'tooltip') +
+      i18n(played ? 'watched' : 'mark_watched', 'common', 'tooltip') +
       (datePlayed ? `: ${ datePlayed }` : '')
     "
     @on-click="onClick"
   >
-    <span>{{ i18n(played ? 'watched' : 'watch', 'common', 'button') }}</span>
+    <span>{{ i18n(played ? 'remove' : 'watch', 'common', 'button') }}</span>
   </ListButton>
 </template>

@@ -9,7 +9,7 @@ import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
 import { isEpisodeOrMovie, type ListScrollItem } from '~/models/list-scroll.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
-import { useCancelWatching } from '~/stores/composable/use-watching';
+import { type CheckinQuery, useCancelWatching } from '~/stores/composable/use-watching';
 import { useWatchingStore, useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -20,7 +20,11 @@ const { disabled, item } = defineProps<{
   iconProps?: IconProps;
 }>();
 
-const i18n = useI18n('list', 'checkin');
+const emit = defineEmits<{
+  (e: 'onClick', payload: { query: CheckinQuery; request: Promise<unknown> }): void;
+}>();
+
+const i18n = useI18n('list', 'button', 'checkin');
 
 const { isWatchingListItem } = useWatchingStore();
 const watching = computed(() => {
@@ -41,8 +45,11 @@ const onClick = async () => {
   };
 
   try {
-    if (watching.value) await cancel(query);
-    else await checkin(query);
+    let request: Promise<unknown>;
+    if (watching.value) request = cancel(query);
+    else request = checkin(query);
+    emit('onClick', { query, request });
+    await request;
   } catch (error) {
     Logger.error('Failed to checkin', { query, error });
     NotificationService.error(i18n('checkin_failed', 'watching'), error);
@@ -54,7 +61,7 @@ const { loading } = useWatchingStoreRefs();
 
 <template>
   <ListButton
-    :disabled="loading || disabled"
+    :disabled="disabled"
     :loading="loading"
     :colored="watching"
     :button-props="{ type: 'error', ...buttonProps }"

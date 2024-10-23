@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia';
 
-import { computed, reactive, watch } from 'vue';
+import { reactive, watch } from 'vue';
 
 import type { BaseCacheOption } from '@dvcol/base-http-client';
 import type {
@@ -338,51 +338,42 @@ export const useShowStore = defineStore('data.show', () => {
     }
   };
 
-  const getShowLoading = (id: number | string) => computed(() => showsLoading[id.toString()]);
-  const getShow = (id: number | string) =>
-    computed(() => {
-      if (showsLoading[id.toString()]) return undefined;
-      return shows[id.toString()];
-    });
-
-  const getSeasonsLoading = (id: number | string) => computed(() => showsSeasonsLoading[id.toString()]);
-  const getShowSeasons = (id: number | string) =>
-    computed(() => {
-      if (showsSeasonsLoading[id.toString()]) return undefined;
-      return showsSeasons[id.toString()];
-    });
-
-  const getSeasonEpisodesLoading = (id: number | string, season: number) => computed(() => showsSeasonEpisodesLoading[id.toString()]?.[season]);
-  const getShowSeasonEpisodes = (id: number | string, season: number) =>
-    computed(() => {
-      if (showsSeasonEpisodesLoading[id.toString()]?.[season]) return undefined;
-      return showsSeasonEpisodes[id.toString()]?.[season];
-    });
-
-  const getEpisodesLoading = (id: number | string, season: number, episode: number) =>
-    computed(() => showsEpisodesLoading[id.toString()]?.[season]?.[episode]);
-  const getShowEpisode = ({ id, season, episode }: { id: number | string; season: number; episode: number }) =>
-    computed(() => {
-      if (showsEpisodesLoading[id.toString()]?.[season]?.[episode]) return undefined;
-      return showsEpisodes[id.toString()]?.[season]?.[episode];
-    });
-
-  const getShowProgressLoading = (id: number | string) => computed(() => showWatchedProgressLoading[id.toString()]);
-  const getShowWatchedProgress = (id: number | string) => {
-    return computed(() => {
-      const progress = showsWatchedProgress[id.toString()];
-      if (!progress) return undefined;
-      return watchProgressToListProgress(progress, id);
-    });
+  const getShowLoading = (id: number | string) => showsLoading[id.toString()];
+  const getShow = (id: number | string) => {
+    if (showsLoading[id.toString()]) return undefined;
+    return shows[id.toString()];
   };
 
-  const getShowCollectionLoading = (id: number | string) => computed(() => showCollectionProgressLoading[id.toString()]);
+  const getSeasonsLoading = (id: number | string) => showsSeasonsLoading[id.toString()];
+  const getShowSeasons = (id: number | string) => {
+    if (showsSeasonsLoading[id.toString()]) return undefined;
+    return showsSeasons[id.toString()];
+  };
+
+  const getSeasonEpisodesLoading = (id: number | string, season: number) => showsSeasonEpisodesLoading[id.toString()]?.[season];
+  const getShowSeasonEpisodes = (id: number | string, season: number) => {
+    if (showsSeasonEpisodesLoading[id.toString()]?.[season]) return undefined;
+    return showsSeasonEpisodes[id.toString()]?.[season];
+  };
+
+  const getEpisodesLoading = (id: number | string, season: number, episode: number) => showsEpisodesLoading[id.toString()]?.[season]?.[episode];
+  const getShowEpisode = ({ id, season, episode }: { id: number | string; season: number; episode: number }) => {
+    if (showsEpisodesLoading[id.toString()]?.[season]?.[episode]) return undefined;
+    return showsEpisodes[id.toString()]?.[season]?.[episode];
+  };
+
+  const getShowProgressLoading = (id: number | string) => showWatchedProgressLoading[id.toString()];
+  const getShowWatchedProgress = (id: number | string) => {
+    const progress = showsWatchedProgress[id.toString()];
+    if (!progress) return undefined;
+    return watchProgressToListProgress(progress, id);
+  };
+
+  const getShowCollectionLoading = (id: number | string) => showCollectionProgressLoading[id.toString()];
   const getShowCollectionProgress = (id: number | string) => {
-    return computed(() => {
-      const progress = showsCollectionProgress[id.toString()];
-      if (!progress) return undefined;
-      return watchProgressToListProgress(progress, id);
-    });
+    const progress = showsCollectionProgress[id.toString()];
+    if (!progress) return undefined;
+    return watchProgressToListProgress(progress, id);
   };
 
   const initShowStore = () => {

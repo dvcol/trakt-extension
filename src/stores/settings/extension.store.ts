@@ -5,12 +5,11 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, toRaw } from 'vue';
 
-import type { ListEntity } from '~/models/list.model';
-
 import type { PosterItem } from '~/models/poster.model';
 
 import NewExtensionIcon from '~/assets/brand/favicon-128x128.png';
 import OldExtensionIcon from '~/assets/favicon/favicon-128x128.png';
+import { DefaultLists, type ListEntity } from '~/models/list.model';
 import { MessageType } from '~/models/message/message-type.model';
 import { NavbarPosition, type NavbarPositions } from '~/models/navbar-position.model';
 
@@ -101,9 +100,21 @@ export type QuickActionDates = (typeof QuickActionDate)[keyof typeof QuickAction
 type ActionDateDictionary = { [QuickAction.Watched]?: QuickActionDates; [QuickAction.Collected]?: QuickActionDates };
 
 const DefaultQuickActions: QuickActionDictionary = {
-  [Route.Progress]: { [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
+  [Route.Progress]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
   [Route.Calendar]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
-  [Route.History]: { [QuickAction.Watched]: true },
+  [Route.History]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true },
+  [Route.Watchlist]: { [QuickAction.List]: true, [QuickAction.Collected]: true, [QuickAction.Watched]: true },
+  [Route.Search]: { [QuickAction.List]: true, [QuickAction.Collected]: true, [QuickAction.Watched]: true },
+};
+
+type QuickActionListDictionary = Partial<Record<Route, ListEntity>>;
+
+export const DefaultQuickActionLists: QuickActionListDictionary = {
+  [Route.Progress]: DefaultLists.Watchlist,
+  [Route.Calendar]: DefaultLists.Watchlist,
+  [Route.History]: DefaultLists.Watchlist,
+  [Route.Watchlist]: DefaultLists.Watchlist,
+  [Route.Search]: DefaultLists.Watchlist,
 };
 
 type ExtensionSettings = {
@@ -124,6 +135,7 @@ type ExtensionSettings = {
   brand: Brands;
   actions: QuickActionDictionary;
   actionDate: ActionDateDictionary;
+  actionLists: QuickActionListDictionary;
 };
 
 const ExtensionSettingsConstants = {
@@ -151,6 +163,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const actions = reactive<QuickActionDictionary>(DefaultQuickActions);
   const actionDate = reactive<ActionDateDictionary>({});
+  const actionLists = reactive<QuickActionListDictionary>(DefaultQuickActionLists);
 
   const brand = ref<Brands>(Brand.Old);
 
@@ -185,6 +198,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         brand: brand.value,
         actions: toRaw(actions),
         actionDate: toRaw(actionDate),
+        actionLists: toRaw(actionLists),
       }),
     500,
   );
@@ -227,6 +241,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
     if (restored?.actions !== undefined) Object.assign(actions, restored.actions);
     if (restored?.actionDate !== undefined) Object.assign(actionDate, restored.actionDate);
+    if (restored?.actionLists !== undefined) Object.assign(actionLists, restored.actionLists);
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -298,6 +313,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const getAction = (route: Route) => actions[route];
   const getActionDate = (action: typeof QuickAction.Collected | typeof QuickAction.Watched) => actionDate[action];
+  const getActionList = (route: Route) => actionLists[route];
 
   return {
     initExtensionSettingsStore,
@@ -414,6 +430,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     }),
     getAction,
     getActionDate,
+    getActionList,
   };
 });
 

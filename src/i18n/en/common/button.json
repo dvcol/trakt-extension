@@ -104,9 +104,21 @@
     "message": "Watched",
     "description": "Button to mark as watched."
   },
+  "common__button__unwatched": {
+    "message": "Unwatched",
+    "description": "Button to mark as unwatched."
+  },
   "common__button__watch": {
     "message": "Watch",
     "description": "Button to mark as watched."
+  },
+  "common__button__add_to": {
+    "message": "Add to",
+    "description": "Button to add to."
+  },
+  "common__button__remove_from": {
+    "message": "Remove from",
+    "description": "Button to remove from."
   },
   "common__button__favorite": {
     "message": "Favorite",
@@ -115,6 +127,10 @@
   "common__button__collected": {
     "message": "Collected",
     "description": "Button to mark as collected."
+  },
+  "common__button__uncollected": {
+    "message": "Uncollected",
+    "description": "Button to mark as uncollected."
   },
   "common__button__collect": {
     "message": "Collect",

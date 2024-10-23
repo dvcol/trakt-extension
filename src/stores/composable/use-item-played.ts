@@ -27,7 +27,7 @@ export const useItemPlayed = (
     if (!item?.value?.getProgressQuery) return;
     const { id } = item.value?.getProgressQuery() ?? {};
     if (!id) return;
-    return getShowWatchedProgress(id).value;
+    return getShowWatchedProgress(id);
   });
 
   const movieHistory = computed(() => {
@@ -115,7 +115,7 @@ export const useItemCollected = (item?: Ref<ListScrollItem>, showCollected: Ref<
     if (!item?.value?.getProgressQuery) return;
     const { id } = item.value?.getProgressQuery() ?? {};
     if (!id) return;
-    return getShowCollectionProgress(id).value;
+    return getShowCollectionProgress(id);
   });
 
   const collected = computed(() => {

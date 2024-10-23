@@ -235,6 +235,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     :line-type="loading ? 'dashed' : lineType"
     :color="loading ? 'grey' : _color"
     @click="onClick"
+    @click.middle="open = !open"
     @keydown.enter="onClick"
     @keydown.alt="open = !open"
     @keydown.ctrl="open = !open"
@@ -315,7 +316,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
             v-if="$slots.buttons"
             ref="buttons"
             class="tile-buttons"
-            :class="{ open, dragged: dragged > 0 && dragged < 100 }"
+            :class="{
+              open,
+              dragged: dragged > 0 && dragged < 100,
+              progress: showProgress,
+            }"
             :style="{ '--dragged': `${dragged}%` }"
             vertical
             @focusin="toggleFocusin(true)"
@@ -390,6 +395,10 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
         &:focus-within,
         &.open {
           translate: 0;
+        }
+
+        &.progress {
+          background: linear-gradient(to right, transparent 10%, var(--bg-black) 100%);
         }
 
         :first-child {

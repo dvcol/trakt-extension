@@ -81,11 +81,11 @@ const i18n = useI18n('panel', 'show');
 
 const watchedProgress = computed(() => {
   if (!showId?.value) return;
-  return getShowWatchedProgress(showId.value).value;
+  return getShowWatchedProgress(showId.value);
 });
 const collectionProgress = computed(() => {
   if (!showId?.value) return;
-  return getShowCollectionProgress(showId.value).value;
+  return getShowCollectionProgress(showId.value);
 });
 
 const seasonNb = computed(() => {
@@ -104,17 +104,17 @@ const episodeNb = computed(() => {
 
 const show = computed(() => {
   if (!showId?.value) return;
-  return getShow(showId.value).value;
+  return getShow(showId.value);
 });
 
 const seasons = computed(() => {
   if (!showId?.value) return;
-  return getShowSeasons(showId.value).value;
+  return getShowSeasons(showId.value);
 });
 
 const episodes = computed(() => {
   if (!showId?.value || seasonNb?.value === undefined) return;
-  return getShowSeasonEpisodes(showId.value, seasonNb.value).value;
+  return getShowSeasonEpisodes(showId.value, seasonNb.value);
 });
 
 const episode = computed(() => {
@@ -124,7 +124,7 @@ const episode = computed(() => {
     id: showId.value,
     season: seasonNb.value,
     episode: episodeNb.value,
-  }).value;
+  });
 });
 
 const season = computed(() => {
@@ -207,13 +207,13 @@ const activeItemCollectionLoading = computed(() => {
     listType: ListType.Collection,
     itemType: panelType.value,
     itemId: _id,
-  }).value;
+  });
 });
 
 const collectionLoading = computed(() => {
   if (activeItemCollectionLoading.value) return true;
   if (!showId?.value) return true;
-  return getShowCollectionLoading(showId.value).value;
+  return getShowCollectionLoading(showId.value);
 });
 
 const activeItemWatchedLoading = computed(() => {
@@ -223,13 +223,13 @@ const activeItemWatchedLoading = computed(() => {
     listType: ListType.History,
     itemType: panelType.value,
     itemId: _id,
-  }).value;
+  });
 });
 
 const watchedLoading = computed(() => {
   if (activeItemWatchedLoading.value) return true;
   if (!showId?.value) return true;
-  return getShowProgressLoading(showId.value).value;
+  return getShowProgressLoading(showId.value);
 });
 
 const activeLists = computed(() => {
@@ -237,7 +237,7 @@ const activeLists = computed(() => {
   const _type = panelType.value;
   if (_id === undefined || !_type) return;
   return myLists.value
-    ?.filter(list => isItemInList(list.id, _type, _id).value)
+    ?.filter(list => isItemInList(list.id, _type, _id))
     .map(list => list.id);
 });
 

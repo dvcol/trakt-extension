@@ -30,6 +30,23 @@ export type SearchResult = Omit<TraktSearchResult, 'type'> & {
 export const SupportedSearchType: TraktSearchType[] = ['episode', 'show', 'movie', 'person'];
 export const DefaultSearchType: TraktSearchType[] = ['show', 'movie'];
 
+const getSearchId = (result: TraktSearchResult) => {
+  if (!result) return;
+  switch (result.type) {
+    case 'person':
+      return result.person?.ids.trakt;
+    case 'movie':
+      return result.movie?.ids.trakt;
+    case 'episode':
+      return result.episode?.ids.trakt;
+    case 'show':
+      return result.show?.ids.trakt;
+    case 'list':
+      return result.list?.ids.trakt;
+    default:
+  }
+};
+
 const SearchStoreConstants = {
   Store: 'data.search',
   LocalHistory: 'data.search.history',
@@ -148,7 +165,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
 
       const data = response.data.map((item, index) => ({
         ...item,
-        id: `${page}-${index}`,
+        id: getSearchId(item) ?? `${page ?? 0}-${index}`,
       }));
 
       pagination.value = response.pagination ?? {};

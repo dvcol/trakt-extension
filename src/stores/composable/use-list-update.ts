@@ -23,6 +23,11 @@ export const useWatchedUpdates = () => {
   const { fetchShowProgress, fetchShowCollectionProgress } = useShowStore();
   const { fetchHistory } = useHistoryStore();
 
+  const fetchWatched = async ({ itemType, showId }: Pick<AddOrRemoveQuery, 'itemType' | 'showId'>, force?: boolean) => {
+    if (itemType === 'movie') await fetchMovieWatched(force);
+    if (showId) await fetchShowProgress(showId.toString(), { force });
+  };
+
   const addOrRemovePlayed = async ({ itemIds, itemType, remove, showId, date = new Date() }: AddOrRemoveQuery) => {
     const ids = Array.isArray(itemIds) ? itemIds.map(({ trakt }) => trakt) : itemIds.trakt;
     if (!ids) {
@@ -42,13 +47,17 @@ export const useWatchedUpdates = () => {
         date,
         remove,
       });
-      if (itemType === 'movie') await fetchMovieWatched(true);
-      if (showId) await fetchShowProgress(showId.toString(), { force: true });
+      await fetchWatched({ itemType, showId }, true);
       await fetchHistory();
     } catch (error) {
       Logger.error('Failed to update watched status', error);
       NotificationService.error(i18n(`history_${remove ? 'remove' : 'add'}_failed`, 'common', 'error'), error);
     }
+  };
+
+  const fetchCollection = async ({ itemType, showId }: Pick<AddOrRemoveQuery, 'itemType' | 'showId'>, force?: boolean) => {
+    if (itemType === 'movie') await fetchMovieCollected(force);
+    if (showId) await fetchShowCollectionProgress(showId.toString(), { force });
   };
 
   const addOrRemoveCollected = async ({ itemIds, itemType, remove, showId, date = new Date() }: AddOrRemoveQuery) => {
@@ -66,14 +75,12 @@ export const useWatchedUpdates = () => {
         date,
         remove,
       });
-
-      if (itemType === 'movie') await fetchMovieCollected(true);
-      if (showId) await fetchShowCollectionProgress(showId.toString(), { force: true });
+      await fetchCollection({ itemType, showId }, true);
     } catch (error) {
       Logger.error('Failed to update collection', error);
       NotificationService.error(i18n(`collection_${remove ? 'remove' : 'add'}_failed`, 'common', 'error'), error);
     }
   };
 
-  return { addOrRemovePlayed, addOrRemoveCollected };
+  return { addOrRemovePlayed, addOrRemoveCollected, fetchWatched, fetchCollection };
 };

@@ -70,6 +70,11 @@ const { onScroll, onUpdated, onLoadMore } = useListScrollEvents(fetchListItems, 
 const { getImageSettings } = useExtensionSettingsStore();
 const imageSettings = getImageSettings(Route.Watchlist);
 
+const onButtonClick = async ({ request }: { request: Promise<unknown> }) => {
+  await request;
+  await fetchListItems(undefined, { force: true });
+};
+
 const { getEvicted } = useActivityStore();
 useWatchActivated(
   watch(getEvicted(Route.Watchlist), async _evicted => {
@@ -118,6 +123,7 @@ useActiveAndDocumentVisible({
           :disabled="!open"
           :item="item"
           :route="Route.Watchlist"
+          @on-click="onButtonClick"
         />
       </template>
     </ListScroll>

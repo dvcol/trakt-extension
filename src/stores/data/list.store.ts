@@ -9,7 +9,7 @@ import type {
   TraktWatchlistGetQuery,
 } from '@dvcol/trakt-http-client/models';
 
-import type { AddOrRemoveIds, AnyList, AnyListDateTypes, ListEntity, ListItemTypes, ListTypes } from '~/models/list.model';
+import type { AddOrRemoveListQuery, AnyList, AnyListDateTypes, ListEntity, ListItemTypes, ListTypes } from '~/models/list.model';
 
 import type { StorePagination } from '~/models/pagination.model';
 
@@ -41,6 +41,16 @@ type ListDictionaryItemLoading = Partial<Record<ListTypes, Partial<Record<ListIt
 
 type ListItemQuery = TraktWatchlistGetQuery | TraktFavoriteGetQuery | TraktCollectionGetQuery | TraktListItemsGetQuery;
 type ListQuery = { page?: number; limit?: number; list?: ListEntity };
+
+const getListId = (list: Record<string, { ids: Pick<TraktApiIds, 'trakt'> }>): string | number | undefined => {
+  if (!list) return;
+  if ('id' in list) return list.id?.ids?.trakt;
+  if ('person' in list) return list.person?.ids.trakt;
+  if ('movie' in list) return list.movie?.ids.trakt;
+  if ('episode' in list) return list.episode?.ids.trakt;
+  if ('season' in list) return list.season?.ids.trakt;
+  if ('show' in list) return list.show?.ids.trakt;
+};
 
 const ListStoreConstants = {
   Store: 'data.list',
@@ -180,7 +190,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       const newData = response.data.map<AnyList>((item, index) => {
         updateDictionary(list, item as MinimalItem);
         if ('id' in item) return item;
-        return { ...item, id: `${page}-${index}` };
+        return { ...item, id: getListId(item as MinimalItem) || `${page ?? 0}-${index}` };
       });
       if (updateState) {
         pagination.value = response.pagination ?? {};
@@ -209,19 +219,23 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
 
   const i18n = useI18n('common', 'notification');
 
-  const addToOrRemoveFromList = async ({
-    list,
+  const setItemListLoading = ({
+    listType,
     itemType,
-    itemIds,
-    date,
-    remove,
+    itemId,
+    loading: _loading,
   }: {
-    list: ListEntity;
+    listType: ListTypes;
     itemType: ListItemTypes;
-    itemIds: AddOrRemoveIds;
-    date?: Date | string | number;
-    remove?: boolean;
+    itemId: Pick<TraktApiIds, 'trakt'>;
+    loading: boolean;
   }) => {
+    if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
+    if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};
+    typeItemLoading[listType][itemType][itemId.trakt.toString()] = _loading;
+  };
+
+  const addToOrRemoveFromList = async ({ list, itemType, itemIds, date, remove }: AddOrRemoveListQuery) => {
     const listId = list.id?.toString();
     const listType = list.type;
     const userId = list.owner?.username;
@@ -247,11 +261,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     });
     if (!filter.length) return;
 
-    if (!typeItemLoading[listType]) typeItemLoading[listType] = {};
-    if (!typeItemLoading[listType]![itemType]) typeItemLoading[listType]![itemType] = {};
-    filter.forEach(id => {
-      typeItemLoading[listType]![itemType]![id.trakt.toString()] = true;
-    });
+    filter.forEach(id => setItemListLoading({ listType, itemType, itemId: id, loading: true }));
     typeLoading[listType] = true;
 
     try {
@@ -296,20 +306,17 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       NotificationService.error(`Failed to add item to list '${list.name}'`, e);
       throw e;
     } finally {
-      filter.forEach(id => {
-        typeItemLoading[listType]![itemType]![id.trakt.toString()] = false;
-      });
+      filter.forEach(id => setItemListLoading({ listType, itemType, itemId: id, loading: false }));
       typeLoading[listType] = false;
     }
   };
 
   const isListLoading = (listId: ListEntity['id']) => computed(() => listDictionaryLoading[listId.toString()]);
   const isItemInList = (listId: ListEntity['id'], itemType: ListItemTypes, itemId: string | number) =>
-    computed(() => {
-      return listDictionary[listId.toString()]?.[itemType]?.[itemId.toString()];
-    });
+    listDictionary[listId.toString()]?.[itemType]?.[itemId.toString()];
+
   const isItemListLoading = ({ listType, itemType, itemId }: { listType: ListTypes; itemType: ListItemTypes; itemId: string | number }) =>
-    computed(() => typeItemLoading[listType]?.[itemType]?.[itemId]);
+    typeItemLoading[listType]?.[itemType]?.[itemId];
 
   const isListTypeLoading = (listType: ListTypes) => computed(() => typeLoading[listType]);
 
@@ -346,6 +353,7 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
     isListTypeLoading,
     isItemListLoading,
     addToOrRemoveFromList,
+    setItemListLoading,
   };
 });
 

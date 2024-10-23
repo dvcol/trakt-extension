@@ -59,7 +59,7 @@ export const useWatchingProgress = (watching: Ref<TraktWatching | undefined>) =>
   return { elapsed, duration, progress };
 };
 
-export type CheckinQuery<T extends 'episode' | 'movie'> = {
+export type CheckinQuery<T extends 'episode' | 'movie' = 'episode' | 'movie'> = {
   ids?: Pick<TraktApiIds, 'trakt'> & Partial<TraktApiIds>;
   type: T;
   showId?: string | number;

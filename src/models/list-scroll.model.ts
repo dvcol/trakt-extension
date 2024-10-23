@@ -107,7 +107,7 @@ export type ListScrollItemMeta<T = { [key: string]: unknown }> = {
     person?: Partial<TraktPerson['ids']>;
     [key: string]: Partial<TraktApiIds> | undefined;
   };
-  released: {
+  released?: {
     movie: TraktMovie<'any'>['released'];
     show: TraktShow<'any'>['first_aired'];
     season: TraktSeason<'any'>['first_aired'];

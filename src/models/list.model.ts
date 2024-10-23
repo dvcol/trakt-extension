@@ -58,3 +58,11 @@ export const isListItemType = (type?: string): type is ListItemTypes => !!type &
 export const canFavorite = (type?: string) => type === 'show' || type === 'movie';
 
 export type AddOrRemoveIds = Pick<TraktApiIds, 'trakt'> | Pick<TraktApiIds, 'trakt'>[];
+
+export type AddOrRemoveListQuery = {
+  list: ListEntity;
+  itemType: ListItemTypes;
+  itemIds: AddOrRemoveIds;
+  date?: Date | string | number;
+  remove?: boolean;
+};

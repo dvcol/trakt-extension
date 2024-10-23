@@ -113,7 +113,7 @@ const collectionLoading = computed(() => {
     listType: ListType.Collection,
     itemType: 'movie',
     itemId: movieId.value,
-  }).value;
+  });
 });
 
 const watchedLoading = computed(() => {
@@ -123,13 +123,13 @@ const watchedLoading = computed(() => {
     listType: ListType.History,
     itemType: 'movie',
     itemId: movieId.value,
-  }).value;
+  });
 });
 
 const activeLists = computed(() => {
   if (movieId?.value === undefined) return;
   return myLists.value
-    ?.filter(list => isItemInList(list.id, 'movie', movieId.value).value)
+    ?.filter(list => isItemInList(list.id, 'movie', movieId.value))
     .map(list => list.id);
 });
 

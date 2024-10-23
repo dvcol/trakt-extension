@@ -144,7 +144,7 @@ onMounted(() => fetchLists());
         }"
         :icon="activeLists?.length ? IconCheckedList : IconListEmpty"
         :filled="!!activeLists?.length"
-        :disabled="listLoading"
+        :loading="listLoading"
         type="warning"
         @on-select="onListUpdate"
       >
@@ -166,7 +166,7 @@ onMounted(() => fetchLists());
         }"
         :icon="collected ? IconGrid : IconGridEmpty"
         :filled="collected"
-        :disabled="collectedLoading"
+        :loading="collectedLoading"
         type="info"
         @on-select="onCollectionUpdate"
       >
@@ -182,7 +182,7 @@ onMounted(() => fetchLists());
         }"
         :icon="watched ? IconPlayFilled : IconPlay"
         :filled="watched"
-        :disabled="watchedLoading"
+        :loading="watchedLoading"
         @on-select="onWatchedUpdate"
       >
         {{ i18n(`label__history__${ watched ? 'remove' : 'add' }`) }}

@@ -65,14 +65,14 @@ const ratingLoading = computed(() => {
   if (mode.value === 'episode') {
     if (!showId?.value || seasonNb.value === undefined || episodeNb.value === undefined)
       return false;
-    return getEpisodesLoading(showId.value, seasonNb.value, episodeNb.value).value;
+    return getEpisodesLoading(showId.value, seasonNb.value, episodeNb.value);
   }
   if (mode.value === 'season') {
     if (!showId?.value) return false;
-    return getSeasonsLoading(showId.value).value;
+    return getSeasonsLoading(showId.value);
   }
   if (!showId?.value) return false;
-  return getShowLoading(showId.value).value;
+  return getShowLoading(showId.value);
 });
 
 const scoreLoading = computed(() => {
