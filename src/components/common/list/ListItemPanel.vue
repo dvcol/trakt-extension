@@ -11,7 +11,7 @@ import {
   type PopoverProps,
 } from 'naive-ui';
 
-import { computed, defineProps, type PropType, ref, toRefs } from 'vue';
+import { computed, defineProps, type PropType, ref, toRefs, watch } from 'vue';
 
 import PosterPlaceholder from '~/assets/images/poster-placholder.webp';
 import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
@@ -25,6 +25,7 @@ import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
 import { useItemCollected, useItemPlayed } from '~/stores/composable/use-item-played';
+import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
@@ -125,6 +126,24 @@ const {
   date: playedDate,
 } = useItemPlayed(item, { showPlayed, showProgress });
 const { collected, date: collectedDate } = useItemCollected(item, showCollected);
+
+const { fetchShowProgress } = useShowStore();
+
+if (showProgress.value) {
+  watch(
+    item,
+    () => {
+      if (!showProgress.value) return;
+      if (!item?.value?.getProgressQuery) return;
+      const { id, cacheOptions } = item.value?.getProgressQuery() ?? {};
+      if (!id) return;
+      return fetchShowProgress(id.toString(), cacheOptions);
+    },
+    {
+      immediate: true,
+    },
+  );
+}
 
 const { isWatchingListItem } = useWatchingStore();
 const watching = computed(() => {
