@@ -107,6 +107,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showWatching: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   showTagLoader: {
     type: Boolean,
     required: false,
@@ -316,6 +321,7 @@ const listPaddingBottom = computed(() => {
           :show-progress="showProgress"
           :show-played="showPlayed"
           :show-collected="showCollected"
+          :show-watching="showWatching"
           :show-tag-loader="showTagLoader"
           @on-hover="onHover"
           @on-item-click="(...args) => $emit('onItemClick', ...args)"
@@ -323,12 +329,12 @@ const listPaddingBottom = computed(() => {
           @on-scroll-out-of-view="(...args) => $emit('onScrollOutOfView', ...args)"
         >
           <slot :item="item" :loading="item.loading" />
-          <template v-if="$slots.buttons" #buttons="{ open, dragged }">
+          <template v-if="$slots.buttons" #buttons="{ open, dragged, focusin }">
             <slot
               name="buttons"
               :item="item"
               :loading="item.loading"
-              :open="open || dragged"
+              :open="open || dragged || focusin"
             />
           </template>
         </ListItem>

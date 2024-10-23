@@ -97,6 +97,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showWatching: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   showTagLoader: {
     type: Boolean,
     required: false,
@@ -118,6 +123,19 @@ const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height,
 const itemRef = ref<
   Omit<InstanceType<typeof NTimelineItem>, '$el'> & { $el?: HTMLDivElement }
 >();
+
+const focusin = ref(false);
+const focusTimeout = ref<ReturnType<typeof setTimeout>>();
+const toggleFocusin = (focus: boolean) => {
+  clearTimeout(focusTimeout.value);
+  if (focus) {
+    focusin.value = true;
+    return;
+  }
+  focusTimeout.value = setTimeout(() => {
+    focusin.value = false;
+  }, 100);
+};
 
 const open = ref(false);
 const dragged = ref(0);
@@ -288,6 +306,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
             :show-progress="showProgress"
             :show-played="showPlayed"
             :show-collected="showCollected"
+            :show-watching="showWatching"
             :show-tag-loader="showTagLoader"
           >
             <slot :item="item" :loading="loading" />
@@ -299,8 +318,16 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
             :class="{ open, dragged: dragged > 0 && dragged < 100 }"
             :style="{ '--dragged': `${dragged}%` }"
             vertical
+            @focusin="toggleFocusin(true)"
+            @focusout="toggleFocusin(false)"
           >
-            <slot name="buttons" :open="open" :dragged="dragged" :item="item" />
+            <slot
+              name="buttons"
+              :open="open"
+              :dragged="dragged"
+              :focusin="focusin"
+              :item="item"
+            />
           </NButtonGroup>
         </NFlex>
       </NFlex>

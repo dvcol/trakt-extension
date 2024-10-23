@@ -103,6 +103,7 @@ useActiveAndDocumentVisible({
       :backdrop="imageSettings.backdrop"
       :poster-type="imageSettings.type"
       show-played
+      show-watching
       show-collected
       @on-scroll="scrolled = true"
       @on-scroll-top="scrolled = false"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, type PropType, toRefs } from 'vue';
 
+import type { ButtonProps, IconProps } from 'naive-ui';
+
 import ListButton from '~/components/common/list/ListButton.vue';
 import IconPlay from '~/components/icons/IconPlay.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
@@ -28,6 +30,14 @@ const props = defineProps({
   },
   disabled: {
     type: Boolean,
+    required: false,
+  },
+  buttonProps: {
+    type: Object as PropType<ButtonProps>,
+    required: false,
+  },
+  iconProps: {
+    type: Object as PropType<IconProps>,
     required: false,
   },
 });
@@ -74,14 +84,15 @@ const onClick = () => {
   <ListButton
     :disabled="isLoading || disabled"
     :loading="isLoading"
-    :button-props="{ type: played ? 'error' : 'success' }"
-    :icon-props="{ component: played ? IconRestore : IconPlay }"
+    :colored="played"
+    :button-props="{ type: 'success', ...buttonProps }"
+    :icon-props="{ component: played ? IconRestore : IconPlay, ...iconProps }"
     :title="
-      i18n(played ? 'watched' : 'mark_watched', 'common', 'tooltip') +
+      i18n(played ? 'watch' : 'mark_watched', 'common', 'tooltip') +
       (datePlayed ? `: ${ datePlayed }` : '')
     "
     @on-click="onClick"
   >
-    <span>{{ i18n(played ? 'remove' : 'watched', 'common', 'button') }}</span>
+    <span>{{ i18n(played ? 'watched' : 'watch', 'common', 'button') }}</span>
   </ListButton>
 </template>

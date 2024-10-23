@@ -88,6 +88,7 @@ useActiveAndDocumentVisible({
       :page-size="pageSize"
       :backdrop="imageSettings.backdrop"
       :poster-type="imageSettings.type"
+      show-watching
       show-collected
       show-tag-loader
       @on-scroll="scrolled = true"

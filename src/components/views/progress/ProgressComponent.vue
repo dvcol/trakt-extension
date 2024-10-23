@@ -112,6 +112,7 @@ useActiveAndDocumentVisible({
         :poster-type="imageSettings.type"
         hide-date
         show-progress
+        show-watching
         show-collected
         show-tag-loader
         @on-scroll="scrolled = true"

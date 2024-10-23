@@ -18,12 +18,14 @@ import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
 import TagLink from '~/components/common/buttons/TagLink.vue';
 import ProgressTooltip from '~/components/common/tooltip/ProgressTooltip.vue';
 import IconGrid from '~/components/icons/IconGrid.vue';
+import IconLoading from '~/components/icons/IconLoading.vue';
 import IconPlayFilled from '~/components/icons/IconPlayFilled.vue';
 import { getCustomLinkIcon } from '~/models/link.model';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
 import { useItemCollected, useItemPlayed } from '~/stores/composable/use-item-played';
+import { useWatchingStore } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
@@ -72,13 +74,19 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  showWatching: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   showTagLoader: {
     type: Boolean,
     required: false,
   },
 });
 
-const { item, hideDate, showProgress, showPlayed, showCollected } = toRefs(props);
+const { item, hideDate, showProgress, showPlayed, showCollected, showWatching } =
+  toRefs(props);
 
 const type = computed(() =>
   item.value.type ? i18n(item.value.type, 'common', 'media', 'type') : item.value.type,
@@ -117,6 +125,13 @@ const {
   date: playedDate,
 } = useItemPlayed(item, { showPlayed, showProgress });
 const { collected, date: collectedDate } = useItemCollected(item, showCollected);
+
+const { isWatchingListItem } = useWatchingStore();
+const watching = computed(() => {
+  if (!showWatching.value) return false;
+  if (!item.value) return false;
+  return isWatchingListItem(item.value);
+});
 
 const { progressType } = useExtensionSettingsStoreRefs();
 
@@ -271,6 +286,26 @@ const onTagClick = (url?: string) => {
           >
             <template #icon>
               <NIcon :component="IconPlayFilled" />
+            </template>
+          </NTag>
+        </template>
+        <template v-if="showWatching && watching">
+          <NSkeleton
+            v-if="loading"
+            key="watching-loader"
+            text
+            style="width: 22px; height: 18px; border-radius: 2px"
+          />
+          <NTag
+            v-else
+            key="watching"
+            class="tag badge"
+            size="small"
+            type="error"
+            :bordered="false"
+          >
+            <template #icon>
+              <NIcon :component="IconLoading" />
             </template>
           </NTag>
         </template>

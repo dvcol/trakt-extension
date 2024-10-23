@@ -80,6 +80,7 @@ const { onItemClick } = usePanelItem();
       :backdrop="imageSettings.backdrop"
       :poster-type="imageSettings.type"
       show-played
+      show-watching
       show-collected
       show-tag-loader
       overscroll="none"

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, type PropType, toRefs } from 'vue';
 
+import type { ButtonProps, IconProps } from 'naive-ui';
+
 import ListButton from '~/components/common/list/ListButton.vue';
-import IconGrid from '~/components/icons/IconGrid.vue';
+import IconGridEmpty from '~/components/icons/IconGridEmpty.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import { type ListScrollItem } from '~/models/list-scroll.model';
 import { isListItemType, ListType } from '~/models/list.model';
@@ -28,6 +30,14 @@ const props = defineProps({
   },
   disabled: {
     type: Boolean,
+    required: false,
+  },
+  buttonProps: {
+    type: Object as PropType<ButtonProps>,
+    required: false,
+  },
+  iconProps: {
+    type: Object as PropType<IconProps>,
     required: false,
   },
 });
@@ -74,8 +84,9 @@ const onClick = () => {
   <ListButton
     :disabled="isLoading || disabled"
     :loading="isLoading"
-    :button-props="{ type: collected ? 'error' : 'info' }"
-    :icon-props="{ component: collected ? IconRestore : IconGrid }"
+    :colored="!!collected"
+    :button-props="{ type: 'info', ...buttonProps }"
+    :icon-props="{ component: collected ? IconRestore : IconGridEmpty, ...iconProps }"
     :title="
       i18n(collected ? 'collected' : 'mark_collected', 'common', 'tooltip') +
       (dateCollected ? `: ${ dateCollected }` : '')

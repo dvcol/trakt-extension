@@ -5,6 +5,7 @@ const { buttonProps } = defineProps<{
   buttonProps?: ButtonProps;
   iconProps?: IconProps;
   disabled?: boolean;
+  colored?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -21,6 +22,7 @@ const onClick = (e: MouseEvent) => {
 <template>
   <NButton
     class="list-button"
+    :class="{ colored }"
     icon-placement="right"
     quaternary
     v-bind="buttonProps"
@@ -57,6 +59,11 @@ const onClick = (e: MouseEvent) => {
 
   &-icon {
     margin-left: 0.25rem;
+  }
+
+  &.colored {
+    --color: var(--n-text-color);
+    --progress: 1200%;
   }
 
   // stylelint-disable-next-line selector-class-pattern -- framework override

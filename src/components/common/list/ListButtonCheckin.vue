@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import type { ButtonProps, IconProps } from 'naive-ui';
+
 import ListButton from '~/components/common/list/ListButton.vue';
 import IconCancel from '~/components/icons/IconCancel.vue';
 import IconConfirmCircle from '~/components/icons/IconConfirmCircle.vue';
@@ -14,6 +16,8 @@ import { useI18n } from '~/utils/i18n.utils';
 const { disabled, item } = defineProps<{
   disabled?: boolean;
   item?: ListScrollItem;
+  buttonProps?: ButtonProps;
+  iconProps?: IconProps;
 }>();
 
 const i18n = useI18n('list', 'checkin');
@@ -52,8 +56,9 @@ const { loading } = useWatchingStoreRefs();
   <ListButton
     :disabled="loading || disabled"
     :loading="loading"
-    :button-props="{ type: watching ? 'warning' : 'error' }"
-    :icon-props="{ component: watching ? IconCancel : IconConfirmCircle }"
+    :colored="watching"
+    :button-props="{ type: 'error', ...buttonProps }"
+    :icon-props="{ component: watching ? IconCancel : IconConfirmCircle, ...iconProps }"
     @on-click="onClick"
   >
     <span>{{ i18n(watching ? 'cancel' : 'checkin', 'common', 'button') }}</span>
