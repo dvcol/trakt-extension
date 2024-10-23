@@ -27,6 +27,10 @@
     "message": "Images",
     "description": "Images menu item"
   },
+  "settings__menu__actions": {
+    "message": "Actions",
+    "description": "Actions menu item"
+  },
   "settings__menu__menus": {
     "message": "Menus",
     "description": "Context menus menu item"

@@ -1,0 +1,14 @@
+{
+  "settings__actions__description": {
+    "message": "Enable quick actions by routes and configure quick list shortcut.",
+    "description": "Quick actions label"
+  },
+  "settings__actions__label__date_watched": {
+    "message": "Configure the date used by the watch quick actions",
+    "description": "Label for the date watched quick action settings"
+  },
+  "settings__actions__label__date_collected": {
+    "message": "Configure the date used by the collect quick actions",
+    "description": "Configure the date used by the collect quick actions"
+  }
+}

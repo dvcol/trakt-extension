@@ -270,7 +270,8 @@ const toggleBrand = () => {
     <!--  Movie init  -->
     <SettingsFormItem
       :label="i18n('label_movie_init')"
-      :warning="initMovie ? i18n('label_init_warning') : undefined"
+      :warning="i18n('label_init_warning')"
+      :show-warning="initMovie"
     >
       <NSwitch v-model:value="initMovie" class="form-switch">
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
@@ -287,11 +288,8 @@ const toggleBrand = () => {
     >
       <SettingsFormItem
         :label="i18n(`label_route_${route}`)"
-        :warning="
-          state && [Route.Progress, Route.Releases].includes(route)
-            ? i18n(`label_route_${route}_warning`)
-            : undefined
-        "
+        :warning="i18n(`label_route_${ route }_warning`)"
+        :show-warning="state && [Route.Progress, Route.Releases].includes(route)"
       >
         <NSwitch
           :value="state"
@@ -327,7 +325,8 @@ const toggleBrand = () => {
         :class="{ show: state }"
         class="hidden-form-item"
         :label="i18n('label_calendar_extended')"
-        :warning="calendarExtended ? i18n('label_extended_warning') : undefined"
+        :warning="i18n('label_extended_warning')"
+        :show-warning="calendarExtended"
       >
         <NSwitch v-model:value="calendarExtended" class="form-switch">
           <template #checked>{{ i18n('on', 'common', 'button') }}</template>
@@ -341,7 +340,8 @@ const toggleBrand = () => {
         :label="i18n('label_history_extended')"
         :class="{ show: state }"
         class="hidden-form-item"
-        :warning="historyExtended ? i18n('label_extended_warning') : undefined"
+        :warning="i18n('label_extended_warning')"
+        :show-warning="historyExtended"
       >
         <NSwitch v-model:value="historyExtended" class="form-switch">
           <template #checked>{{ i18n('on', 'common', 'button') }}</template>
@@ -355,7 +355,8 @@ const toggleBrand = () => {
         :label="i18n('label_history_init')"
         :class="{ show: state }"
         class="hidden-form-item"
-        :warning="initHistory ? i18n('label_init_warning') : undefined"
+        :warning="i18n('label_init_warning')"
+        :show-warning="initHistory"
       >
         <NSwitch v-model:value="initHistory" class="form-switch">
           <template #checked>{{ i18n('on', 'common', 'button') }}</template>
@@ -367,7 +368,8 @@ const toggleBrand = () => {
     <!--  Enable Ratings  -->
     <SettingsFormItem
       :label="i18n('label_enable_ratings')"
-      :warning="enableRatings ? i18n('label_enable_ratings_warning') : undefined"
+      :warning="i18n('label_enable_ratings_warning')"
+      :show-warning="enableRatings"
     >
       <NSwitch v-model:value="enableRatings" class="form-switch">
         <template #checked>{{ i18n('on', 'common', 'button') }}</template>
@@ -378,7 +380,8 @@ const toggleBrand = () => {
     <!--  Rating Page Sizes  -->
     <SettingsFormItem
       :label="i18n('label_ratings_page_size')"
-      :warning="!ratingPageSize ? i18n('label_page_size_warning') : undefined"
+      :warning="i18n('label_page_size_warning')"
+      :show-warning="!ratingPageSize"
     >
       <NSelect
         v-model:value="ratingPageSize"

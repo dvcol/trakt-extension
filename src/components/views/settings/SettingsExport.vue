@@ -175,6 +175,7 @@ const container = ref();
       :key="index"
       :label="label"
       :warning="getProgress(index)"
+      show-warning
     >
       <NButton
         class="export-button"

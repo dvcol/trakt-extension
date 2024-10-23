@@ -28,7 +28,7 @@ type Query<T extends QuickActions> = T extends typeof QuickAction.Checkin
   ? CheckinQuery
   : T extends typeof QuickAction.List
     ? AddOrRemoveListQuery
-    : T extends typeof QuickAction.Collected | typeof QuickAction.Watched
+    : T extends typeof QuickAction.Collect | typeof QuickAction.Watch
       ? AddOrRemoveQuery
       : CheckinQuery | AddOrRemoveListQuery | AddOrRemoveQuery;
 type Payload<T extends QuickActions = QuickActions> = {
@@ -44,8 +44,8 @@ const emit = defineEmits<{
 const { getAction, getActionDate, getActionList } = useExtensionSettingsStore();
 
 const actions = computed(() => getAction(route));
-const collectionDate = computed(() => getActionDate(QuickAction.Collected));
-const watchedDate = computed(() => getActionDate(QuickAction.Watched));
+const collectionDate = computed(() => getActionDate(QuickAction.Collect));
+const watchedDate = computed(() => getActionDate(QuickAction.Watch));
 
 const { activeList } = useListsStoreRefs();
 const list = computed(() => {
@@ -73,18 +73,18 @@ const onClick = <T extends QuickActions>(
     @on-click="e => onClick(QuickAction.List, e)"
   />
   <ListButtonCollected
-    v-if="actions?.[QuickAction.Collected]"
+    v-if="actions?.[QuickAction.Collect]"
     :date-type="collectionDate"
     :disabled="disabled"
     :item="item"
-    @on-click="e => onClick(QuickAction.Collected, e)"
+    @on-click="e => onClick(QuickAction.Collect, e)"
   />
   <ListButtonWatched
-    v-if="actions?.[QuickAction.Watched]"
+    v-if="actions?.[QuickAction.Watch]"
     :date-type="watchedDate"
     :disabled="disabled"
     :item="item"
-    @on-click="e => onClick(QuickAction.Watched, e)"
+    @on-click="e => onClick(QuickAction.Watch, e)"
   />
   <ListButtonCheckin
     v-if="actions?.[QuickAction.Checkin] && isEpisodeOrMovie(item.type)"

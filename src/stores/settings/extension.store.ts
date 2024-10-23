@@ -80,8 +80,8 @@ export const Brand = {
 export type Brands = (typeof Brand)[keyof typeof Brand];
 
 export const QuickAction = {
-  Watched: 'watched' as const,
-  Collected: 'collected' as const,
+  Watch: 'watch' as const,
+  Collect: 'collect' as const,
   Checkin: 'checkin' as const,
   List: 'list' as const,
 } as const;
@@ -97,14 +97,15 @@ export const QuickActionDate = {
 
 export type QuickActionDates = (typeof QuickActionDate)[keyof typeof QuickActionDate];
 
-type ActionDateDictionary = { [QuickAction.Watched]?: QuickActionDates; [QuickAction.Collected]?: QuickActionDates };
+type ActionDateDictionary = { [QuickAction.Watch]: QuickActionDates; [QuickAction.Collect]: QuickActionDates };
+const DefaultActionDate: ActionDateDictionary = { [QuickAction.Watch]: QuickActionDate.Now, [QuickAction.Collect]: QuickActionDate.Now };
 
 const DefaultQuickActions: QuickActionDictionary = {
-  [Route.Progress]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
-  [Route.Calendar]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true, [QuickAction.Checkin]: true },
-  [Route.History]: { [QuickAction.Collected]: true, [QuickAction.Watched]: true },
-  [Route.Watchlist]: { [QuickAction.List]: true, [QuickAction.Collected]: true, [QuickAction.Watched]: true },
-  [Route.Search]: { [QuickAction.List]: true, [QuickAction.Collected]: true, [QuickAction.Watched]: true },
+  [Route.Progress]: { [QuickAction.Watch]: true, [QuickAction.Collect]: true, [QuickAction.Checkin]: true },
+  [Route.Calendar]: { [QuickAction.Watch]: true, [QuickAction.Collect]: true, [QuickAction.Checkin]: true },
+  [Route.History]: { [QuickAction.Watch]: true, [QuickAction.Collect]: true },
+  [Route.Watchlist]: { [QuickAction.Watch]: true, [QuickAction.Collect]: true, [QuickAction.List]: true },
+  [Route.Search]: { [QuickAction.Watch]: true, [QuickAction.Collect]: true, [QuickAction.List]: true },
 };
 
 type QuickActionListDictionary = Partial<Record<Route, ListEntity>>;
@@ -162,7 +163,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const imageFormat = reactive<ExtensionSettings['imageFormat']>(DefaultImageFormats);
 
   const actions = reactive<QuickActionDictionary>(DefaultQuickActions);
-  const actionDate = reactive<ActionDateDictionary>({});
+  const actionDate = reactive<ActionDateDictionary>(DefaultActionDate);
   const actionLists = reactive<QuickActionListDictionary>(DefaultQuickActionLists);
 
   const brand = ref<Brands>(Brand.Old);
@@ -307,13 +308,13 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const initExtensionSettingsStore = async () => {
     if (!initialized.value) initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => true);
-    changeBrand();
+    changeBrand().catch(err => Logger.error('Failed to change brand', { err }));
     return initialized.value;
   };
 
   const getAction = (route: Route) => actions[route];
-  const getActionDate = (action: typeof QuickAction.Collected | typeof QuickAction.Watched) => actionDate[action];
-  const getActionList = (route: Route) => actionLists[route];
+  const getActionDate = (action: typeof QuickAction.Collect | typeof QuickAction.Watch) => actionDate[action];
+  const getActionList = (route: Route): ListEntity | undefined => actionLists[route];
 
   return {
     initExtensionSettingsStore,
@@ -429,8 +430,21 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       },
     }),
     getAction,
+    setAction: (route: Route, action: QuickActions[]) => {
+      actions[route] = Object.fromEntries(action.map(a => [a, true]));
+      saveState().catch(err => Logger.error('Failed to save action extension settings', { route, action, err }));
+    },
     getActionDate,
+    setActionDate: (action: typeof QuickAction.Watch | typeof QuickAction.Collect, date: QuickActionDates) => {
+      actionDate[action] = date;
+      saveState().catch(err => Logger.error('Failed to save action date extension settings', { action, date, err }));
+    },
     getActionList,
+    setActionList: (route: Route, list: ListEntity) => {
+      actionLists[route] = list;
+      console.info('setActionList', route, list, actionLists);
+      saveState().catch(err => Logger.error('Failed to save action list extension settings', { route, list, err }));
+    },
   };
 });
 

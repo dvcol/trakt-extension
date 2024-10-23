@@ -12,6 +12,11 @@ defineProps({
     type: String,
     required: false,
   },
+  showWarning: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   form: {
     type: Object as PropType<FormItemGiProps>,
     required: false,
@@ -38,8 +43,8 @@ defineProps({
       </template>
       <slot />
     </NFormItem>
-    <div class="form-warning" :class="{ show: !!warning }">
-      <span v-if="warning">{{ warning }}</span>
+    <div v-if="warning" class="form-warning" :class="{ show: showWarning }">
+      <span>{{ warning }}</span>
     </div>
   </NFlex>
 </template>
@@ -60,6 +65,7 @@ defineProps({
   display: flex;
   flex: 1 0 100%;
   height: 0;
+  overflow: hidden;
   color: var(--color-warning);
   transition: height 0.3s var(--n-bezier);
 

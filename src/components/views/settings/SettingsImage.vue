@@ -115,6 +115,10 @@ const container = ref();
   }
 
   .description {
+    margin: 0 0 0 0.25rem;
+    color: var(--white-70);
+    font-weight: 600;
+    font-size: 1rem;
     white-space: pre-line;
   }
 }

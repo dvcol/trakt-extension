@@ -1,0 +1,26 @@
+{
+  "common__action__watch": {
+    "message": "Watch",
+    "description": "Watch quick action"
+  },
+  "common__action__collect": {
+    "message": "Collect",
+    "description": "Collect quick action"
+  },
+  "common__action__checkin": {
+    "message": "Check-in",
+    "description": "Check-in quick action"
+  },
+  "common__action__list": {
+    "message": "List",
+    "description": "List quick action"
+  },
+  "common__action__date__now": {
+    "message": "Now",
+    "description": "Mark the current date"
+  },
+  "common__action__date__release": {
+    "message": "Release",
+    "description": "Mark the release date"
+  }
+}
