@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.31.0](https://github.com/dvcol/trakt-extension/compare/v1.30.1...v1.31.0) (2024-10-23)
+
+
+### Features
+
+* **list:** adds hover button support ([4853eb0](https://github.com/dvcol/trakt-extension/commit/4853eb0dead123953ac40a19c2756ae455b19599))
+* **list:** adds quick action buttons - checkin ([467a882](https://github.com/dvcol/trakt-extension/commit/467a8820d2c5803c4d8c2a0e866546d00c84ca01))
+* **list:** adds quick action buttons - collected ([516e0e2](https://github.com/dvcol/trakt-extension/commit/516e0e20c58f61b9c7da5d93c68a33fabbbaf4a1))
+* **list:** adds quick action buttons - list ([a3b9b28](https://github.com/dvcol/trakt-extension/commit/a3b9b28a9cf66032db12aa44bc5bc0f835bd9c4a))
+* **list:** adds quick action buttons - watched ([8e00a0a](https://github.com/dvcol/trakt-extension/commit/8e00a0af458a89c8f383a15e1043587cd2466241))
+* **list:** create list buttons for list quick actions ([2909875](https://github.com/dvcol/trakt-extension/commit/29098759d0b6128340845e803bdb6c3c8aa02507))
+* **list:** enable drag to show buttons in mobile contexts ([3fbbd77](https://github.com/dvcol/trakt-extension/commit/3fbbd779e1ed844fb28824c286539565be163243))
+* **list:** implement list buttons in all lists ([9a788b0](https://github.com/dvcol/trakt-extension/commit/9a788b06bbc9a61f9375c8635516c0e1d84b50e0))
+* **movies:** start up fetch to populate progress & collection ([db1a5bc](https://github.com/dvcol/trakt-extension/commit/db1a5bc572d187413d133e27336f647f78542d72))
+* **panel:** only mark unwatched in seasons ([c4cdea3](https://github.com/dvcol/trakt-extension/commit/c4cdea305ffb6184f14c8f05f024d8bc190ae6ce))
+* **settings:** adds quick action configurations in settings ([b00712c](https://github.com/dvcol/trakt-extension/commit/b00712cc8b5a370485357fdd9883e9171a8a33bb))
+
+
+### Bug Fixes
+
+* **branding:** make listItem marker reactive ([3645497](https://github.com/dvcol/trakt-extension/commit/364549704836cbffda1f287bb1a04e57b74935af))
+* **calendar:** skip datalist reset when no date is saved ([757622a](https://github.com/dvcol/trakt-extension/commit/757622aca4432e5e35471d757b6b02b7dc13ce53))
+* **checkin:** correctly update state when cancelling check in ([1ab8199](https://github.com/dvcol/trakt-extension/commit/1ab8199801a1aac0e47109d9c2b02792b87721d4))
+* **favorites:** only enable favorite list for movie & shows ([644dc61](https://github.com/dvcol/trakt-extension/commit/644dc6199b7339c44548e33dc6d61166b391f7d2))
+* **list:** adjust margin & padding ([a56ecff](https://github.com/dvcol/trakt-extension/commit/a56ecff510ebcd83494d5784108bd3e79b8e9aa9))
+* **list:** key element with date as there might be re-releases ([8d60081](https://github.com/dvcol/trakt-extension/commit/8d60081e899ed090c91587c0d7f268d4e3cd9620))
+* **navbar:** adjust responsive breakpoints ([bec98d6](https://github.com/dvcol/trakt-extension/commit/bec98d6c072c74b094a21d3b457465474f92049b))
+* **navbar:** make tabs tab/enter targets ([c20db4b](https://github.com/dvcol/trakt-extension/commit/c20db4b2de45d5f8e1e133bd66db4c2b07a44d52))
+* **panel:** only clear state if picker is closed ([a35d9d2](https://github.com/dvcol/trakt-extension/commit/a35d9d2fe9f4b090cadb9b43c8a8baebce0beb88))
+* **poster:** adjust responsive design on small screens ([b9bb980](https://github.com/dvcol/trakt-extension/commit/b9bb9803ef8a405fdbbda6b44864fcab53f411b6))
+* **progress:** eagerly fetch progress when item is in view ([c7ad96b](https://github.com/dvcol/trakt-extension/commit/c7ad96be794092a705d100e9dbe97ca5c32ea256))
+* **ratings:** fix issue infinite loop when pageCount is 0 ([b294659](https://github.com/dvcol/trakt-extension/commit/b29465929fdbebac085231689314d14e06f1df22))
+* **watching:** factorize checkin logic into composable ([cf96f94](https://github.com/dvcol/trakt-extension/commit/cf96f94e351eb597c83eb09a9722bb44ec74fe15))
+
 ### [1.30.1](https://github.com/dvcol/trakt-extension/compare/v1.30.0...v1.30.1) (2024-10-19)
 
 
