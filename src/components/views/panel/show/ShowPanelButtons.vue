@@ -27,7 +27,7 @@ import {
   type SeasonProgress,
   type ShowProgress,
 } from '~/models/list-scroll.model';
-import { type ListEntity, ListType } from '~/models/list.model';
+import { canFavorite, type ListEntity, ListType } from '~/models/list.model';
 import { useListsStore, useListsStoreRefs } from '~/stores/data/lists.store';
 import { useI18n } from '~/utils/i18n.utils';
 
@@ -188,11 +188,16 @@ const listLoading = computed(() => {
 
 const listOptions = computed(
   () =>
-    myLists.value?.map(list => ({
-      label: list.type === ListType.List ? list.name : i18n(list.name),
-      value: list.id,
-      icon: getIcon(list),
-    })),
+    myLists.value
+      ?.filter(list => {
+        if (list.type === ListType.Favorites) return canFavorite(mode.value);
+        return true;
+      })
+      .map(list => ({
+        label: list.type === ListType.List ? list.name : i18n(list.name),
+        value: list.id,
+        icon: getIcon(list),
+      })),
 );
 
 const watchedConfirmOptions = computed<PopselectProps | undefined>(() => {

@@ -55,5 +55,6 @@ export const isDefaultList = (list: ListEntity | ListTypes) => DefaultListsTypes
 
 export type ListItemTypes = 'show' | 'season' | 'episode' | 'movie';
 export const isListItemType = (type?: string): type is ListItemTypes => !!type && ['show', 'season', 'episode', 'movie'].includes(type);
+export const canFavorite = (type?: string) => type === 'show' || type === 'movie';
 
 export type AddOrRemoveIds = Pick<TraktApiIds, 'trakt'> | Pick<TraktApiIds, 'trakt'>[];
