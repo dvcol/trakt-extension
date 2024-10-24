@@ -16,7 +16,6 @@ import type { PosterItem } from '~/models/poster.model';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
-import { BrandColors } from '~/styles/colors.style';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -207,8 +206,6 @@ onBeforeUnmount(() => {
 
 const itemHeight = computed(() => (height?.value ? `${height.value}px` : undefined));
 
-const _color = computed(() => color?.value ?? BrandColors.traktDark);
-
 const onClick = (e: MouseEvent | KeyboardEvent) =>
   emit('onItemClick', { item: item?.value, force: e.shiftKey });
 </script>
@@ -233,7 +230,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     :data-type="item.type"
     :aria-label="item.title"
     :line-type="loading ? 'dashed' : lineType"
-    :color="loading ? 'grey' : _color"
+    :color="loading ? 'grey' : 'var(--trakt-color-dark)'"
     @click="onClick"
     @click.middle="open = !open"
     @keydown.enter="onClick"
@@ -447,7 +444,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     }
 
     &.hover {
-      color: var(--trakt-red);
+      color: var(--trakt-color);
     }
 
     .column {

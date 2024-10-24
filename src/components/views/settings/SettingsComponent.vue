@@ -52,6 +52,9 @@ const SettingsImage = lazyComponent(
 const SettingsActions = lazyComponent(
   () => import('~/components/views/settings/SettingsActions.vue'),
 );
+const SettingsTheme = lazyComponent(
+  () => import('~/components/views/settings/SettingsTheme.vue'),
+);
 
 const i18n = useI18n('settings');
 
@@ -76,6 +79,7 @@ const sections = computed<Section[]>(() =>
     { title: 'menu__links', reference: ref(), component: SettingsLinks },
     { title: 'menu__actions', reference: ref(), component: SettingsActions },
     { title: 'menu__images', reference: ref(), component: SettingsImage },
+    { title: 'menu__theme', reference: ref(), component: SettingsTheme },
     { title: 'menu__menus', reference: ref(), component: SettingsMenus },
     { title: 'menu__watching', reference: ref(), component: SettingsWatching },
     { title: 'menu__activity', reference: ref(), component: SettingsActivity },

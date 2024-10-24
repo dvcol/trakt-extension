@@ -352,7 +352,7 @@ const onTagClick = (url?: string) => {
             }"
             :percentage="percentage ?? 0"
             :show-indicator="false"
-            color="var(--trakt-red-dark)"
+            color="var(--trakt-color-dark)"
           />
         </ProgressTooltip>
       </div>
@@ -366,16 +366,16 @@ const onTagClick = (url?: string) => {
   margin: 0 0 0.25rem;
 
   &.played {
-    --trakt-red: var(--color-primary-darker);
+    --trakt-color: var(--color-primary-darker);
   }
 
   &.collected:not(.played) {
-    --trakt-red: var(--color-info-darker);
+    --trakt-color: var(--color-info-darker);
   }
 
   .title {
     margin-top: 0.1rem;
-    color: var(--trakt-red);
+    color: var(--trakt-color);
     font-weight: var(--n-title-font-weight);
     font-size: var(--n-title-font-size);
     transition: color 0.3s var(--n-bezier);
@@ -410,7 +410,7 @@ const onTagClick = (url?: string) => {
     padding-top: 0.75rem;
 
     &:hover {
-      --trakt-red-dark: var(--trakt-red);
+      --trakt-color-dark: var(--trakt-color);
     }
   }
 }

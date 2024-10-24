@@ -1,18 +1,8 @@
 <script lang="ts" setup>
 import { chromeRuntimeId } from '@dvcol/web-extension-utils/chrome/runtime';
-import {
-  NButton,
-  NButtonGroup,
-  NIcon,
-  NSelect,
-  NSwitch,
-  type SelectOption,
-} from 'naive-ui';
+import { NIcon, NSelect, NSwitch, type SelectOption } from 'naive-ui';
 
 import { type Component, computed, h, onBeforeMount, ref, watch } from 'vue';
-
-import IconClose from '~/components/icons/IconCloseSmall.vue';
-import IconPencil from '~/components/icons/IconPencil.vue';
 
 import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { type ListEntity, ListType } from '~/models/list.model';
@@ -30,7 +20,6 @@ import { useRatingsStoreRefs } from '~/stores/data/ratings.store';
 import { useSearchStoreRefs } from '~/stores/data/search.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
 import {
-  Brand,
   useExtensionSettingsStore,
   useExtensionSettingsStoreRefs,
 } from '~/stores/settings/extension.store';
@@ -52,11 +41,9 @@ const {
   loadListsPageSize,
   progressType,
   enableRatings,
-  backgroundColor,
   loadingHysteresis,
   navbarPosition,
   iconOnly,
-  brand,
 } = useExtensionSettingsStoreRefs();
 
 const { getIcon, fetchLists } = useListsStore();
@@ -150,15 +137,6 @@ const { extended: calendarExtended } = useCalendarStoreRefs();
 const { extended: historyExtended } = useHistoryStoreRefs();
 
 const container = ref();
-const picker = ref<HTMLInputElement>();
-const onColor = () => {
-  picker.value?.focus();
-  picker.value?.click();
-};
-
-const toggleBrand = () => {
-  brand.value = brand.value === Brand.New ? Brand.Old : Brand.New;
-};
 </script>
 
 <template>
@@ -206,41 +184,6 @@ const toggleBrand = () => {
         :to="container"
         :options="loadingOption"
       />
-    </SettingsFormItem>
-
-    <!--  Background color  -->
-    <SettingsFormItem :label="i18n('label_background_color')">
-      <div class="form-button">
-        <input ref="picker" v-model="backgroundColor" type="color" class="color-picker" />
-        <NButtonGroup
-          class="color-picker-button-group"
-          :style="{ '--color-picker': backgroundColor }"
-        >
-          <NButton round tertiary @click="onColor">
-            Picker
-            <template #icon>
-              <NIcon><IconPencil /></NIcon>
-            </template>
-          </NButton>
-          <NButton circle tertiary type="error" @click="backgroundColor = 'transparent'">
-            <template #icon>
-              <NIcon><IconClose /></NIcon>
-            </template>
-          </NButton>
-        </NButtonGroup>
-      </div>
-    </SettingsFormItem>
-
-    <!--  Brand  -->
-    <SettingsFormItem :label="i18n('label_brand')">
-      <NSwitch
-        class="form-switch"
-        :value="brand === Brand.New"
-        @update:value="toggleBrand()"
-      >
-        <template #checked>{{ i18n('new', 'common', 'button') }}</template>
-        <template #unchecked>{{ i18n('old', 'common', 'button') }}</template>
-      </NSwitch>
     </SettingsFormItem>
 
     <!--  Icon Only  -->
@@ -499,32 +442,5 @@ const toggleBrand = () => {
 
 .progress-type {
   width: 6rem;
-}
-
-.color-picker {
-  width: 0;
-  height: 2.5rem;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-
-  &-button-group {
-    button {
-      border: 2px solid var(--color-picker, transparent);
-      transition: border-color 0.3s var(--n-bezier);
-
-      i {
-        margin-left: -2px;
-      }
-    }
-
-    :first-child {
-      border-right: none;
-    }
-
-    :last-child {
-      border-left: none;
-    }
-  }
 }
 </style>

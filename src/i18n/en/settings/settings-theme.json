@@ -1,0 +1,22 @@
+{
+  "settings__theme__label_background_color": {
+    "message": "Background Color",
+    "description": "Label for the 'Background Color' setting"
+  },
+  "settings__theme__label_brand": {
+    "message": "Branding",
+    "description": "Label for the 'Branding' setting"
+  },
+  "settings__theme__label_primary_color": {
+    "message": "Primary Color",
+    "description": "Label for the 'Primary Color' setting"
+  },
+  "settings__theme__label_secondary_color": {
+    "message": "Secondary Color",
+    "description": "Label for the 'Secondary Color' setting"
+  },
+  "settings__theme__label_tertiary_color": {
+    "message": "Tertiary Color",
+    "description": "Label for the 'Tertiary Color' setting"
+  }
+}

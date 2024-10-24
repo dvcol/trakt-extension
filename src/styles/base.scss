@@ -58,38 +58,42 @@
   --bg-blur-20: 20px;
   --bg-blur-40: 40px;
   --bg-blur-hover: var(--bg-blur-20);
-  --bg-black: rgba(0 0 0);
-  --bg-black-20: rgba(0 0 0 / 20%);
-  --bg-black-30: rgba(0 0 0 / 30%);
-  --bg-black-40: rgba(0 0 0 / 40%);
-  --bg-black-50: rgba(0 0 0 / 50%);
-  --bg-black-60: rgba(0 0 0 / 60%);
-  --bg-black-70: rgba(0 0 0 / 70%);
-  --bg-black-80: rgba(0 0 0 / 80%);
-  --bg-black-90: rgba(0 0 0 / 90%);
+  --bg-black-source: 0 0 0;
+  --bg-black: rgb(var(--bg-black-source));
+  --bg-black-20: rgba(var(--bg-black-source) / 20%);
+  --bg-black-30: rgba(var(--bg-black-source) / 30%);
+  --bg-black-40: rgba(var(--bg-black-source) / 40%);
+  --bg-black-50: rgba(var(--bg-black-source) / 50%);
+  --bg-black-60: rgba(var(--bg-black-source) / 60%);
+  --bg-black-70: rgba(var(--bg-black-source) / 70%);
+  --bg-black-80: rgba(var(--bg-black-source) / 80%);
+  --bg-black-90: rgba(var(--bg-black-source) / 90%);
   --bg-gradient-60-90: linear-gradient(
     to right,
     var(--bg-color-60) 5%,
     var(--bg-color-90)
   );
-  --bg-black-soft: rgb(24 24 24);
-  --bg-black-soft-70: rgb(24 24 24 / 70%);
-  --bg-black-soft-80: rgb(24 24 24 / 80%);
-  --bg-black-soft-90: rgb(24 24 24 / 90%);
-  --bg-black-softer: rgb(34 34 34);
-  --bg-black-softer-50: rgba(34 34 34 / 50%);
-  --bg-black-softer-55: rgba(34 34 34 / 55%);
-  --bg-black-softer-60: rgba(34 34 34 / 60%);
-  --bg-black-softer-80: rgba(34 34 34 / 80%);
-  --bg-black-softer-90: rgba(34 34 34 / 90%);
+  --bg-black-soft-source: 24 24 24;
+  --bg-black-soft: rgb(var(--bg-black-soft-source));
+  --bg-black-soft-70: rgba(var(--bg-black-soft-source) / 70%);
+  --bg-black-soft-80: rgba(var(--bg-black-soft-source) / 80%);
+  --bg-black-soft-90: rgba(var(--bg-black-soft-source) / 90%);
+  --bg-black-softer-source: 34 34 34;
+  --bg-black-softer: rgb(var(--bg-black-softer-source));
+  --bg-black-softer-50: rgba(var(--bg-black-softer-source) / 50%);
+  --bg-black-softer-55: rgba(var(--bg-black-softer-source) / 55%);
+  --bg-black-softer-60: rgba(var(--bg-black-softer-source) / 60%);
+  --bg-black-softer-80: rgba(var(--bg-black-softer-source) / 80%);
+  --bg-black-softer-90: rgba(var(--bg-black-softer-source) / 90%);
   --bg-black-softest: rgb(40 40 40);
-  --bg-red: rgba(255 222 223);
-  --bg-red-20: rgba(255 222 223 / 20%);
-  --bg-red-30: rgba(255 222 223 / 30%);
-  --bg-red-60: rgba(255 222 223 / 60%);
-  --bg-red-70: rgba(255 222 223 / 70%);
-  --bg-red-80: rgba(255 222 223 / 80%);
-  --bg-red-90: rgba(255 222 223 / 90%);
+  --bg-red-source: 255 222 223;
+  --bg-red: rgba(var(--bg-red-source));
+  --bg-red-20: rgba(var(--bg-red-source) / 20%);
+  --bg-red-30: rgba(var(--bg-red-source) / 30%);
+  --bg-red-60: rgba(var(--bg-red-source) / 60%);
+  --bg-red-70: rgba(var(--bg-red-source) / 70%);
+  --bg-red-80: rgba(var(--bg-red-source) / 80%);
+  --bg-red-90: rgba(var(--bg-red-source) / 90%);
   --bg-color-primary: rgb(24 42 36);
   --bg-color-primary-80: rgba(24 42 36 / 80%);
   --bg-color-success: var(--bg-color-primary);
@@ -102,20 +106,21 @@
   --bg-color-error-80: rgb(45 27 28 / 80%);
 
   /* ui color variables */
-  --white: rgb(255 255 255);
+  --white-source: 255 255 255;
+  --white: rgb(var(--white-source));
   --white-soft: #f8f8f8;
   --white-mute: #f2f2f2;
-  --white-10: rgb(255 255 255 / 10%);
-  --white-15: rgb(255 255 255 / 15%);
-  --white-20: rgb(255 255 255 / 20%);
-  --white-30: rgb(255 255 255 / 30%);
-  --white-50: rgb(255 255 255 / 50%);
-  --white-70: rgb(255 255 255 / 70%);
-  --white-80: rgb(255 255 255 / 80%);
+  --white-10: rgba(var(--white-source) / 10%);
+  --white-15: rgba(var(--white-source) / 15%);
+  --white-20: rgba(var(--white-source) / 20%);
+  --white-30: rgba(var(--white-source) / 30%);
+  --white-50: rgba(var(--white-source) / 50%);
+  --white-70: rgba(var(--white-source) / 70%);
+  --white-80: rgba(var(--white-source) / 80%);
   --black: #181818;
   --code-grey: rgb(228 228 228 / 20%);
   --border-grey: rgb(70 70 70);
-  --border-white: rgb(255 255 255 / 20%);
+  --border-white: rgba(var(--white-source) / 20%);
   --color-primary: #63e2b7;
   --color-primary-lighter: #7fe7c4;
   --color-primary-disabled: #548272;
@@ -125,8 +130,8 @@
   --color-info: #70c0e8;
   --color-info-dark: color-mix(in srgb, var(--color-info) 40%, black 60%);
   --color-info-darker: #38a8df;
-  --color-disabled: rgba(255 255 255 / 6%);
-  --text-color-disabled: rgba(255 255 255 / 38%);
+  --color-disabled: rgba(var(--white-source) / 6%);
+  --text-color-disabled: rgba(var(--white-source) / 38%);
   --color-warning: #f2c97d;
   --color-warning-lighter: #f5d599;
   --color-warning-dark: color-mix(in srgb, var(--color-warning) 40%, black 60%);
@@ -139,37 +144,46 @@
   --trakt-red: #ed1c24;
   --trakt-red-dark: #b7000D;
   --trakt-red-darker: #80000a;
-  --trakt-red-light:#ff5c62;
-  --trakt-red-lighter: #e98b8b;
 
   /* trakt.tv background brand color */
-  --bg-trakt: rgb(237 28 36);
-  --bg-trakt-50: rgba(237 28 36 / 50%);
-  --bg-trakt-60: rgba(237 28 36 / 60%);
-  --bg-trakt-80: rgba(237 28 36 / 80%);
-  --bg-trakt-dark: rgb(128 0 10);
-  --bg-trakt-dark-50: rgba(128 0 1 / 50%);
-  --bg-trakt-dark-60: rgba(128 0 1 / 60%);
-  --bg-trakt-dark-80: rgba(128 0 1 / 80%);
-  --bg-trakt-dark-90: rgba(128 0 1 / 90%);
+  --bg-trakt-red-source: 237 28 36;
+  --bg-trakt-red: rgb(var(--bg-trakt-red-source));
+  --bg-trakt-red-50: rgba(var(--bg-trakt-red-source) / 50%);
+  --bg-trakt-red-60: rgba(var(--bg-trakt-red-source) / 60%);
+  --bg-trakt-red-dark-source: 128 0 10;
+  --bg-trakt-red-dark: rgb(var(--bg-trakt-red-dark-source));
+  --bg-trakt-red-dark-50: rgba(var(--bg-trakt-red-dark-source) / 50%);
+  --bg-trakt-red-dark-60: rgba(var(--bg-trakt-red-dark-source) / 60%);
 
   /* trakt.tv background new brand color */
-  --trakt-purple: #9f42c6;
-  --trakt-purple-dark: #6e1f9d;
-  --trakt-purple-darker: #4a0f7a;
-  --trakt-purple-light: #bf80d9;
-  --trakt-purple-lighter: #d4a3e1;
+  --trakt-purple: #d46cff;
+  --trakt-purple-dark: #c12fff;
+  --trakt-purple-darker: #860bb4;
 
   /* trakt.tv background new brand color */
-  --bg-trakt-purple: rgb(159 66 198);
-  --bg-trakt-purple-50: rgba(159 66 198 / 50%);
-  --bg-trakt-purple-60: rgba(159 66 198 / 60%);
-  --bg-trakt-purple-80: rgba(159 66 198 / 80%);
-  --bg-trakt-purple-darker: rgb(74 15 122);
-  --bg-trakt-purple-darker-50: rgba(74 15 122 / 50%);
-  --bg-trakt-purple-darker-60: rgba(74 15 122 / 60%);
-  --bg-trakt-purple-darker-80: rgba(74 15 122 / 80%);
-  --bg-trakt-purple-darker-90: rgba(74 15 122 / 90%);
+  --bg-trakt-purple-source: 212 108 255;
+  --bg-trakt-purple: rgb(var(--bg-trakt-purple-source));
+  --bg-trakt-purple-50: rgba(var(--bg-trakt-purple-source) / 50%);
+  --bg-trakt-purple-60: rgba(var(--bg-trakt-purple-source) / 60%);
+  --bg-trakt-purple-darker-source: 134 11 180;
+  --bg-trakt-purple-darker: rgb(var(--bg-trakt-purple-darker-source));
+  --bg-trakt-purple-darker-50: rgba(var(--bg-trakt-purple-darker-source) / 50%);
+  --bg-trakt-purple-darker-60: rgba(var(--bg-trakt-purple-darker-source) / 60%);
+
+  /* trakt.tv brand color */
+  --trakt-color: var(--trakt-red);
+  --trakt-color-dark: var(--trakt-red-dark);
+  --trakt-color-darker: var(--trakt-red-darker);
+
+  /* trakt.tv background brand color */
+  --bg-trakt-color-source: var(--bg-trakt-red-source);
+  --bg-trakt-color: rgb(var(--bg-trakt-color-source));
+  --bg-trakt-color-50: rgba(var(--bg-trakt-color-source) / 50%);
+  --bg-trakt-color-60: rgba(var(--bg-trakt-color-source) / 60%);
+  --bg-trakt-color-dark-source: var(--bg-trakt-red-dark-source);
+  --bg-trakt-color-dark: rgb(var(--bg-trakt-color-dark-source));
+  --bg-trakt-color-dark-50: rgba(var(--bg-trakt-color-dark-source) / 50%);
+  --bg-trakt-color-dark-60: rgba(var(--bg-trakt-color-dark-source) / 60%);
 
   /* Transforms */
   --n-bezier: cubic-bezier(0.4, 0, 0.2, 1);
@@ -199,8 +213,8 @@
 
   /* Bow shadows */
   --image-box-shadow: 0 0 20px 9px var(--white-10);
-  --image-box-shadow-hover: 0 0 20px 9px rgb(255 255 255 / 18%);
-  --card-box-shadow: 0 1px 2px -2px rgb(0 0 0 / 24%), 0 3px 6px 0 rgb(0 0 0 / 18%), 0 5px 12px 4px rgb(0 0 0 / 12%);
+  --image-box-shadow-hover: 0 0 20px 9px rgba(var(--white-source) / 18%);
+  --card-box-shadow: 0 1px 2px -2px rgba(var(--bg-black-source) / 24%), 0 3px 6px 0 rgba(var(--bg-black-source) / 18%), 0 5px 12px 4px rgba(var(--bg-black-source) / 12%);
   --inset-box-shadow: inset 0 0 20px 6px var(--bg-color-40);
   --light-box-shadow: 2px 2px 2px 0 var(--bg-color-50), -1px -1px 1px 0 var(--bg-color-30);
 
@@ -222,21 +236,16 @@
 #trakt-extension-root {
   &[data-brand="new"] {
     /* trakt.tv background new brand color overrides */
-    --trakt-red: var(--trakt-purple);
-    --trakt-red-dark: var(--trakt-purple-dark);
-    --trakt-red-darker: var(--trakt-purple-darker);
-    --trakt-red-light: var(--trakt-purple-light);
-    --trakt-red-lighter: var(--trakt-purple-lighter);
+    --trakt-color: var(--trakt-purple);
+    --trakt-color-dark: var(--trakt-purple-dark);
+    --trakt-color-darker: var(--trakt-purple-darker);
 
     /* trakt.tv background new brand color overrides */
-    --bg-trakt: var(--bg-trakt-purple);
-    --bg-trakt-50: var(--bg-trakt-purple-50);
-    --bg-trakt-60: var(--bg-trakt-purple-60);
-    --bg-trakt-80: var(--bg-trakt-purple-80);
-    --bg-trakt-dark: var(--bg-trakt-purple-darker);
-    --bg-trakt-dark-50: var(--bg-trakt-purple-darker-50);
-    --bg-trakt-dark-60: var(--bg-trakt-purple-darker-60);
-    --bg-trakt-dark-80: var(--bg-trakt-purple-darker-80);
-    --bg-trakt-dark-90: var(--bg-trakt-purple-darker-90);
+    --bg-trakt-color: var(--bg-trakt-purple);
+    --bg-trakt-color-50: var(--bg-trakt-purple-50);
+    --bg-trakt-color-60: var(--bg-trakt-purple-60);
+    --bg-trakt-color-dark: var(--bg-trakt-purple-darker);
+    --bg-trakt-color-dark-50: var(--bg-trakt-purple-darker-50);
+    --bg-trakt-color-dark-60: var(--bg-trakt-purple-darker-60);
   }
 }

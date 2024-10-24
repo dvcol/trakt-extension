@@ -118,6 +118,13 @@ export const DefaultQuickActionLists: QuickActionListDictionary = {
   [Route.Search]: DefaultLists.Watchlist,
 };
 
+type ThemeColors = {
+  main?: string;
+  dark?: string;
+  darker?: string;
+  background?: string;
+};
+
 type ExtensionSettings = {
   cacheRetention: CacheRetentionState;
   enabledRoutes: RouteDictionary;
@@ -127,7 +134,6 @@ type ExtensionSettings = {
   loadListsPageSize: number;
   progressType: ProgressTypes;
   enableRatings: boolean;
-  backgroundColor: string;
   loadingHysteresis: number;
   navbarPosition: NavbarPositions;
   iconOnly: boolean;
@@ -137,6 +143,7 @@ type ExtensionSettings = {
   actions: QuickActionDictionary;
   actionDate: ActionDateDictionary;
   actionLists: QuickActionListDictionary;
+  theme: ThemeColors;
 };
 
 const ExtensionSettingsConstants = {
@@ -155,7 +162,6 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const initialized = ref<Promise<boolean>>();
   const progressType = ref<ExtensionSettings['progressType']>(ProgressType.Show);
   const enableRatings = ref(false);
-  const backgroundColor = ref('transparent');
   const loadingHysteresis = ref(-1);
   const navbarPosition = ref<NavbarPositions>(NavbarPosition.Auto);
   const iconOnly = ref(true);
@@ -167,6 +173,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   const actionLists = reactive<QuickActionListDictionary>(DefaultQuickActionLists);
 
   const brand = ref<Brands>(Brand.Old);
+  const theme = reactive<ThemeColors>({ background: 'transparent' });
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -190,7 +197,6 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         loadListsPageSize: loadListsPageSize.value,
         progressType: progressType.value,
         enableRatings: enableRatings.value,
-        backgroundColor: backgroundColor.value,
         loadingHysteresis: loadingHysteresis.value,
         navbarPosition: navbarPosition.value,
         iconOnly: iconOnly.value,
@@ -200,6 +206,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         actions: toRaw(actions),
         actionDate: toRaw(actionDate),
         actionLists: toRaw(actionLists),
+        theme: toRaw(theme),
       }),
     500,
   );
@@ -232,7 +239,6 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         setLoadLists(Object.values(value), key);
       });
     }
-    if (restored?.backgroundColor !== undefined) backgroundColor.value = restored.backgroundColor;
     if (restored?.loadingHysteresis !== undefined) loadingHysteresis.value = restored.loadingHysteresis;
     if (restored?.navbarPosition !== undefined) navbarPosition.value = restored.navbarPosition;
     if (restored?.iconOnly !== undefined) iconOnly.value = restored.iconOnly;
@@ -243,6 +249,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.actions !== undefined) Object.assign(actions, restored.actions);
     if (restored?.actionDate !== undefined) Object.assign(actionDate, restored.actionDate);
     if (restored?.actionLists !== undefined) Object.assign(actionLists, restored.actionLists);
+
+    if (restored?.theme !== undefined) Object.assign(theme, restored.theme);
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -388,10 +396,32 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         saveState().catch(err => Logger.error('Failed to save enable ratings extension settings', { value, err }));
       },
     }),
-    backgroundColor: computed({
-      get: () => backgroundColor.value,
+    themeColors: theme,
+    themeColorMain: computed({
+      get: () => theme.main,
       set: (value: string) => {
-        backgroundColor.value = value;
+        theme.main = value;
+        saveState().catch(err => Logger.error('Failed to save theme color extension settings', { value, err }));
+      },
+    }),
+    themeColorDark: computed({
+      get: () => theme.dark,
+      set: (value: string) => {
+        theme.dark = value;
+        saveState().catch(err => Logger.error('Failed to save dark theme color extension settings', { value, err }));
+      },
+    }),
+    themeColorDarker: computed({
+      get: () => theme.darker,
+      set: (value: string) => {
+        theme.darker = value;
+        saveState().catch(err => Logger.error('Failed to save darker theme color extension settings', { value, err }));
+      },
+    }),
+    themeColorBackground: computed({
+      get: () => theme.background,
+      set: (value: string) => {
+        theme.background = value;
         saveState().catch(err => Logger.error('Failed to save background color extension settings', { value, err }));
       },
     }),

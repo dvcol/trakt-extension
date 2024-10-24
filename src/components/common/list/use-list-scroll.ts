@@ -214,7 +214,7 @@ export const getTags = (
   return tags;
 };
 
-const getContentLink = (item: ListScrollSourceItem): ListScrollItem['contentLink'] => {
+export const getContentLink = (item: Pick<ListScrollSourceItem, 'show' | 'type'>): ListScrollItem['contentLink'] => {
   if (!item?.type || !item.show?.ids?.trakt) return;
   if (![ListScrollItemType.Show, ListScrollItemType.Episode].map(String).includes(item.type)) return;
   return {

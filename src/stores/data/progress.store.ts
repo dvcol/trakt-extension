@@ -6,7 +6,7 @@ import type { TraktEpisode, TraktShow } from '@dvcol/trakt-http-client/models';
 
 import type { ListScrollItem, ListScrollItemMeta, ListScrollSourceItem } from '~/models/list-scroll.model';
 
-import { getContent, getTags, getTitle } from '~/components/common/list/use-list-scroll';
+import { getContent, getContentLink, getTags, getTitle } from '~/components/common/list/use-list-scroll';
 import { type ProgressItem } from '~/models/progress.model';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
@@ -66,6 +66,7 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
       episode: Number(progress.episodeNumber),
     },
   };
+  const { type } = progress;
 
   return {
     id,
@@ -73,6 +74,7 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     key: `${index}-${id}`,
     title,
     content: getContent({ show, episode }),
+    contentLink: getContentLink({ show, type }),
     poster,
     getProgressQuery: () => ({
       id: show?.ids?.trakt,
@@ -83,9 +85,9 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     date: {
       current: new Date(progress.firstAired),
     },
-    type: progress.type,
+    type,
     meta,
-    tags: getTags({ episode }, { id, type: progress.type, title, meta }),
+    tags: getTags({ episode }, { id, type, title, meta }),
   };
 };
 

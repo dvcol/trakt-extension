@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { hexToRgb } from '@dvcol/common-utils/common/color';
 import {
   darkTheme,
   type GlobalThemeOverrides,
@@ -19,6 +20,7 @@ import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
 import { lazyComponent } from '~/utils/lazy.utils';
+
 import '~/styles/properties.css';
 
 const AppComponent = lazyComponent(() => import('~/components/AppComponent.vue'));
@@ -27,13 +29,19 @@ const isLight = ref(false); // watchPreferLight(); TODO implement light theme
 const theme = computed(() => (isLight.value ? lightTheme : darkTheme));
 
 const override: GlobalThemeOverrides = {
-  // TODO red palette
+  // TODO light mode
 };
 
 const { drawer, open, dropdown } = NavbarService;
-const { enabledRoutes, backgroundColor, brand } = useExtensionSettingsStoreRefs();
+const { enabledRoutes, themeColors, brand } = useExtensionSettingsStoreRefs();
 const { root, floating, reverse } = useAppStateStoreRefs();
 const { isWatching } = useWatchingStoreRefs();
+
+const toRgb = (color?: string, alpha?: string) => {
+  if (!color) return;
+  const { r, g, b } = hexToRgb(color);
+  return `rgb(${r} ${g} ${b}${alpha ? ` / ${alpha}` : ''})`;
+};
 </script>
 
 <template>
@@ -42,7 +50,13 @@ const { isWatching } = useWatchingStoreRefs();
     ref="root"
     :style="{
       '--tab-count': enabledRoutes.length + 1,
-      '--background-color': backgroundColor,
+      '--background-color': themeColors.background,
+      '--trakt-color': themeColors.main,
+      '--trakt-color-dark': themeColors.dark,
+      '--trakt-purple-darker': themeColors.darker,
+      '--bg-trakt-color': themeColors.main,
+      '--bg-trakt-color-50': toRgb(themeColors.main, '0.5'),
+      '--bg-trakt-color-60': toRgb(themeColors.main, '0.6'),
     }"
     :data-brand="brand"
   >

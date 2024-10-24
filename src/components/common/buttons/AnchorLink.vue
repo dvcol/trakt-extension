@@ -82,7 +82,7 @@ const onTitleClick = (e: MouseEvent) => {
     &:focus-within,
     &:hover,
     &:focus-visible {
-      color: var(--trakt-red);
+      color: var(--trakt-color);
     }
 
     &:active {
@@ -93,7 +93,7 @@ const onTitleClick = (e: MouseEvent) => {
   &:active,
   &:hover,
   &:focus-visible .hover-link {
-    color: var(--trakt-red);
+    color: var(--trakt-color);
   }
 
   &:active {

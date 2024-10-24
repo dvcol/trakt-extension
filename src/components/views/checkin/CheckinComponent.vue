@@ -236,7 +236,10 @@ const onClick = (e: MouseEvent | KeyboardEvent) => {
   }
 
   .background {
-    @include mixin.hover-background($from: var(--bg-trakt-50), $to: var(--bg-trakt-60));
+    @include mixin.hover-background(
+      $from: var(--bg-trakt-color-50),
+      $to: var(--bg-trakt-color-60)
+    );
 
     position: absolute;
     top: 0;
@@ -248,8 +251,8 @@ const onClick = (e: MouseEvent | KeyboardEvent) => {
 
   .container {
     @include mixin.hover-background(
-      $from: var(--bg-trakt-dark-50),
-      $to: var(--bg-trakt-dark-60)
+      $from: var(--bg-trakt-color-dark-50),
+      $to: var(--bg-trakt-color-dark-60)
     );
 
     position: relative;

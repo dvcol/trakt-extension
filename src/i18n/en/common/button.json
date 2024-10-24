@@ -167,5 +167,9 @@
   "common__button__panel__collection__all": {
     "message": "All Episodes",
     "description": "Button to select all."
+  },
+  "common__button__picker": {
+    "message": "Picker",
+    "description": "Picker to select a colors."
   }
 }

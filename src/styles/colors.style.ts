@@ -4,11 +4,11 @@ export const Colors = {
   bgBlurBlack: 'rgba(0, 0, 0, 30%)',
   bgBlurBlackHover: 'rgba(0, 0, 0, 60%)',
   traktRed: '#ed1c24',
-  traktRedDark: '#ba080f',
+  traktRedDark: '#b7000D',
   traktRedDarker: '#80000a',
-  traktPurple: '#9f42c6',
-  traktPurpleDark: '#7802b7',
-  traktPurpleDarker: '#4a0f7a',
+  traktPurple: '#d46cff',
+  traktPurpleDark: '#c12fff',
+  traktPurpleDarker: '#860bb4',
   white: '#fff',
 } as const;
 

@@ -202,7 +202,7 @@ const onTouchEnd = (e: TouchEvent) => {
       justify-content="space-evenly"
       animated
       :style="{
-        '--n-bar-color': 'var(--trakt-red-dark)',
+        '--n-bar-color': 'var(--trakt-color-dark)',
         '--n-tab-text-color-active': 'var(--navbar-text-color-active)',
         '--n-tab-text-color-hover': 'var(--navbar-text-color-hover)',
         '--n-tab-color-segment': 'var(--navbar-tab-color)',
@@ -273,8 +273,8 @@ const onTouchEnd = (e: TouchEvent) => {
 @use '~/styles/layout' as layout;
 
 nav {
-  --navbar-tab-color: hsl(from var(--trakt-red-darker) h s l / 80%);
-  --navbar-text-color-hover: var(--trakt-red);
+  --navbar-tab-color: hsl(from var(--trakt-color-darker) h s l / 80%);
+  --navbar-text-color-hover: var(--trakt-color);
   --navbar-text-color-hover-active: var(--white);
   --navbar-text-color-active: var(--white);
 
