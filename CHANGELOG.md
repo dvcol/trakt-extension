@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.1](https://github.com/dvcol/trakt-extension/compare/v1.32.0...v1.32.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* **brand:** prevent badge flash when refreshing before restore ([60db763](https://github.com/dvcol/trakt-extension/commit/60db7639554768830be8bab1eb50eeb6955ca22b))
+
 ## [1.32.0](https://github.com/dvcol/trakt-extension/compare/v1.31.0...v1.32.0) (2024-10-24)
 
 
