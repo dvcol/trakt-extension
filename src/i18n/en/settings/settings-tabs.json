@@ -132,7 +132,7 @@
     "description": "Warning message for the 'Fetch history data on startup' setting"
   },
   "settings__tabs__label_movie_init": {
-    "message": "Fetch movie collection & watched data on startup",
+    "message": "Fetch movie data on startup",
     "description": "Label for the 'Fetch history data on startup' setting"
   }
 }
