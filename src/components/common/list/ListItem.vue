@@ -16,6 +16,7 @@ import type { PosterItem } from '~/models/poster.model';
 import ListItemPanel from '~/components/common/list/ListItemPanel.vue';
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
 import { type ListScrollItem, ListScrollItemType } from '~/models/list-scroll.model';
+import { useAppStateStoreRefs } from '~/stores/app-state.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const props = defineProps({
@@ -119,9 +120,11 @@ const i18n = useI18n('list', 'item');
 const { item, noHeader, nextHasHeader, poster, hideDate, scrollIntoView, height, color } =
   toRefs(props);
 
+const { root } = useAppStateStoreRefs();
 const itemRef = ref<
   Omit<InstanceType<typeof NTimelineItem>, '$el'> & { $el?: HTMLDivElement }
 >();
+const buttons = ref<InstanceType<typeof NButtonGroup> & { $el?: HTMLDivElement }>();
 
 const focusin = ref(false);
 const focusTimeout = ref<ReturnType<typeof setTimeout>>();
@@ -138,11 +141,26 @@ const toggleFocusin = (focus: boolean) => {
 
 const open = ref(false);
 const dragged = ref(0);
+
+const hoverTimeout = ref<ReturnType<typeof setTimeout>>();
+const overOpen = (e: MouseEvent) => {
+  clearTimeout(hoverTimeout.value);
+  if (open.value) return;
+  if (e.shiftKey || e.ctrlKey || e.shiftKey || e.metaKey) return;
+  const offsetWidth = (root.value?.clientWidth ?? window.innerWidth) - e.clientX;
+  if (offsetWidth > 50) return;
+  hoverTimeout.value = setTimeout(() => {
+    open.value = true;
+  }, 100);
+};
+
 const onHover = (_event: MouseEvent, _hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
   itemRef.value?.$el?.focus({ preventScroll: true });
   open.value = _hover && (_event.altKey || _event.ctrlKey);
   if (!_hover) dragged.value = 0;
+  if (!_hover) return clearTimeout(hoverTimeout.value);
+  return overOpen(_event);
 };
 
 const touchStart = ref<TouchEvent>();
@@ -153,7 +171,6 @@ const onTouchStart = (e: TouchEvent) => {
   initialDrag.value = dragged.value;
 };
 
-const buttons = ref<InstanceType<typeof NButtonGroup> & { $el?: HTMLDivElement }>();
 const onToucheMove = (e: TouchEvent) => {
   const _width = buttons.value?.$el?.clientWidth;
   if (!_width) return;
@@ -238,6 +255,7 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
     @keydown.ctrl="open = !open"
     @mouseenter.passive="e => onHover(e, true)"
     @mouseleave.passive="e => onHover(e, false)"
+    @mousemove.passive="overOpen"
     @touchstart.passive="onTouchStart"
     @touchmove.passive="onToucheMove"
     @touchend.passive="onTouchEnd"
