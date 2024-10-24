@@ -56,7 +56,7 @@
     "@dvcol/simkl-http-client": "^1.1.8",
     "@dvcol/tmdb-http-client": "^1.3.10",
     "@dvcol/trakt-http-client": "^1.4.16",
-    "@dvcol/web-extension-utils": "^3.4.4",
+    "@dvcol/web-extension-utils": "^3.4.5",
     "@vue/devtools": "^7.4.6",
     "naive-ui": "^2.40.1",
     "pinia": "^2.2.4",

@@ -315,8 +315,11 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
   };
 
   const initExtensionSettingsStore = async () => {
-    if (!initialized.value) initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => true);
-    changeBrand().catch(err => Logger.error('Failed to change brand', { err }));
+    if (initialized.value) return initialized.value;
+    initialized.value = Promise.all([restoreState(), restoreDefaultTab()]).then(() => {
+      changeBrand().catch(err => Logger.error('Failed to change brand', { err }));
+      return true;
+    });
     return initialized.value;
   };
 
