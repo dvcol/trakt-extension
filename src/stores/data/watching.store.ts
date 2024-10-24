@@ -211,7 +211,7 @@ export const useWatchingStore = defineStore(WatchingStoreConstants.Store, () => 
         saveState().catch(e => Logger.error('Failed to save watching state', e));
       },
     }),
-    isWatching: computed(() => !!watching.value),
+    isWatching: computed(() => watching.value?.expires_at && new Date(watching.value.expires_at).getTime() > Date.now()),
     cancelling: computed(() => loading.cancel),
     checkingIn: computed(() => loading.checkin),
     loading: computed(() => loading.cancel || loading.checkin),
