@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.32.0](https://github.com/dvcol/trakt-extension/compare/v1.31.0...v1.32.0) (2024-10-24)
+
+
+### Features
+
+* **theme:** allow custom theming of ui colors ([db9613e](https://github.com/dvcol/trakt-extension/commit/db9613ee7cde07790dc1e8fdda46ff6e8a4444bb))
+
 ## [1.31.0](https://github.com/dvcol/trakt-extension/compare/v1.30.1...v1.31.0) (2024-10-23)
 
 
