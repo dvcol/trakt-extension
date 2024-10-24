@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.2](https://github.com/dvcol/trakt-extension/compare/v1.32.1...v1.32.2) (2024-10-24)
+
+
+### Bug Fixes
+
+* **list:** open quick action on item edge when no movement or modifiers ([1bf46cf](https://github.com/dvcol/trakt-extension/commit/1bf46cf2b3518267054ec9ccaa76927ef4c40174))
+
 ### [1.32.1](https://github.com/dvcol/trakt-extension/compare/v1.32.0...v1.32.1) (2024-10-24)
 
 
