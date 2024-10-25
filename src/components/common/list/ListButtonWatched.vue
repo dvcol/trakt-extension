@@ -37,6 +37,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+  },
   disableFetch: {
     type: Boolean,
     required: false,
@@ -55,7 +59,7 @@ const emit = defineEmits<{
   (e: 'onClick', payload: { query: AddOrRemoveQuery; request: Promise<unknown> }): void;
 }>();
 
-const { disabled, disableFetch, item, dateType } = toRefs(props);
+const { disabled, disableFetch, item, dateType, loading } = toRefs(props);
 
 const { played, date: datePlayed } = useItemPlayed(item);
 
@@ -76,6 +80,7 @@ const { loadingWatched } = useMovieStoreRefs();
 const { getShowProgressLoading } = useShowStore();
 
 const isLoading = computed(() => {
+  if (loading?.value) return true;
   if (isListLoading.value) return true;
   if (item.value.type === 'movie') return loadingWatched.value;
   if (!item.value?.meta?.ids?.show?.trakt) return false;

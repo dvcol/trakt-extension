@@ -22,6 +22,7 @@ const { item, disabled, route } = defineProps<{
   item: ListScrollItem;
   route: Route;
   disabled?: boolean;
+  loading?: boolean;
 }>();
 
 type Query<T extends QuickActions> = T extends typeof QuickAction.Checkin
@@ -68,6 +69,7 @@ const onClick = <T extends QuickActions>(
     v-if="actions?.[QuickAction.List] && list"
     :list="list"
     :disabled="disabled"
+    :loading="loading"
     :disable-fetch="route === Route.Watchlist"
     :item="item"
     @on-click="e => onClick(QuickAction.List, e)"
@@ -76,6 +78,7 @@ const onClick = <T extends QuickActions>(
     v-if="actions?.[QuickAction.Collect]"
     :date-type="collectionDate"
     :disabled="disabled"
+    :loading="loading"
     :item="item"
     @on-click="e => onClick(QuickAction.Collect, e)"
   />
@@ -83,12 +86,14 @@ const onClick = <T extends QuickActions>(
     v-if="actions?.[QuickAction.Watch]"
     :date-type="watchedDate"
     :disabled="disabled"
+    :loading="loading"
     :item="item"
     @on-click="e => onClick(QuickAction.Watch, e)"
   />
   <ListButtonCheckin
     v-if="actions?.[QuickAction.Checkin] && isEpisodeOrMovie(item.type)"
     :disabled="disabled"
+    :loading="loading"
     :item="item"
     @on-click="e => onClick(QuickAction.Checkin, e)"
   />

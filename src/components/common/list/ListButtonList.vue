@@ -31,6 +31,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
   },
+  loading: {
+    type: Boolean,
+    required: false,
+  },
   disableFetch: {
     type: Boolean,
     required: false,
@@ -52,12 +56,13 @@ const emit = defineEmits<{
   ): void;
 }>();
 
-const { disabled, disableFetch, item, list } = toRefs(props);
+const { disabled, disableFetch, item, list, loading } = toRefs(props);
 
 const { isItemListLoading, addToOrRemoveFromList, isItemInList, fetchListItems } =
   useListStore();
 
 const isLoading = computed(() => {
+  if (loading.value) return true;
   if (!item.value?.id) return;
   if (!isListItemType(item.value.type)) return;
   return isItemListLoading({

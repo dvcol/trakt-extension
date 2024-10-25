@@ -91,10 +91,11 @@ const { onItemClick } = usePanelItem();
       @on-scroll-top="onScrollTop"
       @on-scroll-bottom="onScrollBottom"
     >
-      <template #buttons="{ open, item }">
+      <template #buttons="{ open, item, loading: itemLoading }">
         <ListButtons
           v-if="isListItemType(item?.type)"
           :disabled="!open"
+          :loading="itemLoading"
           :item="item"
           :route="Route.Calendar"
         />

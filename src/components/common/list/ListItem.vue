@@ -343,10 +343,11 @@ const onClick = (e: MouseEvent | KeyboardEvent) =>
           >
             <slot
               name="buttons"
+              :item="item"
               :open="open"
               :dragged="dragged"
               :focusin="focusin"
-              :item="item"
+              :loading="loading"
             />
           </NButtonGroup>
         </NFlex>

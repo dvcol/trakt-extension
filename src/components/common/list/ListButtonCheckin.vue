@@ -15,6 +15,7 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const { disabled, item } = defineProps<{
   disabled?: boolean;
+  loading?: boolean;
   item?: ListScrollItem;
   buttonProps?: ButtonProps;
   iconProps?: IconProps;
@@ -56,13 +57,13 @@ const onClick = async () => {
   }
 };
 
-const { loading } = useWatchingStoreRefs();
+const { loading: watchLoading } = useWatchingStoreRefs();
 </script>
 
 <template>
   <ListButton
     :disabled="disabled"
-    :loading="loading"
+    :loading="loading || watchLoading"
     :colored="watching"
     :button-props="{ type: 'error', ...buttonProps }"
     :icon-props="{ component: watching ? IconCancel : IconConfirmCircle, ...iconProps }"

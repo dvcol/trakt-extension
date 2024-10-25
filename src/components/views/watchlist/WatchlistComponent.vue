@@ -117,10 +117,11 @@ useActiveAndDocumentVisible({
       @onload-more="onLoadMore"
       @on-item-click="onItemClick"
     >
-      <template #buttons="{ open, item }">
+      <template #buttons="{ open, item, loading: itemLoading }">
         <ListButtons
           v-if="isListItemType(item?.type)"
           :disabled="!open"
+          :loading="itemLoading"
           :item="item"
           :route="Route.Watchlist"
           @on-click="onButtonClick"
