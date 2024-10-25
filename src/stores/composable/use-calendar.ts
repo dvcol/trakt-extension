@@ -3,16 +3,11 @@ import { DateUtils } from '@dvcol/common-utils/common/date';
 import { computed, nextTick, type Ref, ref, watch } from 'vue';
 
 import type { TraktCalendarMovie, TraktCalendarShow } from '@dvcol/trakt-http-client/models';
+import type { ListScrollItem, ListScrollItemTag, VirtualListRef, VirtualListScrollToOptions } from '~/models/list-scroll.model';
 
 import IconChevronDown from '~/components/icons/IconChevronDown.vue';
 import IconChevronUp from '~/components/icons/IconChevronUp.vue';
-import {
-  type ListScrollItem,
-  type ListScrollItemTag,
-  ListScrollItemType,
-  type VirtualListRef,
-  type VirtualListScrollToOptions,
-} from '~/models/list-scroll.model';
+import { ListScrollItemType } from '~/models/list-scroll.model';
 import { defaultDebounceLoadingDelay } from '~/utils/store.utils';
 
 export type CalendarItem = (TraktCalendarShow | TraktCalendarMovie | Record<never, never>) & {
@@ -174,7 +169,7 @@ export const useCalendar = ({
     // offset the scroll by 1 item if a placeholder is added
     let placeholder = 0;
     const timeout = setTimeout(() => {
-      listRef.value?.list.scrollTo({ top: itemSize });
+      listRef.value?.list.scrollTo({ top: itemSize, debounce: true });
       placeholder = placeholders;
     }, defaultDebounceLoadingDelay); // default debounceLoading delay
 
@@ -185,6 +180,7 @@ export const useCalendar = ({
     await nextTick();
     listRef.value?.list.scrollTo({
       top: currentScrollTop + (list.value.findIndex(item => item.id === first.id) - placeholder) * itemSize,
+      debounce: true,
     });
     placeholder = 0;
   };

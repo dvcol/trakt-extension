@@ -2,15 +2,15 @@ import { DateUtils, dayOfTheWeek, getTodayISOLocal } from '@dvcol/common-utils/c
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
+import type { CalendarItem } from '~/stores/composable/use-calendar';
 import type { ProgressListItem } from '~/stores/data/progress.store';
-
-import type { CalendarItem } from '~/utils/calendar.utils';
 
 import { ListScrollItemType } from '~/models/list-scroll.model';
 import { MessageType } from '~/models/message/message-type.model';
 
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
+import { spaceDate } from '~/stores/composable/use-calendar';
 import { fetchCalendarData } from '~/stores/data/calendar.store';
 import { fetchProgressData } from '~/stores/data/progress.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
@@ -18,7 +18,6 @@ import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store
 import { BrandColors, Colors } from '~/styles/colors.style';
 import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
-import { spaceDate } from '~/utils/calendar.utils';
 import { debounce } from '~/utils/debounce.utils';
 
 const cleanCalendarBadge = () => sendMessage({ type: MessageType.BadgeUpdate, payload: { text: '', title: '' } });

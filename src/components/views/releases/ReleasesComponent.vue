@@ -12,9 +12,9 @@ import { usePanelItem } from '~/components/common/panel/use-panel-item';
 import { Route } from '~/models/router.model';
 import { TraktService } from '~/services/trakt.service';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { useCalendar, useCenterButton } from '~/stores/composable/use-calendar';
 import { useReleasesStore, useReleasesStoreRefs } from '~/stores/data/releases.store';
 import { useExtensionSettingsStore } from '~/stores/settings/extension.store';
-import { useCalendar, useCenterButton } from '~/utils/calendar.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useActiveAndDocumentVisible, watchUserChange } from '~/utils/store.utils';
 
