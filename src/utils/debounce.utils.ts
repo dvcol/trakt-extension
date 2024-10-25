@@ -11,12 +11,15 @@ export function debounce<T>(
   const timeoutId = timout;
 
   return async (...args: Parameters<typeof func>[]): Promise<T> => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       if (timeoutId.value) clearTimeout(timeoutId.value);
 
       timeoutId.value = setTimeout(async () => {
-        const result = await func(...args);
-        resolve(result);
+        try {
+          resolve(await func(...args));
+        } catch (error) {
+          reject(error);
+        }
       }, delay);
     });
   };
