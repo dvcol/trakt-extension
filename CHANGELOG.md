@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.3](https://github.com/dvcol/trakt-extension/compare/v1.32.2...v1.32.3) (2024-10-25)
+
+
+### Bug Fixes
+
+* **buttons:** pass down loading state from items ([5dec105](https://github.com/dvcol/trakt-extension/commit/5dec1051fb7d5b40a285f3facccd8feb46d86090))
+* **watching:** only show watching if not expired ([1e17f46](https://github.com/dvcol/trakt-extension/commit/1e17f464782faecf1be17c3bb1ca56f92c080e6e))
+
 ### [1.32.2](https://github.com/dvcol/trakt-extension/compare/v1.32.1...v1.32.2) (2024-10-24)
 
 
