@@ -36,7 +36,7 @@ const { title, url, label } = defineProps({
 .panel-title-skeleton {
   text-align: center;
 
-  @media (width < 725px) {
+  @media (width < 550px) {
     padding: 0 1.5rem;
   }
 }

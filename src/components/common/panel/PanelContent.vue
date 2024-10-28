@@ -71,7 +71,7 @@ const onTouchEnd = (e: TouchEvent) => {
     position: sticky;
     top: 1rem;
 
-    @media (width < 725px) {
+    @media (width < 550px) {
       position: inherit;
     }
   }
@@ -79,6 +79,7 @@ const onTouchEnd = (e: TouchEvent) => {
   &-content {
     margin-top: -1.125rem;
     padding: 0 3rem 1.25rem;
+    transition: padding 0.5s var(--n-bezier);
 
     :deep(.n-skeleton) {
       opacity: 1;
@@ -91,7 +92,11 @@ const onTouchEnd = (e: TouchEvent) => {
     }
 
     @media (width < 725px) {
-      padding: 0 0.75rem 1rem;
+      padding: 0 0.75rem 0.5rem;
+    }
+
+    @media (width < 550px) {
+      padding: 0 0.25rem;
     }
   }
 }
