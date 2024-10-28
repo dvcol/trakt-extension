@@ -46,6 +46,7 @@ defineProps({
     margin-top: 1rem;
     margin-bottom: 1rem;
     font-weight: bold;
+    text-align: center;
   }
 }
 </style>

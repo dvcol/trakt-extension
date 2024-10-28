@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
-import { NFlex, NSkeleton } from 'naive-ui';
+import { NFlex } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
 import { useRoute } from 'vue-router';
 
-import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
+import PanelHeader from '~/components/common/panel/PanelHeader.vue';
 import PanelPoster from '~/components/common/panel/PanelPoster.vue';
 import PersonPanelDetails from '~/components/views/panel/person/PersonPanelDetails.vue';
 import PersonPanelOverview from '~/components/views/panel/person/PersonPanelOverview.vue';
@@ -61,19 +61,10 @@ onMounted(() => {
     vertical
     :data-person="personId"
   >
-    <AnchorLink
-      v-if="title"
-      class="show-title"
-      :href="titleUrl"
-      :title="i18n('open_in_trakt', 'common', 'tooltip')"
-    >
-      {{ title }}
-    </AnchorLink>
-    <NSkeleton
-      v-else
-      class="show-title-skeleton"
-      style="width: min(var(--half-width), var(--height-70-dvh))"
-      round
+    <PanelHeader
+      :title="title"
+      :url="titleUrl"
+      :label="i18n('open_in_trakt', 'common', 'tooltip')"
     />
 
     <PanelPoster :tmdb="person?.ids.tmdb" mode="person" portait :link="titleUrl" />

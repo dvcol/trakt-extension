@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { deCapitalise } from '@dvcol/common-utils/common/string';
-import { NFlex, NSkeleton } from 'naive-ui';
+import { NFlex } from 'naive-ui';
 import { computed, onMounted, toRefs, watch } from 'vue';
 
 import { useRoute } from 'vue-router';
 
-import AnchorLink from '~/components/common/buttons/AnchorLink.vue';
+import PanelHeader from '~/components/common/panel/PanelHeader.vue';
 import PanelMovieStatistics from '~/components/common/panel/PanelMovieStatistics.vue';
 import PanelPoster from '~/components/common/panel/PanelPoster.vue';
 import {
@@ -269,19 +269,10 @@ onMounted(() => {
     vertical
     :data-movie="movieId"
   >
-    <AnchorLink
-      v-if="title"
-      class="show-title"
-      :href="titleUrl"
-      :title="i18n('open_in_trakt', 'common', 'tooltip')"
-    >
-      {{ title }}
-    </AnchorLink>
-    <NSkeleton
-      v-else
-      class="show-title-skeleton"
-      style="width: min(var(--half-width), var(--height-70-dvh))"
-      round
+    <PanelHeader
+      :title="title"
+      :url="titleUrl"
+      :label="i18n('open_in_trakt', 'common', 'tooltip')"
     />
 
     <PanelMovieStatistics :movie="movie" :movie-loading="movieLoading">
@@ -322,11 +313,6 @@ onMounted(() => {
     @media (width > 1200px) {
       max-width: min(var(--half-width), var(--height-70-dvh));
     }
-  }
-
-  .show-title-skeleton {
-    height: 1.5rem;
-    margin-top: 0.625rem;
   }
 }
 </style>

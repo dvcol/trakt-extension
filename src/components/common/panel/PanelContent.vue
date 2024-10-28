@@ -70,6 +70,10 @@ const onTouchEnd = (e: TouchEvent) => {
   &-header {
     position: sticky;
     top: 1rem;
+
+    @media (width < 725px) {
+      position: inherit;
+    }
   }
 
   &-content {
