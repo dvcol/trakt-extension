@@ -288,6 +288,7 @@ onDeactivated(() => {
     .menu {
       margin-top: 0;
       margin-bottom: layout.$safe-bottom-navbar-height;
+      padding-top: layout.$safe-area-inset-top;
     }
 
     &.watching {
