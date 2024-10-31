@@ -26,6 +26,9 @@ importers:
       '@dvcol/web-extension-utils':
         specifier: ^3.4.5
         version: 3.4.5
+      '@leeoniya/ufuzzy':
+        specifier: ^1.0.14
+        version: 1.0.14
       '@vue/devtools':
         specifier: ^7.4.6
         version: 7.4.6(vite@5.4.2(@types/node@20.5.3)(sass@1.66.1)(sugarss@2.0.0)(terser@5.31.2))(vue@3.5.12(typescript@5.5.4))
@@ -1458,6 +1461,9 @@ packages:
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+
+  '@leeoniya/ufuzzy@1.0.14':
+    resolution: {integrity: sha512-/xF4baYuCQMo+L/fMSUrZnibcu0BquEGnbxfVPiZhs/NbJeKj4c/UmFpQzW9Us0w45ui/yYW3vyaqawhNYsTzA==}
 
   '@microsoft/api-extractor-model@7.28.3':
     resolution: {integrity: sha512-wT/kB2oDbdZXITyDh2SQLzaWwTOFbV326fP0pUwNW00WeliARs0qjmXBWmGWardEzp2U3/axkO3Lboqun6vrig==}
@@ -8265,6 +8271,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@juggle/resize-observer@3.4.0': {}
+
+  '@leeoniya/ufuzzy@1.0.14': {}
 
   '@microsoft/api-extractor-model@7.28.3(@types/node@20.5.3)':
     dependencies:

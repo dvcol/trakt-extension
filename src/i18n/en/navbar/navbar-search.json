@@ -83,9 +83,9 @@
     "message": "Used for searching using regular expressions.",
     "description": "Search query tooltip for the regex keywords (/)"
   },
-  "navbar__search__option_group_filter": {
-    "message": "Filter",
-    "description": "Label for the search option group filter"
+  "navbar__search__option_group_match": {
+    "message": "Match",
+    "description": "Label for the search option group match"
   },
   "navbar__search__option_group_recent": {
     "message": "Recent",

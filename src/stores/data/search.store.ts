@@ -77,7 +77,8 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
 
   const addToHistory = debounce((value: string = search.value) => {
     if (!value || value.trim().length < minSearchLength) return;
-    const newArray = [value, ...history.value].map(v => v.trim()).filter(v => v && v.length > 3);
+    const newArray = [...history.value].filter(v => v !== value);
+    newArray.unshift(value);
     // Keep only the last 100 elements
     if (newArray.length > 100) {
       history.value = new Set(newArray.slice(0, 100));

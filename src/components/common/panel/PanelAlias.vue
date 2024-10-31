@@ -88,7 +88,7 @@ const i18n = useI18n('panel', 'alias');
       :disabled="!popOptions?.length"
       :width="popWidth"
       placement="bottom-end"
-      style="--custom-bg-color: var(--bg-color-70)"
+      :style="{ '--custom-bg-color': 'var(--bg-color-70)' }"
       scrollable
     >
       <!--  Alias Input -->

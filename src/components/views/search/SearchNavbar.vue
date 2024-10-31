@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import UFuzzy from '@leeoniya/ufuzzy';
 import {
   NAutoComplete,
   NFlex,
@@ -17,6 +18,7 @@ import type { TraktSearchType } from '@dvcol/trakt-http-client/models';
 
 import ButtonLinkExternal from '~/components/common/buttons/ButtonLinkExternal.vue';
 import NavbarPageSizeSelect from '~/components/common/navbar/NavbarPageSizeSelect.vue';
+import TextHtml from '~/components/common/typography/TextHtml.vue';
 import IconAccount from '~/components/icons/IconAccount.vue';
 import IconChevronDown from '~/components/icons/IconChevronDownSmall.vue';
 import IconChevronUp from '~/components/icons/IconChevronUpSmall.vue';
@@ -31,6 +33,7 @@ import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.st
 import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
+import { fuzzyMatch } from '~/utils/string.utils';
 
 const i18n = useI18n('navbar', 'search');
 
@@ -53,41 +56,52 @@ const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
 const debouncedSearch = useDebouncedSearch(search, 1000);
 const external = computed(() => ResolveExternalLinks.trakt.query(debouncedSearch.value));
 
+const fuzzy = new UFuzzy();
+
 const filteredHistory = computed(() => {
   const _search = debouncedSearch.value?.toLowerCase().trim();
+  const _values = Array.from(history.value);
 
-  if (!_search || !history.value) {
-    return { filter: [], recent: Array.from(history.value) };
-  }
+  const result = { match: [], highlight: [], recent: _values };
 
-  const filter: string[] = [];
+  if (!_search || !_values.length) return result;
+
+  const { match, highlight } = fuzzyMatch(_values, _search);
   const recent: string[] = [];
 
   history.value.forEach(value => {
     const _val = value.toLowerCase().trim();
     if (_val === _search) return;
-    if (_val.includes(_search) || _search.includes(_val)) {
-      filter.push(value);
-    } else if (recent.length < 5) {
-      recent.push(value);
-    }
+    if (match.includes(value)) return;
+    if (recent.length >= 5) return;
+    recent.push(value);
   });
 
-  return { filter, recent };
+  let i = 0;
+  let value: string;
+  while (recent.length < 5) {
+    value = _values[i];
+    if (value !== _search && !match.includes(value)) recent.push(value);
+    i += 1;
+  }
+
+  return { match, highlight, recent };
 });
+
 const historyOptions = computed(() => {
   const results = [];
-  const filter = {
+  const match = {
     type: 'group',
-    label: i18n('option_group_filter'),
-    key: 'filter',
-    children: filteredHistory.value.filter.map(value => ({
+    label: i18n('option_group_match'),
+    key: 'match',
+    children: filteredHistory.value.match.map((value, i) => ({
       value,
       label: value,
-      key: `filter-${value}`,
+      highlight: filteredHistory.value.highlight[i],
+      key: `match-${value}`,
     })),
   };
-  if (filter.children.length) results.push(filter);
+  if (match.children.length) results.push(match);
   const recent = {
     type: 'group',
     label: i18n('option_group_recent'),
@@ -102,6 +116,9 @@ const historyOptions = computed(() => {
   if (recent.children.length) results.push(recent);
   return results;
 });
+
+const renderMatch = ({ highlight, label }: SelectOption & { highlight?: string }) =>
+  highlight ? h(TextHtml, { html: highlight }) : label?.toString();
 
 const selectedValues = computed({
   get: () => types.value,
@@ -253,6 +270,7 @@ onActivated(() => {
           class="search-input"
           :loading="loading"
           :placeholder="i18n('search', 'navbar')"
+          :render-label="renderMatch"
           autosize
           clearable
           :options="historyOptions"
