@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.33.0](https://github.com/dvcol/trakt-extension/compare/v1.32.3...v1.33.0) (2024-10-31)
+
+
+### Features
+
+* **panel:** adds alt titles options to panel aliases ([ec94617](https://github.com/dvcol/trakt-extension/commit/ec946171615ee81aba01abfa63c0afe6a4a0d953))
+* **search:** adds recent search and allow type search ([da25a97](https://github.com/dvcol/trakt-extension/commit/da25a978b762aafb8e2051f8acf6bf44de5a2799))
+* **search:** switches to fuzzy search ([d4b2d91](https://github.com/dvcol/trakt-extension/commit/d4b2d916ea6ff9e172c1eb4aeb98f6a78e34f2a3))
+
+
+### Bug Fixes
+
+* **css:** adjust page loading vertical offset ([1605ba2](https://github.com/dvcol/trakt-extension/commit/1605ba2e90e65db1f5f40607a3a62af9cb7b72b9))
+* **debounce:** reject promise on error ([e823b20](https://github.com/dvcol/trakt-extension/commit/e823b20e5d77c6df0971dc8fa4b362b1565fd9ef))
+* **panel:** adjust responsive padding ([53dbba6](https://github.com/dvcol/trakt-extension/commit/53dbba62cbde8f2bfcb8f47dd80d1514f48cf2c2))
+* **panel:** fix responsive sizing for the panel ([3f4301f](https://github.com/dvcol/trakt-extension/commit/3f4301faca19812d36775659b3a91c826f7f7559))
+* **settings:** adds safe inset in menu for mobile ([dc8838c](https://github.com/dvcol/trakt-extension/commit/dc8838c3ec883f03d6bd008487ee725c4bcdf505))
+
 ### [1.32.3](https://github.com/dvcol/trakt-extension/compare/v1.32.2...v1.32.3) (2024-10-25)
 
 
