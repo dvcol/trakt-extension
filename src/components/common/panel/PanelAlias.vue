@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NFlex, NInput } from 'naive-ui';
+import { NFlex, NInput, NPopselect } from 'naive-ui';
 
 import { computed, nextTick, type PropType, ref, toRefs } from 'vue';
 
@@ -22,6 +22,10 @@ const props = defineProps({
     type: String as PropType<AliasScope>,
     required: true,
   },
+  options: {
+    type: Array as PropType<string[]>,
+    required: false,
+  },
   placeholder: {
     type: String,
     required: false,
@@ -29,7 +33,7 @@ const props = defineProps({
   },
 });
 
-const { scope, id, placeholder } = toRefs(props);
+const { scope, id, placeholder, options } = toRefs(props);
 
 const { aliasEnabled } = useLinksStoreRefs();
 const { getAliasRef } = useLinksStore();
@@ -44,7 +48,7 @@ const value = computed(() => {
 const hover = ref(false);
 const focus = ref(false);
 
-const inputRef = ref<InputInst>();
+const inputRef = ref<InputInst & { $el?: HTMLInputElement }>();
 
 const onClick = async () => {
   if (!id.value || !aliasEnabled.value) return;
@@ -52,6 +56,17 @@ const onClick = async () => {
   await nextTick();
   inputRef.value?.focus();
 };
+
+const popOptions = computed(() => {
+  if (!options?.value) return [];
+  return options.value.map(option => ({ label: option, value: option }));
+});
+
+const popWidth = computed(() => {
+  const _input = inputRef?.value?.$el?.querySelector('input');
+  if (!_input?.offsetWidth) return;
+  return _input.offsetWidth + 32;
+});
 
 const i18n = useI18n('panel', 'alias');
 </script>
@@ -64,21 +79,34 @@ const i18n = useI18n('panel', 'alias');
     size="large"
     justify="center"
   >
-    <!--  Alias Input -->
-    <NInput
+    <!--  Options select -->
+    <NPopselect
       v-if="hover || focus"
-      ref="inputRef"
       v-model:value="alias"
-      class="alias-input"
-      :placeholder="placeholder"
-      @focus="focus = true"
-      @blur="focus = false"
-      @mouseleave="hover = false"
+      class="alias-pop-select"
+      :options="popOptions"
+      :disabled="!popOptions?.length"
+      :width="popWidth"
+      placement="bottom-end"
+      style="--custom-bg-color: var(--bg-color-70)"
+      scrollable
     >
-      <template #prefix>
-        <span class="alias-prefix">{{ i18n('label') }}</span>
-      </template>
-    </NInput>
+      <!--  Alias Input -->
+      <NInput
+        ref="inputRef"
+        v-model:value="alias"
+        class="alias-input"
+        :placeholder="placeholder"
+        clearable
+        @focus="focus = true"
+        @blur="focus = false"
+        @mouseleave="hover = false"
+      >
+        <template #prefix>
+          <span class="alias-prefix">{{ i18n('label') }}</span>
+        </template>
+      </NInput>
+    </NPopselect>
 
     <!--  Alias  -->
     <TextField
@@ -107,7 +135,8 @@ const i18n = useI18n('panel', 'alias');
   font-size: 1rem;
 
   .alias-prefix {
-    min-width: 3rem;
+    min-width: var(--prefix-min-width, 4rem);
+    margin-right: 0.5rem;
     color: var(--white-50);
     font-weight: 600;
   }

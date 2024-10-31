@@ -123,6 +123,12 @@ const simklShow = computed(() => {
   return getShowOrAnime(show.value.ids.imdb).value;
 });
 
+const altTitles = computed(() => {
+  if (!simklShow?.value) return;
+  if (!('alt_titles' in simklShow.value)) return;
+  return simklShow.value.alt_titles?.map(({ name }) => name);
+});
+
 const genres = computed(() => {
   if (!show?.value) return;
   const _genres = new Set<string>();
@@ -222,7 +228,7 @@ const title = computed(() =>
     </NFlex>
 
     <!--  Show name alias  -->
-    <PanelAlias :id="showId" scope="show" :placeholder="showTitle" />
+    <PanelAlias :id="showId" scope="show" :placeholder="showTitle" :options="altTitles" />
 
     <NFlex class="row" size="large">
       <!--  Show Year  -->

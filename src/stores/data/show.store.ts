@@ -175,8 +175,8 @@ export const useShowStore = defineStore('data.show', () => {
       shows[id] = await TraktService.show.summary(id, force);
 
       if (simklEnabled.value && shows[id].ids.imdb) {
-        if (shows[id].genres.includes('anime')) await fetchSimklAnime(shows[id].ids.imdb);
-        else await fetchSimklShow(shows[id].ids.imdb);
+        if (shows[id].genres.includes('anime')) await fetchSimklAnime(shows[id].ids.imdb, force);
+        else await fetchSimklShow(shows[id].ids.imdb, force);
       }
 
       delete showsError[id];

@@ -89,7 +89,7 @@ export const useMovieStore = defineStore(MovieStoreConstants.Store, () => {
 
     try {
       movies[id] = await TraktService.movie(id, force);
-      if (simklEnabled.value && movies[id]?.ids?.imdb) await fetchSimklMovie(movies[id].ids.imdb);
+      if (simklEnabled.value && movies[id]?.ids?.imdb) await fetchSimklMovie(movies[id].ids.imdb, force);
       delete movieErrors[id.toString()];
     } catch (error) {
       Logger.error('Failed to fetch movie', id);

@@ -617,20 +617,20 @@ export class TraktService {
       this.evict.simkl().catch(err => Logger.error('Failed to evict simkl cache', { account, err }));
       return this.simklClient.importAuthentication({});
     },
-    show: async (id: string | number, extended = true) => {
-      const response = await this.simklClient.show.id.cached({ id, extended });
+    show: async (id: string | number, extended?: boolean, force?: boolean) => {
+      const response = await this.simklClient.show.id.cached({ id, extended }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data;
     },
-    anime: async (id: string | number, extended = true) => {
-      const response = await this.simklClient.anime.id.cached({ id, extended });
+    anime: async (id: string | number, extended?: boolean, force?: boolean) => {
+      const response = await this.simklClient.anime.id.cached({ id, extended }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data;
     },
-    movie: async (id: string | number, extended = true) => {
-      const response = await this.simklClient.movie.id.cached({ id, extended });
+    movie: async (id: string | number, extended?: boolean, force?: boolean) => {
+      const response = await this.simklClient.movie.id.cached({ id, extended }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.released)) response.cache?.evict?.();
       return data;

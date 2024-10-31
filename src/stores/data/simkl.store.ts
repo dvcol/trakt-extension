@@ -104,7 +104,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     }
   };
 
-  const fetchShow = async (id: string) => {
+  const fetchShow = async (id: string, force?: boolean, extended = true) => {
     if (!userEnabled.value) {
       Logger.error('Cannot fetch show, simkl is not enabled');
       return;
@@ -117,7 +117,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     Logger.debug('Fetching simkl show', { id });
     showLoading[id] = true;
     try {
-      shows[id] = await TraktService.simkl.show(id);
+      shows[id] = await TraktService.simkl.show(id, extended, force);
     } catch (err) {
       Logger.error('Failed to fetch simkl show', { id, err });
     } finally {
@@ -125,7 +125,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     }
   };
 
-  const fetchAnime = async (id: string) => {
+  const fetchAnime = async (id: string, force?: boolean, extended = true) => {
     if (!userEnabled.value) {
       Logger.error('Cannot fetch anime, simkl is not enabled');
       return;
@@ -138,7 +138,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     Logger.debug('Fetching simkl anime', { id });
     animeLoading[id] = true;
     try {
-      animes[id] = await TraktService.simkl.anime(id);
+      animes[id] = await TraktService.simkl.anime(id, extended, force);
     } catch (err) {
       Logger.error('Failed to fetch simkl anime', { id, err });
     } finally {
@@ -146,7 +146,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     }
   };
 
-  const fetchMovie = async (id: string) => {
+  const fetchMovie = async (id: string, force?: boolean, extended = true) => {
     if (!userEnabled.value) {
       Logger.error('Cannot fetch movie, simkl is not enabled');
       return;
@@ -159,7 +159,7 @@ export const useSimklStore = defineStore(SimklStoreConstants.Store, () => {
     Logger.debug('Fetching simkl movie', { id });
     movieLoading[id] = true;
     try {
-      movies[id] = await TraktService.simkl.movie(id);
+      movies[id] = await TraktService.simkl.movie(id, extended, force);
     } catch (err) {
       Logger.error('Failed to fetch simkl movie', { id, err });
     } finally {

@@ -75,6 +75,12 @@ const simklMovie = computed(() => {
   return getMovie(movie.value.ids.imdb).value;
 });
 
+const altTitles = computed(() => {
+  if (!simklMovie?.value) return;
+  if (!('alt_titles' in simklMovie.value)) return;
+  return simklMovie.value.alt_titles?.map(({ name }) => name);
+});
+
 const ids = computed(() => {
   if (!movie?.value) return;
   return {
@@ -140,6 +146,7 @@ const movieTitle = computed(() => deCapitalise(movie?.value?.title));
       :id="movie?.ids?.trakt.toString()"
       scope="movie"
       :placeholder="movieTitle"
+      :options="altTitles"
     />
     <NFlex class="row" size="large">
       <!--  Year  -->
