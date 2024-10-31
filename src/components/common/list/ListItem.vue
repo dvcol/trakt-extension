@@ -156,7 +156,6 @@ const overOpen = (e: MouseEvent) => {
 
 const onHover = (_event: MouseEvent, _hover: boolean) => {
   emit('onHover', { item: item?.value, hover: _hover });
-  itemRef.value?.$el?.focus({ preventScroll: true });
   open.value = _hover && (_event.altKey || _event.ctrlKey);
   if (!_hover) dragged.value = 0;
   if (!_hover) return clearTimeout(hoverTimeout.value);

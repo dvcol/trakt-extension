@@ -29,6 +29,7 @@ export type SearchResult = Omit<TraktSearchResult, 'type'> & {
 
 export const SupportedSearchType: TraktSearchType[] = ['episode', 'show', 'movie', 'person'];
 export const DefaultSearchType: TraktSearchType[] = ['show', 'movie'];
+export const minSearchLength = 3;
 
 const getSearchId = (result: TraktSearchResult) => {
   if (!result) return;
@@ -74,16 +75,17 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const saveHistory = debounce(() => storage.local.set(SearchStoreConstants.LocalHistory, [...history.value]), 1000);
   const saveSearch = debounce(() => storage.local.set(SearchStoreConstants.LocalLast, { value: search.value, date: Date.now() }), 1000);
 
-  const addToHistory = (value: string = search.value) => {
-    const newArray = [...history.value, value].filter(Boolean);
+  const addToHistory = debounce((value: string = search.value) => {
+    if (!value || value.trim().length < minSearchLength) return;
+    const newArray = [value, ...history.value].map(v => v.trim()).filter(v => v && v.length > 3);
     // Keep only the last 100 elements
     if (newArray.length > 100) {
-      history.value = new Set(newArray.slice(-100));
+      history.value = new Set(newArray.slice(0, 100));
     } else {
       history.value = new Set(newArray);
     }
     return Promise.all([saveHistory(), saveSearch()]);
-  };
+  }, 3000);
 
   const clearState = () => {
     types.value = DefaultSearchType;
@@ -186,8 +188,9 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     await restoreState();
 
     watch(search, async () => {
+      if (!search.value || search.value.length < minSearchLength) return;
       await fetchSearchResults();
-      await addToHistory().catch(e => Logger.error('Failed to save search history', e));
+      addToHistory().catch(e => Logger.error('Failed to save search history', e));
     });
 
     watch([pageSize, types], async () => {
@@ -201,6 +204,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     query,
     search,
     history,
+    addToHistory,
     clearState,
     initSearchStore,
     fetchSearchResults,

@@ -23,9 +23,9 @@ import IconChevronUp from '~/components/icons/IconChevronUpSmall.vue';
 import IconList from '~/components/icons/IconList.vue';
 import IconLoop from '~/components/icons/IconLoop.vue';
 import IconMovie from '~/components/icons/IconMovie.vue';
+import IconRestore from '~/components/icons/IconRestore.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
 import IconYoutube from '~/components/icons/IconYoutube.vue';
-
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.store';
 import { debounce } from '~/utils/debounce.utils';
@@ -33,34 +33,6 @@ import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
 
 const i18n = useI18n('navbar', 'search');
-
-const { search, types, query, pageSize, loading, history } = useSearchStoreRefs();
-
-const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
-
-const inputFocus = ref(false);
-const toggleFocus = (focus: boolean) => {
-  inputFocus.value = focus;
-};
-
-const debouncedSearch = useDebouncedSearch(search, 1000);
-const external = computed(() => ResolveExternalLinks.trakt.query(debouncedSearch.value));
-
-const filteredHistory = computed(() =>
-  [...history.value]
-    .filter(val => {
-      const _search = debouncedSearch.value?.toLowerCase().trim();
-      if (!_search) return false;
-      const _val = val.toLowerCase().trim();
-      if (_val === _search) return false;
-      return _val.includes(_search) || _search.includes(_val);
-    })
-    .slice(0, 10),
-);
-
-const historyOptions = computed(() =>
-  filteredHistory.value.map(value => ({ value, label: value })),
-);
 
 const { reverse } = defineProps({
   parentElement: {
@@ -72,6 +44,63 @@ const { reverse } = defineProps({
     required: false,
     default: false,
   },
+});
+
+const { search, types, query, pageSize, loading, history } = useSearchStoreRefs();
+
+const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
+
+const debouncedSearch = useDebouncedSearch(search, 1000);
+const external = computed(() => ResolveExternalLinks.trakt.query(debouncedSearch.value));
+
+const filteredHistory = computed(() => {
+  const _search = debouncedSearch.value?.toLowerCase().trim();
+
+  if (!_search || !history.value) {
+    return { filter: [], recent: Array.from(history.value) };
+  }
+
+  const filter: string[] = [];
+  const recent: string[] = [];
+
+  history.value.forEach(value => {
+    const _val = value.toLowerCase().trim();
+    if (_val === _search) return;
+    if (_val.includes(_search) || _search.includes(_val)) {
+      filter.push(value);
+    } else if (recent.length < 5) {
+      recent.push(value);
+    }
+  });
+
+  return { filter, recent };
+});
+const historyOptions = computed(() => {
+  const results = [];
+  const filter = {
+    type: 'group',
+    label: i18n('option_group_filter'),
+    key: 'filter',
+    children: filteredHistory.value.filter.map(value => ({
+      value,
+      label: value,
+      key: `filter-${value}`,
+    })),
+  };
+  if (filter.children.length) results.push(filter);
+  const recent = {
+    type: 'group',
+    label: i18n('option_group_recent'),
+    key: 'recent',
+    children: filteredHistory.value.recent.map(value => ({
+      value,
+      label: value,
+      key: `recent-${value}`,
+      icon: IconRestore,
+    })),
+  };
+  if (recent.children.length) results.push(recent);
+  return results;
 });
 
 const selectedValues = computed({
@@ -98,8 +127,11 @@ const getIcon = (type: TraktSearchType) => {
 
 const open = ref(false);
 
-type SearchOption = SelectOption & { value: TraktSearchType; icon: Component };
-const searchOptions = computed<SearchOption[]>(() =>
+type SearchOption<T extends string = string> = SelectOption & {
+  value: T;
+  icon: Component;
+};
+const searchOptions = computed<SearchOption<TraktSearchType>[]>(() =>
   typeOptions.value.map(type => ({
     label: i18n(type, 'navbar', 'search', 'type'),
     value: type,
@@ -169,7 +201,9 @@ const placement = computed(() => (reverse ? 'top' : 'bottom'));
 
 onActivated(() => {
   if (!search.value) inputRef.value?.focus();
-  if (typeof route?.query?.search === 'string') search.value = route.query.search;
+  const _search = route?.query?.search;
+  if (typeof _search !== 'string') return;
+  search.value = _search.trim();
 });
 </script>
 
@@ -218,12 +252,9 @@ onActivated(() => {
           v-model:value="debouncedSearch"
           class="search-input"
           :loading="loading"
-          :disabled="loading"
           :placeholder="i18n('search', 'navbar')"
           autosize
           clearable
-          :on-input-focus="() => toggleFocus(true)"
-          :on-input-blur="() => toggleFocus(false)"
           :options="historyOptions"
           :to="parentElement"
         >
