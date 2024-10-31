@@ -32,7 +32,6 @@ defineProps({
   width: 100%;
   height: 100%;
   min-height: var(--min-height, 0);
-  padding-bottom: layout.$header-navbar-height;
   opacity: 1;
   transition: opacity 1s ease-in 0.2s;
 
