@@ -73,7 +73,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const history = ref<Set<string>>(new Set());
 
   const saveHistory = debounce(() => storage.local.set(SearchStoreConstants.LocalHistory, [...history.value]), 1000);
-  const saveSearch = debounce(() => storage.local.set(SearchStoreConstants.LocalLast, { value: search.value, date: Date.now() }), 1000);
+  const saveSearch = debounce(() => storage.local.set(SearchStoreConstants.LocalLast, { value: search.value, date: Date.now() }), 200);
 
   const addToHistory = debounce((value: string = search.value) => {
     if (!value || value.trim().length < minSearchLength) return;
@@ -136,12 +136,12 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const loadingPlaceholder = useLoadingPlaceholder<SearchResult>(pageSize);
 
   const { isAuthenticated } = useAuthSettingsStoreRefs();
-  const fetchSearchResults = async ({ page, limit = pageSize.value }: { page?: number; limit?: number } = {}) => {
+  const fetchSearchResults = async ({ page, limit = pageSize.value }: { page?: number; limit?: number } = {}, _search = search.value?.trim()) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch search results, user is not authenticated');
       return;
     }
-    if (!search.value?.trim()) {
+    if (!_search) {
       pagination.value = {};
       searchResults.value = [];
       return;
@@ -152,14 +152,14 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     }
     if (firstLoad.value) firstLoad.value = false;
 
-    Logger.debug('Fetching search results', { types: types.value, query: query.value, search: search.value });
+    Logger.debug('Fetching search results', { types: types.value, query: query.value, search: _search });
 
     loading.value = true;
     const { clearLoading } = debounceLoading(searchResults, loadingPlaceholder, { clear: !page });
     const request: TraktSearch = {
       type: types.value,
       escape: !query.value,
-      query: search.value,
+      query: _search,
       pagination: { page, limit },
     };
     try {
@@ -191,7 +191,7 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
     watch(search, async () => {
       if (!search.value || search.value.length < minSearchLength) return;
       await fetchSearchResults();
-      addToHistory().catch(e => Logger.error('Failed to save search history', e));
+      saveSearch().catch(e => Logger.error('Failed to save search', e));
     });
 
     watch([pageSize, types], async () => {

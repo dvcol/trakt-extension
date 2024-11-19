@@ -28,8 +28,13 @@ import IconMovie from '~/components/icons/IconMovie.vue';
 import IconRestore from '~/components/icons/IconRestore.vue';
 import IconScreen from '~/components/icons/IconScreen.vue';
 import IconYoutube from '~/components/icons/IconYoutube.vue';
+import { Logger } from '~/services/logger.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
-import { SupportedSearchType, useSearchStoreRefs } from '~/stores/data/search.store';
+import {
+  SupportedSearchType,
+  useSearchStore,
+  useSearchStoreRefs,
+} from '~/stores/data/search.store';
 import { debounce } from '~/utils/debounce.utils';
 import { useI18n } from '~/utils/i18n.utils';
 import { useDebouncedSearch } from '~/utils/store.utils';
@@ -49,6 +54,7 @@ const { reverse } = defineProps({
   },
 });
 
+const { fetchSearchResults, addToHistory } = useSearchStore();
 const { search, types, query, pageSize, loading, history } = useSearchStoreRefs();
 
 const typeOptions = ref<TraktSearchType[]>(SupportedSearchType);
@@ -216,11 +222,23 @@ const route = useRoute();
 
 const placement = computed(() => (reverse ? 'top' : 'bottom'));
 
+const saveHistory = async () => {
+  try {
+    await addToHistory();
+  } catch (e) {
+    Logger.error('Failed to save search history', e);
+  }
+};
+
+const searchNow = () => {
+  fetchSearchResults(undefined, debouncedSearch.value);
+};
+
 onActivated(() => {
-  if (!search.value) inputRef.value?.focus();
   const _search = route?.query?.search;
   if (typeof _search !== 'string') return;
   search.value = _search.trim();
+  saveHistory();
 });
 </script>
 
@@ -275,6 +293,8 @@ onActivated(() => {
           clearable
           :options="historyOptions"
           :to="parentElement"
+          @blur="saveHistory"
+          @keydown.enter="searchNow"
         >
           <template #prefix>
             <NIcon :component="IconLoop" />
