@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.1](https://github.com/dvcol/trakt-extension/compare/v1.33.0...v1.33.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* **navbar:** navigate based on route name instead of path in dropdown ([a23712b](https://github.com/dvcol/trakt-extension/commit/a23712bb6b2fa71baa3abcc65685bc7782295d64))
+* **search:** search on enter and only add to history on blur ([f8674b7](https://github.com/dvcol/trakt-extension/commit/f8674b7b29556d30613e0d2f6e8c9eade3fa7dfa))
+
 ## [1.33.0](https://github.com/dvcol/trakt-extension/compare/v1.32.3...v1.33.0) (2024-10-31)
 
 
