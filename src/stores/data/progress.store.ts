@@ -87,7 +87,7 @@ export const progressToListItem = (progress: ProgressItem, index: number): Progr
     },
     type,
     meta,
-    tags: getTags({ episode }, { id, type, title, meta }),
+    tags: getTags({ episode, show }, { id, type, title, meta }),
   };
 };
 
