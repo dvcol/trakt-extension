@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.2](https://github.com/dvcol/trakt-extension/compare/v1.33.1...v1.33.2) (2025-01-09)
+
+
+### Bug Fixes
+
+* **progress:** add missing show source context to fix custom links ([bef8330](https://github.com/dvcol/trakt-extension/commit/bef83301060b8ee17ff517b4b56552729bf0fc12))
+
 ### [1.33.1](https://github.com/dvcol/trakt-extension/compare/v1.33.0...v1.33.1) (2024-11-19)
 
 
