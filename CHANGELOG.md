@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.34.0](https://github.com/dvcol/trakt-extension/compare/v1.33.2...v1.34.0) (2025-01-12)
+
+
+### Features
+
+* **ratings:** adds support for external ratings ([ee3db29](https://github.com/dvcol/trakt-extension/commit/ee3db29fcd67e4796ebf2dab214da18edbb949ad))
+
 ### [1.33.2](https://github.com/dvcol/trakt-extension/compare/v1.33.1...v1.33.2) (2025-01-09)
 
 
