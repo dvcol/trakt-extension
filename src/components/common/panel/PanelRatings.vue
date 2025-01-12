@@ -36,21 +36,21 @@ const getIcon = (icon: RatingItem['icon']): DropdownOption['icon'] => {
 
 const options = computed<DropdownOption[]>(() => {
   if (!ratings?.value) return [];
-  return ratings.value.map((rating, index) => ({
+  return ratings.value.map(rating => ({
     label: rating.name,
-    key: index,
+    key: rating.name,
     icon: getIcon(rating.icon),
   }));
 });
 
-const activeIndex = ref(0);
+const activeKey = ref();
 const onSelect = (key: number, option: DropdownOption) => {
-  activeIndex.value = key;
+  activeKey.value = key;
 };
 
 const activeRating = computed(
   () =>
-    ratings?.value?.at(activeIndex.value) ??
+    ratings?.value?.find(r => r.name === activeKey.value) ??
     ratings?.value?.at(0) ?? { name: undefined, rating: {} },
 );
 

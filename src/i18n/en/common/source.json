@@ -22,5 +22,13 @@
   "common__source__name__imdb": {
     "message": "IMDb",
     "description": "IMDb source name"
+  },
+  "common__source__name__rotten_tomatoes": {
+    "message": "Rotten Tomatoes",
+    "description": "Rotten Tomatoes source name"
+  },
+  "common__source__name__metascore": {
+    "message": "Metascore",
+    "description": "Metascore source name"
   }
 }

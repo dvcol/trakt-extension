@@ -21,8 +21,8 @@ importers:
         specifier: ^1.3.10
         version: 1.3.10
       '@dvcol/trakt-http-client':
-        specifier: ^1.4.16
-        version: 1.4.16
+        specifier: ^1.5.2
+        version: 1.5.2
       '@dvcol/web-extension-utils':
         specifier: ^3.4.5
         version: 3.4.5
@@ -1105,8 +1105,8 @@ packages:
     resolution: {integrity: sha512-7oP3pI6g0CwAi6Bs6LyicBynQm3aDFZMJYkHp4pM2hZQwtMJV3okCtcrMcOytu/HX1tfUl4x8zn7CR97kfnKNw==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/trakt-http-client@1.4.16':
-    resolution: {integrity: sha512-Eq68U9Y3XDsPhApVdFdjx5SKJQjP8bE6NlXqyyyK2Z9r69FCozXzw8Li34l7Y/sopOs4S4HAWRqAbatIqJM2zw==}
+  '@dvcol/trakt-http-client@1.5.2':
+    resolution: {integrity: sha512-69DSbUbb+cj1n3QKvGB8nr6p+IMzNjwNuX+7nnYrEfNsmZLCY63HmvXbqnCiaALv8/x1eSA/vbWTXmieVzivPA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
   '@dvcol/web-extension-utils@3.4.5':
@@ -8030,7 +8030,7 @@ snapshots:
       '@dvcol/base-http-client': 1.16.1
       '@dvcol/common-utils': 1.18.0
 
-  '@dvcol/trakt-http-client@1.4.16':
+  '@dvcol/trakt-http-client@1.5.2':
     dependencies:
       '@dvcol/base-http-client': 1.16.1
       '@dvcol/common-utils': 1.18.0

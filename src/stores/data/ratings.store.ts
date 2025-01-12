@@ -1,5 +1,7 @@
+import { debounce } from '@dvcol/common-utils/common/debounce';
 import {
   type TraktApiIds,
+  type TraktExtendedRatings,
   type TraktRating,
   type TraktRatingRequest,
   TraktRatingType,
@@ -32,9 +34,11 @@ type TraktRatingsReturn<T extends TraktRatingTypes> = T extends 'movies'
         ? TraktRating<'episode'>
         : TraktRating;
 
-type RatingsLoadingDictionary = Partial<Record<TraktRatingTypes, boolean>>;
+type RatingsLoadingDictionary = Partial<Record<TraktRatingTypes, boolean> & { [key: string]: boolean }>;
 type RatingsDictionary<T extends TraktRatingTypes = TraktRatingTypes> = Partial<Record<T, Record<string, TraktRatingsReturn<T>>>>;
+type RatingsExtendedDictionary<T extends TraktRatingTypes = TraktRatingTypes> = Partial<Record<T, Record<string, TraktExtendedRatings>>>;
 type RatingsPaginationDictionary = Partial<Record<TraktRatingTypes, StorePagination>>;
+type RatingsExtendedQuery = { id: string | number; season?: number; episode?: number };
 
 const isMovieRating = (rating: TraktRating): rating is TraktRating<'movie'> => rating.type === 'movie';
 const isShowRating = (rating: TraktRating): rating is TraktRating<'show'> => rating.type === 'show';
@@ -73,6 +77,7 @@ const RatingsStoreConstants = {
 
 export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
   const ratings = reactive<RatingsDictionary>({});
+  const extended = reactive<RatingsExtendedDictionary>({});
   const loading = reactive<RatingsLoadingDictionary>({});
   const errors = reactive<ErrorDictionary>({});
 
@@ -94,6 +99,7 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
 
   const clearState = () => {
     clearProxy(ratings);
+    clearProxy(extended);
     clearProxy(loading);
     clearProxy(errors);
     clearProxy(paginations);
@@ -224,8 +230,69 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     }
   };
 
-  const getLoading = (type: TraktRatingTypes) => !!loading[type];
+  const fetchRating = debounce(async (type: TraktRatingTypes, { id, season, episode }: RatingsExtendedQuery, force?: boolean) => {
+    const query = { type, id, season, episode };
+    const strQuery = JSON.stringify(query);
+
+    if (loading[strQuery]) {
+      Logger.warn('Already fetching rating', query);
+      return;
+    }
+
+    Logger.debug('Fetching rating', query);
+
+    loading[strQuery] = true;
+
+    try {
+      if (!extended[type]) extended[type] = {};
+
+      switch (type) {
+        case TraktRatingType.Movies:
+          extended[type][id] = await TraktService.ratings.movie(id, force);
+          break;
+        case TraktRatingType.Shows:
+          extended[type][id] = await TraktService.ratings.show(id, force);
+          break;
+        case TraktRatingType.Seasons:
+          if (!season) return Logger.error('Season is required for season ratings', query);
+          extended[type][`${id}-${season}`] = await TraktService.ratings.season(id, season, force);
+          break;
+        case TraktRatingType.Episodes:
+          if (!season || !episode) return Logger.error('Season and episode are required for episode ratings', query);
+          extended[type][`${id}-${season}-${episode}`] = await TraktService.ratings.episode(id, season, episode, force);
+          break;
+        default:
+          Logger.error('Invalid rating type', query);
+      }
+    } catch (error) {
+      Logger.error('Failed to fetch rating', query);
+      NotificationService.error(`Failed to fetch rating '${type}'.`, error);
+      errors[strQuery] = ErrorCount.fromDictionary(errors, strQuery, error);
+      throw error;
+    } finally {
+      loading[strQuery] = false;
+    }
+  });
+
+  const getLoading = (type: TraktRatingTypes, query?: RatingsExtendedQuery) => {
+    if (!query) return !!loading[type];
+    return !!loading[JSON.stringify(query)];
+  };
   const getRatings = <T extends TraktRatingTypes, R = TraktRatingsReturn<T> | undefined>(type: T, id: string): R => ratings[type]?.[id] as R;
+  const getRating = <T extends TraktRatingTypes, R = TraktExtendedRatings>(type: T, { id, season, episode }: RatingsExtendedQuery): R | undefined => {
+    switch (type) {
+      case TraktRatingType.Movies:
+        return extended[type]?.[id] as R;
+      case TraktRatingType.Shows:
+        return extended[type]?.[id] as R;
+      case TraktRatingType.Seasons:
+        return extended[type]?.[`${id}-${season}`] as R;
+      case TraktRatingType.Episodes:
+        return extended[type]?.[`${id}-${season}-${episode}`] as R;
+      default:
+        return undefined;
+    }
+  };
 
   const loadRatings = async <T extends TraktRatingTypes>(type: T, id: string): Promise<TraktRatingsReturn<T> | undefined> => {
     while (
@@ -255,8 +322,10 @@ export const useRatingsStore = defineStore(RatingsStoreConstants.Store, () => {
     }),
     clearState,
     fetchRatings,
+    fetchRating,
     getLoading,
     getRatings,
+    getRating,
     loadRatings,
     addRating,
     removeRating,

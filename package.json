@@ -55,7 +55,7 @@
     "@dvcol/common-utils": "^1.18.0",
     "@dvcol/simkl-http-client": "^1.1.8",
     "@dvcol/tmdb-http-client": "^1.3.10",
-    "@dvcol/trakt-http-client": "^1.4.16",
+    "@dvcol/trakt-http-client": "^1.5.2",
     "@dvcol/web-extension-utils": "^3.4.5",
     "@leeoniya/ufuzzy": "^1.0.14",
     "@vue/devtools": "^7.4.6",

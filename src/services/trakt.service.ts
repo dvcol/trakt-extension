@@ -16,7 +16,7 @@ import {
 } from '@dvcol/tmdb-http-client/models';
 import { TraktClient } from '@dvcol/trakt-http-client';
 
-import { TraktApiExtended } from '@dvcol/trakt-http-client/models';
+import { toExtendedRatings, TraktApiExtended } from '@dvcol/trakt-http-client/models';
 
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
@@ -404,7 +404,7 @@ export class TraktService {
 
   static show = {
     async summary(id: string | number, force?: boolean) {
-      const response = await TraktService.traktClient.shows.summary.cached({ id, extended: 'full' }, undefined, { force });
+      const response = await TraktService.traktClient.shows.summary.cached({ id, extended: TraktApiExtended.Full }, undefined, { force });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data as TraktShowExtended;
@@ -418,14 +418,16 @@ export class TraktService {
     },
 
     async seasons(id: string | number, force?: boolean) {
-      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: 'full' }, undefined, { force });
+      const response = await TraktService.traktClient.seasons.summary.cached({ id, extended: TraktApiExtended.Full }, undefined, { force });
       const data = await response.json();
       if (data.some(s => shouldEvict(response?.cache, s?.first_aired))) response.cache?.evict?.();
       return data as TraktSeasonExtended[];
     },
 
     async episode({ id, season, episode }: { id: string | number; season: number; episode: number }, force?: boolean) {
-      const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: 'full' }, undefined, { force });
+      const response = await TraktService.traktClient.episodes.summary.cached({ id, season, episode, extended: TraktApiExtended.Full }, undefined, {
+        force,
+      });
       const data = await response.json();
       if (shouldEvict(response?.cache, data?.first_aired)) response.cache?.evict?.();
       return data as TraktEpisodeExtended;
@@ -433,14 +435,14 @@ export class TraktService {
   };
 
   static async movie(id: string | number, force?: boolean) {
-    const response = await this.traktClient.movies.summary.cached({ id, extended: 'full' }, undefined, { force });
+    const response = await this.traktClient.movies.summary.cached({ id, extended: TraktApiExtended.Full }, undefined, { force });
     const data = await response.json();
     if (shouldEvict(response?.cache, data?.released)) response.cache?.evict?.();
     return data as TraktMovieExtended;
   }
 
   static async person(id: string | number, force?: boolean) {
-    const response = await this.traktClient.people.summary.cached({ id, extended: 'full' }, undefined, { force });
+    const response = await this.traktClient.people.summary.cached({ id, extended: TraktApiExtended.Full }, undefined, { force });
     return response.json() as Promise<TraktPersonExtended>;
   }
 
@@ -572,10 +574,6 @@ export class TraktService {
   };
 
   static ratings = {
-    get: async (query: TraktSyncRatingRequest) => {
-      const response = await TraktService.traktClient.sync.ratings.get.cached(query);
-      return { data: await response.json(), pagination: response.pagination };
-    },
     add: async (query: TraktRatingRequest) => {
       const response = await TraktService.traktClient.sync.ratings.add(query);
       TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => Logger.error('Failed to evict ratings cache', { query, err }));
@@ -587,6 +585,38 @@ export class TraktService {
       const response = await TraktService.traktClient.sync.ratings.remove(query);
       TraktService.traktClient.sync.ratings.get.cached.evict().catch(err => Logger.error('Failed to evict ratings cache', { query, err }));
       return response.json();
+    },
+
+    get: async (query: TraktSyncRatingRequest) => {
+      const response = await TraktService.traktClient.sync.ratings.get.cached(query);
+      return { data: await response.json(), pagination: response.pagination };
+    },
+
+    show: async (id: string | number, force?: boolean) => {
+      const response = await TraktService.traktClient.shows.ratings.cached({ id, extended: TraktApiExtended.All }, undefined, { force });
+      const data = await response.json();
+      if (shouldEvict(response?.cache)) response.cache?.evict?.();
+      return toExtendedRatings(data);
+    },
+    season: async (id: string | number, season: number, force?: boolean) => {
+      const response = await TraktService.traktClient.seasons.ratings.cached({ id, season, extended: TraktApiExtended.All }, undefined, { force });
+      const data = await response.json();
+      if (shouldEvict(response?.cache)) response.cache?.evict?.();
+      return toExtendedRatings(data);
+    },
+    episode: async (id: string | number, season: number, episode: number, force?: boolean) => {
+      const response = await TraktService.traktClient.episodes.ratings.cached({ id, season, episode, extended: TraktApiExtended.All }, undefined, {
+        force,
+      });
+      const data = await response.json();
+      if (shouldEvict(response?.cache)) response.cache?.evict?.();
+      return toExtendedRatings(data);
+    },
+    movie: async (id: string | number, force?: boolean) => {
+      const response = await TraktService.traktClient.movies.ratings.cached({ id, extended: TraktApiExtended.All }, undefined, { force });
+      const data = await response.json();
+      if (shouldEvict(response?.cache)) response.cache?.evict?.();
+      return toExtendedRatings(data);
     },
   };
 
@@ -707,7 +737,14 @@ export class TraktService {
         ]),
       movie: TraktService.traktClient.sync.collection.get.cached.evict,
     },
-    ratings: TraktService.traktClient.sync.ratings.get.cached.evict,
+    ratings: () =>
+      Promise.all([
+        TraktService.traktClient.sync.ratings.get.cached.evict(),
+        TraktService.traktClient.shows.ratings.cached.evict(),
+        TraktService.traktClient.seasons.ratings.cached.evict(),
+        TraktService.traktClient.episodes.ratings.cached.evict(),
+        TraktService.traktClient.movies.ratings.cached.evict(),
+      ]),
     stats: TraktService.traktClient.users.stats.cached.evict,
     settings: TraktService.traktClient.users.settings.cached.evict,
     clean: () => Promise.all([TraktService.caches.trakt.clean(), TraktService.caches.simkl.clean(), TraktService.caches.tmdb.clean()]),

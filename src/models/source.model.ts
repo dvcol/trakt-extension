@@ -6,7 +6,9 @@ import type { Brands } from '~/stores/settings/extension.store';
 
 import IconExternalLinkRounded from '~/components/icons/IconExternalLinkRounded.vue';
 import IconIMDb from '~/components/icons/IconIMDb.vue';
+import IconMeta from '~/components/icons/IconMeta.vue';
 import IconMyAnimeList from '~/components/icons/IconMyAnimeList.vue';
+import IconRT from '~/components/icons/IconRT.vue';
 import IconSimkl from '~/components/icons/IconSimkl.vue';
 import IconTMDb from '~/components/icons/IconTMDb.vue';
 import IconTVDb from '~/components/icons/IconTVDb.vue';
@@ -22,11 +24,13 @@ export const DataSource = {
   Tvdb: 'tvdb',
   Simkl: 'simkl',
   Mal: 'mal',
+  RottenTomatoes: 'rotten_tomatoes',
+  Metascore: 'metascore',
 } as const;
 
 export type DataSources = (typeof DataSource)[keyof typeof DataSource];
 
-export const AllDataSources = Object.keys(DataSource).map(key => key.toLowerCase());
+export const AllDataSources: string[] = Object.values(DataSource);
 export const isKnownSource = (source: string): source is DataSources => AllDataSources.includes(source);
 
 export const getIconFromSource = (source: DataSources | string, brand?: Brands, fallback: Component = IconExternalLinkRounded): Component => {
@@ -43,9 +47,19 @@ export const getIconFromSource = (source: DataSources | string, brand?: Brands, 
       return IconSimkl;
     case DataSource.Mal:
       return IconMyAnimeList;
+    case DataSource.RottenTomatoes:
+      return IconRT;
+    case DataSource.Metascore:
+      return IconMeta;
     default:
       return fallback;
   }
+};
+
+export const sortSources = (a: DataSources | string, b: DataSources | string): number => {
+  if (a.toLowerCase() === DataSource.Trakt) return -1;
+  if (b.toLowerCase() === DataSource.Trakt) return 1;
+  return a.localeCompare(b);
 };
 
 export const getUrlFromSource = (
@@ -79,6 +93,17 @@ export const getUrlFromSource = (
       return ResolveExternalLinks.mal(ids[source]);
     default:
       return undefined;
+  }
+};
+
+export const normalizeSource = (source: DataSources | string, rating: number): number => {
+  switch (source) {
+    case DataSource.RottenTomatoes:
+      return rating / 10;
+    case DataSource.Metascore:
+      return rating / 10;
+    default:
+      return rating;
   }
 };
 

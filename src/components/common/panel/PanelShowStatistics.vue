@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sentenceCase } from '@dvcol/common-utils/common/string';
 import {
   type TraktEpisodeExtended,
   TraktRatingType,
@@ -13,7 +14,13 @@ import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/common/panel/PanelStatistics.vue';
 import PanelTrailers from '~/components/common/panel/PanelTrailers.vue';
-import { DataSource } from '~/models/source.model';
+import {
+  DataSource,
+  getUrlFromSource,
+  isKnownSource,
+  normalizeSource,
+  sortSources,
+} from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 
@@ -49,8 +56,15 @@ const { mode, episode, season, show } = toRefs(props);
 
 const { getShowLoading, getSeasonsLoading, getEpisodesLoading } = useShowStore();
 
-const { loadRatings, getRatings, getLoading, addRating, removeRating } =
-  useRatingsStore();
+const {
+  loadRatings,
+  getRatings,
+  fetchRating,
+  getRating,
+  getLoading,
+  addRating,
+  removeRating,
+} = useRatingsStore();
 
 const { enableRatings } = useExtensionSettingsStoreRefs();
 
@@ -82,25 +96,28 @@ const scoreLoading = computed(() => {
   return getLoading(TraktRatingType.Shows);
 });
 
+const rType = computed<TraktRatingTypes>(() => {
+  if (mode.value === 'episode') return TraktRatingType.Episodes;
+  if (mode.value === 'season') return TraktRatingType.Seasons;
+  return TraktRatingType.Shows;
+});
+
 const scoreIds = computed(() => {
   if (!enableRatings.value) return {};
 
   let id: string | undefined;
-  let type: TraktRatingTypes | undefined;
+  const type: TraktRatingTypes | undefined = rType.value;
 
-  if (!showId.value) return { id, type };
+  if (!showId.value) return { id };
   if (mode.value === 'show') {
     id = showId.value.toString();
-    type = TraktRatingType.Shows;
     return { id, type };
   }
   if (mode.value === 'season') {
-    type = TraktRatingType.Seasons;
     if (seasonId.value) id = `${showId.value}-${seasonId.value}`;
     return { id, type };
   }
   if (mode.value === 'episode') {
-    type = TraktRatingType.Episodes;
     if (episodeId.value) id = `${showId.value}-${episodeId.value}`;
     return { id, type };
   }
@@ -176,35 +193,66 @@ const trailers = computed(() => {
     }));
 });
 
-const ratings = computed<RatingItem[]>(() => {
-  const _ratings: RatingItem[] = [];
-  _ratings.push({
-    name: i18n('trakt', 'common', 'source', 'name'),
-    icon: DataSource.Trakt,
-    rating: {
-      votes: votes.value,
-      rating: rating.value,
-      url: ratingUrl.value,
-      loading: ratingLoading.value,
-    },
-  });
-  if (!simklShow.value?.ratings) return _ratings;
-  if (mode.value !== 'show') return _ratings;
-  Object.entries(simklShow.value.ratings).forEach(([key, value]) => {
-    _ratings.push({
-      name: i18n(key, 'common', 'source', 'name'),
+const extended = computed<[string, RatingItem][]>(() => {
+  if (!showId.value) return [];
+  if (!enableRatings.value) return [];
+  const _query = { id: showId.value, season: seasonNb.value, episode: episodeNb.value };
+  const _ratings = getRating(rType.value, _query);
+  if (!_ratings) return [];
+  return Object.entries(_ratings).map(([key, value]) => [
+    key,
+    {
+      name: isKnownSource(key)
+        ? i18n(key, 'common', 'source', 'name')
+        : sentenceCase(key.replaceAll('_', ' ')),
       icon: key,
       rating: {
         votes: value.votes,
-        rating: value.rating,
-        loading: simklShowLoading.value,
-        url:
-          key === 'mal' ? `https://myanimelist.net/anime/${simklShow.value}` : undefined,
+        rating: normalizeSource(key, value.rating),
+        loading: getLoading(rType.value, _query),
+        url: key === 'trakt' ? ratingUrl.value : undefined,
+      },
+    },
+  ]);
+});
+
+const ratings = computed<RatingItem[]>(() => {
+  const _ratings: Map<string, RatingItem> = new Map(extended.value);
+  if (!_ratings.has(DataSource.Trakt)) {
+    _ratings.set(DataSource.Trakt, {
+      name: i18n('trakt', 'common', 'source', 'name'),
+      icon: DataSource.Trakt,
+      rating: {
+        votes: votes.value,
+        rating: rating.value,
+        url: ratingUrl.value,
+        loading: ratingLoading.value,
       },
     });
-  });
-
-  return _ratings;
+  }
+  if (mode.value === 'show' && simklShow.value?.ratings) {
+    Object.entries(simklShow.value.ratings).forEach(([key, value]) => {
+      _ratings.set(key, {
+        name: isKnownSource(key)
+          ? i18n(key, 'common', 'source', 'name')
+          : sentenceCase(key.replaceAll('_', ' ')),
+        icon: key,
+        rating: {
+          votes: value.votes,
+          rating: normalizeSource(key, value.rating),
+          loading: simklShowLoading.value,
+          url: getUrlFromSource(key, simklShow.value?.ids, {
+            season: seasonNb.value,
+            episode: episodeNb.value,
+            type: mode.value,
+          }),
+        },
+      });
+    });
+  }
+  return Array.from(_ratings.values())
+    .filter(r => r.name === DataSource.Trakt || r.rating.rating)
+    .sort((a, b) => sortSources(a.name, b.name));
 });
 
 const onScoreEdit = async (_score: TraktSyncRatingValue) => {
@@ -254,6 +302,15 @@ onMounted(() => {
   watch(scoreIds, ({ id, type }) => {
     if (!id || !type) return;
     loadRatings(type, id);
+  });
+  watch([showId, seasonNb, episodeNb], () => {
+    if (!showId.value) return;
+    if (!enableRatings.value) return;
+    fetchRating(rType.value, {
+      id: showId.value,
+      season: seasonNb.value,
+      episode: episodeNb.value,
+    });
   });
 });
 </script>

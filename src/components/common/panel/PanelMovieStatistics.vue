@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sentenceCase } from '@dvcol/common-utils/common/string';
 import {
   type TraktMovieExtended,
   TraktRatingType,
@@ -11,7 +12,13 @@ import type { RatingItem } from '~/models/rating.model';
 
 import PanelStatistics from '~/components/common/panel/PanelStatistics.vue';
 import PanelTrailers from '~/components/common/panel/PanelTrailers.vue';
-import { DataSource, getUrlFromSource } from '~/models/source.model';
+import {
+  DataSource,
+  getUrlFromSource,
+  isKnownSource,
+  normalizeSource,
+  sortSources,
+} from '~/models/source.model';
 import { ResolveExternalLinks } from '~/settings/external.links';
 import { useRatingsStore } from '~/stores/data/ratings.store';
 import { useSimklStore } from '~/stores/data/simkl.store';
@@ -36,8 +43,15 @@ const props = defineProps({
 const { movie, movieLoading } = toRefs(props);
 
 const { enableRatings } = useExtensionSettingsStoreRefs();
-const { loadRatings, getRatings, getLoading, addRating, removeRating } =
-  useRatingsStore();
+const {
+  loadRatings,
+  getRatings,
+  fetchRating,
+  getRating,
+  getLoading,
+  addRating,
+  removeRating,
+} = useRatingsStore();
 
 const movieId = computed(() => movie?.value?.ids.trakt);
 const scoreLoading = computed(() => getLoading(TraktRatingType.Movies));
@@ -77,33 +91,63 @@ const trailers = computed(() => {
     }));
 });
 
-const ratings = computed<RatingItem[]>(() => {
-  const _ratings: RatingItem[] = [];
-  _ratings.push({
-    name: i18n('trakt', 'common', 'source', 'name'),
-    icon: DataSource.Trakt,
-    rating: {
-      votes: movie?.value?.votes,
-      rating: movie?.value?.rating,
-      url: ratingUrl.value,
-      loading: movieLoading.value,
-    },
-  });
-  if (!simklMovie.value?.ratings) return _ratings;
-  Object.entries(simklMovie.value.ratings).forEach(([key, value]) => {
-    _ratings.push({
-      name: i18n(key, 'common', 'source', 'name'),
+const extended = computed<[string, RatingItem][]>(() => {
+  if (!movieId.value) return [];
+  if (!enableRatings.value) return [];
+  const _query = { id: movieId.value };
+  const _ratings = getRating(TraktRatingType.Movies, _query);
+  if (!_ratings) return [];
+  return Object.entries(_ratings).map(([key, value]) => [
+    key,
+    {
+      name: isKnownSource(key)
+        ? i18n(key, 'common', 'source', 'name')
+        : sentenceCase(key.replaceAll('_', ' ')),
       icon: key,
       rating: {
         votes: value.votes,
-        rating: value.rating,
-        loading: simklMovieLoading.value,
-        url: getUrlFromSource(key, simklMovie?.value?.ids, { type: 'movie' }),
+        rating: normalizeSource(key, value.rating),
+        loading: getLoading(TraktRatingType.Movies, _query),
+        url: key === 'trakt' ? ratingUrl.value : undefined,
+      },
+    },
+  ]);
+});
+
+const ratings = computed<RatingItem[]>(() => {
+  const _ratings: Map<string, RatingItem> = new Map(extended.value);
+  if (!_ratings.has(DataSource.Trakt)) {
+    _ratings.set(DataSource.Trakt, {
+      name: i18n('trakt', 'common', 'source', 'name'),
+      icon: DataSource.Trakt,
+      rating: {
+        votes: movie?.value?.votes,
+        rating: movie?.value?.rating,
+        url: ratingUrl.value,
+        loading: movieLoading.value,
       },
     });
-  });
+  }
+  if (simklMovie.value?.ratings) {
+    Object.entries(simklMovie.value.ratings).forEach(([key, value]) => {
+      _ratings.set(key, {
+        name: isKnownSource(key)
+          ? i18n(key, 'common', 'source', 'name')
+          : sentenceCase(key.replaceAll('_', ' ')),
+        icon: key,
+        rating: {
+          votes: value.votes,
+          rating: normalizeSource(key, value.rating),
+          loading: simklMovieLoading.value,
+          url: getUrlFromSource(key, simklMovie?.value?.ids, { type: 'movie' }),
+        },
+      });
+    });
+  }
 
-  return _ratings;
+  return Array.from(_ratings.values())
+    .filter(r => r.name === DataSource.Trakt || r.rating.rating)
+    .sort((a, b) => sortSources(a.name, b.name));
 });
 
 const onScoreEdit = async (_score: TraktSyncRatingValue) => {
@@ -123,6 +167,7 @@ onMounted(() => {
     if (!movieId.value) return;
     if (!enableRatings.value) return;
     loadRatings(TraktRatingType.Movies, movieId.value.toString());
+    fetchRating(TraktRatingType.Movies, { id: movieId.value });
   });
 });
 </script>
