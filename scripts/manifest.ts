@@ -26,9 +26,34 @@ const Endpoints = {
     Data: SimklConfig.Data,
     Domain: SimklConfig.Website,
   },
+  dev: `http://localhost`,
 } as const;
 
-export const manifest: Manifest.WebExtensionManifest = {
+export const getExtensionPages = (_dev: boolean, _port: number) => {
+  if (_dev) return `script-src 'self' http://localhost:${_port}; object-src 'self' http://localhost:${_port}`;
+  return "script-src 'self'; object-src 'self'";
+};
+
+export const getHostPermissions = (_dev: boolean, _port: number) => {
+  const permissions: Manifest.Permission[] = [
+    `${Endpoints.Trakt.Domain}/*`,
+    `${Endpoints.Trakt.SubDomain}/*`,
+    `${Endpoints.Trakt.Api}/*`,
+    `${Endpoints.Trakt.StagingApi}/*`,
+    `${Endpoints.Tmdb.Api}/*`,
+    `${Endpoints.Tmdb.Domain}/*`,
+    `${Endpoints.Simkl.Api}/*`,
+    `${Endpoints.Simkl.Data}/*`,
+    `${Endpoints.Simkl.Domain}/*`,
+  ];
+  if (_dev) permissions.push(`${Endpoints.dev}:${_port}/*`);
+  return permissions;
+};
+export type WebManifest = Manifest.WebExtensionManifest & {
+  side_panel: Record<string, string>;
+};
+
+export const manifest: WebManifest = {
   manifest_version: 3,
   name: pkg.title || pkg.name,
   version: pkg.version,
@@ -38,6 +63,9 @@ export const manifest: Manifest.WebExtensionManifest = {
     16: 'icons/icon-512.png',
     48: 'icons/icon-512.png',
     128: 'icons/icon-512.png',
+  },
+  side_panel: {
+    default_path: 'views/options/index.html',
   },
   options_ui: {
     page: 'views/options/index.html',
@@ -52,7 +80,7 @@ export const manifest: Manifest.WebExtensionManifest = {
     service_worker: 'scripts/background.js',
     type: 'module',
   },
-  permissions: ['storage', 'tabs', 'contextMenus', 'cookies'],
+  permissions: ['storage', 'tabs', 'contextMenus', 'cookies', 'sidePanel'],
   web_accessible_resources: [
     {
       resources: ['/views/options/index.html'],
@@ -66,22 +94,10 @@ export const manifest: Manifest.WebExtensionManifest = {
       ],
     },
   ],
-  host_permissions: [
-    `${Endpoints.Trakt.Domain}/*`,
-    `${Endpoints.Trakt.SubDomain}/*`,
-    `${Endpoints.Trakt.Api}/*`,
-    `${Endpoints.Trakt.StagingApi}/*`,
-    `${Endpoints.Tmdb.Api}/*`,
-    `${Endpoints.Tmdb.Domain}/*`,
-    `${Endpoints.Simkl.Api}/*`,
-    `${Endpoints.Simkl.Data}/*`,
-    `${Endpoints.Simkl.Domain}/*`,
-  ],
+  host_permissions: getHostPermissions(isDev, port),
   content_security_policy: {
     // Adds localhost for vite hot reload
-    extension_pages: isDev
-      ? `script-src 'self' http://localhost:${port}; object-src 'self' http://localhost:${port}`
-      : "script-src 'self'; object-src 'self'",
+    extension_pages: getExtensionPages(isDev, port),
   },
 };
 
