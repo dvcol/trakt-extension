@@ -1,5 +1,6 @@
 import type { VersionUpdateDetails } from '@dvcol/web-extension-utils/chrome/models';
 import type { ContextMenuIds } from '~/models/context/context-menu.model';
+import type { IconActions } from '~/models/icon-action';
 import type { BadgeColorDetails, TabIconDetails } from '~/utils/browser/browser-message.utils';
 
 export const MessageType = {
@@ -8,6 +9,7 @@ export const MessageType = {
   AppReady: 'app-ready',
   BadgeUpdate: 'badge-update',
   IconUpdate: 'icon-update',
+  IconOptions: 'icon-options',
 } as const;
 
 export type MessageTypes = (typeof MessageType)[keyof typeof MessageType];
@@ -32,4 +34,6 @@ export type MessagePayload<T extends MessageTypes = MessageTypes> = T extends ty
         ? BadgeUpdatePayload
         : T extends typeof MessageType.IconUpdate
           ? { icon?: TabIconDetails; color?: BadgeColorDetails }
-          : never;
+          : T extends typeof MessageType.IconOptions
+            ? { open: IconActions }
+            : never;

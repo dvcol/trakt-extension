@@ -1,6 +1,7 @@
 export const ContextMenuId = {
   OpenInSideTrakt: 'open_in_side_trakt',
   AddToSearchHistory: 'add_to_search_history',
+  OpenInSideTraktPanel: 'open_in_side_trakt_panel',
 } as const;
 
 export type ContextMenuIds = (typeof ContextMenuId)[keyof typeof ContextMenuId];
@@ -17,7 +18,12 @@ export type ContextMenu = {
 export const ContextMenus: Record<ContextMenuIds, ContextMenu> = {
   [ContextMenuId.OpenInSideTrakt]: {
     id: ContextMenuId.OpenInSideTrakt,
-    title: 'Open in side trakt',
+    title: 'Open Side Trakt window',
+    contexts: ['selection'],
+  },
+  [ContextMenuId.OpenInSideTraktPanel]: {
+    id: ContextMenuId.OpenInSideTraktPanel,
+    title: 'Open Side Trakt panel',
     contexts: ['selection'],
   },
   [ContextMenuId.AddToSearchHistory]: {

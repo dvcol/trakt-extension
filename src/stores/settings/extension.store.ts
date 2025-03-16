@@ -5,10 +5,13 @@ import { defineStore, storeToRefs } from 'pinia';
 
 import { computed, reactive, ref, toRaw } from 'vue';
 
+import type { IconActions } from '~/models/icon-action';
+
 import type { PosterItem } from '~/models/poster.model';
 
 import NewExtensionIcon from '~/assets/brand/favicon-128x128.png';
 import OldExtensionIcon from '~/assets/favicon/favicon-128x128.png';
+import { IconAction } from '~/models/icon-action';
 import { DefaultLists, type ListEntity } from '~/models/list.model';
 import { MessageType } from '~/models/message/message-type.model';
 import { NavbarPosition, type NavbarPositions } from '~/models/navbar-position.model';
@@ -118,6 +121,8 @@ export const DefaultQuickActionLists: QuickActionListDictionary = {
   [Route.Search]: DefaultLists.Watchlist,
 };
 
+const sendIconActionUpdate = debounce((action: IconActions) => sendMessage({ type: MessageType.IconOptions, payload: { open: action } }), 500);
+
 type ThemeColors = {
   main?: string;
   dark?: string;
@@ -144,6 +149,7 @@ type ExtensionSettings = {
   actionDate: ActionDateDictionary;
   actionLists: QuickActionListDictionary;
   theme: ThemeColors;
+  iconAction: IconActions;
 };
 
 const ExtensionSettingsConstants = {
@@ -174,6 +180,8 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
 
   const brand = ref<Brands>(Brand.Old);
   const theme = reactive<ThemeColors>({ background: 'transparent' });
+
+  const iconAction = ref<IconActions>(IconAction.Popup);
 
   const clearState = () => {
     Object.assign(cacheRetention, DefaultCacheRetention);
@@ -207,6 +215,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
         actionDate: toRaw(actionDate),
         actionLists: toRaw(actionLists),
         theme: toRaw(theme),
+        iconAction: iconAction.value,
       }),
     500,
   );
@@ -251,6 +260,7 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
     if (restored?.actionLists !== undefined) Object.assign(actionLists, restored.actionLists);
 
     if (restored?.theme !== undefined) Object.assign(theme, restored.theme);
+    if (restored?.iconAction !== undefined) iconAction.value = restored.iconAction;
 
     if (!chromeRuntimeId) routeDictionary[Route.Progress] = false;
   };
@@ -447,6 +457,14 @@ export const useExtensionSettingsStore = defineStore(ExtensionSettingsConstants.
       set: (value: boolean) => {
         iconOnly.value = value;
         saveState().catch(err => Logger.error('Failed to save icon only extension settings', { value, err }));
+      },
+    }),
+    iconAction: computed<IconActions>({
+      get: () => iconAction.value,
+      set: (value: IconActions) => {
+        iconAction.value = value;
+        sendIconActionUpdate(value).catch(err => Logger.error('Failed to toggle icon action', { value, err }));
+        saveState().catch(err => Logger.error('Failed to save icon action extension settings', { value, err }));
       },
     }),
     getImageSettings,

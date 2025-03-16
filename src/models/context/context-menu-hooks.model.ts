@@ -1,9 +1,10 @@
 import { openPopup } from '@dvcol/web-extension-utils/chrome/action';
 import { context } from '@dvcol/web-extension-utils/chrome/context';
 import { runtime } from '@dvcol/web-extension-utils/chrome/runtime';
+import { openPanel } from '@dvcol/web-extension-utils/chrome/side-panel';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
-import type { ContextMenuOnClickedData } from '@dvcol/web-extension-utils/chrome/models';
+import type { ContextMenuOnClickedData, Tab } from '@dvcol/web-extension-utils/chrome/models';
 import type { RouteLocationNormalized } from 'vue-router';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds, ContextMenus } from '~/models/context/context-menu.model';
@@ -21,12 +22,20 @@ const setLastRoute = (data: ContextMenuOnClickedData) => {
 const openPopupApp = async () => {
   if (openPopup) return openPopup();
   if (!runtime) return;
+  // Fallback to open options page
   await createTab({
     url: runtime.getURL('views/options/index.html'),
   });
 };
 
-export const ContextMenusHooks: Record<ContextMenuIds, (data: ContextMenuOnClickedData) => void | Promise<void>> = {
+export const ContextMenusHooks: Record<ContextMenuIds, (data: ContextMenuOnClickedData, tab?: Tab) => void | Promise<void>> = {
+  [ContextMenuId.OpenInSideTraktPanel]: async (data, tab) => {
+    if (tab?.windowId && openPanel) await openPanel({ windowId: tab.windowId });
+    await setLastRoute(data);
+    if (tab?.windowId && openPanel) return;
+    // Fallback to open popup/options page
+    await openPopupApp();
+  },
   [ContextMenuId.OpenInSideTrakt]: async data => {
     await setLastRoute(data);
     await openPopupApp();

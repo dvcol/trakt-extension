@@ -1,0 +1,14 @@
+{
+  "settings__icon__label_toggle": {
+    "message": "Open Side Trakt in a side panel or a popup",
+    "description": "Label for toggling between side panel and popup."
+  },
+  "settings__icon__label_toggle_panel": {
+    "message": "Panel",
+    "description": "Label for the side panel option."
+  },
+  "settings__icon__label_toggle_popup": {
+    "message": "Popup",
+    "description": "Label for the popup option."
+  }
+}

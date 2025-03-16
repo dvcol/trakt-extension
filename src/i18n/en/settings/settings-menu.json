@@ -54,5 +54,9 @@
   "settings__menu__badge": {
     "message": "Badge",
     "description": "Badge ui menu item"
+  },
+  "settings__menu__icon": {
+    "message": "Icon",
+    "description": "Icon Action menu item"
   }
 }

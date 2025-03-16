@@ -14,6 +14,7 @@ type ContextMenuState = Record<ContextMenuIds, boolean>;
 const defaultState = {
   [ContextMenuId.OpenInSideTrakt]: false,
   [ContextMenuId.AddToSearchHistory]: false,
+  [ContextMenuId.OpenInSideTraktPanel]: false,
 } as const;
 
 export const useContextMenuStore = defineStore(ContextMenuConstants.Store, () => {
