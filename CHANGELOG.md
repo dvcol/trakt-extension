@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.35.0](https://github.com/dvcol/trakt-extension/compare/v1.34.0...v1.35.0) (2025-03-16)
+
+
+### Features
+
+* **side-panel:** adds side-panel support ([7ecb1fe](https://github.com/dvcol/trakt-extension/commit/7ecb1fee3855bb1329d50ee5c2728e702e83925a))
+
+
+### Bug Fixes
+
+* **hmr:** update hmr config to work with vite 6 ([4448b27](https://github.com/dvcol/trakt-extension/commit/4448b2776b1c9b987a7065b16693ea03ff4ac701))
+
 ## [1.34.0](https://github.com/dvcol/trakt-extension/compare/v1.33.2...v1.34.0) (2025-01-12)
 
 
