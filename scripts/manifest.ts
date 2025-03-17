@@ -64,9 +64,6 @@ export const manifest: WebManifest = {
     48: 'icons/icon-512.png',
     128: 'icons/icon-512.png',
   },
-  side_panel: {
-    default_path: 'views/options/index.html',
-  },
   options_ui: {
     page: 'views/options/index.html',
     open_in_tab: true,
@@ -75,6 +72,9 @@ export const manifest: WebManifest = {
     default_title: pkg.title || pkg.name,
     default_icon: 'icons/icon-512.png',
     default_popup: 'views/popup/index.html',
+  },
+  side_panel: {
+    default_path: 'views/panel/index.html',
   },
   background: {
     service_worker: 'scripts/background.js',

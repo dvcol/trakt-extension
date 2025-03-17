@@ -1,6 +1,5 @@
 import { type JsonWriterOptions, writeJson } from '@dvcol/common-utils/common/save';
 import { capitalizeEachWord } from '@dvcol/common-utils/common/string';
-import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive, ref, type Ref } from 'vue';
 
@@ -224,11 +223,6 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     },
   });
 
-  const openTab = (url?: string, active?: boolean) => {
-    if (!url) return;
-    createTab({ url, active: active ?? !openLinkInBackground.value });
-  };
-
   return {
     initLinksStore,
     clearState,
@@ -241,7 +235,6 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     getAliasRef,
     aliasEnabled,
     openLinkInBackground,
-    openTab,
     exporting,
     exportLinks,
   };

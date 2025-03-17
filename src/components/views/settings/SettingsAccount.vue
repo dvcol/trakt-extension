@@ -13,8 +13,8 @@ import IconAccount from '~/components/icons/IconAccount.vue';
 import IconLogOut from '~/components/icons/IconLogOut.vue';
 import { Logger } from '~/services/logger.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { openLink } from '~/stores/composable/use-links';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useLogout } from '~/stores/settings/use-logout';
 import {
   defaultUser,
@@ -78,10 +78,9 @@ const onAvatarError = (event: Event) => {
   fallback.value = true;
 };
 
-const { openTab } = useLinksStore();
 const onClick = () => {
   if (!userData.value?.username) return;
-  openTab(ResolveExternalLinks.trakt.account(userData.value.username));
+  openLink(ResolveExternalLinks.trakt.account(userData.value.username));
 };
 
 const { user } = useAuthSettingsStoreRefs();

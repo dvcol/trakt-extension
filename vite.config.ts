@@ -26,6 +26,7 @@ const getInput = (hmr: boolean, _isWeb: boolean): InputOption => {
     background: resolveParent('src/scripts/background/index.ts'),
     options: resolveParent('src/views/options/index.html'),
     popup: resolveParent('src/views/popup/index.html'),
+    panel: resolveParent('src/views/panel/index.html'),
   };
 
   if (_isWeb) {

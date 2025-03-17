@@ -25,10 +25,10 @@ import { type ListScrollItem } from '~/models/list-scroll.model';
 
 import { ProgressType } from '~/models/progress-type.model';
 import { useItemCollected, useItemPlayed } from '~/stores/composable/use-item-played';
+import { openLink } from '~/stores/composable/use-links';
 import { useShowStore } from '~/stores/data/show.store';
 import { useWatchingStore } from '~/stores/data/watching.store';
 import { useExtensionSettingsStoreRefs } from '~/stores/settings/extension.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('list', 'item', 'panel');
@@ -169,10 +169,9 @@ const tooltipOptions = computed<PopoverProps>(() => ({
   delay: 500,
 }));
 
-const { openTab } = useLinksStore();
 const onTagClick = (url?: string) => {
   if (!url) return;
-  openTab(url);
+  openLink(url);
 };
 </script>
 

@@ -5,7 +5,7 @@ import type { PropType } from 'vue';
 import type { TagLink } from '~/models/tag.model';
 
 import TagLinkComponent from '~/components/common/buttons/TagLink.vue';
-import { useLinksStore } from '~/stores/settings/links.store';
+import { openLink } from '~/stores/composable/use-links';
 
 defineProps({
   label: {
@@ -88,8 +88,6 @@ defineProps({
     default: false,
   },
 });
-
-const { openTab } = useLinksStore();
 </script>
 
 <template>
@@ -116,7 +114,7 @@ const { openTab } = useLinksStore();
             v-for="(tag, i) of values"
             :key="i"
             :tag="{ ...tag, round: true }"
-            @on-click="openTab"
+            @on-click="openLink"
           />
         </template>
         <template v-else>

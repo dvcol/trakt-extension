@@ -24,8 +24,8 @@ importers:
         specifier: ^1.5.2
         version: 1.5.2
       '@dvcol/web-extension-utils':
-        specifier: ^3.5.0
-        version: 3.5.0
+        specifier: ^3.5.1
+        version: 3.5.1
       '@leeoniya/ufuzzy':
         specifier: ^1.0.14
         version: 1.0.14
@@ -1109,8 +1109,8 @@ packages:
     resolution: {integrity: sha512-69DSbUbb+cj1n3QKvGB8nr6p+IMzNjwNuX+7nnYrEfNsmZLCY63HmvXbqnCiaALv8/x1eSA/vbWTXmieVzivPA==}
     engines: {node: '>=20', pnpm: '>= 8'}
 
-  '@dvcol/web-extension-utils@3.5.0':
-    resolution: {integrity: sha512-PmSfdlQ8/8y4EttLY3e4RCeCnIUxBIOi6SgEFRhK0strj+spqkjMeTfDJMZ+NWtcDcoVsUb9aK/2nmf79jC37Q==}
+  '@dvcol/web-extension-utils@3.5.1':
+    resolution: {integrity: sha512-cjTvhzsAu8MtW6sRBLIYzfUbwBXFAcwW8ne6z+Gq+HbZiZHAbELqY8ITKs5KjnPf35bgSE7Lh7tCo2y6AOtulA==}
     engines: {node: '>=16', pnpm: '>= 6.32.0'}
 
   '@electron/get@2.0.3':
@@ -8043,7 +8043,7 @@ snapshots:
       '@dvcol/base-http-client': 1.16.1
       '@dvcol/common-utils': 1.21.1
 
-  '@dvcol/web-extension-utils@3.5.0':
+  '@dvcol/web-extension-utils@3.5.1':
     dependencies:
       '@dvcol/common-utils': 1.21.1
       fast-glob: 3.3.2

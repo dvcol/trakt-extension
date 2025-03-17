@@ -26,8 +26,8 @@ import LoginCard from '~/components/views/login/LoginCard.vue';
 import { Logger } from '~/services/logger.service';
 import { NotificationService } from '~/services/notification.service';
 import { TraktService } from '~/services/trakt.service';
+import { openLink } from '~/stores/composable/use-links';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('login');
@@ -65,8 +65,6 @@ const onSignIn = async () => {
     Logger.error('Error:', error);
   }
 };
-
-const { openTab } = useLinksStore();
 
 const useCode = ref(false);
 const auth = ref<TraktDeviceAuthentication>();
@@ -126,7 +124,7 @@ const copyToClipBoard = () => {
 
 const openVerification = () => {
   const _code = auth.value?.user_code;
-  openTab(_code ? Config.Verification.code(_code) : Config.Verification.Url, false);
+  openLink(_code ? Config.Verification.code(_code) : Config.Verification.Url, false);
 };
 
 const onCheckedToggle = (checked: boolean) => {

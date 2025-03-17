@@ -8,7 +8,7 @@ import type { PosterItem } from '~/models/poster.model';
 import type { ImageQuery, ImageStoreTypes } from '~/stores/data/image.store';
 
 import PosterComponent from '~/components/common/poster/PosterComponent.vue';
-import { useLinksStore } from '~/stores/settings/links.store';
+import { openLink } from '~/stores/composable/use-links';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('common', 'tooltip');
@@ -82,7 +82,6 @@ const label = computed(() => {
   return i18n(`open_${mode.value}_in_trakt`, 'common', 'tooltip');
 });
 
-const { openTab } = useLinksStore();
 const route = useRoute();
 </script>
 
@@ -93,7 +92,7 @@ const route = useRoute();
       class="poster-container"
       :class="{ landscape: !portait, link }"
       :title="label"
-      @click="openTab(link)"
+      @click="openLink(link)"
     >
       <PosterComponent
         :item="posterItem"

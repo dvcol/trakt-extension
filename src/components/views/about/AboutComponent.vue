@@ -10,8 +10,8 @@ import IconGithub from '~/components/icons/IconGithub.vue';
 import IconStar from '~/components/icons/IconStar.vue';
 import { ExternaLinks, ResolveExternalLinks } from '~/settings/external.links';
 import { useAppStateStoreRefs } from '~/stores/app-state.store';
+import { openLink } from '~/stores/composable/use-links';
 import { useWatchingStoreRefs } from '~/stores/data/watching.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('about');
@@ -20,14 +20,12 @@ const version = import.meta.env.PKG_VERSION;
 const language = navigator?.language;
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-const { openTab } = useLinksStore();
-
 const { floating, reverse } = useAppStateStoreRefs();
 const { watching } = useWatchingStoreRefs();
 
 const openRelease = (url?: string) => {
   if (!url) return;
-  openTab(url, true);
+  openLink(url, true);
 };
 </script>
 

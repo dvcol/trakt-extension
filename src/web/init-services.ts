@@ -42,7 +42,7 @@ const onVersionUpdate = async () => {
   await storage.local.remove(MessageType.VersionUpdate);
 };
 
-export const initServices = async (options: { option?: boolean; popup?: boolean; web?: boolean } = {}) => {
+export const initServices = async (options: { option?: boolean; popup?: boolean; panel?: boolean; web?: boolean } = {}) => {
   await useLogStore().initLogStore();
 
   const { setAppReady } = useAppStateStore();

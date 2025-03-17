@@ -12,9 +12,9 @@ import SettingsFormItem from '~/components/views/settings/SettingsFormItem.vue';
 import { Logger } from '~/services/logger.service';
 import { TraktService } from '~/services/trakt.service';
 import { ResolveExternalLinks } from '~/settings/external.links';
+import { openLink } from '~/stores/composable/use-links';
 import { useSimklStore, useSimklStoreRefs } from '~/stores/data/simkl.store';
 import { useAuthSettingsStoreRefs } from '~/stores/settings/auth.store';
-import { useLinksStore } from '~/stores/settings/links.store';
 import { defaultUser } from '~/stores/settings/user.store';
 import { useI18n } from '~/utils/i18n.utils';
 import { useWatchActivated } from '~/utils/vue.utils';
@@ -43,8 +43,7 @@ const onAvatarError = (event: Event) => {
   fallback.value = true;
 };
 
-const { openTab } = useLinksStore();
-const onClick = () => openTab(ResolveExternalLinks.simkl.settings);
+const onClick = () => openLink(ResolveExternalLinks.simkl.settings);
 
 const { isSimklAuthenticated, user } = useAuthSettingsStoreRefs();
 const loginLogout = () => {

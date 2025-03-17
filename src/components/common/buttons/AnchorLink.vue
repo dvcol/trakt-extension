@@ -2,7 +2,7 @@
 import { NH2 } from 'naive-ui';
 import { type Component, type PropType, toRefs, useAttrs } from 'vue';
 
-import { useLinksStore } from '~/stores/settings/links.store';
+import { openLink } from '~/stores/composable/use-links';
 
 const props = defineProps({
   component: {
@@ -30,13 +30,11 @@ const { onClick, label } = toRefs(props);
 
 const attrs = useAttrs() as Record<keyof HTMLAnchorElement, string> | undefined;
 
-const { openTab } = useLinksStore();
-
 const onTitleClick = (e: MouseEvent) => {
   if (onClick?.value) return onClick.value(e, { url: attrs?.href, label: label?.value });
   e.preventDefault();
   e.stopPropagation();
-  openTab(attrs?.href);
+  openLink(attrs?.href);
 };
 </script>
 

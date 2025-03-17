@@ -10,6 +10,7 @@ import { useWaitReady } from '~/utils/store.utils';
 import { watchBreakpoint } from '~/utils/window.utils';
 
 export const useAppStateStore = defineStore('app.state', () => {
+  const root = ref<HTMLElement>();
   const appRef = ref<HTMLDivElement>();
   const mainRef = ref<HTMLDivElement>();
   const footerRef = ref<HTMLDivElement>();
@@ -20,14 +21,15 @@ export const useAppStateStore = defineStore('app.state', () => {
   const footerOpen = ref(false);
   const isOption = ref(false);
   const isPopup = ref(false);
+  const isPanel = ref(false);
   const isWeb = ref(false);
-  const root = ref<HTMLElement>();
+  const isModal = computed(() => isPopup.value || isPanel.value);
 
   const { waitReady, setReady, resetReady } = useWaitReady();
 
   const setAppReady = async (
     ready: boolean,
-    { option, popup, web = !chromeRuntimeId }: { option?: boolean; popup?: boolean; web?: boolean } = {},
+    { option, popup, panel, web = !chromeRuntimeId }: { option?: boolean; popup?: boolean; panel?: boolean; web?: boolean } = {},
   ) => {
     isAppReady.value = ready;
 
@@ -35,6 +37,7 @@ export const useAppStateStore = defineStore('app.state', () => {
 
     isOption.value = option ?? false;
     isPopup.value = popup ?? false;
+    isPanel.value = panel ?? false;
     isWeb.value = web ?? false;
 
     setReady(ready);
@@ -65,11 +68,13 @@ export const useAppStateStore = defineStore('app.state', () => {
     footerOpen,
     isOption,
     isPopup,
+    isPanel,
+    isModal,
     isWeb,
     root,
     reverse: computed(() => {
       if (navbarPosition.value === NavbarPosition.Bottom) return true;
-      if (isPopup.value) return false;
+      if (isModal.value) return false;
       // web and small screen only
       return navbarPosition.value === NavbarPosition.Auto && bottom.width;
     }),
@@ -77,7 +82,7 @@ export const useAppStateStore = defineStore('app.state', () => {
       if (minimum.width) return false;
       // if (panelOpen.value) return false;
       if (navbarPosition.value === NavbarPosition.Floating) return true;
-      if (isPopup.value) return false;
+      if (isModal.value) return false;
       // web & big screen only
       return navbarPosition.value === NavbarPosition.Auto && floating.width === false;
     }),

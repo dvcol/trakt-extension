@@ -187,7 +187,7 @@ export class TraktService {
     const url = this.traktClient
       .redirectToAuthenticationUrl(params)
       .replace(`${traktClientSettings.corsProxy}/${traktClientSettings.corsPrefix}`, traktClientSettings.endpoint);
-    if (useAppStateStore().isPopup) return createTab({ url });
+    if (useAppStateStore().isModal) return createTab({ url });
     window.location.href = url;
   }
 
@@ -634,7 +634,7 @@ export class TraktService {
     },
     authorize: () => {
       const url = this.simklClient.resolveAuthorizeUrl();
-      if (useAppStateStore().isPopup) return createTab({ url });
+      if (useAppStateStore().isModal) return createTab({ url });
       window.location.href = url;
     },
     login: async (code: string): Promise<SettingsAndAuth> => {
