@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.36.0](https://github.com/dvcol/trakt-extension/compare/v1.35.0...v1.36.0) (2025-03-17)
+
+
+### Features
+
+* **links:** open link in active tab if not set to background ([a646be7](https://github.com/dvcol/trakt-extension/commit/a646be7801c331b88d64f92038f6547878f04466))
+
 ## [1.35.0](https://github.com/dvcol/trakt-extension/compare/v1.34.0...v1.35.0) (2025-03-16)
 
 
