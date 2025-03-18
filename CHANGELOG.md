@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.1](https://github.com/dvcol/trakt-extension/compare/v1.36.0...v1.36.1) (2025-03-18)
+
+
+### Bug Fixes
+
+* **panel:** update search if panel already open ([d3edf8c](https://github.com/dvcol/trakt-extension/commit/d3edf8c508682e53f42064b0e1c114ca63bbb7bc))
+* **search:** keep last search & toggle autocomplete on ctrl ([e77482e](https://github.com/dvcol/trakt-extension/commit/e77482e30279474681213ee126fe9d0e39f351b5))
+
 ## [1.36.0](https://github.com/dvcol/trakt-extension/compare/v1.35.0...v1.36.0) (2025-03-17)
 
 
