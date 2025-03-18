@@ -8,15 +8,16 @@ import type { ContextMenuOnClickedData, Tab } from '@dvcol/web-extension-utils/c
 import type { RouteLocationNormalized } from 'vue-router';
 
 import { ContextMenuConstants, ContextMenuId, type ContextMenuIds, ContextMenus } from '~/models/context/context-menu.model';
+import { MessageType } from '~/models/message/message-type.model';
 import { Route, RouterStorageKey } from '~/models/router.model';
+import { sendMessage } from '~/utils/browser/browser-message.utils';
 import { storage } from '~/utils/browser/browser-storage.utils';
 
-const setLastRoute = (data: ContextMenuOnClickedData) => {
+const setLastRoute = async (data: ContextMenuOnClickedData, payload?: Partial<RouteLocationNormalized>) => {
   if (!data?.selectionText) return;
-  return storage.local.set(RouterStorageKey.LastRoute, {
-    name: Route.Search,
-    query: { search: data.selectionText },
-  } satisfies Partial<RouteLocationNormalized>);
+  if (!payload) payload = { name: Route.Search, query: { search: data.selectionText } };
+  await storage.local.set(RouterStorageKey.LastRoute, payload);
+  await sendMessage({ type: MessageType.Routing, payload });
 };
 
 const openPopupApp = async () => {
@@ -40,7 +41,7 @@ export const ContextMenusHooks: Record<ContextMenuIds, (data: ContextMenuOnClick
     await setLastRoute(data);
     await openPopupApp();
   },
-  [ContextMenuId.AddToSearchHistory]: setLastRoute,
+  [ContextMenuId.AddToSearchHistory]: data => setLastRoute(data),
 } as const;
 
 export const installContextMenus = async (enabled?: Record<ContextMenuIds, boolean>) => {

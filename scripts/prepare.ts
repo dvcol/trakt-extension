@@ -25,7 +25,7 @@ const copyIndexHtml = async (view: string) => {
 /**
  * copy index.html to use Vite in development
  */
-const copyViews = async (views = ['options', 'popup']) => views.map(copyIndexHtml);
+const copyViews = async (views = ['options', 'popup', 'panel']) => views.map(copyIndexHtml);
 
 /**
  * Copy extension icons to dist folder

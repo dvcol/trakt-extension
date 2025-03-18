@@ -27,7 +27,7 @@ const i18n = useI18n('search');
 
 const { footerOpen } = useAppStateStoreRefs();
 
-const { searchResults, loading, pagination } = useSearchStoreRefs();
+const { searchResults, loading, pagination, search } = useSearchStoreRefs();
 const { fetchSearchResults } = useSearchStore();
 
 const { getImageSettings } = useExtensionSettingsStore();

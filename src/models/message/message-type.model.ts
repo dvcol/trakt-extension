@@ -1,4 +1,5 @@
 import type { VersionUpdateDetails } from '@dvcol/web-extension-utils/chrome/models';
+import type { RouteLocationRaw } from 'vue-router';
 import type { ContextMenuIds } from '~/models/context/context-menu.model';
 import type { IconActions } from '~/models/icon-action';
 import type { BadgeColorDetails, TabIconDetails } from '~/utils/browser/browser-message.utils';
@@ -10,6 +11,7 @@ export const MessageType = {
   BadgeUpdate: 'badge-update',
   IconUpdate: 'icon-update',
   IconOptions: 'icon-options',
+  Routing: 'routing',
 } as const;
 
 export type MessageTypes = (typeof MessageType)[keyof typeof MessageType];
@@ -36,4 +38,6 @@ export type MessagePayload<T extends MessageTypes = MessageTypes> = T extends ty
           ? { icon?: TabIconDetails; color?: BadgeColorDetails }
           : T extends typeof MessageType.IconOptions
             ? { open: IconActions }
-            : never;
+            : T extends typeof MessageType.Routing
+              ? RouteLocationRaw
+              : never;

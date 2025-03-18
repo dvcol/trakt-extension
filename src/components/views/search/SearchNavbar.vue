@@ -10,7 +10,16 @@ import {
   type SelectOption,
 } from 'naive-ui';
 
-import { type Component, computed, defineProps, h, onActivated, ref } from 'vue';
+import {
+  type Component,
+  computed,
+  defineProps,
+  h,
+  onActivated,
+  onDeactivated,
+  ref,
+  watch,
+} from 'vue';
 
 import { useRoute } from 'vue-router';
 
@@ -218,8 +227,6 @@ const hideTooltip = () => {
 
 const inputRef = ref();
 
-const route = useRoute();
-
 const placement = computed(() => (reverse ? 'top' : 'bottom'));
 
 const saveHistory = async () => {
@@ -234,12 +241,18 @@ const searchNow = () => {
   fetchSearchResults(undefined, debouncedSearch.value);
 };
 
-onActivated(() => {
-  const _search = route?.query?.search;
-  if (typeof _search !== 'string') return;
-  search.value = _search.trim();
-  saveHistory();
-});
+const route = useRoute();
+const watching = watch(
+  () => route.query,
+  () => {
+    const _search = route?.query?.search;
+    if (typeof _search !== 'string') return;
+    search.value = _search.trim();
+    saveHistory();
+  },
+);
+onActivated(watching.resume);
+onDeactivated(watching.pause);
 </script>
 
 <template>
