@@ -136,6 +136,8 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
   const loadingPlaceholder = useLoadingPlaceholder<SearchResult>(pageSize);
 
   const { isAuthenticated } = useAuthSettingsStoreRefs();
+
+  const searching = ref<string>();
   const fetchSearchResults = async ({ page, limit = pageSize.value }: { page?: number; limit?: number } = {}, _search = search.value?.trim()) => {
     if (!isAuthenticated.value) {
       Logger.error('Cannot fetch search results, user is not authenticated');
@@ -146,25 +148,25 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       searchResults.value = [];
       return;
     }
+
+    const request: TraktSearch = { type: types.value, escape: !query.value, query: _search, pagination: { page, limit } };
+    const requestStr = JSON.stringify(request);
     if (!firstLoad.value && loading.value) {
-      Logger.warn('Already fetching history');
-      return;
+      if (searching.value === requestStr) return Logger.warn('Already fetching search results', JSON.parse(searching.value ?? '{}'));
+      Logger.warn('Cancelling previous search request', JSON.parse(searching.value ?? '{}'));
     }
+
     if (firstLoad.value) firstLoad.value = false;
 
     Logger.debug('Fetching search results', { types: types.value, query: query.value, search: _search });
 
     loading.value = true;
     const { clearLoading } = debounceLoading(searchResults, loadingPlaceholder, { clear: !page });
-    const request: TraktSearch = {
-      type: types.value,
-      escape: !query.value,
-      query: _search,
-      pagination: { page, limit },
-    };
+    searching.value = requestStr;
     try {
       const response = await TraktService.search(request);
       delete searchErrors[JSON.stringify(request)];
+      if (searching.value !== requestStr) return;
 
       const data = response.data.map((item, index) => ({
         ...item,
@@ -177,11 +179,13 @@ export const useSearchStore = defineStore(SearchStoreConstants.Store, () => {
       Logger.error('Failed to fetch search query');
       NotificationService.error('Failed to fetch search query', e);
       searchResults.value = searchResults.value.filter(s => s.type !== ListScrollItemType.Loading);
-      searchErrors[JSON.stringify(request)] = ErrorCount.fromDictionary(searchErrors, JSON.stringify(request), e);
+      searchErrors[requestStr] = ErrorCount.fromDictionary(searchErrors, requestStr, e);
       throw e;
     } finally {
-      clearLoading();
-      loading.value = false;
+      if (searching.value === requestStr) {
+        clearLoading();
+        loading.value = false;
+      }
     }
   };
 

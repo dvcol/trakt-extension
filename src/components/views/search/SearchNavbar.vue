@@ -227,6 +227,8 @@ const hideTooltip = () => {
 
 const inputRef = ref();
 
+const dropdown = ref(false);
+
 const placement = computed(() => (reverse ? 'top' : 'bottom'));
 
 const saveHistory = async () => {
@@ -237,8 +239,11 @@ const saveHistory = async () => {
   }
 };
 
-const searchNow = () => {
-  fetchSearchResults(undefined, debouncedSearch.value);
+const searchNow = () => fetchSearchResults(undefined, debouncedSearch.value);
+
+const onKeydownEnter = () => {
+  if (dropdown.value) return;
+  searchNow();
 };
 
 const route = useRoute();
@@ -306,8 +311,11 @@ onDeactivated(watching.pause);
           clearable
           :options="historyOptions"
           :to="parentElement"
+          :get-show="() => dropdown"
           @blur="saveHistory"
-          @keydown.enter="searchNow"
+          @select="searchNow"
+          @keydown.enter="onKeydownEnter"
+          @keydown.ctrl="dropdown = !dropdown"
         >
           <template #prefix>
             <NIcon :component="IconLoop" />
@@ -423,6 +431,10 @@ onDeactivated(watching.pause);
     @media (width < 600px) {
       min-width: auto;
     }
+  }
+
+  .search-button-auto {
+    flex: 0 1 2rem;
   }
 }
 </style>
