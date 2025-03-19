@@ -64,8 +64,13 @@ import { useI18n } from '~/utils/i18n.utils';
 
 const i18n = useI18n('settings', 'links');
 
-const { linkDictionary, aliasEnabled, openLinkInBackground, exporting } =
-  useLinksStoreRefs();
+const {
+  linkDictionary,
+  aliasEnabled,
+  openLinkInActiveTab,
+  openLinkInBackground,
+  exporting,
+} = useLinksStoreRefs();
 const { addLink, removeLink, exportLinks } = useLinksStore();
 
 const { root } = useAppStateStoreRefs();
@@ -268,6 +273,12 @@ const containerRef = ref<HTMLDivElement>();
       <NSwitch v-model:value="aliasEnabled" class="form-switch">
         <template #checked>{{ i18n('show', 'common', 'button') }}</template>
         <template #unchecked>{{ i18n('hide', 'common', 'button') }}</template>
+      </NSwitch>
+    </SettingsFormItem>
+    <SettingsFormItem :label="i18n('label_open_in_active_tab')">
+      <NSwitch v-model:value="openLinkInActiveTab" class="form-switch">
+        <template #checked>{{ i18n('on', 'common', 'button') }}</template>
+        <template #unchecked>{{ i18n('off', 'common', 'button') }}</template>
       </NSwitch>
     </SettingsFormItem>
     <SettingsFormItem :label="i18n('label_open_in_background')">

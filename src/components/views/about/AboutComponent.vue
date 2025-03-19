@@ -25,7 +25,7 @@ const { watching } = useWatchingStoreRefs();
 
 const openRelease = (url?: string) => {
   if (!url) return;
-  openLink(url, true);
+  openLink(url, { active: true });
 };
 </script>
 

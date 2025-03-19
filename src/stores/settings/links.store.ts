@@ -38,6 +38,7 @@ type AliasDictionary = Partial<Record<AliasScope, Record<string, string>>>;
 
 type LinksStoreState = {
   enabled: boolean;
+  activeLink: boolean;
   backgroundLink: boolean;
 };
 
@@ -49,6 +50,7 @@ const LinksStoreConstants = {
 
 export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
   const enabled = ref(false);
+  const activeLink = ref(false);
   const backgroundLink = ref(false);
   const aliasDictionary = reactive<AliasDictionary>({});
 
@@ -64,7 +66,7 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
   };
 
   const saveState = debounce(
-    () => storage.sync.set(LinksStoreConstants.Store, { enabled: enabled.value, backgroundLink: backgroundLink.value }),
+    () => storage.sync.set(LinksStoreConstants.Store, { enabled: enabled.value, activeLink: activeLink.value, backgroundLink: backgroundLink.value }),
     500,
   );
   const saveAlias = debounce(() => storage.sync.set(LinksStoreConstants.SyncAliases, aliasDictionary), 500);
@@ -111,6 +113,7 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     ]);
 
     if (restoredState?.enabled !== undefined) enabled.value = restoredState.enabled;
+    if (restoredState?.activeLink !== undefined) activeLink.value = restoredState.activeLink;
     if (restoredState?.backgroundLink !== undefined) backgroundLink.value = restoredState.backgroundLink;
     if (restoredAliases) Object.assign(aliasDictionary, restoredAliases);
     if (restoredLinks) {
@@ -215,6 +218,14 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     },
   });
 
+  const openLinkInActiveTab = computed({
+    get: () => activeLink.value,
+    set: (value: boolean) => {
+      activeLink.value = value;
+      saveState().catch(err => Logger.error('Failed to save link settings', { value, err }));
+    },
+  });
+
   const openLinkInBackground = computed({
     get: () => backgroundLink.value,
     set: (value: boolean) => {
@@ -234,6 +245,7 @@ export const useLinksStore = defineStore(LinksStoreConstants.Store, () => {
     getAlias,
     getAliasRef,
     aliasEnabled,
+    openLinkInActiveTab,
     openLinkInBackground,
     exporting,
     exportLinks,

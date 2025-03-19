@@ -124,7 +124,9 @@ const copyToClipBoard = () => {
 
 const openVerification = () => {
   const _code = auth.value?.user_code;
-  openLink(_code ? Config.Verification.code(_code) : Config.Verification.Url, false);
+  openLink(_code ? Config.Verification.code(_code) : Config.Verification.Url, {
+    active: false,
+  });
 };
 
 const onCheckedToggle = (checked: boolean) => {

@@ -67,6 +67,10 @@
     "message": "Remove this custom link?",
     "description": "Confirmation message for removing a custom link"
   },
+  "settings__links__label_open_in_active_tab": {
+    "message": "Open links in active tab (replace current tab)",
+    "description": "Label for the open in new tab checkbox"
+  },
   "settings__links__label_open_in_background": {
     "message": "Open links in background (popup stay active)",
     "description": "Label for the open in new tab checkbox"
