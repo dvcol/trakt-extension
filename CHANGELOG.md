@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.3](https://github.com/dvcol/trakt-extension/compare/v1.36.2...v1.36.3) (2025-03-25)
+
+
+### Bug Fixes
+
+* **error:** parse error message to give better notifications ([1c44d77](https://github.com/dvcol/trakt-extension/commit/1c44d77b64b24a228f3e4911a52de6ae1d2e2c93))
+* **error:** parse error message to give better notifications ([54c22df](https://github.com/dvcol/trakt-extension/commit/54c22df446e60090ad35c1b81827b0aaf2ec2c6e))
+
 ### [1.36.2](https://github.com/dvcol/trakt-extension/compare/v1.36.1...v1.36.2) (2025-03-19)
 
 
