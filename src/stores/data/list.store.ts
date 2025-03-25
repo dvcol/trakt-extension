@@ -303,7 +303,10 @@ export const useListStore = defineStore(ListStoreConstants.Store, () => {
       );
     } catch (e) {
       Logger.error('Failed to add item to list');
-      NotificationService.error(`Failed to add item to list '${list.name}'`, e);
+      NotificationService.error(
+        `Failed to add item to ${i18n(list.type, 'common', 'list').toLowerCase()}${list.type === ListType.List ? ` '${list.name}'` : ''}`,
+        e,
+      );
       throw e;
     } finally {
       filter.forEach(id => setItemListLoading({ listType, itemType, itemId: id, loading: false }));

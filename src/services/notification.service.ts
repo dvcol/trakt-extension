@@ -1,3 +1,4 @@
+import { TraktApiResponseError } from '@dvcol/trakt-http-client/models';
 import { createTab } from '@dvcol/web-extension-utils/chrome/tabs';
 
 import { NButton } from 'naive-ui';
@@ -50,7 +51,10 @@ export class NotificationService {
       duration,
     };
 
-    if (error instanceof Response) {
+    if (error instanceof TraktApiResponseError) {
+      option.description = [error.response.status, error.response.statusText].filter(Boolean).join(' - ');
+      option.content = error.message;
+    } else if (error instanceof Response) {
       option.description = error.status?.toString();
       option.content = error.statusText;
     } else if (error instanceof Error) {

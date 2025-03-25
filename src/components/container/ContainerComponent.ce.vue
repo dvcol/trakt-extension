@@ -290,7 +290,7 @@ const toRgb = (color?: string, alpha?: string) => {
 .n-popselect-menu,
 .n-select-menu {
   @include mixin.hover-background(
-    $from: var(--custom-bg-color, var(--bg-color-20)),
+    $from: var(--custom-bg-color, var(--bg-color-60)),
     $to: var(--custom-bg-color-hover, var(--bg-color-80))
   );
 }
