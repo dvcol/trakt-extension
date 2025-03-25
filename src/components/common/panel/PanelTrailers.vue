@@ -76,13 +76,20 @@ const onTouchEnd = (e: TouchEvent) => {
 @use '~/styles/mixin' as mixin;
 
 .carousel {
-  --width: min(var(--half-width), var(--height-70-dvh));
-  --height: calc(var(--width) * (9 / 16));
-
   width: var(--width);
   height: calc(var(--height) + 1rem + 2.5rem);
   margin: 0 -1.25rem;
   padding: 0 1.25rem;
+  aspect-ratio: 16 / 9;
+
+  --width: min(var(--half-width), var(--height-70-dvh));
+  --height: calc(var(--width) * (9 / 16));
+
+  @media (width < 725px) {
+    --width: min(var(--width-80-dvh), var(--height-70-dvh));
+
+    margin: auto;
+  }
 
   :deep(.n-carousel__slides .n-carousel__slide.n-carousel__slide--current) {
     overflow: unset;
