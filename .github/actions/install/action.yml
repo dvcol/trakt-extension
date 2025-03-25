@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: 🏗️ Setup pnpm ${{ inputs.pnpm_version }}
-      uses: pnpm/action-setup@v2
+      uses: pnpm/action-setup@v4
       with:
         version: ${{ inputs.pnpm_version }}
 
