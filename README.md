@@ -70,7 +70,7 @@ Give a ⭐️ if this project helped you!
 * [Download Side Trakt (companion app for Trakt.tv)](https://chrome.google.com/webstore/detail/side-trakt-companion-app/pdodapikbijcfickiofjkjgkkmlcnbba)
 
  <a href="https://chrome.google.com/webstore/detail/side-trakt-companion-app/pdodapikbijcfickiofjkjgkkmlcnbba" target="_blank">
-    <img alt="chrome-webstore" src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/mPGKYBIR2uCP0ApchDXE.png" />
+    <img alt="chrome-webstore" src="https://dvcol.github.io/trakt-extension/chrome-store.png" />
  </a>
 
 ## 📝 License
