@@ -45,7 +45,7 @@
     "test:watch": "vitest --mode testing",
     "lint": "eslint .",
     "lint:fix": "pnpm run lint --fix",
-    "style": "stylelint **/*.{vue,css,scss,less,html} --go '{\"gitignore\":true}'",
+    "style": "stylelint '**/*.{vue,css,scss,less,html}' --go '{\"gitignore\":true}'",
     "style:fix": "pnpm run style --fix",
     "release": "standard-version",
     "release:changelog": "extract-changelog-release > RELEASE.md"
@@ -68,44 +68,30 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
-    "@dvcol/eslint-plugin-presets": "^1.3.11",
+    "@dvcol/eslint-config": "^1.4.0",
     "@dvcol/stylelint-plugin-presets": "^2.1.2",
+    "@prettier/plugin-xml": "^3.4.1",
     "@tsconfig/node20": "^20.1.2",
     "@types/chrome": "^0.0.309",
     "@types/fs-extra": "^11.0.1",
     "@types/jsdom": "^21.1.2",
     "@types/node": "^20.5.3",
     "@types/webextension-polyfill": "^0.12.3",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vitest/coverage-v8": "^2.1.1",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.4.3",
     "@vue/tsconfig": "^0.5.1",
     "c8": "^10.1.2",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
-    "eslint": "^8.56.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-html": "^8.0.0",
-    "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-jsonc": "^2.9.0",
-    "eslint-plugin-markdown": "^3.0.1",
-    "eslint-plugin-prettier": "^5.1.2",
-    "eslint-plugin-vitest": "^0.4.0",
-    "eslint-plugin-vue": "^9.29.0",
-    "eslint-plugin-vuejs-accessibility": "^2.2.0",
-    "eslint-plugin-yml": "^1.0.0",
+    "eslint": "^9.25.0",
+    "eslint-plugin-format": "^1.0.1",
+    "eslint-plugin-svelte": "^3.5.1",
     "esno": "^4.0.0",
     "extract-changelog-release": "^1.0.2",
     "fs-extra": "^11.1.1",
     "husky": "^9.0.6",
     "jsdom": "^24.0.0",
-    "jsonc-eslint-parser": "^2.1.0",
     "lint-staged": "^15.0.0",
     "magic-string": "^0.30.3",
     "npm-run-all2": "^6.0.0",
@@ -123,27 +109,14 @@
     "vite-plugin-pwa": "^0.20.5",
     "vitest": "^2.1.1",
     "vue-tsc": "^2.1.6",
-    "webextension-polyfill": "^0.12.0",
-    "yaml-eslint-parser": "^1.0.0"
+    "webextension-polyfill": "^0.12.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue,svelte,json,md}": [
+    "*.{js,cjs,mjs,jsx,ts,tsx,vue,svelte,json,md,yml,html,md,svg,xml}": [
       "eslint --fix"
     ],
     "*.{css,scss,less,vue,svelte}": [
       "stylelint --fix"
     ]
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "@babel/plugin-syntax-flow",
-        "@babel/plugin-transform-react-jsx",
-        "svelte"
-      ],
-      "allowedVersions": {
-        "stylelint": ">=15"
-      }
-    }
   }
 }
