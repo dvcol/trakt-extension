@@ -176,11 +176,12 @@ export class TraktService {
     return { auth, settings: _settings };
   }
 
-  static async importAuthentication({ trakt, simkl, tmdb }: SettingsAuth = {}): Promise<SettingsAndAuth> {
-    if (trakt) await this.traktClient.importAuthentication(trakt);
-    if (simkl) this.simklClient.importAuthentication(simkl);
-    if (tmdb) this.tmdbClient.importAuthentication(tmdb);
-    return this.saveAuth({ trakt, tmdb, simkl });
+  static async importAuthentication({ trakt, tmdb, simkl }: SettingsAuth = {}): Promise<SettingsAndAuth> {
+    const auth = { trakt, simkl, tmdb };
+    if (trakt) auth.trakt = await this.traktClient.importAuthentication(trakt);
+    if (simkl) auth.simkl = this.simklClient.importAuthentication(simkl);
+    if (tmdb) auth.tmdb = this.tmdbClient.importAuthentication(tmdb);
+    return this.saveAuth(auth);
   }
 
   static async approve(params: TraktAuthenticationApprove = {}) {
