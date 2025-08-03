@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.4](https://github.com/dvcol/trakt-extension/compare/v1.36.3...v1.36.4) (2025-08-03)
+
+
+### Bug Fixes
+
+* **auth:** replace stored auth when refreshing token ([b767343](https://github.com/dvcol/trakt-extension/commit/b76734310db331f267cc9cf37de6658e7740d39a))
+
 ### [1.36.3](https://github.com/dvcol/trakt-extension/compare/v1.36.2...v1.36.3) (2025-03-25)
 
 
