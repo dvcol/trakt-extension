@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           fetch-depth: 0
@@ -49,7 +49,7 @@ jobs:
           simkl_client_secret: ${{ secrets.VITE_SIMKL_CLIENT_SECRET }}
 
       - name: 💾 Restore build artefacts
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         id: cache
         with:
           path: dist
@@ -71,7 +71,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.commit-hash || 'main' }}
           fetch-depth: 0

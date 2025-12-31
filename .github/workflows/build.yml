@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🚧 Build
         uses: ./.github/actions/build
@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🚧 Build
         uses: ./.github/actions/build
@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🧱 Install
         uses: ./.github/actions/install
@@ -85,7 +85,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🧱 Install
         uses: ./.github/actions/install

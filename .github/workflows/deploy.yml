@@ -30,10 +30,10 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 💾 Restore build artefacts
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         id: cache
         with:
           path: dist
@@ -63,7 +63,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: 📦 Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           # Upload entire repository
           path: dist
