@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.5](https://github.com/dvcol/trakt-extension/compare/v1.36.4...v1.36.5) (2025-12-31)
+
+
+### Bug Fixes
+
+* **list:** filter out duplicated id in scrollable lists ([e8aed7d](https://github.com/dvcol/trakt-extension/commit/e8aed7d334b038ea0c35fe839dc97d1828e5a9d7))
+
 ### [1.36.4](https://github.com/dvcol/trakt-extension/compare/v1.36.3...v1.36.4) (2025-08-03)
 
 
