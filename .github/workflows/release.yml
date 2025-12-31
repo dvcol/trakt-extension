@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: ⛙ Checkout branch ${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           fetch-depth: 0

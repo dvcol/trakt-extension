@@ -19,7 +19,7 @@ runs:
         version: ${{ inputs.pnpm_version }}
 
     - name: 🏗️ Setup Node.js ${{ inputs.node_version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node_version }}
         registry-url: 'https://registry.npmjs.org'
