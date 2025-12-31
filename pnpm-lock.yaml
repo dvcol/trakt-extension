@@ -56,13 +56,13 @@ importers:
         version: 19.0.0
       '@dvcol/eslint-plugin-presets':
         specifier: ^1.3.11
-        version: 1.3.11(iwoqv5igyzkvidfw6efekeklmy)
+        version: 1.3.11(0fbc20f78847428e47da6ad42b82a219)
       '@dvcol/stylelint-plugin-presets':
         specifier: ^2.1.2
-        version: 2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.5.4))
-      '@tsconfig/node20':
-        specifier: ^20.1.2
-        version: 20.1.2
+        version: 2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.5.4))
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.5
       '@types/chrome':
         specifier: ^0.0.309
         version: 0.0.309
@@ -1411,6 +1411,7 @@ packages:
   '@humanwhocodes/config-array@0.11.13':
     resolution: {integrity: sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==}
     engines: {node: '>=10.10.0'}
+    deprecated: Use @eslint/config-array instead
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -1418,6 +1419,7 @@ packages:
 
   '@humanwhocodes/object-schema@2.0.1':
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==}
+    deprecated: Use @eslint/object-schema instead
 
   '@hutson/parse-repository-url@3.0.2':
     resolution: {integrity: sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==}
@@ -1731,8 +1733,8 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tsconfig/node20@20.1.2':
-    resolution: {integrity: sha512-madaWq2k+LYMEhmcp0fs+OGaLFk0OenpHa4gmI4VEmCKX4PJntQ6fnnGADVFrVkBj0wIdAlQnK/MrlYTHsa1gQ==}
+  '@tsconfig/node22@22.0.5':
+    resolution: {integrity: sha512-hLf2ld+sYN/BtOJjHUWOk568dvjFQkHnLNa6zce25GIH+vxKfvTgm3qpaH6ToF5tu/NN0IH66s+Bb5wElHrLcw==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -2415,6 +2417,7 @@ packages:
 
   boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -3299,6 +3302,7 @@ packages:
   eslint-plugin-markdown@3.0.1:
     resolution: {integrity: sha512-8rqoc148DWdGdmYF6WSQFT3uQ6PO7zXYgeBpHAOAakX/zpq+NvFYbDA/H7PYzHajwtmaOzAwfxyl++x0g1/N9A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: Please use @eslint/markdown instead
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
 
@@ -3358,6 +3362,7 @@ packages:
   eslint@8.56.0:
     resolution: {integrity: sha512-Go19xM6T9puCOWntie1/P997aXxFsOi37JIHRWI514Hc6ZnaHGKY9xFhrU65RT6CcBEzZoGG1e6Nq+DT04ZtZQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   esno@4.0.0:
@@ -3716,6 +3721,7 @@ packages:
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -3978,6 +3984,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -4521,9 +4528,11 @@ packages:
 
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
+    deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.ismatch@4.4.0:
     resolution: {integrity: sha512-fPMfXjGQEV9Xsq/8MTSgUf255gawYRbjwMyDbcvDhXgV7enSZA0hynz6vMPnpAb5iONEzBHBPsT+0zes5Z301g==}
@@ -5350,6 +5359,10 @@ packages:
   q@1.5.1:
     resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
+    deprecated: |-
+      You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
+      (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   querystringify@2.2.0:
     resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
@@ -5547,10 +5560,12 @@ packages:
 
   rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@5.0.5:
@@ -5792,6 +5807,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -6713,6 +6729,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -7974,7 +7991,7 @@ snapshots:
     dependencies:
       pretty-bytes: 6.1.1
 
-  '@dvcol/eslint-plugin-presets@1.3.11(iwoqv5igyzkvidfw6efekeklmy)':
+  '@dvcol/eslint-plugin-presets@1.3.11(0fbc20f78847428e47da6ad42b82a219)':
     dependencies:
       chalk: 4.1.2
       dash-ast: 2.0.1
@@ -8009,7 +8026,7 @@ snapshots:
       '@dvcol/base-http-client': 1.16.1
       '@dvcol/common-utils': 1.21.1
 
-  '@dvcol/stylelint-plugin-presets@2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.5.4))':
+  '@dvcol/stylelint-plugin-presets@2.1.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)(prettier@3.1.1)(stylelint@16.2.0(typescript@5.5.4))':
     dependencies:
       chalk: 5.3.0
       ora: 8.0.1
@@ -8020,16 +8037,16 @@ snapshots:
       stylelint-config-html: 1.1.0(postcss-html@1.5.0)(stylelint@16.2.0(typescript@5.5.4))
       stylelint-config-rational-order: 0.1.2
       stylelint-config-standard: 36.0.0(stylelint@16.2.0(typescript@5.5.4))
-      stylelint-config-standard-scss: 13.0.0(postcss@8.4.33)(stylelint@16.2.0(typescript@5.5.4))
+      stylelint-config-standard-scss: 13.0.0(postcss@8.5.3)(stylelint@16.2.0(typescript@5.5.4))
       stylelint-config-standard-vue: 1.0.0(postcss-html@1.5.0)(stylelint@16.2.0(typescript@5.5.4))
       stylelint-declaration-block-no-ignored-properties: 2.8.0(stylelint@16.2.0(typescript@5.5.4))
       stylelint-group-selectors: 1.0.10(stylelint@16.2.0(typescript@5.5.4))
       stylelint-order: 6.0.4(stylelint@16.2.0(typescript@5.5.4))
       stylelint-prettier: 5.0.0(prettier@3.1.1)(stylelint@16.2.0(typescript@5.5.4))
     optionalDependencies:
-      postcss: 8.4.33
+      postcss: 8.5.3
       postcss-html: 1.5.0
-      postcss-scss: 4.0.9(postcss@8.4.33)
+      postcss-scss: 4.0.9(postcss@8.5.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -8525,7 +8542,7 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tsconfig/node20@20.1.2': {}
+  '@tsconfig/node22@22.0.5': {}
 
   '@types/argparse@1.0.38': {}
 
@@ -12452,7 +12469,7 @@ snapshots:
     dependencies:
       htmlparser2: 3.10.1
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)
+      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)
 
   postcss-html@1.5.0:
     dependencies:
@@ -12465,7 +12482,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.17.10
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)
+      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -12476,7 +12493,7 @@ snapshots:
   postcss-markdown@0.36.0(postcss-syntax@0.36.2)(postcss@7.0.39):
     dependencies:
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)
+      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)
       remark: 10.0.1
       unist-util-find-all-after: 1.0.5
 
@@ -12512,9 +12529,9 @@ snapshots:
     dependencies:
       postcss: 7.0.39
 
-  postcss-scss@4.0.9(postcss@8.4.33):
+  postcss-scss@4.0.9(postcss@8.5.3):
     dependencies:
-      postcss: 8.4.33
+      postcss: 8.5.3
 
   postcss-selector-parser@3.1.2:
     dependencies:
@@ -12536,12 +12553,12 @@ snapshots:
     dependencies:
       postcss: 8.4.33
 
-  postcss-syntax@0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33):
+  postcss-syntax@0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3):
     dependencies:
-      postcss: 8.4.33
+      postcss: 8.5.3
     optionalDependencies:
       postcss-html: 1.5.0
-      postcss-scss: 4.0.9(postcss@8.4.33)
+      postcss-scss: 4.0.9(postcss@8.5.3)
 
   postcss-value-parser@3.3.1: {}
 
@@ -13360,14 +13377,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  stylelint-config-recommended-scss@14.0.0(postcss@8.4.33)(stylelint@16.2.0(typescript@5.5.4)):
+  stylelint-config-recommended-scss@14.0.0(postcss@8.5.3)(stylelint@16.2.0(typescript@5.5.4)):
     dependencies:
-      postcss-scss: 4.0.9(postcss@8.4.33)
+      postcss-scss: 4.0.9(postcss@8.5.3)
       stylelint: 16.2.0(typescript@5.5.4)
       stylelint-config-recommended: 14.0.0(stylelint@16.2.0(typescript@5.5.4))
       stylelint-scss: 6.0.0(stylelint@16.2.0(typescript@5.5.4))
     optionalDependencies:
-      postcss: 8.4.33
+      postcss: 8.5.3
 
   stylelint-config-recommended-vue@1.4.0(postcss-html@1.5.0)(stylelint@16.2.0(typescript@5.5.4)):
     dependencies:
@@ -13381,13 +13398,13 @@ snapshots:
     dependencies:
       stylelint: 16.2.0(typescript@5.5.4)
 
-  stylelint-config-standard-scss@13.0.0(postcss@8.4.33)(stylelint@16.2.0(typescript@5.5.4)):
+  stylelint-config-standard-scss@13.0.0(postcss@8.5.3)(stylelint@16.2.0(typescript@5.5.4)):
     dependencies:
       stylelint: 16.2.0(typescript@5.5.4)
-      stylelint-config-recommended-scss: 14.0.0(postcss@8.4.33)(stylelint@16.2.0(typescript@5.5.4))
+      stylelint-config-recommended-scss: 14.0.0(postcss@8.5.3)(stylelint@16.2.0(typescript@5.5.4))
       stylelint-config-standard: 36.0.0(stylelint@16.2.0(typescript@5.5.4))
     optionalDependencies:
-      postcss: 8.4.33
+      postcss: 8.5.3
 
   stylelint-config-standard-vue@1.0.0(postcss-html@1.5.0)(stylelint@16.2.0(typescript@5.5.4)):
     dependencies:
@@ -13522,7 +13539,7 @@ snapshots:
       postcss-sass: 0.3.5
       postcss-scss: 2.1.1
       postcss-selector-parser: 3.1.2
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.4.33))(postcss@8.4.33)
+      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss-scss@4.0.9(postcss@8.5.3))(postcss@8.5.3)
       postcss-value-parser: 3.3.1
       resolve-from: 4.0.0
       signal-exit: 3.0.7
