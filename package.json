@@ -113,7 +113,7 @@
     "rimraf": "^5.0.1",
     "rollup": "^4.8.0",
     "sass": "^1.66.1",
-    "standard-version": "^9.5.0",
+    "commit-and-tag-version": "^9.5.0",
     "stylelint": "^16.2.0",
     "typescript": "~5.5.4",
     "vite": "^5.4.2",
